@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="lote_holerites_form" >
+            <field name="name">boleto.holerites.form</field>
+            <field name="model">hr.holerite</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Gerar Holerites de funcionario">
+                    <group colspan="4">
+                        <field name="nome" invisible="1"/>
+                        <button icon="gtk-execute" string="Gerar holerites" name="gera_holerites" type="object" />
+                        <button icon="gtk-cancel" special="cancel" string="Fechar" />
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_holerites_wizard" multi="True" key2="client_action_multi" name="Holerites de funcionários" res_model="hr.holerite" src_model="hr.payslip" view_mode="form" target="new" view_type="form" />
+
+    </data>
+</openerp>

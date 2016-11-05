@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="cotacao_supplier_info_tree">
+            <field name="name">cotacao.supplier.info.tree</field>
+            <field name="model">product.supplierinfo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Cotação - fornecedores">
+                    <field name="codigo_cotacao" />
+                    <field name="product_id" string="Produto" />
+                    <field name="variants" string="Subtipo" />
+                    <field name="name" string="Fornecedor" />
+                    <field name="quantidade_cotada" />
+                    <field name="uom_id" />
+                    <field name="preco" />
+                    <field name="total" />
+                    <field name="delay" string="Prazo de entrega" />
+<!--                     <field name="min_qty" string="Qtd. mínima" /> -->
+                    <field name="condicao_pagamento" />
+                    <field name="data_atualizacao" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="cotacao_supplier_info_form">
+            <field name="name">cotacao.supplier.info.form</field>
+            <field name="model">product.supplierinfo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Cotação - produtos">
+                    <field name="codigo_cotacao" readonly="1" />
+                    <field name="product_id" string="Produto" options="{'quick_create': false}" colspan="4" readonly="1" />
+                    <field name="variants" string="Subtipo" colspan="4" readonly="1" />
+                    <field name="name" string="Fornecedor" context="{'default_customer': 0, 'search_default_supplier': 1, 'default_supplier': 1}" options='{"quick_create": false}' colspan="4" readonly="1" />
+                    <field name="product_code" colspan="4" />
+                    <field name="product_name" colspan="4" />
+                    <field name="quantidade_cotada" readonly="1" />
+                    <field name="uom_id" readonly="1" />
+                    <field name="preco" required="1" on_change="onchange_preco(quantidade_cotada, preco)" />
+                    <field name="total" readonly="1" />
+                    <newline />
+                    <field name="delay" string="Prazo de entrega" required="1" />
+                    <newline />
+                    <field name="condicao_pagamento" colspan="4" required="1" />
+                    <field name="obs" colspan="4" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="cotacao_supplier_info_search">
+            <field name="name">cotacao.supplier.info.search</field>
+            <field name="model">product.supplierinfo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Cotação - produtos">
+                    <field name="codigo_cotacao" />
+                    <field name="product_id" />
+                    <field name="name" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="cotacao_supplier_info_acao">
+            <field name="name">Cotação - fornecedores</field>
+            <field name="res_model">product.supplierinfo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('codigo_cotacao', '&gt;', 0)]</field>
+            <field name="view_id" ref="cotacao_supplier_info_tree" />
+            <field name="search_view_id" ref="cotacao_supplier_info_search" />
+        </record>
+
+        <menuitem
+            action="cotacao_supplier_info_acao"
+            id="menu_cotacao_supplier_info"
+            name="Cotação - fornecedores"
+            sequence="4"
+            parent="menu_purchase_cotacao" />
+
+        <record model="ir.actions.act_window.view" id="cotacao_supplier_info_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="cotacao_supplier_info_form"/>
+            <field name="act_window_id" ref="cotacao_supplier_info_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="cotacao_supplier_info_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="cotacao_supplier_info_tree"/>
+            <field name="act_window_id" ref="cotacao_supplier_info_acao"/>
+        </record>
+
+    </data>
+</openerp>

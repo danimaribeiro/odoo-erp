@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <record model="ir.ui.view" id="sped_modelo_partida_dobrada_rh_form_view">
+            <field name="name">sped.modelo_partida_dobrada_rh.form</field>
+            <field name="model">sped.modelo_partida_dobrada</field>
+             <field name="inherit_id" ref="sped_contabilidade.sped_modelo_partida_dobrada_form_view"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">                
+                <field name="tabela" position="replace">
+                    <field name="tabela" attrs="{'invisible': [('tabela', '=', 'FP')]}" />                     
+                </field>
+            </field>
+        </record>     
+        
+        <record model="ir.actions.act_window" id="sped_modelo_partida_dobrada_acao_rh">
+            <field name="name">Parametrizacao Contabilidade</field>
+            <field name="domain">[('tabela','=','FP')]</field>
+            <field name="context">{'tabela':'FP','default_tabela':'FP'}</field>
+            <field name="res_model">sped.modelo_partida_dobrada</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+                
+        <menuitem id="menu_sped_modelo_partida_dobrada_rh"
+            action="sped_modelo_partida_dobrada_acao_rh"
+            parent="hr_payroll.payroll_configure"
+            name="Modelo Partida Dobrada"
+            sequence="20" />        
+
+    </data>
+</openerp>

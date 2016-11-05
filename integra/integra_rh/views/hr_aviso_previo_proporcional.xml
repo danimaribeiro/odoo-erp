@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="hr_aviso_previo_proporcional_tree">
+            <field name="name">hr.aviso_previo_proporcional.tree</field>
+            <field name="model">hr.aviso_previo_proporcional</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Aviso prévio proporcional">
+                    <field name="descricao" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_aviso_previo_proporcional_form">
+            <field name="name">hr.aviso_previo_proporcional.form</field>
+            <field name="model">hr.aviso_previo_proporcional</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <field name="descricao" required="1" colspan="4" />
+                    <separator string="Anos de aviso e dias" colspan="4" />
+                    <field name="avisoprevioproporcional_item_ids" nolabel="1">
+                        <tree editable="top">
+                            <field name="anos" />
+                            <field name="dias" />
+                        </tree>
+                    </field>
+                    <separator string="Empresas em que aplicar" colspan="4" />
+                    <field name="company_ids" nolabel="1">
+                        <tree>
+                            <field name="name" />
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+<!--        <record model="ir.ui.view" id="hr_aviso_previo_proporcional_search">
+            <field name="name">hr.aviso_previo_proporcional.search</field>
+            <field name="model">hr.aviso_previo_proporcional</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Faltas">
+                    <field name="company_id" widget="selection"/>
+                    <field name="employee_id" widget="selection"/>
+                </search>
+            </field>
+        </record>-->
+
+        <record model="ir.actions.act_window" id="hr_aviso_previo_proporcional_acao">
+            <field name="name">Aviso prévio proporcional</field>
+            <field name="res_model">hr.aviso_previo_proporcional</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_aviso_previo_proporcional_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            action="hr_aviso_previo_proporcional_acao"
+            id="menu_hr_aviso_previo_proporcional"
+            name="Aviso prévio proporcional"
+            parent="menu_hr_tabelas"
+            sequence="60"
+            />
+
+        <record model="ir.actions.act_window.view" id="hr_aviso_previo_proporcional_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_aviso_previo_proporcional_acao"/>
+            <field name="view_id" ref="hr_aviso_previo_proporcional_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_aviso_previo_proporcional_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_aviso_previo_proporcional_acao"/>
+            <field name="view_id" ref="hr_aviso_previo_proporcional_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

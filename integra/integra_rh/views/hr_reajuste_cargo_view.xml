@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_reajuste_cargo_tree">
+            <field name="name">hr.reajuste.cargo.tree</field>
+            <field name="model">hr.reajuste_cargo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Reajuste Salarial">
+                    <field name="company_id" />
+                    <field name="data" string="Data de reajuste" />
+                    <field name="new_funcao_id" string="Percentual de reajuste" />
+                    <field name="data_confirmacao" />
+                    <field name="motivo_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_reajuste_cargo_form">
+            <field name="name">hr.reajuste.cargo.form</field>
+            <field name="model">hr.reajuste_cargo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Reajuste Cargo">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="company_id" colspan="4" required="1" />
+                        <field name="sindicato_id" domain="[('ref', '=', 'SINDICATO')]" colspan="4"/>
+                        <field name="excluir_sindicato" />
+                        <field name="funcao_id" colspan="4"/>
+                        <field name="excluir_funcao" />
+                        <field name="cbo_id" colspan="4"/>
+                        <field name="excluir_cbo" />
+                        <field name="centrocusto_id" colspan="4"/>
+                        <field name="excluir_centrocusto" />
+                        <newline />
+                        <field name="data" string="Data do reajuste" colspan="2" />
+                        <field name="new_funcao_id" colspan="2" required="1" />
+                        <newline />
+                        <field name="motivo_id" required="1" colspan="4" />
+                        <newline />
+                        <field name="data_confirmacao" colspan="2" />
+
+                        <field name="create_uid" colspan="2"  attrs="{'invisible': [('confirmado', '!=', True)]}" readonly="1" />
+                        <field name="confirmado" invisible="1" />
+                        <newline />
+                        <button icon="gtk-execute" string="Bucar Contratos" name="buscar_contratos" type="object" colspan="2" attrs="{'invisible': [('confirmado', '!=', False )]}" />
+                        <button icon="gtk-execute" string="Confirmar Reajuste" name="confirmar_reajuste" type="object" colspan="2" attrs="{'invisible': [('confirmado', '!=', False )]}" />
+                        <newline/>
+                        <field name="nome_arquivo" colspan="4" invisible="1" />
+                        <separator string="Listagem do reajuste" colspan="4" />
+                        <field name="arquivo" nolabel="1" filename="nome_arquivo" colspan="4"/>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Contratos a alterar">
+                            <field name="cargos_reajustar_ids" nolabel="1" colspan="4" readonly="1">
+                                <tree>
+                                    <field name="contrato_id" />
+                                    <field name="company_id" />
+                                    <field name="cbo_id" />
+                                    <field name="centrocusto_id" />
+                                    <field name="old_job_id" />
+                                    <field name="new_job_id" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Contratos excluidos">
+                            <field name="contrato_excluido_ids" colspan="4" >
+                                <tree>
+                                    <field name="company_id" />
+                                    <field name="name" />
+                                    <field name="employee_id" />
+                                    <field name="job_id" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_reajuste_cargo_search">
+            <field name="name">hr.reajuste.cargo.search</field>
+            <field name="model">hr.reajuste_cargo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Remessas de Folha de Pagamento">
+                    <field name="company_id" select="1" />
+                    <field name="data" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_reajuste_cargo_acao">
+            <field name="name">Reajuste Cargos</field>
+            <field name="res_model">hr.reajuste_cargo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="hr_reajuste_cargo_tree" />
+        </record>
+
+        <menuitem action="hr_reajuste_cargo_acao"
+                  id="menu_hr_reajuste_cargo" string="Reajuste Cargos" parent="menu_hr_alteracao_contratuais"/>
+
+    </data>
+</openerp>

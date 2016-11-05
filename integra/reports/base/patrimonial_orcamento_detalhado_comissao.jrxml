@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="patrimonial_orcamento_detalhado_comissao" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="1b2087e8-46ca-456b-bbaa-c6a1e381b515">
+	<property name="ireport.zoom" value="2.357947691000003"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ORDEM_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+orcat.nome,
+coalesce(ol.vr_comissao_locacao,0) as comissao_locacao,
+coalesce(ol.meses_retorno_investimento,0) as retorno_investimento,
+coalesce(case when orcat.id = 9 then 0 else ol.vr_total_minimo end,0) as custo_equipamento,
+coalesce(ol.vr_mensal,0) as mensal_cliente,
+
+--
+-- Média ponderada dos meses para retorno do investimento
+--
+coalesce(ol.meses_retorno_investimento, 0) * coalesce(coalesce(case when orcat.id = 9 then 0 else ol.vr_total_minimo end,0) / coalesce((select sum(coalesce(oll.vr_total_minimo, 0)) from orcamento_orcamento_locacao oll where oll.sale_order_id = ol.sale_order_id and oll.orcamento_categoria_id != 9 and oll.vr_mensal > 0), 1), 0) as media_ponderada_retorno_investimento
+
+from orcamento_orcamento_locacao as ol
+join sale_order orc on orc.id = ol.sale_order_id
+join orcamento_categoria orcat on orcat.id = ol.orcamento_categoria_id
+
+where orc.id = $P{ORDEM_ID} and ol.vr_mensal > 0
+
+order by
+orcat.ordem]]>
+	</queryString>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[Descrição]]></fieldDescription>
+	</field>
+	<field name="comissao_locacao" class="java.lang.Double"/>
+	<field name="retorno_investimento" class="java.lang.Double"/>
+	<field name="custo_equipamento" class="java.lang.Double"/>
+	<field name="mensal_cliente" class="java.lang.Double"/>
+	<field name="media_ponderada_retorno_investimento" class="java.lang.Double"/>
+	<variable name="comissao_locacao_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{comissao_locacao}]]></variableExpression>
+	</variable>
+	<variable name="retorno_investimento_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{retorno_investimento}]]></variableExpression>
+	</variable>
+	<variable name="custo_equipamento_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{custo_equipamento}]]></variableExpression>
+	</variable>
+	<variable name="mensal_cliente_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{mensal_cliente}]]></variableExpression>
+	</variable>
+	<variable name="media_ponderada_retorno_investimento_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{media_ponderada_retorno_investimento}]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="12" splitType="Stretch">
+			<staticText>
+				<reportElement x="288" y="0" width="86" height="12" uuid="55d1ccaf-c58d-454c-b030-2073c9f586eb"/>
+				<box rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Custo Equipamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="374" y="0" width="93" height="12" uuid="44548727-fba3-4f08-b15c-4602716651d8"/>
+				<box rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Periodo Recuperação]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="467" y="0" width="88" height="12" uuid="5b8fda4d-4783-4d4f-980e-e099cca22f55"/>
+				<box rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Mensalidade Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="468" y="0" width="87" height="12" uuid="71e7a68f-cc35-491c-99b5-6638122005f1">
+					<printWhenExpression><![CDATA[true == false]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Comissão Vendedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="288" height="12" uuid="1c92db9f-3d76-406a-a005-6a81e4d1182f"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="288" height="12" uuid="7a709d01-e24a-4899-99c1-122691a9d572"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="468" y="0" width="87" height="12" uuid="58d1f84f-9c10-4fc7-b2ae-c94410255977">
+					<printWhenExpression><![CDATA[true == false]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comissao_locacao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="467" y="0" width="88" height="12" uuid="6bbdbbb7-7e48-434a-a51d-c7e79510b3a9"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mensal_cliente}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="374" y="0" width="93" height="12" uuid="416a7650-f7ea-4ba3-b3df-3f868e1e3dcc"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{retorno_investimento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="288" y="0" width="86" height="12" uuid="a6852910-8fa5-4db5-8065-7b9e655ee900"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{custo_equipamento}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="12" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="288" height="12" uuid="61271f8e-9aba-426a-b582-52505e40d8f3"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAIS]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="468" y="0" width="87" height="12" uuid="b309e039-a423-4eef-899f-6461c06856f8">
+					<printWhenExpression><![CDATA[true == false]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{comissao_locacao_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="288" y="0" width="86" height="12" uuid="3f9ab3f5-3fcc-4b37-87b4-4ff589dc1f7a"/>
+				<box rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{custo_equipamento_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="467" y="0" width="88" height="12" uuid="be833dba-c822-4347-b65f-af9073e5dc8b"/>
+				<box rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{mensal_cliente_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="374" y="0" width="93" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f03fc9fe-9bb9-4503-b324-6a3ec0c60a68"/>
+				<box rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{media_ponderada_retorno_investimento_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

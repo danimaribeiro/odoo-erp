@@ -1,0 +1,893 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hr_ficha_financeira_rh" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="814" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="3.2153832150000174"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="397"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CONTRACT_ID" class="java.lang.Integer"/>
+	<parameter name="ANO" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+pc.rubrica,
+pc.sinal,
+rp.name,
+'[' || e.id ||']' || e.nome as nome,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-01' then pc.valor
+    else 0
+end, 0)
+) as valor_janeiro,
+
+
+sum(coalesce(
+case
+    when pc.competencia like '%-02' then pc.valor
+    else 0
+end, 0)
+) as valor_fevereiro,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-03' then pc.valor
+    else 0
+end, 0)
+) as valor_marco,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-04' then pc.valor
+    else 0
+end, 0)
+) as valor_abril,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-05' then pc.valor
+    else 0
+end, 0)
+) as valor_maio,
+
+
+sum(coalesce(
+case
+    when pc.competencia like '%-06' then pc.valor
+    else 0
+end, 0)
+) as valor_junho,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-07' then pc.valor
+    else 0
+end, 0)
+) as valor_julho,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-08' then pc.valor
+    else 0
+end, 0)
+) as valor_agosto,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-09' then pc.valor
+    else 0
+end, 0)
+) as valor_setembro,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-10' then pc.valor
+    else 0
+end, 0)
+) as valor_outubro,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-11' then pc.valor
+    else 0
+end, 0)
+) as valor_novembro,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-12' then pc.valor
+    else 0
+end, 0)
+) as valor_dezembro,
+
+
+sum(coalesce(
+case
+    when pc.competencia like '%-13' then pc.valor
+    else 0
+end, 0)
+) as valor_13,
+
+sum(coalesce(pc.valor, 0)) as valor_total
+
+
+
+from hr_payslip_line_competencia pc
+join hr_contract co on co.id = pc.contract_id
+join hr_employee e on e.id = co.employee_id
+join res_company c on c.id = co.company_id
+join res_partner rp on rp.id = c.partner_id
+where
+pc.competencia like $P{ANO}
+and pc.contract_id = $P{CONTRACT_ID}
+
+
+group by
+pc.sinal,
+pc.rubrica,
+rp.name,
+e.id,
+e.nome
+
+
+order by
+pc.sinal desc,
+pc.rubrica]]>
+	</queryString>
+	<field name="rubrica" class="java.lang.String"/>
+	<field name="sinal" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[Nome]]></fieldDescription>
+	</field>
+	<field name="valor_janeiro" class="java.math.BigDecimal"/>
+	<field name="valor_fevereiro" class="java.math.BigDecimal"/>
+	<field name="valor_marco" class="java.math.BigDecimal"/>
+	<field name="valor_abril" class="java.math.BigDecimal"/>
+	<field name="valor_maio" class="java.math.BigDecimal"/>
+	<field name="valor_junho" class="java.math.BigDecimal"/>
+	<field name="valor_julho" class="java.math.BigDecimal"/>
+	<field name="valor_agosto" class="java.math.BigDecimal"/>
+	<field name="valor_setembro" class="java.math.BigDecimal"/>
+	<field name="valor_outubro" class="java.math.BigDecimal"/>
+	<field name="valor_novembro" class="java.math.BigDecimal"/>
+	<field name="valor_dezembro" class="java.math.BigDecimal"/>
+	<field name="valor_13" class="java.math.BigDecimal"/>
+	<field name="valor_total" class="java.math.BigDecimal"/>
+	<variable name="valor_janeiro_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_janeiro}]]></variableExpression>
+	</variable>
+	<variable name="valor_fevereiro_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_fevereiro}]]></variableExpression>
+	</variable>
+	<variable name="valor_marco_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_marco}]]></variableExpression>
+	</variable>
+	<variable name="valor_abril_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_abril}]]></variableExpression>
+	</variable>
+	<variable name="valor_maio_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_maio}]]></variableExpression>
+	</variable>
+	<variable name="valor_junho_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_junho}]]></variableExpression>
+	</variable>
+	<variable name="valor_julho_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_julho}]]></variableExpression>
+	</variable>
+	<variable name="valor_agosto_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_agosto}]]></variableExpression>
+	</variable>
+	<variable name="valor_setembro_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_setembro}]]></variableExpression>
+	</variable>
+	<variable name="valor_outubro_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_outubro}]]></variableExpression>
+	</variable>
+	<variable name="valor_novembro_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_novembro}]]></variableExpression>
+	</variable>
+	<variable name="valor_dezembro_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_dezembro}]]></variableExpression>
+	</variable>
+	<variable name="valor_13_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_13}]]></variableExpression>
+	</variable>
+	<variable name="valor_total_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_total}]]></variableExpression>
+	</variable>
+	<variable name="valor_total_base" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{sinal} == "0" ?
+$F{valor_total}
+:
+0]]></variableExpression>
+	</variable>
+	<variable name="valor_total_proventos" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{sinal} == "+" ?
+$F{valor_total}
+:
+0]]></variableExpression>
+	</variable>
+	<variable name="valor_total_descontos" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{sinal} == "-"?
+$F{valor_total}
+:
+0]]></variableExpression>
+	</variable>
+	<group name="detalhe">
+		<groupExpression><![CDATA[$F{sinal}]]></groupExpression>
+		<groupHeader>
+			<band height="28" splitType="Stretch">
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="814" height="14" uuid="1a92f40b-3dde-4d94-a797-a6b2efd89cd2"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{sinal} == "0" ?
+"Bases"
+:
+$F{sinal} == "+" ?
+"Proventos"
+:
+"Descontos"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="14" width="112" height="14" uuid="ddcd2217-5350-469f-a37d-b87ea923d46a"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Rubricas]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="112" y="14" width="50" height="14" uuid="08ecac14-433e-4ede-8155-06239bbb5d9e"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Janeiro]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="162" y="14" width="50" height="14" uuid="0eb9bc07-caf7-43a5-a93e-4f92a76663f9"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fevereiro]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="212" y="14" width="50" height="14" uuid="4625dae4-6eaf-421b-86f0-31dc57c61418"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Março]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="262" y="14" width="50" height="14" uuid="8de611f6-5a4a-4707-be54-e1405be72a40"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Abril]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="312" y="14" width="50" height="14" uuid="b7830a14-591e-4c4f-a610-f070e1d64457"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Maio]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="362" y="14" width="50" height="14" uuid="1e126ffb-b7c3-41ca-bf84-f032d67b0292"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Junho]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="412" y="14" width="50" height="14" uuid="563a55aa-99d6-421f-b642-9708fb4feb61"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Julho]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="462" y="14" width="50" height="14" uuid="b1c8dc15-17b2-4426-a86a-70ccf2f35fe4"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Agosto]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="512" y="14" width="50" height="14" uuid="4f35a739-652f-447b-8a2d-053d4484b457"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Setembro]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="562" y="14" width="50" height="14" uuid="7d209911-27d7-4e95-99d4-50e15b65c57c"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Outubro]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="612" y="14" width="50" height="14" uuid="ec53a973-b263-4c89-a8a5-4faaff0f5d93"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Novembro]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="662" y="14" width="50" height="14" uuid="6fb66688-8103-4585-80d2-df90e88c27dd"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Dezembro]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="712" y="14" width="50" height="14" uuid="b7821b29-5253-4fa6-82ac-8f1561e3f067"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[13º]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="762" y="14" width="52" height="14" uuid="b6413e02-f951-486c-b232-ff5e867380f0"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="512" y="0" width="50" height="14" uuid="975a5c90-3098-475f-a00d-b3c4c82f79a8"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_setembro_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="362" y="0" width="50" height="14" uuid="c5a002d9-3aa6-4e03-b891-a8fc95b071dd"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_junho_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="162" y="0" width="50" height="14" uuid="2fa66c66-d2b9-477a-94e9-fc9e5804f698"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_fevereiro_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="412" y="0" width="50" height="14" uuid="79c325c5-f69a-401d-8aed-8f7b2f7f288f"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_julho_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="562" y="0" width="50" height="14" uuid="312580ce-1fd1-462f-a786-42425cfaebe6"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_outubro_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="262" y="0" width="50" height="14" uuid="f859f368-d24c-4b97-9f42-679919a7f7cd"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_abril_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="462" y="0" width="50" height="14" uuid="d1a8fe68-6d08-4e32-9ccd-7261cf86661c"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_agosto_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="712" y="0" width="50" height="14" uuid="8de0c941-305b-46cf-8e71-b1d646ee09d9"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_13_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="662" y="0" width="50" height="14" uuid="43a55a67-d030-44db-84ac-55f22172864c"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_dezembro_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="212" y="0" width="50" height="14" uuid="f54e8ad8-0d52-4d47-bd3c-c37477ca284c"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_marco_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="612" y="0" width="50" height="14" uuid="75ba82a2-d51a-4321-85fc-d7629a7f71f7"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_novembro_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="762" y="0" width="52" height="14" uuid="d18158e1-78cc-4f31-bb58-1a0652fc2e20"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_total_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="112" y="0" width="50" height="14" uuid="d5c21f98-26db-4423-9141-5d7f0d867de2"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_janeiro_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="312" y="0" width="50" height="14" uuid="398be7bf-8df8-4c2b-9efe-296c1b43e150"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_maio_1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="112" height="14" uuid="4479c10a-6f08-4cb6-8481-69a3fff77afc"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="37">
+			<staticText>
+				<reportElement x="0" y="0" width="814" height="37" uuid="f3a0f342-8326-4c62-af6a-2ac87264c601"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ficha Financeira por Funcionário]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="771" y="17" width="43" height="8" uuid="11cf1411-663e-465b-be65-d184575de58d"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm:ss">
+				<reportElement x="771" y="24" width="43" height="8" uuid="616a94d5-6a5a-466d-b00c-18a3af7970dd"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="748" y="17" width="23" height="8" uuid="6ab04aef-87ea-4a0c-bb80-d259e2108e83"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="748" y="9" width="23" height="8" uuid="cec7371c-43de-4d14-87a8-1f6557e87526"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pág:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="748" y="24" width="23" height="8" uuid="16653a63-a342-4698-af74-0ecc30dc51d7"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="771" y="9" width="43" height="8" uuid="089091f4-ff8d-4edd-a916-afdefd07bcc8"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="28">
+			<staticText>
+				<reportElement x="0" y="0" width="35" height="14" uuid="7651dfd5-87c7-4364-bab7-e0360934f2df"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empresa:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="14" width="46" height="14" uuid="43a645ee-ef93-4cb5-a1d1-90bf0eaa7e28"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Funcionario:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="46" y="14" width="768" height="14" uuid="0556e761-83c7-4da2-87bb-e348e2f10faa"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="35" y="0" width="779" height="14" uuid="eb8286b9-c675-44c7-af72-b38b18e55b8b"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="462" y="0" width="50" height="14" uuid="c532e799-913d-4756-a8dc-6ffa82fa34b5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_agosto}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="162" y="0" width="50" height="14" uuid="897a02e0-6787-42a4-8765-981d47ca11a5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_fevereiro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="362" y="0" width="50" height="14" uuid="cf3e0b82-3c3e-45f4-a2b4-7c8e8f69472e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_junho}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="612" y="0" width="50" height="14" uuid="05346f1d-a535-4712-b620-ca61df210854"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_novembro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="112" y="0" width="50" height="14" uuid="2dbd19f3-d729-412b-9b60-5c2bcc2270c6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_janeiro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="662" y="0" width="50" height="14" uuid="9610d5c5-1cec-4cfd-a518-873c59ec115d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_dezembro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="312" y="0" width="50" height="14" uuid="1660c611-6bb1-42f9-8e75-c016e67037af"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_maio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="212" y="0" width="50" height="14" uuid="71cd36e3-4a0e-4ad3-927e-a782c4265f63"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_marco}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="262" y="0" width="50" height="14" uuid="dcc1e18b-b546-4ff7-a875-1d9e747e86ee"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_abril}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="562" y="0" width="50" height="14" uuid="29880902-3f96-43b9-8c95-ce0009915f3f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_outubro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="412" y="0" width="50" height="14" uuid="3b374c60-b608-4688-a2a9-bbd62da55c9c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_julho}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="512" y="0" width="50" height="14" uuid="7b329ccf-56a7-4b89-b930-c3a5f8e46e2d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_setembro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="762" y="0" width="52" height="14" uuid="4d959368-88fa-468b-b335-356030cb4d96"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_total}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="712" y="0" width="50" height="14" uuid="8f5e3f16-69b9-4dab-983d-2d63ae9641c2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_13}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="123" height="14" uuid="69dcfcee-4f3f-456e-9edb-03edab747486"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rubrica}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="100" splitType="Stretch">
+			<staticText>
+				<reportElement isPrintRepeatedValues="false" x="0" y="25" width="112" height="19" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="f45dafb7-ff15-4ee2-b941-e96546793bd6"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Resumo de Valores]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="46" y="44" width="66" height="14" uuid="1985f9dd-8d92-42a8-bcb5-b38bf9aac007"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_total_base}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="46" y="58" width="66" height="14" uuid="67199554-b3b0-423d-9e02-f629a0e858ee"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_total_proventos}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="46" y="86" width="66" height="14" uuid="0dd0e78e-0970-447f-ad7c-0579b6ce6e46"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_total_proventos} - $V{valor_total_descontos}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="44" width="46" height="14" uuid="e740859c-b502-4cd7-8a15-8bd65017f14b"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bases:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="58" width="46" height="14" uuid="714c42aa-ebf3-4f27-931d-3d8fa117dc91"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proventos:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="86" width="46" height="14" uuid="268ea9d6-9688-4d47-94bb-10ae68f74e41"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Liquido:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="46" y="72" width="66" height="14" uuid="1ebef475-0fa8-4f6a-8629-4c9746ce9495"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_total_descontos}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="72" width="46" height="14" uuid="9fc2e04a-f0b8-41ea-9120-28e645202ac0"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descontos:]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="0" y="0" width="814" height="14" uuid="40247ebe-905a-452f-9d27-e360a80dc441"/>
+				<subreportParameter name="CONTRACT_ID">
+					<subreportParameterExpression><![CDATA[$P{CONTRACT_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "hr_ficha_financeira_rh_liquido.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

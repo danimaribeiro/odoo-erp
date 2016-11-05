@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem
+            id="menu_cadastro"
+            name="Cadastros"
+            parent="base.menu_base_partner"
+            sequence="-10"/>
+
+        <menuitem
+            id="construtora.menu_imoveis"
+            name="Imóveis"
+            parent="base.menu_base_partner"
+            sequence="-9"/>
+
+        <menuitem
+            action="construtora.res_partner_contato_action"
+            id="construtora.menu_partner_contato"
+            parent="menu_cadastro"
+            sequence="1"/>
+
+        <menuitem
+            action="construtora.crm_lead_prospecto_action"
+            id="construtora.menu_crm_lead_prospecto"
+            parent="menu_cadastro"
+            sequence="2"/>
+
+        <menuitem
+            action="base.action_partner_form"
+            id="base.menu_partner_form"
+            parent="menu_cadastro"
+            sequence="3"/>
+        <menuitem
+            action="construtora.res_partner_corretor_action"
+            id="construtora.menu_partner_corretor"
+            parent="menu_cadastro"
+            sequence="4"/>
+
+        <menuitem
+            action="construtora.res_cep_acao"
+            id="construtora.menu_res_cep"
+            name="CEP"
+            parent="menu_cadastro"
+            sequence="5" />
+
+        <menuitem
+            action="construtora.const_zoneamento_acao"
+            id="construtora.ecd_menu_const_zoneamento"
+            name="Zoneamento"
+            parent="menu_cadastro"
+            sequence="6" />
+
+        <!-- outros menus -->
+        <menuitem
+            action="construtora.imovel_crm_acao"
+            id="construtora.menu_imovel_crm"
+            name="Busca imóveis"
+            sequence="-8"
+            parent="base.menu_base_partner" />
+
+        <menuitem
+            action="construtora.finan_contrato_proposta_imovel_acao"
+            id="construtora.menu_finan_contrato_proposta_imovel"
+            sequence="-7"
+            name="Propostas"
+            parent="base.menu_base_partner" />
+
+    </data>
+</openerp>

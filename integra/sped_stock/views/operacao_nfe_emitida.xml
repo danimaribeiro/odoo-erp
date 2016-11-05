@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_operacao_nfe_emitida_form">
+            <field name="name">sped.operacao.nfe.emitida.form</field>
+            <field name="model">sped.operacao</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped.sped_operacao_nfe_emitida_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//separator[@string='Itens da operação']" position="before">
+                    <field name="traz_custo_medio" />
+                </xpath>
+                <page string="Itens da operação" position="after">
+                    <page string="Locais para custo médio" attrs="{'invisible': [('traz_custo_medio', '!=', True)]}">
+                        <field name="local_custo_ids" nolabel="1" colspan="4">
+                            <tree editable="top">
+                                <field name="ordem" />
+                                <field name="stock_location_id" />
+                            </tree>
+                        </field>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

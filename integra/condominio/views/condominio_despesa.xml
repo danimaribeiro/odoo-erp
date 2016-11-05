@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="condominio_despesa_tree">
+            <field name="name">condo.despesa.tree</field>
+            <field name="model">condo.despesa</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="project_id" />
+                    <field name="documento_id" />
+                    <field name="valor" sum="Total" />
+                    <field name="data" />
+                    <field name="data_vencimento" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="condominio_despesa_form">
+            <field name="name">condo.despesa.form</field>
+            <field name="model">condo.despesa</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Despesa de Condôminio">
+                    <group col="6" colspan="4" string="Parâmentros">
+                        <group col="4" colspan="4">                        
+                            <field name="project_id" string="Condomínio" colspan="4" required="1"/>
+                            <field name="documento_id" colspan="4" required="1"/>
+                        </group>
+                        <group col="2" colspan="2">                        
+                            <field name="data" required="1"/>
+                            <field name="data_vencimento" />
+                            <field name="valor" />
+                        </group>
+                    </group>
+                    <separator string="Unidades" colspan="4" />
+                    <field name="item_ids" colspan="4" nolabel="1" context="{'default_project_id': project_id }">
+                        <tree editable="bottom">
+                            <field name="project_id" invisible="1"/>
+                            <field name="unidade_id" required="1" domain="[('project_id','=', project_id)]"/>
+                            <field name="valor" sum="Total" />
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="condominio_despesa_search">
+            <field name="name">condo.despesa.search</field>
+            <field name="model">condo.despesa</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Despesas do Condôminio">
+                    <field name="project_id" string="Condomínio" />
+                    <field name="documento_id" />
+                    <field name="data" />                                        
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="condominio_despesa_acao">
+            <field name="name">Despesas do Condôminio</field>
+            <field name="res_model">condo.despesa</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="condominio_despesa_tree" />
+            <field name="search_view_id" ref="condominio_despesa_search" />            
+        </record>
+
+        <menuitem
+            action="condominio_despesa_acao"
+            id="menu_condominio_despesa"
+            name="Despesas"
+            sequence="1"
+            parent="menu_condominio_administracao" />
+
+        <record model="ir.actions.act_window.view" id="condominio_despesa_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="condominio_despesa_form"/>
+            <field name="act_window_id" ref="condominio_despesa_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="condominio_despesa_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="condominio_despesa_tree"/>
+            <field name="act_window_id" ref="condominio_despesa_acao"/>
+        </record>
+
+    </data>
+</openerp>

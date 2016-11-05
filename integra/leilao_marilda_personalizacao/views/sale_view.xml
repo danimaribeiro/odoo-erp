@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="leilao_orcamento_sale_order_form">
+            <field name="name">leilao.orcamento.sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped_sale.sale_order_form"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="data_hora_id" required="1"/>
+                    <field name="midia_id"/>
+                </field>
+                <field name="date_order" position="before">
+                    <newline/>
+                </field>
+                <button name="imprime_pedido_venda" position="replace">                    
+                </button>
+                <field name="partner_id" position="after">
+                    <newline/>
+                    <field name="finan_formapagamento_id"/>
+                    <newline/>
+                    <field name="payment_term"/>
+                </field>
+                <!--<field name="partner_order_id" position="replace">
+                    <field name="partner_order_id" invisible="True"/>
+                </field>-->
+                <!--<field name="partner_invoice_id" position="replace">
+                    <field name="partner_invoice_id" invisible="True"/>
+                </field>-->
+                <!--<field name="pricelist_id" position="replace">
+                    <field name="pricelist_id" invisible="True"/>
+                </field>-->
+                <!--<field name="partner_shipping_id" position="replace">
+                    <field name="partner_shipping_id" invisible="True"/>
+                </field>-->
+                <field name="vr_desconto_rateio" position="before">
+                    <newline/>
+                    <!--<field name="valor_frete"/> -->
+                    <field name="frete_primeira"/>
+                    <!--<field name="vr_total"/>-->
+                </field>
+                <!--<field name="client_order_ref" position="replace">
+                    <field name="client_order_ref" invisible="True"/>
+                </field>-->
+                <!--<field name="vr_total_custo" position="replace" />
+                <field name="vr_total_margem_desconto" position="replace">
+                    <field name="vr_total_margem_desconto" string="Valor dos produtos" />
+                </field>-->
+                <!--<xpath expr="//group[@string='Totais - locação']" position="replace"/>
+                No form original tem 2 botoes com o mesmo nome
+                <xpath expr="//button[@string='Imprimir OS']" position="replace"/>
+                <xpath expr="//button[@string='Imprimir OS']" position="replace"/> -->
+            </field>
+        </record>
+
+        <record id="leilao_orcamento_sales_order_filter" model="ir.ui.view">
+            <field name="name">leilao.orcamento.sale_order_filter</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <field name="name" position="replace">
+                    <field filter_domain="['|', ('name','ilike',self),('client_order_ref','ilike',self)]" name="name" string="Proposta"/>
+                </field>
+                <filter position="before" string="State">
+                    <filter context="{'group_by': 'versao'}" domain="[]" icon="terp-stock_effects-object-colorize" string="Orçamento"/>
+                </filter>
+                <field name="user_id" position="after">
+                    <newline />
+                    <filter context="{'group_by': 'data_hora_id'}" domain="[]" icon="terp-stock_effects-object-colorize" string="Leilão"/>
+                    <filter context="{'group_by': 'midia_id'}" domain="[]" icon="terp-stock_effects-object-colorize" string="Mídia"/>
+                    <separator orientation="vertical" />
+                    <field name="date_order_from" string="De data do pedido" filter_domain="[('date_order','&gt;=',self)]" widget="calendar" />
+                    <field name="date_order_to" string="a data do pedido" filter_domain="[('date_order','&lt;=',self)]" widget="calendar" />                  
+                </field>
+            </field>
+        </record>
+
+        <record id="orcamento_sale_order_tree" model="ir.ui.view">
+            <field name="name">orcamento.sale_order_tree</field>
+            <field name="model">sale.order</field>
+            <field name="type">tree</field>
+            <!--             <field name="priority">2</field> -->
+            <field name="inherit_id" ref="sped_sale.sale_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="date_order" position="after">
+                    <field name="data_hora_id"/>
+                    <field name="midia_id"/>
+                </field>                
+                <field name="amount_total" position="replace">                
+                    <field name="amount_total" groups="leilao_marilda_personalizacao.group_permissao_fechamento" />
+                </field>
+            </field>
+        </record>       
+       
+    </data>
+</openerp>

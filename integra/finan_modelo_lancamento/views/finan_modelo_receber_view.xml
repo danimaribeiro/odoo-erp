@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_receber_modelo_tree">
+            <field name="name">finan.modelo.receber.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="descricao_modelo" />
+                    <field name="documento_id" />
+                    <field name="conta_id" />
+                    <field name="sugestao_bank_id" string="Previsão de débito na conta" />
+                    <field name="res_partner_bank_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_rateio_tree">
+            <field name="name">finan.receber.rateio.tree</field>
+            <field name="model">finan.lancamento.rateio</field>
+            <field name="inherit_id" ref="finan.finan_receber_rateio_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="company_id"  position="replace">
+                    <field name="company_id" />
+                </field>
+                <field name="conta_id"  position="replace">
+                    <field name="conta_id" domain="[('sintetica', '=', False)]" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_modelo_form">
+            <field name="name">finan.modelo.receber.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Modelo Conta a Receber">
+                    <group col="4" colspan="4">
+                        <field name="descricao_modelo" required="1" />
+                        <field name="tipo" invisible="1" />
+                    </group>
+                    <notebook>
+                        <page string="Dados básicos">
+                            <group colspan="2" col="2">
+                                <separator string="Dados do documento" colspan="2" />
+                                <field name="documento_id" required="1" />
+                                <field name="sugestao_bank_id" string="Previsão de débito na conta" />
+                            </group>
+                            <group colspan="2" col="2">
+                                <separator string="Classificação" colspan="2" />
+                                <field name="conta_id" required="1" domain="[('sintetica', '=', False)]" />
+                                <field name="exige_centro_custo" invisible="1" />
+                                <field name="historico" />
+                            </group>
+                            <group colspan="4">
+                                <separator string="Rateio por centros de custo" colspan="4" />
+                                <newline/>
+                                <field name="centrocusto_id" string="Centro de custo/Modelo de rateio" domain="['|', ('tipo', '=', 'R'), '&amp;', ('tipo', '=', 'C'), ('sintetico', '=', False)]"
+                                attrs="{'required': [('exige_centro_custo', '=', True)]}" />
+                                <separator string="Itens de rateio" colspan="4" />
+                                <newline/>
+                                <field name="rateio_ids" widget="many2one_list" nolabel="1" colspan="4" context="{'default_conta_id': conta_id, 'tree_view_ref': 'finan.finan_receber_rateio_tree'}"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_modelo_search">
+            <field name="name">finan.modelo.receber.search</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Modelo Contas a Receber">
+                    <field name="descricao_modelo" />
+                    <field name="conta_id" />
+                    <field name="documento_id"  />
+                    <field name="res_partner_bank_id"  />
+                    <field name="sugestao_bank_id"  />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_receber_modelo_acao">
+            <field name="name">Modelo Contas a Receber</field>
+            <field name="res_model">finan.lancamento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo', '=', 'MR')]</field>
+            <field name="context">{'tipo':'MR','default_tipo':'MR'}</field>
+            <field name="view_id" ref="finan_receber_modelo_tree" />
+            <field name="search_view_id" ref="finan_receber_modelo_search" />
+        </record>
+
+        <menuitem action="finan_receber_modelo_acao"
+            id="menu_finan_receber_modelo"
+            name="Modelo Contas a Receber"
+            parent="finan.menu_finan_config"
+            sequence="30"/>
+
+        <record model="ir.actions.act_window.view" id="finan_receber_modelo_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_receber_modelo_form"/>
+            <field name="act_window_id" ref="finan_receber_modelo_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_receber_modelo_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_receber_modelo_tree"/>
+            <field name="act_window_id" ref="finan_receber_modelo_acao"/>
+        </record>
+
+    </data>
+</openerp>

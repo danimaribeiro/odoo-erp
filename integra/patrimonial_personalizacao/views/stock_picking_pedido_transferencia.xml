@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+      
+        <record id="stock_picking_pedido_transferencia_search" model="ir.ui.view">
+            <field name="name">stock.picking.pedido.transferencia.search</field>
+            <field name="model">stock.picking</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="sped_pedido_transferencia.stock_picking_pedido_transferencia_search"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="company_id" />                                        
+                    <field name="operacao_id"/>                   
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="sesmt_risco_ergonomico_tree">
+            <field name="name">sesmt.risco.ergonomico.tree</field>
+            <field name="model">sesmt.risco</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Riscos">
+                    <field name="descricao" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sesmt_risco_ergonomico_form">
+            <field name="name">sesmt.risco.ergonomico.form</field>
+            <field name="model">sesmt.risco</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <field name="descricao" required="1" colspan="4" />
+                    <field name="data_inicial" required="1" colspan="2" />
+                    <field name="data_final" colspan="2" />
+                    <field name="recomendacao_id" colspan="4" required="1" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sesmt_risco_ergonomico_search">
+            <field name="name">sesmt.risco.ergonomico.search</field>
+            <field name="model">sesmt.risco</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Riscos ergonômicos">
+                    <field name="descricao" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sesmt_risco_ergonomico_acao">
+            <field name="name">Riscos ergonômicos</field>
+            <field name="res_model">sesmt.risco</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="sesmt_risco_ergonomico_tree"/>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo', '=', 'E')]</field>
+            <field name="context">{'tipo': 'E','default_tipo': 'E'}</field>
+        </record>
+
+        <menuitem action="sesmt_risco_ergonomico_acao" id="menu_sesmt_risco_ergonomico" name="Riscos ergonômicos" parent="menu_sesmt_cadastro" sequence="10"/>
+
+        <record model="ir.actions.act_window.view" id="sesmt_risco_ergonomico_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="sesmt_risco_ergonomico_acao"/>
+            <field name="view_id" ref="sesmt_risco_ergonomico_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sesmt_risco_ergonomico_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="sesmt_risco_ergonomico_acao"/>
+            <field name="view_id" ref="sesmt_risco_ergonomico_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="econo_analise_tree">
+            <field name="name">econo.analise.tree</field>
+            <field name="model">econo.analise</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="descricao" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                    <field name="data" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="econo_analise_form">
+            <field name="name">econo.analise.form</field>
+            <field name="model">econo.analise</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Análise econômica">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="descricao" colspan="4" required="1" />
+<!--                         <field name="company_id" colspan="4" required="1" /> -->
+                        <newline />
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />
+                        <newline />
+                        <separator string="Empresas/Unidades" colspan="4" />
+                        <field name="company_ids" colspan="4" required="1" nolabel="1" />
+                        <newline />
+                        <field name="nome" invisible="1"/>
+                        <field name="data" readonly="1" />
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar arquivo" name="gera_analise" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                        <newline/>
+                        <field name="arquivo_texto" colspan="4" />
+                    </group>
+                    <group col="4" colspan="4">
+                        <separator string="Itens da análise" colspan="4"/>
+                        <field name="item_ids" readonly="1" colspan="4" nolabel="1">
+                            <tree colors="red:valor_usado &lt; 0">
+                                <field name="codigo_completo" />
+                                <field name="nome" />
+                                <field name="valor_usado" />
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="econo_analise_search">
+            <field name="name">econo.analise.search</field>
+            <field name="model">econo.analise</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Análises econômicas">
+                    <field name="company_ids" select="1" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="econo_analise_acao">
+            <field name="name">Análises econômicas</field>
+            <field name="res_model">econo.analise</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="econo_analise_tree" />
+        </record>
+
+        <menuitem action="econo_analise_acao"
+            id="menu_econo_analise" name="Análises econômicas"
+            parent="menu_finan_analise_economica" />
+
+    </data>
+</openerp>

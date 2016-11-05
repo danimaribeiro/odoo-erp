@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        
+        <record model="ir.ui.view" id="crm_case_claims_form_view">
+        <field name="name">CRM - Claims Form</field>
+        <field name="model">crm.claim</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="crm_claim.crm_case_claims_form_view"/>
+        <field name="arch" type="xml">                                 
+             <field name="priority" position="before">
+                    <field name="user_atendimento" />                    
+                    <field name="departamento_id" required="1"/>                    
+                    <field name="employee_id" />                    
+             </field>                  
+             <field name="categ_id" position="replace">
+                 <field name="categ_id" widget="selection" domain="[('object_id.model', '=', 'crm.claim')]" string="Estado Emocional do cliente"/>
+             </field>                  
+             <separator  string="Root Causes" position="replace">
+                 <separator colspan="2" string="Diagnóstico"/>
+             </separator>                  
+        </field>
+    </record>        
+    
+    <menuitem id="menu_rel_crm_claim" 
+        name="Relatórios"
+        parent="base.menu_aftersale" 
+        sequence="10" />
+    
+    </data>
+</openerp>

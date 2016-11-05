@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="vendedor_meta_search">
+            <field name="name">vendedor.meta.search</field>
+            <field name="model">comercial.meta</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Metas de vendas">
+                    <field name="vendedor_id" />
+                    <field name="data_inicial" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="vendedor_meta_tree">
+            <field name="name">vendedor.meta.tree</field>
+            <field name="model">comercial.meta</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="vendedor_id" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                    <field name="vr_novos_total" string="1. Novos contratos" />
+                    <field name="meta_vr_novos_total" />
+                    <field name="meta_vr_novos_deficit" />
+                    <field name="meta_vr_novos_real"  />
+                    <field name="saldo_vr_novos_total" />
+                    <field name="vr_vendas_total" string="2. Faturamento de vendas" />
+                    <field name="meta_vr_vendas_total" />
+                    <field name="percentual_crescimento_financeiro" string="3. Crescimento financeiro" />
+                    <field name="meta_percentual_crescimento_financeiro" />
+                    <field name="percentual_diminuicao_financeira" string="4. Diminuição financeira" />
+                    <field name="meta_percentual_diminuicao_financeira" />
+                    <field name="percentual_crescimento_quantitativo" string="5. Crescimento quantitativo" />
+                    <field name="fechado" />
+                    <field name="data_fechamento" />
+                    <field name="user_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="vendedor_meta_form">
+            <field name="name">vendedor.meta.form</field>
+            <field name="model">comercial.meta</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Metas de vendas">
+                    <field name="fechado" invisible="1" />
+                    <group col="4" colspan="4" attrs="{'readonly': [('fechado', '!=', False)]}">
+                        <field name="vendedor_id" colspan="4" />
+                        <newline/>
+                        <field name="data_inicial" />
+                        <field name="data_final" />
+                        <newline/>
+                        <separator string="Carteira inicial" colspan="4" />
+                        <field name="carteira_inicial" />
+                        <field name="carteira_inicial_organica" />
+                        <newline />
+                        <field name="carteira_transferida" readonly="1" />
+                        <newline />
+                        <separator string="Carteira final = carteira inicial + carteira transferida + novos - rescindidos ± diferença de mensalidades" colspan="4" />
+                        <newline />
+                        <field name="carteira" readonly="1" />
+                        <field name="teto_variavel" readonly="1" />
+                        <newline/>
+                        <field name="percentual_aplicado" readonly="1" />
+                        <field name="vr_variavel" readonly="1" />
+                        <group colspan="4" col="4" attrs="{'invisible': [('meta_percentual_retencao_carteira_organica', '=', False)]}">
+                            <separator string="Carteira final orgânica" colspan="4" />
+                            <newline />
+                            <field name="carteira_organica" readonly="1" />
+                            <field name="teto_variavel_organica" readonly="1" />
+                            <newline/>
+                            <field name="percentual_aplicado_organica" readonly="1" />
+                            <field name="vr_variavel_organica" readonly="1" />
+                        </group>
+                        <button type="object" string="Acumula indicadores" name="acumula_indicadores" colspan="4" attrs="{'invisible': [('fechado', '!=', False)]}" />
+<!--                         <button type="object" string="Reacumula indicadores" name="ajuste_antigo" colspan="4" attrs="{'invisible': [('fechado', '!=', False)]}" groups="85" /> -->
+                        <notebook colspan="4">
+                            <page string="Indicadores e metas">
+                                <separator string="1. Saldo de contratos" colspan="4" />
+                                <field name="vr_novos_total" readonly="1" />
+                                <newline />
+                                <field name="meta_vr_novos_total" attrs="{'readonly': [('fechado', '!=', False)]}" string="Meta inicial" />
+                                <newline />
+                                <field name="meta_vr_novos_deficit" readonly="1" />
+                                <newline />
+                                <field name="meta_vr_novos_superavit" readonly="1" />
+                                <newline />
+                                <field name="meta_vr_novos_real" readonly="1" />
+<!--                                 <label string="= Meta original de contratos novos + Déficit perdas mês anterior" colspan="2" /> -->
+                                <newline />
+<!--                                 <field name="saldo_vr_novos_mes" readonly="1" /> -->
+                                <field name="saldo_vr_novos_total" readonly="1" string="Saldo para o mês seguinte" />
+<!--                                 <label string="= Contratos novos + Crédito meta mês anterior - Meta real de contratos novos" colspan="2" /> -->
+                                <newline />
+                                <newline/>
+                                <field name="percentual_atingido_vr_novos_total" readonly="1" />
+<!--                                 <label string="= ((Contratos novos + Crédito meta mês anterior) ÷ Meta real de contrato novos) × 100 (limitado a 100%%)" colspan="2" /> -->
+
+                                <newline/>
+                                <field name="percentual_repres_vr_novos_total" readonly="1" />
+                                <newline/>
+                                <field name="vr_variavel_vr_novos_total" readonly="1" />
+                                <separator string="2. Faturamento de vendas" colspan="4" />
+                                <field name="vr_vendas_total" readonly="1" />
+                                <newline />
+                                <field name="meta_vr_vendas_total" attrs="{'readonly': [('fechado', '!=', False)]}" />
+                                <newline/>
+                                <field name="percentual_atingido_vr_vendas_total" readonly="1" />
+                                <field name="percentual_repres_vr_vendas_total" readonly="1" />
+                                <newline/>
+                                <field name="vr_variavel_vr_vendas_total" readonly="1" />
+                                <newline />
+                                <separator string="3. Crescimento financeiro" colspan="4" />
+                                <field name="vr_novos_total2" readonly="1" string="(valor dos novos" />
+                                <field name="meta_vr_novos_superavit2" readonly="1" string="+ crédito mês anterior" />
+                                <field name="saldo_vr_novos_mes2" readonly="1" string="+ saldo do mês (novos)" />
+                                <field name="vr_rescindidos_total2" readonly="1" string="- valor dos rescindidos" />
+                                <field name="vr_diferenca_total" readonly="1" string="+ diferença de mensalidade)" />
+                                <newline />
+                                <field name="carteira_inicial3" readonly="1" string="÷ (carteira inicial" />
+                                <field name="carteira_transferida2" readonly="1" string="+ carteira transferida)" />
+                                <field name="percentual_crescimento_financeiro" readonly="1" string="="/>
+                                <newline />
+                                <field name="meta_percentual_crescimento_financeiro" attrs="{'readonly': [('fechado', '!=', False)]}" />
+                                <newline/>
+                                <field name="saldo_crescimento_financeiro" readonly="1" />
+                                <field name="saldo_acumulado_crescimento_financeiro" readonly="1" />
+                                <newline/>
+                                <field name="percentual_atingido_crescimento_financeiro" readonly="1" />
+                                <field name="percentual_repres_crescimento_financeiro" readonly="1" />
+                                <newline/>
+                                <field name="vr_variavel_crescimento_financeiro" readonly="1" />
+                                <newline/>
+                                <separator string="4. Diminuição financeira da carteira" colspan="4" />
+                                <field name="vr_rescindidos_total" readonly="1" string="(valor dos rescindidos" />
+                                <field name="vr_reducao_total" readonly="1" string="+ diminuição de mensalidades)" />
+                                <newline />
+                                <field name="carteira_inicial2" readonly="1" string="÷ (carteira inicial" />
+                                <field name="carteira_transferida3" readonly="1" string="+ carteira transferida)" />
+                                <field name="percentual_diminuicao_financeira" readonly="1" string="="/>
+                                <newline />
+                                <field name="meta_percentual_diminuicao_financeira" attrs="{'readonly': [('fechado', '!=', False)]}" />
+                                <newline/>
+                                <field name="percentual_atingido_diminuicao_financeira" readonly="1" />
+                                <field name="percentual_repres_diminuicao_financeira" readonly="1" />
+                                <newline/>
+                                <field name="vr_variavel_diminuicao_financeira" readonly="1" />
+                                <newline/>
+                                <separator string="5. Crescimento quantitativo" colspan="4" />
+                                <field name="qtd_novos_total" readonly="1" string="(qtde. de contratos novos" />
+                                <field name="qtd_rescindidos_total" readonly="1" string="- qtde. de contratos rescindidos)" />
+                                <field name="qtd_anterior_total" readonly="1" string="÷ qtde. do período anterior" />
+                                <field name="percentual_crescimento_quantitativo" readonly="1" string="=" />
+
+                                <separator string="6. Retenção da carteira" colspan="4" />
+                                <field name="carteira6" readonly="1" string="carteira final" />
+                                <newline />
+                                <field name="carteira_inicial6" readonly="1" string="÷ carteira inicial" />
+                                <newline />
+                                <field name="percentual_retencao_carteira" readonly="1" string="= perc. retenção da carteira" />
+                                <newline />
+                                <field name="meta_percentual_retencao_carteira" attrs="{'readonly': [('fechado', '!=', False)]}" />
+                                <newline/>
+                                <field name="percentual_atingido_retencao_carteira" readonly="1" />
+                                <field name="percentual_repres_retencao_carteira" readonly="1" />
+                                <newline/>
+                                <field name="vr_variavel_retencao_carteira" readonly="1" />
+
+                                <group colspan="4" col="4" attrs="{'invisible': ['!', ('vendedor_id', 'in', (231, 287))]}">
+                                    <separator string="7. Retenção da carteira orgânica" colspan="4" />
+                                    <field name="carteira_organica2" readonly="1" string="carteira final" />
+                                    <newline />
+                                    <field name="carteira_inicial_organica2" readonly="1" string="÷ carteira inicial" />
+                                    <newline />
+                                    <field name="percentual_retencao_carteira_organica" readonly="1" string="= perc. retenção da carteira" />
+                                    <newline />
+                                    <field name="meta_percentual_retencao_carteira_organica" attrs="{'readonly': [('fechado', '!=', False)]}" />
+                                    <newline/>
+                                    <field name="percentual_atingido_retencao_carteira_organica" readonly="1" />
+                                    <field name="percentual_repres_retencao_carteira_organica" readonly="1" />
+                                    <newline/>
+                                    <field name="vr_variavel_retencao_carteira_organica" readonly="1" />
+                                </group>
+
+                            </page>
+                            <page string="Unidades e postos">
+                                <separator string="Unidades" colspan="4" />
+                                <field name="company_ids" nolabel="1" colspan="4" />
+                                <newline/>
+                                <separator string="Vendedores" colspan="4" />
+                                <field name="vendedor_ids" nolabel="1" colspan="4" />
+                                <newline/>
+                                <separator string="Postos" colspan="4" />
+                                <field name="hr_department_ids" nolabel="1" colspan="4" />
+                                <newline/>
+                                <separator string="Excluir as seguintes categorias" colspan="4" />
+                                <field name="exclui_categoria_ids" nolabel="1" colspan="4" />
+                                <field name="incluir_vigilancia" string="Incluir serviços de vigilância?" />
+                                <field name="incluir_somente_vigilancia" string="Incluir SOMENTE serviços de vigilância?" />
+                            </page>
+                            <page string="Contratos novos">
+                                <field name="contrato_novo_ids" nolabel="1" colspan="4" readonly="1">
+                                    <tree>
+                                        <field name="numero_contrato" />
+                                        <field name="cliente" />
+                                        <field name="cnpj_cpf" />
+                                        <field name="data_inicio" />
+                                        <field name="vr_contrato" sum="VR NF" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Contratos rescindidos">
+                                <field name="contrato_rescindido_ids" nolabel="1" colspan="4" readonly="1">
+                                    <tree>
+                                        <field name="numero_contrato" />
+                                        <field name="cliente" />
+                                        <field name="cnpj_cpf" />
+                                        <field name="data_distrato" />
+                                        <field name="vr_contrato" sum="VR NF" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Faturamento de vendas">
+                                <field name="nf_venda_ids" nolabel="1" colspan="4" readonly="1">
+                                    <tree>
+                                        <field name="unidade" />
+                                        <field name="cliente" />
+                                        <field name="cnpj_cpf" />
+                                        <field name="data_emissao_brasilia" />
+                                        <field name="modelo" />
+                                        <field name="serie" />
+                                        <field name="numero" />
+                                        <field name="vr_nf" sum="VR NF" />
+                                        <field name="pedido" string="Proposta" />
+                                        <field name="posto" string="Posto" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Devoluções de vendas">
+                                <field name="nf_devolucao_ids" nolabel="1" colspan="4" readonly="1">
+                                    <tree>
+                                        <field name="unidade" />
+                                        <field name="cliente" />
+                                        <field name="cnpj_cpf" />
+                                        <field name="data_entrada_saida_brasilia" />
+                                        <field name="modelo" />
+                                        <field name="serie" />
+                                        <field name="numero" />
+                                        <field name="vr_nf" sum="VR NF" />
+                                        <field name="pedido" string="Proposta" />
+                                        <field name="posto" />
+                                        <field name="data_nf_devolvida" />
+                                        <field name="serie_nf_devolvida" />
+                                        <field name="numero_nf_devolvida" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Alterações de contratos">
+                                <field name="contrato_diferenca_ids" nolabel="1" colspan="4" readonly="1">
+                                    <tree>
+                                        <field name="numero_documento_original" />
+                                        <field name="numero_documento" />
+
+                                        <field name="cliente" />
+
+                                        <field name="data_vencimento_anterior" />
+                                        <field name="vr_contrato_anterior" />
+
+                                        <field name="data_vencimento" />
+                                        <field name="vr_contrato" />
+
+                                        <field name="numero_contrato" />
+
+                                        <field name="vr_diferenca" sum="Diferença" />
+                                        <field name="vr_reducao" sum="Redução" />
+                                        <field name="vr_aumento" sum="Aumento" />
+                                        <field name="vr_reajuste" sum="Reajuste" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Transferências de contratos">
+                                <field name="contrato_transferido_ids" nolabel="1" colspan="4" readonly="1">
+                                    <tree>
+                                        <field name="numero_contrato" />
+                                        <field name="cliente" />
+                                        <field name="cnpj_cpf" />
+                                        <field name="data_transferencia" />
+                                        <field name="vr_contrato" sum="VR NF" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Fechamento" groups="85">
+                                <separator string="Fechamento" colspan="4" />
+                                <field name="data_fechamento" readonly="1" />
+                                <newline/>
+                                <field name="user_id" readonly="1" colspan="4" />
+                                <newline/>
+                                <button type="object" string="Fechar cálculo, alimentar RH e défict do próximo período" name="fechar_calculo" colspan="4" attrs="{'invisible': [('fechado', '!=', False)]}" />
+                                <separator string="Comissões" colspan="4" />
+                                <field name="input_ids" nolabel="1" readonly="1" colspan="4" >
+                                    <tree>                                                                                                                       
+                                        <field name="contract_id"  />                                    
+                                        <field name="rule_id" />                                  
+                                        <field name="data_inicial" />
+                                        <field name="data_final" />
+                                        <field name="payslip_id" />                                
+                                        <field name="amount" sum="Valor"  />
+                                    </tree>
+                                </field>
+                            </page>                            
+                        </notebook>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="vendedor_meta_acao">
+            <field name="name">Metas de vendas</field>
+            <field name="domain">[('indicador_corporativo', '=', False)]</field>
+            <field name="context">{'indicador_corporativo': False, 'default_indicador_corporativo': False}</field>
+            <field name="res_model">comercial.meta</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="vendedor_meta_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vendedor_meta_form"/>
+            <field name="act_window_id" ref="vendedor_meta_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="vendendor_meta_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="vendedor_meta_tree"/>
+            <field name="act_window_id" ref="vendedor_meta_acao"/>
+        </record>
+
+        <menuitem id="menu_comercial_plano"
+            name="Plano comercial"
+            parent="base.menu_base_config"
+            sequence="2" />
+
+        <menuitem id="menu_vendedor_meta"
+            name="Metas de vendas"
+            parent="menu_comercial_plano" sequence="20" action="vendedor_meta_acao" />
+
+        <menuitem id="menu_vendedor_meta_vendedor"
+            name="Metas de vendas"
+            parent="base.menu_sales" sequence="20" action="vendedor_meta_acao" />
+
+    </data>
+</openerp>

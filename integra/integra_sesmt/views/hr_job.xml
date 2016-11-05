@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_job_form_sesmt" model="ir.ui.view">
+            <field name="name">hr.job.form.sesmt</field>
+            <field name="model">hr.job</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_rh.hr_job_form_integra"/>
+            <field name="arch" type="xml">
+                <page string="Description" position="after">
+                    <page string="SESMT">
+                        <notebook colspan="4">
+                            <page string="Fatores de risco">
+                                <field name="fator_risco_ids" nolabel="1" colspan="4"/>
+                            </page>
+                            <page string="Riscos">
+                                <separator string="Riscos de acidentes" colspan="4"/>
+                                <field name="risco_acidente_ids" nolabel="1" colspan="4"/>
+                                <separator string="Riscos ergonômicos" colspan="4"/>
+                                <field name="risco_ergonomico_ids" nolabel="1" colspan="4"/>
+                            </page>
+                            <page string="EPIs">
+                                <separator string="EPIs obrigatórios" colspan="4"/>
+                                <field name="epi_ids" nolabel="1" colspan="4"/>
+                                <separator string="EPIs eletivos" colspan="4"/>
+                                <field name="epi_eletivo_ids" nolabel="1" colspan="4"/>
+                            </page>
+                            <page string="Treinamentos">
+                                <separator string="Treinamentos obrigatórios" colspan="4"/>
+                                <field name="treinamento_ids" nolabel="1" colspan="4"/>
+                                <separator string="Treinamentos eletivos" colspan="4"/>
+                                <field name="treinamento_eletivo_ids" nolabel="1" colspan="4"/>
+                            </page>
+                            <page string="Restrições">
+                                <field name="restricao_ids" nolabel="1" colspan="4"/>
+                            </page>
+                            <page string="Exames e vacinas">
+                                <newline/>
+                            </page>
+                        </notebook>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sesmt_cargo_acao">
+            <field name="name">Cargos</field>
+            <field name="res_model">hr.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="sesmt_cargo_acao" id="menu_sesmt_cargo" name="Cargos" parent="menu_sesmt_laudo" sequence="10"/>
+
+        <menuitem id="menu_sesmt_ltcat" parent="menu_sesmt_laudo" action="sesmt_cargo_acao" name="LTCAT" />
+        <menuitem id="menu_sesmt_ppra" parent="menu_sesmt_laudo" action="sesmt_cargo_acao" name="PPRA" />
+        <menuitem id="menu_sesmt_pcmso" parent="menu_sesmt_laudo" action="sesmt_cargo_acao" name="PCMSO" />
+        <menuitem id="menu_sesmt_pcmat" parent="menu_sesmt_laudo" action="sesmt_cargo_acao" name="PCMAT" />
+        <menuitem id="menu_sesmt_ppp" parent="menu_sesmt_laudo" action="sesmt_cargo_acao" name="PPP" />
+        <menuitem id="menu_sesmt_entrega_epi" parent="menu_sesmt_laudo" action="sesmt_cargo_acao" name="Ficha EPI" />
+
+        <menuitem id="menu_sesmt_emissao_cat" parent="menu_sesmt_cat" action="sesmt_cargo_acao" name="CAT" />
+        <menuitem id="menu_sesmt_cipa" parent="menu_sesmt_cat" action="sesmt_cargo_acao" name="CIPA" />
+        <menuitem id="menu_sesmt_estabilidade" parent="menu_sesmt_cat" action="sesmt_cargo_acao" name="Estabilidade" />
+
+    </data>
+</openerp>
+

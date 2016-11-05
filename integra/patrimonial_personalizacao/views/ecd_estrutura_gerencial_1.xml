@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="ecd_estrutura_gerencial_1_tree">
+            <field name="name">ecd.estrutura.gerencial_1.tree</field>
+            <field name="model">ecd.estrutura.demonstrativo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:sintetica;green:resumida">
+                    <field name="gerencial" invisible="1" />
+                    <field name="codigo_completo" />
+                    <field name="nome" />
+                    <field name="parent_id" invisible="1" />
+                    <field name="sintetica" invisible="1" />
+                    <field name="resumida" invisible="1" />
+                    <field name="nivel_estrutura" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ecd_estrutura_gerencial_1_form">
+            <field name="name">ecd.estrutura.gerencial_1.form</field>
+            <field name="model">ecd.estrutura.demonstrativo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Estrutura Gerencial 1">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="tipo_demonstrativo" invisible="1" />
+                        <field name="gerencial" invisible="1" />
+                        <field name="sintetica" />
+                        <field name="nivel_estrutura" required="1" />
+                        <newline />
+                        <field name="parent_id" colspan="4" domain="[('sintetica', '=', True)]" on_change="onchange_parent_id(parent_id)" />
+                        <newline />
+                        <field name="codigo_completo" colspan="4" />
+                        <newline />
+                        <field name="nome"  colspan="4"/>
+                        <newline />
+                        <field name="resumida" />
+                        <newline />
+                        <group colspan="4" attrs="{'invisible': [('resumida', '=', True)]}">
+                            <separator string="Filtros de análise" colspan="4" />
+                            <field name="conta_ids" colspan="4" domain="[('sintetica', '=', False)]" />
+                            <separator string="Filtros de análise gerencial" colspan="4" />
+                            <field name="centrocusto_ids" colspan="4" domain="[('tipo', '=', 'C'), ('sintetico', '=', False)]" />
+                            <!--<field name="company_ids" colspan="4" />-->
+                        </group>
+                        <group colspan="4" attrs="{'invisible': [('resumida', '=', False)]}">
+                            <separator string="Resumo de contas" colspan="4" />
+                            <field name="resumida_soma" colspan="4" />
+                            <field name="resumida_subtrai" colspan="4" />
+                        </group>
+                    </group>
+                    <group col="4" colspan="4">
+                        <separator string="Contas filhas" colspan="4"/>
+                        <field name="contas_filhas_ids" readonly="1" colspan="4" nolabel="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ecd_estrutura_gerencial_1_search">
+            <field name="name">ecd.estrutura.gerencial_1.search</field>
+            <field name="model">ecd.estrutura.demonstrativo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Estrutura Gerencial 1">
+                    <filter string="Sintética" domain="[('sintetica', '=', True)]" />
+                    <filter string="Analítica" domain="[('sintetica', '=', False)]" />
+                    <separator orientation="vertical" />
+                    <field name="codigo_completo" select="1" />
+                    <field name="nome_completo" select="1" />
+                    <newline />
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Conta" icon="terp-project" domain="[]" context="{'group_by': 'parent_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="ecd_estrutura_gerencial_1_acao">
+            <field name="name">Gerencial 1</field>
+            <field name="res_model">ecd.estrutura.demonstrativo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo_demonstrativo', '=', 'GERENCIAL_1'), ('gerencial', '=', True)]</field>
+            <field name="context">{'tipo_demonstrativo': 'GERENCIAL_1', 'default_tipo_demonstrativo': 'GERENCIAL_1', 'default_gerencial': True}</field>
+            <field name="view_id" ref="ecd_estrutura_gerencial_1_tree" />
+        </record>
+
+        <record model="ir.actions.act_window.view" id="ecd_estrutura_gerencial_1_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="ecd_estrutura_gerencial_1_form"/>
+            <field name="act_window_id" ref="ecd_estrutura_gerencial_1_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="ecd_estrutura_gerencial_1_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="ecd_estrutura_gerencial_1_tree"/>
+            <field name="act_window_id" ref="ecd_estrutura_gerencial_1_acao"/>
+        </record>
+
+        <menuitem action="ecd_estrutura_gerencial_1_acao"
+            id="menu_ecd_estrutura_gerencial_1"
+            name="Gerencial 1"
+            parent="sped_ecd.menu_sped_ecd_config_demonstrativo_gerencial"
+            sequence="1" />
+
+    </data>
+</openerp>

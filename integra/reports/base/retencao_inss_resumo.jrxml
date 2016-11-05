@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="retencao_inss_resumo" language="groovy" pageWidth="555" pageHeight="230" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6fff61ce-1432-40fb-830b-18bbe5149856">
+	<property name="ireport.zoom" value="3.4522712143931047"/>
+	<property name="ireport.x" value="1094"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="CNPJ_CPF" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+       sd.vr_nf,
+       sd.vr_previdencia
+
+from sped_documento as sd
+join res_company c on c.id = sd.company_id
+join res_partner rpc on rpc.id = c.partner_id
+left join res_company cc on cc.id = c.parent_id
+left join res_company ccc on ccc.id = cc.parent_id
+
+where sd.emissao = '0'
+and sd.situacao in ('00','01')
+and sd.previdencia_retido = true
+and sd.state = 'autorizada'
+and to_char(sd.data_emissao, 'YYYY-MM-DD') between $P{DATA_INICIAL} and $P{DATA_FINAL}
+and c.cnpj_cpf = $P{CNPJ_CPF}
+
+]]>
+	</queryString>
+	<field name="vr_nf" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da NF]]></fieldDescription>
+	</field>
+	<field name="vr_previdencia" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do INSS]]></fieldDescription>
+	</field>
+	<variable name="vr_nf_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_nf}]]></variableExpression>
+	</variable>
+	<variable name="vr_previdencia_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_previdencia}]]></variableExpression>
+	</variable>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<summary>
+		<band height="12">
+			<staticText>
+				<reportElement x="0" y="0" width="445" height="12" uuid="b2bfc837-deec-42d9-926e-1dc535a89187"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL GERAL:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="445" y="0" width="55" height="12" uuid="2bbbe8a9-ad14-40a1-9f1a-349a0745261b"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_nf_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="500" y="0" width="55" height="12" uuid="b7fa7ba5-8f8b-4d5f-9af2-32831108a5a9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_previdencia_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

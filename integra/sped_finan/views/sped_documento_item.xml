@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_documentoitem_tree">
+            <field name="name">sped.documentoitem.tree</field>
+            <field name="model">sped.documentoitem</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="sped.sped_documentoitem_tree"/>
+            <field name="arch" type="xml">
+                <field name="contribuinte" position="after">
+                    <field name="finan_centrocusto_id" invisible="1"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_documentoitem_form">
+            <field name="name">sped.documentoitem.form</field>
+            <field name="model">sped.documentoitem</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped.sped_documentoitem_form"/>
+            <field name="arch" type="xml">
+                <page string="Informações adicionais" position="before">
+                    <page string="Financeiro">
+<!--                         <field name="finan_centrocusto_id" colspan="4" /> -->
+                        <separator string="Itens do rateio" colspan="4" />
+                        <field name="rateio_ids" widget="many2one_list" nolabel="1" colspan="4" context="{'tree_view_ref': 'finan.finan_rateio_item_tree'}"/>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

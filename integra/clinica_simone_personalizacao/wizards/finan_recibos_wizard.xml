@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_recibos_form" >
+            <field name="name">finan.recibos.form</field>
+            <field name="model">finan.recibos</field>
+            <field name="inherit_id" ref="finan.finan_recibos_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">                
+                <field name="data_quitacao" position="replace" />                            
+                <field name="recibo_previo" position="replace"  />                            
+            </field>
+        </record>        
+
+    </data>
+</openerp>

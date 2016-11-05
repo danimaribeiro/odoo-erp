@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_hr_escalas"
+            name="Escalas" />
+
+         <menuitem id="menu_hr_alteracao_contratuais_escala"
+            name="Alterações Contratuais"
+            parent="menu_hr_escalas"
+            sequence="4"/>
+
+        <menuitem action="integra_rh.hr_contract_alteracao_jornada_acao" id="menu_hr_contract_alteracao_jornada_escala" name="Jornada" parent="menu_hr_alteracao_contratuais_escala" sequence="02"/>
+
+        <menuitem action="integra_rh.hr_contract_alteracao_lotacao_acao" id="menu_hr_contract_alteracao_lotacao_escala" name="Lotação/Local de trabalho" parent="menu_hr_alteracao_contratuais_escala" sequence="05"/>
+
+         <menuitem id="menu_hr_escala_controle"
+            name="Controle de escala"
+            parent="menu_hr_escalas"
+            sequence="8"/>
+
+    </data>
+</openerp>

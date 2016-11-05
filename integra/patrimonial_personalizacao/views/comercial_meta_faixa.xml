@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="comercial_meta_variavel_search">
+            <field name="name">vendedor.meta.variavel.search</field>
+            <field name="model">comercial.meta.variavel</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Faixas de faturamento">
+                    <field name="name" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="comercial_meta_variavel_tree">
+            <field name="name">vendedor.meta.variavel.tree</field>
+            <field name="model">comercial.meta.variavel</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Faixas de faturamento">
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="comercial_meta_variavel_form">
+            <field name="name">vendedor.meta.variavel.form</field>
+            <field name="model">comercial.meta.variavel</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Faixas de faturamento para remuneração variável">
+                    <field name="name" colspan="4" required="1" />
+                    <field name="vendedor_ids" colspan="4" />
+                    <separator string="Faixas para indicadores de vendas/vigilância eletrônica/demais serviços" colspan="4" />
+                    <field name="faixa_ids" nolabel="1" colspan="4" context="{'default_tipo': 'N'}">
+                        <tree editable="top">
+                            <field name="tipo" invisible="1" />
+                            <field name="valor_inicial" />
+                            <field name="valor_final" />
+                            <field name="base" />
+                        </tree>
+                    </field>
+                    <separator string="Faixas para indicadores de retenção de vigilância orgânica" colspan="4" />
+                    <field name="faixa_vigilancia_organica_ids" nolabel="1" colspan="4" context="{'default_tipo': 'O'}">
+                        <tree editable="top">
+                            <field name="tipo" invisible="1" />
+                            <field name="valor_inicial" />
+                            <field name="valor_final" />
+                            <field name="base" />
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="comercial_meta_variavel_acao">
+            <field name="name">Faixas de faturamento</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">comercial.meta.variavel</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_comercial_meta_variavel"
+            name="Faixas de faturamento"
+            parent="menu_comercial_plano" sequence="30" action="comercial_meta_variavel_acao" />
+
+    </data>
+</openerp>

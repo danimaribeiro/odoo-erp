@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.actions.act_window" id="sped_operacao_energia_recebida_acao">
+            <field name="name">NF/Conta de energia</field>
+            <field name="domain">[('modelo','=','06'),('emissao','=','1'),('entrada_saida', '=', '0')]</field>
+            <field name="context">{'default_modelo': '06', 'default_emissao': '1', 'default_entrada_saida': '0'}</field>
+            <field name="res_model">sped.operacao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_operacao_energia_recebida"
+            name="NF/Conta de energia"
+            parent="menu_sped_operacao_recebido" sequence="50" action="sped_operacao_energia_recebida_acao" />
+
+        <record model="ir.actions.act_window.view" id="sped_operacao_energia_recebida_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_operacao_nfe_emitida_form"/>
+            <field name="act_window_id" ref="sped_operacao_energia_recebida_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_operacao_energia_recebida_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sped_operacao_tree"/>
+            <field name="act_window_id" ref="sped_operacao_energia_recebida_acao"/>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hubricas_recibo_pagamento_analitico_total" language="groovy" pageWidth="555" pageHeight="230" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6fff61ce-1432-40fb-830b-18bbe5149856">
+	<property name="ireport.zoom" value="1.7715610000000048"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="TIPOS" class="java.lang.String">
+		<defaultValueExpression><![CDATA["('N', 'R')"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO_HOLERITE" class="java.lang.String">
+		<defaultValueExpression><![CDATA["'NR'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_INICIAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2014-02-01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_FINAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2014-02-28"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPLEMENTAR" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_ID" class="java.lang.Integer"/>
+	<parameter name="CNPJ" class="java.lang.String"/>
+	<parameter name="COMPANY_ID_ESCOLHIDA" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+
+sr.sinal,
+case
+  when hl.code in ('INSS', 'INSS_anterior', 'IRPF') then hl.name || ' (' || formata_valor(hl.rate) || '%)'
+  else hl.name
+end as rubrica,
+hl.salary_rule_id  as code,
+
+sum(coalesce(hl.quantity, 0)) as quantidade,
+sum(coalesce(hl.total, 0)) as valor,
+sum(coalesce(case
+when sr.sinal = '+' then
+hl.total
+else
+0
+end, 0)) as provento,
+sum(coalesce(case
+when sr.sinal = '-' then
+hl.total
+else
+0
+end,0)) as desconto,
+
+sum(coalesce(
+case
+    when h.provisao = True and sr.sinal = '+' then
+        coalesce((
+            select sum(coalesce(hla.total, 0))
+            from hr_payslip_line hla
+            where
+                hla.slip_id = prov_anterior.id
+                and hla.salary_rule_id = hl.salary_rule_id
+                and (h.tipo = 'F' or h.mes != '01')
+       ) , 0)
+    else 0
+end, 0)) as provento_anterior,
+sum(coalesce(
+case
+    when h.provisao = True and sr.sinal = '-' then
+        coalesce((
+            select sum(coalesce(hla.total, 0))
+            from hr_payslip_line hla
+            where
+                hla.slip_id = prov_anterior.id
+                and hla.salary_rule_id = hl.salary_rule_id
+                and (h.tipo = 'F' or h.mes != '01')
+       ) , 0)
+    else 0
+end, 0)) as desconto_anterior
+
+
+
+
+FROM
+hr_payslip_line as hl
+join hr_payslip h on h.id = hl.slip_id
+join hr_salary_rule as sr on hl.salary_rule_id = sr.id
+join hr_contract c on c.id = h.contract_id
+join res_company cp on cp.id = c.company_id
+join res_partner p on p.id = cp.partner_id
+
+left join res_company unidade_escolhida on unidade_escolhida.id = $P{COMPANY_ID_ESCOLHIDA}
+left join res_partner empresa_escolhida on empresa_escolhida.id = unidade_escolhida.partner_id
+
+left join hr_payslip prov_anterior on h.provisao = True and prov_anterior.contract_id = h.contract_id and prov_anterior.data_inicio_periodo_aquisitivo = h.data_inicio_periodo_aquisitivo and prov_anterior.tipo = h.tipo and to_char(prov_anterior.date_to, 'yyyy-mm') = to_char(h.date_to - interval '1 month', 'yyyy-mm')
+
+
+
+where
+sr.sinal in ('+','-')
+and hl.total > 0
+and hl.appears_on_payslip = True
+and case
+  when c.categoria_trabalhador in ('701','702','703') then
+  'AU'
+  when c.categoria_trabalhador in ('721', '722') then
+  'PL'
+  when (h.tipo = 'N' and h.holerite_anterior_id is not null) or (h.tipo = 'F') then
+  'FE'
+  when h.tipo = 'N' and exists(select pa.id from hr_payslip_afastamento pa where pa.payslip_id = h.id) then
+  'AF'
+  when h.tipo = 'N' then
+  'NR'
+  when h.tipo = 'R' then
+  'RE'
+  when h.tipo = 'D' then
+  'DT'
+  end like $P{TIPO_HOLERITE}
+and
+  h.tipo in $P!{TIPOS} and (h.simulacao = False or h.simulacao is null or h.provisao = True)
+  and (($P{COMPLEMENTAR} = True and h.complementar = $P{COMPLEMENTAR}) or ($P{COMPLEMENTAR} = False and (h.complementar is null or h.complementar = False)))
+  and ((
+      (h.complementar is null or h.complementar = False or h.provisao = True)
+      and (
+          (h.provisao = True and h.tipo in ('D', 'F') and h.date_to between cast($P{DATA_INICIAL} as date) and cast($P{DATA_FINAL} as date))
+       or (h.tipo in ('N', 'D') and h.date_from >= cast($P{DATA_INICIAL} as date) and h.date_to <= cast($P{DATA_FINAL} as date))
+       or (h.tipo = 'R' and h.data_afastamento between cast($P{DATA_INICIAL} as date) and cast($P{DATA_FINAL} as date))
+      ))
+    or (
+      h.complementar = True
+      and h.data_complementar between cast($P{DATA_INICIAL} as date) and cast($P{DATA_FINAL} as date)
+    ))
+
+  and (
+     (empresa_escolhida.cnpj_cpf = $P{CNPJ} and unidade_escolhida.id = $P{COMPANY_ID} and cp.id = $P{COMPANY_ID})
+     or (
+       (empresa_escolhida.cnpj_cpf is null or empresa_escolhida.cnpj_cpf != $P{CNPJ})
+       and p.cnpj_cpf = $P{CNPJ}
+     )
+  )
+
+group by
+ 1, 2, 3
+
+
+order by 1 desc, 2]]>
+	</queryString>
+	<field name="sinal" class="java.lang.String"/>
+	<field name="rubrica" class="java.lang.String"/>
+	<field name="code" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Code]]></fieldDescription>
+	</field>
+	<field name="quantidade" class="java.math.BigDecimal"/>
+	<field name="valor" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor]]></fieldDescription>
+	</field>
+	<field name="provento" class="java.math.BigDecimal"/>
+	<field name="desconto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Desconto (%)]]></fieldDescription>
+	</field>
+	<field name="provento_anterior" class="java.math.BigDecimal"/>
+	<field name="desconto_anterior" class="java.math.BigDecimal"/>
+	<variable name="desconto_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{desconto} - $F{desconto_anterior}]]></variableExpression>
+	</variable>
+	<variable name="provento_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{provento} - $F{provento_anterior}]]></variableExpression>
+	</variable>
+	<variable name="desconto_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{desconto} - $F{desconto_anterior}]]></variableExpression>
+	</variable>
+	<variable name="provento_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{provento} - $F{provento_anterior}]]></variableExpression>
+	</variable>
+	<variable name="liquido" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{provento_1}.subtract($V{desconto_1})]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="12" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="50" height="12" uuid="93943ab1-e4ea-4341-be0d-44763da5033d"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Cód.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="0" width="255" height="12" uuid="97b63981-7c15-44d6-9926-a2af5adad87b"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="305" y="0" width="50" height="12" uuid="e2469220-4e8f-4c25-8c6d-5ac91ac515f6"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Refer.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="0" width="100" height="12" uuid="e9c6941d-13b8-4b68-a85d-a9b1bcf9de7f"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Proventos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="100" height="12" uuid="75e555e7-2619-46f1-b6f7-5dcd09b5b7f8"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Descontos]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="50" height="12" uuid="6919bdfa-2e02-471f-9d49-c9706a6d7580"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{code}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="50" y="0" width="255" height="12" uuid="285cf7fe-34dc-4ce1-b833-5e897622aff2"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rubrica}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="305" y="0" width="50" height="12" uuid="e726eb11-21e1-4f42-91ef-0875c981a94b"/>
+				<box leftPadding="0">
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantidade}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="355" y="0" width="100" height="12" uuid="7e411bf3-ba1f-4010-82c2-1eecbebea99a"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{provento} == 0?
+""
+:
+$F{provento} - $F{provento_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="455" y="0" width="100" height="12" uuid="f05e3d0c-c725-41d0-b502-ffbae3481fa2"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desconto} == 0?
+""
+:
+$F{desconto} - $F{desconto_anterior}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="34">
+			<staticText>
+				<reportElement x="355" y="0" width="100" height="10" uuid="fdae3ddb-a004-4454-888a-d8d9174d84db"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Proventos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="100" height="10" uuid="b837d0a1-df5e-4c04-b584-b9939ed5eca0"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Descontos ]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="442" y="22" width="113" height="12" uuid="addc6277-78b2-4df8-8027-6216809b5cc1"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{liquido}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="305" y="22" width="137" height="12" uuid="b465fd3b-7e29-4e36-91cc-971468bc7333"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor Líquido:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="455" y="10" width="100" height="12" uuid="0b99a29a-82cc-4416-94b9-90493666a226"/>
+				<box rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{desconto_2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="34" uuid="405cbfe3-39c9-473d-be68-5dd2174a0b8b"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="355" y="10" width="100" height="12" uuid="81480c98-34ba-46ad-9ca0-d7c85404f1da"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{provento_2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="305" height="10" uuid="a97e6294-3f4d-4a25-b92f-57379508d2e0"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="305" y="0" width="50" height="22" uuid="93fd5868-f90b-47a2-a273-c1637c7a21f0"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="esocial_tabela_13_tree">
+            <field name="name">Tabela 13 - Parte do Corpo Atingida</field>
+            <field name="model">esocial.tabela_13</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="blue">
+                    <group>
+                        <field name="codigo" />
+                        <field name="descricao" />
+                    </group>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="esocial_tabela_13_form">
+            <field name="name">Tabela 13 - Parte do Corpo Atingida</field>
+            <field name="model">esocial.tabela_13</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Tabela">
+                    <group col="4" colspan="4">
+                        <separator string="Campos" colspan="4" />
+                        <field name="codigo" />
+                        <field name="descricao" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="esocial_tabela_13_search">
+            <field name="name">Tabela 13 - Parte do Corpo Atingida</field>
+            <field name="model">esocial.tabela_13</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Tabela">
+                    <group col="4" colspan="4">
+                        <separator string="Campos" colspan="4" />
+                        <field name="codigo" />
+                        <field name="descricao" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="esocial_tabela_13_acao">
+           <field name="name">Tabela 13 - Parte do Corpo Atingida</field>
+            <field name="res_model">esocial.tabela_13</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,search</field>
+        </record>
+
+        <menuitem action="esocial_tabela_13_acao" id="esocial_menu_tabela_13" name="Parte do Corpo Atingida" parent="esocial_menu_tabelas" sequence="13" />
+    </data>
+</openerp>

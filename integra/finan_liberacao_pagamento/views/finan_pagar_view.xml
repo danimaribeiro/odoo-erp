@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        
+        <record model="ir.ui.view" id="finan_pagamento_liberacao_tree">
+            <field name="name">finan.pagamento.liberacao.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="grey:provisionado;red:situacao=='Vencido';black:situacao=='A vencer';magenta:situacao=='Vence hoje';blue:situacao=='Quitado';green:situacao=='Baixado'">
+                    <field name="parent_company_id" string="Empresa" groups="finan.group_finan_manager,finan.group_finan_treasury_manager"/>
+                    <field name="company_id" string="Unidade de negócio" />
+                    <field name="pagamento_bloqueado"/>
+                    <field name="aprovador_id"/>
+                    <field name="partner_id" string="Fornecedor"/>
+                    <field name="conta_id" />
+                    <field name="documento_id" />
+                    <field name="numero_documento" />
+                    <field name="data_documento" />
+                    <field name="data_vencimento" />
+                    <field name="ano_mes_vencimento" invisible="1"/>
+                    <field name="ano_vencimento" invisible="1"/>
+                    <field name="parcial" invisible="1"/>
+                    <field name="motivo_baixa_id" invisible="1"/>
+                    <field name="valor_documento" sum="Valor documento" />
+                    <field name="situacao" />
+                    <field name="data_quitacao" />
+                    <field name="res_partner_bank_id" />
+                    <field name="valor" sum="Valor" />
+                    <field name="valor_saldo" sum="Valor" />
+                    <field name="provisionado" />
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="finan_pagamento_liberacao_search">
+            <field name="name">finan.pagamento.liberacao.search</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Contas a pagar">
+                    <filter name="bloqueado" string="Bloqueado" icon="terp-go-month" domain="[('pagamento_bloqueado','=',True)]" />
+                    <filter name="aprovado" string="Aprovado" icon="terp-go-month" domain="[('aprovador_id','!=',False)]" />
+                    <filter name="vencido" string="Vencido" icon="terp-go-month" domain="[('situacao','=','Vencido')]" />
+                    <filter name="vence_hoje" string="Vence Hoje" icon="terp-go-month" domain="[('situacao','=','Vence hoje')]" />
+                    <filter name="a_vencer" string="A Vencer" icon="terp-go-month" domain="[('situacao','=','A vencer')]" />
+                    <filter name="quitado" string="Quitado" icon="terp-go-month" domain="['|', '|', ('situacao','=','Quitado'), ('situacao', '=', 'Conciliado'), ('parcial', '=', True)]"/>
+                    <filter name="conciliado" string="Conciliado" icon="terp-go-month" domain="[('situacao','=','Conciliado')]" />
+                    <filter name="baixado" string="Baixado" icon="terp-go-month" domain="[('situacao','=','Baixado')]" />
+                    <separator orientation="vertical" />
+                    <filter name="efetivo" string="Efetivo" domain="[('provisionado', '=', False)]" />
+                    <filter name="provisionado" string="Provisionado" domain="[('provisionado', '=', True)]" />
+                    <separator orientation="vertical" />
+                    <newline />
+                    <field name="company_id" />
+                    <field name="conta_id" />
+                    <field name="res_partner_bank_id"  />
+                    <field name="carteira_id"  />
+                    <field name="partner_id"  />
+                    <newline />
+                    <field name="documento_id"  />
+                    <field name="numero_documento" />
+                    <field name="valor_documento_from" filter_domain="[('valor_documento', '&gt;=', self)]" />
+                    <field name="valor_documento_to" filter_domain="[('valor_documento', '&lt;=', self)]" />
+                    <newline />
+                    
+                    <field name="data_vencimento_from" string="De vencimento" filter_domain="[('data_vencimento','&gt;=',self)]" widget="calendar" />
+                    <field name="data_vencimento_to" string="A vencimento" filter_domain="[('data_vencimento','&lt;=',self)]" widget="calendar" />
+                    
+                    <field name="data_documento_from" string="De documento" filter_domain="[('data_documento','&gt;=',self)]" widget="calendar" />
+                    <field name="data_documento_to" string="A documento" filter_domain="[('data_documento','&lt;=',self)]" widget="calendar" />
+                    <newline />
+                    
+                    <group expand="0" string="Outras datas...">
+                        <field name="data_quitacao_from" string="De quitação" filter_domain="[('data_quitacao','&gt;=',self)]" widget="calendar" />
+                        <field name="data_quitacao_to" string="A quitação" filter_domain="[('data_quitacao','&lt;=',self)]" widget="calendar" />
+                        
+                        <field name="data_from" string="De conciliação" filter_domain="['|', '&amp;', ('conciliado', '=', False), ('data_quitacao', '&gt;=', self), ('data','&gt;=',self)]" widget="calendar"/>
+                        <field name="data_to" string="A conciliação" filter_domain="['|', '&amp;', ('conciliado', '=', False), ('data_quitacao', '&lt;=', self), ('data','&lt;=',self)]" widget="calendar"/>
+                        
+                        <field name="data_baixa_from" string="De baixa" filter_domain="[('data_baixa','&gt;=',self)]" widget="calendar" />
+                        <field name="data_baixa_to" string="A baixa" filter_domain="[('data_baixa','&lt;=',self)]" widget="calendar" />
+                    </group>
+                    <newline />
+                    
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'parent_company_id'}" groups="finan.group_finan_manager,finan.group_finan_treasury_manager"/>
+                        <filter string="Unidade de negócio" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Fornecedor" icon="terp-project" domain="[]" context="{'group_by': 'partner_id'}" />
+                        <filter string="Conta" icon="terp-project" domain="[]" context="{'group_by': 'conta_id'}" />
+                        <filter string="Situação" icon="terp-project" domain="[]" context="{'group_by': 'situacao'}" />
+                        <filter string="Motivo da baixa" icon="terp-project" domain="[]" context="{'group_by': 'motivo_baixa_id'}" />
+                        
+                        <separator orientation="vertical" />
+                        <filter string="Data de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'data_vencimento'}" />
+                        <filter string="Mês de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'ano_mes_vencimento'}" />
+                        <filter string="Ano de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'ano_vencimento'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+                
+        <record model="ir.actions.act_window" id="finan_pagamento_liberacao_acao">
+            <field name="name">Liberação de pagamentos</field>
+            <field name="res_model">finan.lancamento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('tipo', '=', 'P'), '|', ('pagamento_bloqueado', '=', True), ('aprovador_id', '!=', False)]</field>
+            <field name="context">{'tipo':'P','default_tipo':'P','provisionado':False,'default_provisionado':False, 'search_default_bloqueado': True}</field>
+            <field name="view_id" ref="finan_pagamento_liberacao_tree" />
+            <field name="search_view_id" ref="finan_pagamento_liberacao_search" />
+            <field name="calendar_view_id" ref="finan.finan_pagar_calendar" />
+        </record>
+                
+        <menuitem action="finan_pagamento_liberacao_acao"
+            id="menu_finan_pagamento_liberacao" name="Liberação de pagamentos" parent="purchase.menu_procurement_management" />
+                
+        <record model="ir.actions.act_window.view" id="finan_pagamento_liberacao_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan.finan_pagar_form"/>
+            <field name="act_window_id" ref="finan_pagamento_liberacao_acao"/>
+        </record>
+                
+        <record model="ir.actions.act_window.view" id="finan_pagamento_liberacao_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_pagamento_liberacao_tree"/>
+            <field name="act_window_id" ref="finan_pagamento_liberacao_acao"/>
+        </record>
+                
+    </data>
+</openerp>

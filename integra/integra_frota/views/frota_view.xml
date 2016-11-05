@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+    <menuitem id="menu_frota" name="Frota" groups="group_frota_manager,group_frota_staff" />
+
+    <menuitem id="menu_frota_veiculos" name="Veículos" parent="menu_frota" sequence="1"/>
+    
+    <menuitem id="menu_frota_relatorio" name="Relatórios" parent="menu_frota" sequence="2"/>
+
+    <menuitem id="menu_frota_config" name="Configuração" parent="menu_frota" sequence="3" groups="group_frota_manager" />
+
+<!--        <menuitem id="menu_frota" name="Frota"
+                  groups="group_frota_manager,group_frota_staff"
+                  web_icon="images/frotace_grey.png"
+                  web_icon_hover="images/frotace.png" />-->
+
+
+
+    </data>
+</openerp>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_operacaoitem_simples_tree">
+            <field name="name">sped.operacaoitem.simples.tree</field>
+            <field name="model">sped.operacaoitem</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree editable="top">
+                    <field name="regime_tributario" invisible="1" />
+                    <field name="entrada_saida" invisible="1" />
+                    <field name="familiatributaria_id" />
+                    <field name="contribuinte" />
+                    <field name="cfop_id" domain="[('entrada_saida', '=', entrada_saida)]"/>
+                    <field name="org_icms" />
+                    <field name="cst_icms_sn" required="[('regime_tributario', '=', '1')]" />
+                    <field name="familiatributaria_alternativa_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_operacaoitem_simples_form">
+            <field name="name">sped.operacaoitem.simples.form</field>
+            <field name="model">sped.operacaoitem</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <field name="regime_tributario" invisible="1" />
+                    <field name="entrada_saida" invisible="1" />
+                    <field name="familiatributaria_id"/>
+                    <newline/>
+                    <field name="contribuinte" />
+                    <newline/>
+                    <field name="cfop_id" domain="[('entrada_saida', '=', entrada_saida)]"/>
+                    <newline/>
+                    <field name="org_icms" />
+                    <newline/>
+                    <field name="cst_icms_sn" required="[('regime_tributario', '=', '1')]"/>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

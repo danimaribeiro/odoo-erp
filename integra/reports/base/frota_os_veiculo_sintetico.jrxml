@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="frota_os_veiculo" language="groovy" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="1.5000000000000087"/>
+	<property name="ireport.x" value="152"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="COMPANY_ID" class="java.lang.Integer"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="VEICULO_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SERVICO_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+rp.name as empresa,
+coalesce(fv.placa,'') as placa,
+coalesce(fm.modelo, '') as veiculo_modelo,
+coalesce(fm.marca,'') as veiculo_marca,
+ft.nome as tipo_auto,
+frp.name as fornecedor,
+fis.nome as serviço_item,
+sum(coalesce(foi.valor, 0)) as valor_item
+
+
+from frota_os fo
+join frota_servico fs on fs.id = fo.servico_id
+join frota_veiculo fv on fv.id = fo.veiculo_id
+left join res_partner frp on frp.id = fo.res_partner_id
+left join frota_os_item foi on foi.os_id = fo.id
+left join frota_servico fis on fis.id = foi.servico_id
+join frota_modelo fm on fm.id = fv.modelo_id
+join frota_tipo ft on ft.id = fm.tipo_id
+join res_company c on c.id = fo.res_company_id
+join res_partner rp on rp.id = c.partner_id
+left join res_company cc on cc.id = c.parent_id
+left join res_company ccc on ccc.id = cc.parent_id
+
+where
+to_char(fo.data, 'YYYY-MM-DD') between $P{DATA_INICIAL} and $P{DATA_FINAL}
+and
+( cast(fo.servico_id as varchar) like $P{SERVICO_ID}
+  or
+  cast(fis.parent_id as varchar) like $P{SERVICO_ID}
+)
+and cast(fo.veiculo_id as varchar) like $P{VEICULO_ID}
+and cast(fm.tipo_id as varchar) like $P{TIPO_ID}
+and fo.state = 'F'
+and
+(
+   c.id = $P{COMPANY_ID}
+   or cc.id = $P{COMPANY_ID}
+   or ccc.id = $P{COMPANY_ID}
+)
+
+group by
+empresa,
+placa,
+veiculo_modelo,
+veiculo_marca,
+tipo_auto,
+fornecedor,
+serviço_item
+
+order by
+empresa,
+placa,
+fornecedor,
+serviço_item
+]]>
+	</queryString>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="placa" class="java.lang.String">
+		<fieldDescription><![CDATA[Placa]]></fieldDescription>
+	</field>
+	<field name="veiculo_modelo" class="java.lang.String"/>
+	<field name="veiculo_marca" class="java.lang.String"/>
+	<field name="tipo_auto" class="java.lang.String"/>
+	<field name="fornecedor" class="java.lang.String"/>
+	<field name="serviço_item" class="java.lang.String"/>
+	<field name="valor_item" class="java.lang.Double"/>
+	<variable name="valor_item_2" class="java.lang.Double" resetType="Group" resetGroup="placa" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_item}]]></variableExpression>
+	</variable>
+	<variable name="valor_item_3" class="java.lang.Double" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_item}]]></variableExpression>
+	</variable>
+	<variable name="valor_item_4" class="java.lang.Double" resetType="Group" resetGroup="fornecedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_item}]]></variableExpression>
+	</variable>
+	<group name="empresa" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{empresa}]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<textField isBlankWhenNull="true">
+					<reportElement x="39" y="0" width="516" height="14" uuid="695b86c9-1690-46c3-9067-144843c32c67"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="39" height="14" uuid="f73da192-a35b-4666-9978-f52f3f1b067c"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Empresa:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<staticText>
+					<reportElement x="0" y="0" width="497" height="14" uuid="4cedb954-38e7-42cf-9c5a-f866e7d8615d"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor Total da Empresa:]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="497" y="0" width="58" height="14" uuid="128e3c8a-1ef5-4906-ad79-54955ee1d6aa"/>
+					<box leftPadding="0" rightPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_item_3}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="placa">
+		<groupExpression><![CDATA[$F{placa}]]></groupExpression>
+		<groupHeader>
+			<band height="16" splitType="Stretch">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="16" uuid="8b48c193-32c6-43d2-b8eb-7ffcc3b6c664"/>
+					<box leftPadding="3">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{placa} + " "  + $F{veiculo_marca} + " - " + $F{veiculo_modelo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="497" y="0" width="58" height="14" uuid="364d6584-85e0-4f4b-aa06-39576ea3ee66"/>
+					<box leftPadding="0" rightPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_item_2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="497" height="14" uuid="009aaa53-635c-4eb2-8342-fbfeec7b04c6"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor Total do Veículo:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="fornecedor">
+		<groupExpression><![CDATA[$F{fornecedor}]]></groupExpression>
+		<groupHeader>
+			<band height="28">
+				<staticText>
+					<reportElement x="0" y="0" width="54" height="14" uuid="e034a9c8-a62e-41d3-b5be-5bb60bc5becf"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fornecedor:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="54" y="0" width="419" height="14" uuid="f31a6b5a-e472-43ec-83bc-c8066e3f67c1"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{fornecedor}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="14" width="497" height="14" uuid="df0e3c87-fee8-4dc7-8e09-0237c021e107"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Itens das OS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="497" y="14" width="58" height="14" uuid="036c1c7c-9ec1-4455-bb80-121719041a9f"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<staticText>
+					<reportElement x="0" y="0" width="497" height="14" uuid="35c97a90-3552-4114-848e-6ab5e2115dfb"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor Total do Fornecedor:]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="497" y="0" width="58" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="2722a9fe-36c5-460d-ad42-e16d8f8a045c"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVu Sans" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_item_4}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<detail>
+		<band height="14">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="497" height="14" uuid="2a65dd34-3688-4c06-8c1f-621f6223eae9"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{serviço_item}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="497" y="0" width="58" height="14" uuid="ddd764a7-d649-487c-92dc-0d4a47481d3f"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_item}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

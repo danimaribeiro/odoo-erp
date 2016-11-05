@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="relatorio_estoque_minimo_form" >
+            <field name="name">asp.relatorio.estoque.minimo.form</field>
+            <field name="model">asp.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Produtos para Comprar">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="location_id" required="1" colspan="4" />                                            
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_estoque_minimo" type="object" colspan="2" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="2"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="relatorio_estoque_minimo_acao">
+            <field name="name">Produtos para Comprar</field>
+            <field name="res_model">asp.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="relatorio_estoque_minimo_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="relatorio_estoque_minimo_form"/>
+            <field name="act_window_id" ref="relatorio_estoque_minimo_acao"/>
+        </record>
+
+        <menuitem action="relatorio_estoque_minimo_acao"
+                  id="menu_relatorio_estoque_minimo"
+                  name="Produtos para Comprar"
+                  parent="sped_stock.menu_estoque_relatorio"
+                  sequence="6" />
+
+    </data>
+</openerp>

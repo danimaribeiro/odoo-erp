@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <!--
+        Para a criação de um dashboard com uma lista de informações,
+        primeiro criamos a tree view, exibindo apenas os campos
+        necessários (esta aqui foi copiada do finan_receber_view.xml, e
+        os campos foram tornados invisíveis, mas mantidos para filtragem
+        e agrupamento)
+        -->
+
+        <record model="ir.ui.view" id="finan_receber_dashboard_tree">
+            <field name="name">finan.receber.dashboard.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="grey:provisionado;red:situacao=='Vencido';black:situacao=='A vencer';magenta:situacao=='Vence hoje';blue:situacao=='Quitado';green:situacao=='Baixado'">
+                    <field name="parent_company_id" string="Empresa" groups="finan.group_finan_manager,finan.group_finan_treasury_manager" invisible="1"/>
+                    <field name="company_id" string="Unidade de negócio" invisible="1" />
+                    <field name="partner_id" string="Cliente" />
+                    <field name="conta_id" invisible="1" />
+                    <field name="documento_id" invisible="1" />
+                    <field name="numero_documento" />
+                    <field name="data_documento" />
+                    <field name="data_vencimento" invisible="1" />
+                    <field name="ano_mes_vencimento" invisible="1"/>
+                    <field name="ano_vencimento" invisible="1"/>
+                    <field name="parcial" invisible="1"/>
+                    <field name="motivo_baixa_id" invisible="1"/>
+                    <field name="valor_documento" sum="Valor documento" invisible="1" />
+                    <field name="situacao" invisible="1" />
+                    <field name="formapagamento_id" invisible="1" />
+                    <field name="data_quitacao" invisible="1" />
+                    <field name="res_partner_bank_id" invisible="1" />
+                    <field name="valor" sum="Valor" invisible="1" />
+                    <field name="valor_saldo" sum="Valor" invisible="0" />
+                    <field name="carteira_id" invisible="1" />
+                    <field name="nosso_numero" invisible="1" />
+                    <field name="provisionado" invisible="1" />
+                </tree>
+            </field>
+        </record>
+
+        <!--
+        Criamos o action view, ativando os filtros padrão (domain) e o agrupamento
+        padrão (group by no context)
+        -->
+
+        <record model="ir.actions.act_window" id="finan_receber_dashboard_recebe_hoje_acao">
+            <field name="name">Recebimentos para hoje</field>
+            <field name="res_model">finan.lancamento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('tipo', '=', 'R'), ('provisionado', '=', False), ('situacao', '=', 'Vence hoje')]</field>
+            <field name="context">{'group_by': 'company_id'}</field>
+            <field name="view_id" ref="finan_receber_dashboard_tree" />
+        </record>
+
+        <!--
+        Vinculamos o tree view ao action, para que esse tree view não seja
+        usado por engano em outras áreas
+        -->
+
+        <record model="ir.actions.act_window.view" id="finan_receber_dashboard_recebe_hoje_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_receber_dashboard_tree"/>
+            <field name="act_window_id" ref="finan_receber_dashboard_recebe_hoje_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_receber_dashboard_recebe_hoje_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_receber_form"/>
+            <field name="act_window_id" ref="finan_receber_dashboard_recebe_hoje_acao"/>
+        </record>
+
+        <!--
+        Por fim, inserimos no dashboard o action view para a chamada do tree view,
+        que é o painel que queremos mostrar
+        -->
+
+        <record model="ir.ui.view" id="finan_receber_dashboard_recebe_hoje_form">
+            <field name="name">finan.receber.dashboard.recebe.hoje.form</field>
+            <field name="model">board.board</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan_dashboard_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/board/column[1]" position="inside">
+                 <action name="%(finan_receber_dashboard_recebe_hoje_acao)d" string="Recebimentos para hoje"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

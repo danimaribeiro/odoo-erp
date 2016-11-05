@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="os_nota_wizard">
+            <field name="name">os.nota.wizard</field>
+            <field name="model">ordem.servico.nota</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Incluir anotação">
+                    <field name="data_hora" />
+                    <separator string="Anotação" colspan="4" />
+                    <field name="texto" nolabel="1" colspan="4" default_focus="1"/>
+                    <separator string="" colspan="6"/>
+                    <group colspan="6" col="4" >
+                        <button string="Cancelar" icon="gtk-close" special="cancel" />
+                        <button name="adiciona_nota" type="object" string="Incluir" icon="gtk-ok" context="{'data_hora': data_hora, 'texto': texto}"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>
+

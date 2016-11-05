@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+<!--        <record model="ir.ui.view" id="finan_lote_receber_tree">
+            <field name="name">finan.lote.receber.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id" />
+                    <field name="numero" string="Número/Descrição" />
+                    <field name="partner_id" />
+                    <field name="valor" sum="Valor" />
+                </tree>
+            </field>
+        </record>-->
+
+        <record model="ir.ui.view" id="finan_lote_receber_form">
+            <field name="name">finan.lote.receber.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Recebimento em lote">
+                    <group colspan="2" col="4">
+                        <separator string="Confirmar data de pagamento" colspan="4" />
+                        <field name="data_quitacao" string="Data do pagamento" required="1" />
+                        <separator string="Informações bancárias" colspan="4" />
+                        <field name="company_id" on_change="onchange_company_id(company_id)" domain="[('cnpj_cpf', '!=', False)]" required="1" colspan="4" />
+                        <field name="cnpj_cpf" invisible="1"  readonly="1" />
+                        <field name="raiz_cnpj" invisible="1" />
+                        <newline />
+                        <field name="res_partner_bank_id" required="1" on_change="onchange_company_banco(res_partner_bank_id)" domain="['|', ('raiz_cnpj', '=', raiz_cnpj),('cnpj_cpf', '=', False)]"/>                        
+                        <separator string="Valores e confirmação" colspan="4" />
+                        <field name="valor" />
+                        <notebook colspan="4">
+                            <page string="Lançamentos liquidantes">
+                                <field name="pagamento_ids" nolabel="1" colspan="4" context="{'tree_view_ref': 'finan.finan_pagamento_tree', 'default_data_quitacao': data_quitacao, 'default_data_juros': data_quitacao, 'default_data_multa': data_quitacao, 'default_data_desconto': data_quitacao, 'default_res_partner_bank_id': res_partner_bank_id, 'default_tipo': 'PR', 'default_company_id': company_id}" mode="tree" />
+                            </page>
+                            <page string="Lançamentos a liquidar">
+                                <field name="lote_pago_ids" nolabel="1" mode="tree" domain="[('company_id', '=', company_id)]">
+                                    <tree string="Lançamento a liquidar" editable="top">
+                                        <field name="partner_id" readonly="1" />
+                                        <field name="situacao" readonly="1" />
+                                        <field name="documento_id" readonly="1" />
+                                        <field name="data_documento" readonly="1" />
+                                        <field name="numero_documento" readonly="1" />
+                                        <field name="data_vencimento" readonly="1" />
+                                        <field name="valor_saldo" sum="Valor" readonly="1" />
+                                        <field name="valor_multa" sum="Valor multa" />
+                                        <field name="valor_juros" sum="Valor juros" />
+                                        <field name="valor_desconto" sum="Valor desconto" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Comunicação e histórico">
+                                <group col="6" colspan="6">                            
+                                    <group col="2" colspan="2">                            
+                                        <separator colspan="2" string="Histórico de Alterações"/>
+                                        <field colspan="2" name="create_uid" readonly="1" string="Criado por"/>
+                                        <newline />                     
+                                        <field colspan="2" name="write_uid" readonly="1"/>
+                                        <newline />                     
+                                        <field colspan="2" name="write_date" readonly="1"/>
+                                    </group>
+                                    <group col="4" colspan="4">                            
+                                    </group>
+                                </group>  
+                            </page>
+                        </notebook>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_lote_receber_acao">
+            <field name="name">Recebimento em lote</field>
+            <field name="res_model">finan.lancamento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+<!--             <field name="view_id" ref="finan_lote_receber_tree" /> -->
+            <field name="domain">[('tipo', '=', 'LR')]</field>
+            <field name="context">{'tipo':'LR','default_tipo':'LR','provisionado':False,'default_provisionado':False}</field>
+        </record>
+
+        <menuitem action="finan_lote_receber_acao"
+            id="menu_finan_lote_recebimento" name="Recebimento em lote" parent="finan.menu_finan_conta_receber" />
+
+        <record model="ir.actions.act_window.view" id="finan_lote_receber_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_lote_receber_form"/>
+            <field name="act_window_id" ref="finan_lote_receber_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_lote_receber_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_receber_tree"/>
+            <field name="act_window_id" ref="finan_lote_receber_acao"/>
+        </record>
+
+    </data>
+</openerp>

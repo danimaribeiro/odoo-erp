@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="rh_tipoavaliacao_tree">
+            <field name="name">rh.tipoavaliacao.tree</field>
+            <field name="model">rh.tipoavaliacao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:tipo=='+';red:tipo=='-'" string="Tipos de avaliação/eventos">
+                    <field name="tipo" />
+                    <field name="nome" />
+                    <field name="pontos" />
+                    <field name="tratamento" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="rh_tipoavaliacao_form">
+            <field name="name">rh.tipoavaliacao.form</field>
+            <field name="model">rh.tipoavaliacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Tipo de avaliação/evento">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="nome"  colspan="4"/>
+                        <newline />
+                        <field name="tipo" />
+                        <newline />
+                        <field name="pontos" />
+                        <newline />
+                        <field name="tratamento" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="rh_tipoavaliacao_search">
+            <field name="name">rh.tipoavaliacao.search</field>
+            <field name="model">rh.tipoavaliacao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Tipos de avaliação/evento">
+                    <filter string="Positivos" domain="[('tipo', '=', '+')]" />
+                    <filter string="Negativos" domain="[('tipo', '=', '-')]" />
+                    <separator orientation="vertical" />
+                    <field name="nome" />
+                    <field name="tratamento" select="1" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="rh_tipoavaliacao_acao">
+            <field name="name">Tipos de avaliação/evento</field>
+            <field name="res_model">rh.tipoavaliacao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="rh_tipoavaliacao_tree" />
+        </record>
+
+        <menuitem action="rh_tipoavaliacao_acao"
+            id="menu_rh_tipoavaliacao" name="Tipos de avaliação/evento" parent="menu_hr_avaliacao" />
+
+    </data>
+</openerp>

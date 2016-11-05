@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+          <record id="purchase_order_form" model="ir.ui.view">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="type">form</field>
+            <field name="priority">3</field>
+            <field name="inherit_id" ref="sped_purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <field name="payment_term_id" position="after">
+                     <newline />
+                     <field name="partner_bank_id" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                     <newline />
+                     <field name="operacao_id" required="True" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                     <newline />
+                     <field name="centrocusto_id" on_change="onchange_centrocusto_id(centrocusto_id, amount_total, 0, company_id, False, partner_id)" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                </field>
+                <field name="state" position="before">
+                    <newline />
+                    <separator string="Itens do rateio" colspan="8" />
+                    <field name="rateio_ids" widget="many2one_list" nolabel="1" colspan="8" context="{'tree_view_ref': 'finan.finan_rateio_item_tree'}" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                    <newline />
+                </field>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

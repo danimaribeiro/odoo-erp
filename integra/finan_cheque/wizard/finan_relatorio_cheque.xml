@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_cheque_form" >
+            <field name="name">finan.relatorio.cheque</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Cheques por Conta Bancária">
+                    <group colspan="4">
+                        <field name="company_id" colspan="4"/>
+                        <newline/>
+                        <field name="res_partner_bank_ids" colspan="4"/>
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <button icon="gtk-print" string="Gerar relatório" name="gera_relatorio_cheque" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_relatorio_cheque_acao">
+            <field name="name">Cheques por Conta Bancária</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_relatorio_cheque_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_relatorio_cheque_form"/>
+            <field name="act_window_id" ref="finan_relatorio_cheque_acao"/>
+        </record>
+
+        <menuitem action="finan_relatorio_cheque_acao"
+                  id="menu_finan_relatorio_cheque" 
+                  name="Cheques por Conta Bancária" 
+                  parent="menu_relatorio_cheque" 
+                  sequence="01" />
+
+    </data>
+</openerp>

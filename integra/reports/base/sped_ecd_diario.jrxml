@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sped_ecd_diario" language="groovy" printOrder="Horizontal" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="9" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="2.196150000000023"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="SQL" class="java.lang.String"/>
+	<parameter name="UID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[$P!{SQL}]]>
+	</queryString>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="cnpj_cpf" class="java.lang.String"/>
+	<field name="data_lancamento" class="java.sql.Date"/>
+	<field name="codigo_lancamento" class="java.lang.Integer"/>
+	<field name="conta_id" class="java.lang.Integer"/>
+	<field name="data_criacao" class="java.sql.Date"/>
+	<field name="conta_contabil" class="java.lang.String"/>
+	<field name="codigo_completo" class="java.lang.String">
+		<fieldDescription><![CDATA[unknown]]></fieldDescription>
+	</field>
+	<field name="conta_reduzida" class="java.lang.Integer"/>
+	<field name="vr_debito" class="java.lang.Double"/>
+	<field name="vr_credito" class="java.lang.Double"/>
+	<field name="historico" class="java.lang.String">
+		<fieldDescription><![CDATA[Histórico]]></fieldDescription>
+	</field>
+	<field name="centro_custo" class="java.lang.Integer">
+		<fieldDescription><![CDATA[ Gerar Bloco O (Centro de Custo)?]]></fieldDescription>
+	</field>
+	<field name="mes" class="java.lang.String">
+		<fieldDescription><![CDATA[Mês]]></fieldDescription>
+	</field>
+	<variable name="vr_debito_1" class="java.lang.Double" resetType="Group" resetGroup="data_lancamento" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_debito}]]></variableExpression>
+	</variable>
+	<variable name="vr_credito_1" class="java.lang.Double" resetType="Group" resetGroup="data_lancamento" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_credito}]]></variableExpression>
+	</variable>
+	<variable name="vr_debito_2" class="java.lang.Double" resetType="Group" resetGroup="MES" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_debito}]]></variableExpression>
+	</variable>
+	<variable name="vr_credito_2" class="java.lang.Double" resetType="Group" resetGroup="MES" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_credito}]]></variableExpression>
+	</variable>
+	<group name="MES">
+		<groupExpression><![CDATA[$F{mes}]]></groupExpression>
+		<groupFooter>
+			<band height="17">
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="495" y="0" width="60" height="10" uuid="ac422d6a-61d9-4ccf-b492-244cae0721a8"/>
+					<box rightPadding="0">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{vr_credito_2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="435" height="10" uuid="65aa6b66-507e-47bb-bbbd-72b505a9ea7d"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL DO MÊS:"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="435" y="0" width="60" height="10" uuid="09b96792-f09e-4e92-899e-3a7d9b857b44"/>
+					<box rightPadding="0">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{vr_debito_2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="data_lancamento" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{data_lancamento}]]></groupExpression>
+		<groupHeader>
+			<band height="10">
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="37" height="10" backcolor="#E2E2E2" uuid="8a814ddd-987c-4f8a-89a6-52fff3c163ee"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Data]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="158" y="0" width="109" height="10" backcolor="#E2E2E2" uuid="7366bf72-8c12-4aeb-abbc-9bd78d391e4c"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta Contábil]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="435" y="0" width="60" height="10" backcolor="#E2E2E2" uuid="0e4a8e20-d336-4153-8b3a-02460b676a7e"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Débito]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="495" y="0" width="60" height="10" backcolor="#E2E2E2" uuid="984b0e3e-db1b-4864-821b-b6ea6c4fc975"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Crédito]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="36" y="0" width="37" height="10" backcolor="#E2E2E2" uuid="cd15f974-bee2-41bf-b3f0-e460344b955f"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cód.Lanc.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="418" y="0" width="17" height="10" backcolor="#E2E2E2" uuid="2cfaca40-6301-4e84-bb66-25092ab4c4fd"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[C.C]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="73" y="0" width="60" height="10" backcolor="#E2E2E2" uuid="1be93ec5-3172-4287-9b3e-6d3ffdaf5332"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Código completo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="267" y="0" width="151" height="10" backcolor="#E2E2E2" uuid="7c94846a-e2f3-4895-b789-2aff3697d356"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Histórico]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="133" y="0" width="25" height="10" backcolor="#E2E2E2" uuid="e3863338-bcf0-41fd-ac85-16aad8a4111c"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[C.Red.]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14" splitType="Stretch">
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="435" y="0" width="60" height="10" uuid="1b96af6f-dac3-4418-bf3c-857453ef0b93"/>
+					<box rightPadding="0">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{vr_debito_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="495" y="0" width="60" height="10" uuid="40b53718-d950-4e08-a1fd-151f7f93b298"/>
+					<box rightPadding="0">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{vr_credito_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="435" height="10" uuid="207c1649-cfdd-4d8b-8268-f13d523f81cc"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL DO DIA:"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="48">
+			<staticText>
+				<reportElement x="491" y="2" width="23" height="8" uuid="8d73f97e-7895-4305-907e-a78f42053fda"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Folha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="491" y="10" width="23" height="8" uuid="56456d47-6224-4298-859a-9c7220053828"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="30" width="555" height="18" backcolor="#E2E2E2" uuid="3c01e601-d088-4642-8d72-363df2a0277e"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Diário]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="514" y="10" width="39" height="8" uuid="c5f29352-212c-48be-b91f-bb058ba7cb52"/>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm:ss">
+				<reportElement x="514" y="18" width="39" height="8" uuid="b58bb6b6-7ca9-41b4-9ed2-1326389a657d"/>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement x="514" y="2" width="39" height="8" uuid="a5ef6a26-7967-475d-a5f0-6f6c55cfe8b0"/>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="491" y="18" width="23" height="8" uuid="0db0098c-eec2-4862-989c-248111ef4620"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="37" height="10" uuid="012203dd-ae67-4760-ae53-f8ee5c8009f3"/>
+				<box leftPadding="0" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empresa:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="37" y="0" width="518" height="10" uuid="bebb4001-8202-41d6-9205-acd19faa9996"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="20" width="37" height="10" uuid="a33b6158-d894-4850-b0dd-72603a54cc7a"/>
+				<box leftPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="37" y="20" width="36" height="10" uuid="f7292132-e0cf-43ee-b9a2-f9d63b402ae8"/>
+				<box leftPadding="0">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse($P{DATA_INICIAL}))]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="73" y="20" width="8" height="10" uuid="fe74dbfe-c616-467d-a3e7-a65a6b28dd6d"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="81" y="20" width="62" height="10" uuid="16bdd343-bb30-4b3d-855c-fe8487ab3ae3"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse($P{DATA_FINAL}))]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="10" width="37" height="10" uuid="e2e17e16-5e04-444b-b969-d398a5e28713"/>
+				<box leftPadding="0" rightPadding="2">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CNPJ:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="37" y="10" width="106" height="10" uuid="27e86c2c-ce23-4569-b307-0433763bcd7f"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cnpj_cpf}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="13">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="495" y="3" width="60" height="10" uuid="a81622ff-4da1-4bb2-8992-f962bba40345"/>
+				<box rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_credito}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="435" y="3" width="60" height="10" uuid="519dcb68-002d-45c9-8e1c-ca1b91ba8dde"/>
+				<box rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_debito}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="3" width="37" height="10" uuid="9a72cb3c-cc02-42cc-a687-91f946bbba09"/>
+				<box rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_lancamento}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="36" y="3" width="37" height="10" uuid="7a31c952-7e06-4a6e-8317-7984d590c175"/>
+				<box rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_lancamento}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="73" y="3" width="60" height="10" uuid="2d93942f-05ca-4454-93dd-d86d18d42ee4"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_completo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="267" y="3" width="151" height="10" uuid="c55939b2-c0bf-4fc4-8d9e-611975f6e3d6"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{historico}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="418" y="3" width="24" height="10" uuid="e715afca-ceec-4f0f-98b2-f1d0243e599a"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{centro_custo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="133" y="3" width="25" height="10" uuid="5763f7e5-1657-4df5-9431-7e94e659c495"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{conta_reduzida}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="158" y="3" width="109" height="10" uuid="94a6fe6f-a92d-4b3e-ac3d-53e414215319"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{conta_contabil}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="28">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="28" uuid="5d0d7981-b906-4943-8457-94b5d78c28d2"/>
+				<subreportParameter name="UID">
+					<subreportParameterExpression><![CDATA[$P{UID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rodape_retrato.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageFooter>
+</jasperReport>

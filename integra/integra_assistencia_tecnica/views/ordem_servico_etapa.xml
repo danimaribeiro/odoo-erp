@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="os_etapa_tree">
+            <field name="name">os.etapa.tree</field>
+            <field name="model">ordem.servico.etapa</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="codigo" />                                       
+                    <field name="nome" />                                                                              
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="os_etapa_form">
+            <field name="name">os.etapa.form</field>
+            <field name="model">ordem.servico.etapa</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Cadastro de Etapa">
+                    <group col="6" colspan="4">                                                
+                        <group col="2" colspan="2">
+                            <field name="codigo" readonly="1"/>                                                                                           
+                            <field name="nome" required="1"/>                                                                                           
+                            <field name="tipo_proxima_etapa" required="1"/>                                                                                           
+                            <field name="gera_orcamento" />                                                                                           
+                        </group>
+                        <group col="4" colspan="4">                                                                                                                                                                                                                                                                                         
+                        </group>
+                    </group>
+                    <field name="etapa_seguinte_ids" nolabel="1" />                                            
+                    <group string="Local de Estoque" col="4" colspan="4">                                                
+                        <field name="stock_location_id" colspan="4"/>                                                                                           
+                        <field name="stock_location_dest_id" colspan="4"/>                                                                                                                                                                                                             
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+         <record id="os_etapa_search" model="ir.ui.view">
+            <field name="name">os.etapa.search</field>
+            <field name="model">ordem.servico.etapa</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Cadastro de Etapa">
+                    <field name="nome" />                                       
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="os_etapa_acao">
+            <field name="name">Cadastro de Etapa</field>
+            <field name="res_model">ordem.servico.etapa</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="os_etapa_tree" />            
+            <field name="search_view_id" ref="os_etapa_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>       
+        
+        <menuitem action="os_etapa_acao"
+            id="menu_os_etapa" 
+            name="Cadastro de Etapa" 
+            parent="menu_configuracao"
+            sequence="02" />
+
+        <record model="ir.actions.act_window.view" id="os_etapaform_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="os_etapa_form"/>
+            <field name="act_window_id" ref="os_etapa_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="os_etapa_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="os_etapa_tree"/>
+            <field name="act_window_id" ref="os_etapa_acao"/>
+        </record>
+
+    </data>
+</openerp>

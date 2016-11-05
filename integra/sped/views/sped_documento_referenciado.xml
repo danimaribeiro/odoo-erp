@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_documentoreferenciado_form_view">
+            <field name="name">documentoreferenciado.form</field>
+            <field name="model">sped.documentoreferenciado</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Documento referenciado">
+                    <notebook colspan="4">
+                        <page string="Documento já cadastrado no sistema">
+                            <field name="documentoreferenciado_id" />
+                            <field name="modelo" />
+                            <field name="serie" />
+                            <field name="numero" />
+                            <field name="data_emissao" />
+                            <field name="participante_id" />
+                            <field name="chave" />
+                        </page>
+                        <page string="modelos 55 ou 56">
+                            <field name="modelo" />
+                            <field name="chave" />
+                        </page>
+                        <page string="modelos 01, 1B ou 04">
+                            <field name="modelo" />
+                            <field name="serie" />
+                            <field name="numero" />
+                            <field name="data_emissao" />
+                            <field name="participante_id" />
+                        </page>
+                        <page string="modelos 2B, 2C, 2D">
+                            <field name="modelo" />
+                            <field name="numero_ecf" />
+                            <field name="numero_coo" />
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

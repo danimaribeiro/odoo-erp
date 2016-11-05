@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_demonstrativo_parcela_form" >
+            <field name="name">finan.demonstrativo.parcela</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Demonstrativo de Parcela">
+                    <group colspan="4">
+                        <field name="partner_id" required="1" colspan="4"/>
+                        <newline/>
+                        <field name="contrato_id" required="1" colspan="4" domain="[('partner_id', '=', partner_id)]"/>
+                        <newline/>
+                        <field name="parcela_id" colspan="4" domain="[('contrato_id', '=', contrato_id)]" />
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-print" string="Gerar relatório" name="gera_demonstrativo_parcela" type="object" colspan="5" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_demonstrativo_parcela_acao">
+            <field name="name">Demonstrativo de Parcela</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_demonstrativo_parcela_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_demonstrativo_parcela_form"/>
+            <field name="act_window_id" ref="finan_demonstrativo_parcela_acao"/>
+        </record>
+
+        <menuitem action="finan_demonstrativo_parcela_acao"
+                  id="menu_finan_demonstrativo_parcela"
+                  name="Demonstrativo de Parcela"
+                  parent="finan.menu_finan_relatorios"
+                  sequence="10" />
+
+    </data>
+</openerp>

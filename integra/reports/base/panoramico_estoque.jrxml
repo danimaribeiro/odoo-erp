@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="panoramico_estoque" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="1.8150000000000073"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="165"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/ari/integra/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="LOCAL_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRODUTO_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+  pp.name_template as produto,
+  sl.name as local_estoque,
+  sum(
+  case when
+  es.tipo = 'S' THEN
+  es.quantidade * -1
+  else
+  es.quantidade
+  end) as quantidade,
+  pc.nome_completo as categoria,
+  pp.variants as marca,
+  coalesce(pp.default_code,'') as codigo,
+  c.id as company_id,
+  rp.name
+
+from
+  estoque_entrada_saida es
+  join product_product pp on pp.id = es.product_id
+  join product_template pt on pt.id = pp.product_tmpl_id
+  join stock_location sl on sl.id = es.location_id
+  join product_category pc on pc.id = pt.categ_id
+
+  join res_company c on c.id = es.company_id
+  join res_partner rp on rp.id = c.partner_id
+  left join res_company cc on cc.id = c.parent_id
+  left join res_company ccc on ccc.id = cc.parent_id
+
+where
+  cast(es.product_id as varchar) like $P{PRODUTO_ID}
+  and to_char(es.data, 'YYYY-MM-DD')  <= $P{DATA_FINAL}
+  and sl.usage = 'internal'
+  and
+  (
+    c.id = $P{COMPANY_ID}
+    or cc.id = $P{COMPANY_ID}
+    or ccc.id = $P{COMPANY_ID}
+  )
+  $P!{LOCAL_ID}
+
+group by
+  pp.name_template,
+  pc.nome_completo,
+  sl.name,
+  pp.variants,
+  pp.default_code,
+  c.id,
+  rp.name
+
+union all
+
+select distinct
+  pp.name_template as produto,
+  'SEM MOVIMENTAÇÃO' as local_estoque,
+  0.00 as quantidade,
+  pc.nome_completo as categoria,
+  pp.variants as marca,
+  coalesce(pp.default_code,'') as codigo,
+  pt.company_id as company_id,
+  rp.name
+
+from
+  product_product pp
+  join product_template pt on pt.id = pp.product_tmpl_id
+  join product_category pc on pc.id = pt.categ_id
+  left join stock_move m on m.product_id = pp.id and m.state = 'done'
+  join res_company c on c.id = pt.company_id
+  join res_partner rp on rp.id = c.partner_id
+  left join res_company cc on cc.id = c.parent_id
+  left join res_company ccc on ccc.id = cc.parent_id
+
+where
+  m.id is null and
+  cast(pp.id as varchar) like $P{PRODUTO_ID} and
+  pt.type in ('consu', 'product') and
+  (
+    c.id = $P{COMPANY_ID}
+    or cc.id = $P{COMPANY_ID}
+    or ccc.id = $P{COMPANY_ID}
+  )
+
+order by
+  name,
+  categoria,
+  produto,
+  local_estoque]]>
+	</queryString>
+	<field name="produto" class="java.lang.String"/>
+	<field name="local_estoque" class="java.lang.String"/>
+	<field name="quantidade" class="java.math.BigDecimal"/>
+	<field name="categoria" class="java.lang.String"/>
+	<field name="marca" class="java.lang.String">
+		<fieldDescription><![CDATA[Marca]]></fieldDescription>
+	</field>
+	<field name="codigo" class="java.lang.String">
+		<fieldDescription><![CDATA[unknown]]></fieldDescription>
+	</field>
+	<field name="company_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Company]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String"/>
+	<variable name="quantidade_1" class="java.math.BigDecimal" resetType="Group" resetGroup="produto" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidade}]]></variableExpression>
+	</variable>
+	<group name="empresa" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{company_id}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="44" y="0" width="511" height="14" uuid="837cb5b5-0c49-40cf-8b0b-2faf676dc502"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="44" height="14" isPrintWhenDetailOverflows="true" uuid="1a2e8f8b-3337-4701-9a4a-dc0676a01b6a"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Empresa:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<group name="categoria">
+		<groupExpression><![CDATA[$F{categoria}]]></groupExpression>
+		<groupHeader>
+			<band height="14" splitType="Stretch">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="49" y="0" width="506" height="14" uuid="ffb94499-5dcd-4ddf-af2b-a40fdb6f67d2"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{categoria}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="49" height="14" isPrintWhenDetailOverflows="true" uuid="669b48b5-a756-4ab4-98ca-6cd7e40d2e75"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Categoria:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="produto">
+		<groupExpression><![CDATA[$F{produto}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<staticText>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="43" height="14" uuid="e034a9c8-a62e-41d3-b5be-5bb60bc5becf"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Produto:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="42" y="0" width="383" height="14" uuid="f31a6b5a-e472-43ec-83bc-c8066e3f67c1"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["[" + $F{codigo} + "] " + $F{produto}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="456" y="0" width="99" height="14" uuid="4afd52d1-12d1-4082-9a59-2612949e9863"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{marca}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="425" y="0" width="31" height="14" uuid="9e2e7aa2-dde7-4a9f-ae33-4b4d06b2fdd4"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Marca:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<textField pattern="#,##0.000;-#,##0.000">
+					<reportElement x="497" y="0" width="58" height="14" uuid="ad8d1182-3f6b-45fe-9591-64c35a7d76df"/>
+					<box leftPadding="0" rightPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{quantidade_1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="497" height="14" uuid="685dcf7b-273d-4cfc-a62c-4d2028f72717"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="87">
+			<textField>
+				<reportElement positionType="Float" x="0" y="60" width="555" height="21" uuid="385fc5b8-99af-49c7-86dc-557483328107"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RELATÓRIO PANORÂMICO DE ESTOQUE ATÉ " + new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse($P{DATA_FINAL}))]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="60" uuid="f315853d-1267-44b0-85df-78b9a91e25ec"/>
+				<subreportParameter name="COMPANY_ID">
+					<subreportParameterExpression><![CDATA[$F{company_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cabecalho_empresa.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="14">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="497" height="14" uuid="2a65dd34-3688-4c06-8c1f-621f6223eae9"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{local_estoque}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.000;-#,##0.000">
+				<reportElement x="497" y="0" width="58" height="14" uuid="ddd764a7-d649-487c-92dc-0d4a47481d3f"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantidade}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="12">
+			<textField>
+				<reportElement positionType="Float" x="443" y="0" width="91" height="12" uuid="f5496e66-278a-4d08-8089-ddaf7d45dca3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement positionType="Float" x="534" y="0" width="31" height="12" uuid="af7c86c3-93a7-4e4f-bfd3-9c3e37bc790b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<noData>
+		<band height="50">
+			<textField>
+				<reportElement positionType="Float" x="0" y="0" width="555" height="21" uuid="735841ff-fae5-467d-83e2-0056698996f8"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Não há dados para a impressão"]]></textFieldExpression>
+			</textField>
+		</band>
+	</noData>
+</jasperReport>

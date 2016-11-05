@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_order_seguranca_orcamento_tree">
+            <field name="name">sale.order.seguranca.orcamento.tree</field>
+            <field name="model">sale.order</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Orçamentos">
+                    <field name="name" string="Código" />
+                    <field name="partner_id" />
+                    <field name="pricelist_id" string="Tipo do orçamento" />
+                    <field name="user_id" />
+                    <field name="company_id" />
+                    <field name="date_order" />
+                    <field name="defeito_obs" />
+                    <field name="vr_mensal_total" string="Valor mensal" sum="Valor mensal" />
+                    <field name="amount_total" string="Valor total" sum="Valor total" />
+                    <field name="etapa_id" />
+                    <field name="tempo_etapa" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_order_seguranca_orcamento_form">
+            <field name="name">sale.order.seguranca.orcamento.form</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Orçamento">
+                    <group col="2" colspan="4" name="avisa_validade"
+                           attrs="{'invisible': [('dt_validade', '&gt;=',  str(pybrasil.data.hoje()))] }">
+                        <separator string="Aviso de vencimento de validade" colspan="10" />
+                        <label name="mensagem_restricao" string="Atenção!!! Orçamento fora de validade - recalcule, por favor!" colspan="2" />
+                        <newline />
+                        <newline />
+                        <button name="recalcula_fora_validade" type="object" string="Atualizar preços dos produtos" />
+                        <newline />
+                        <newline />
+                        <separator string="Orçamento com preços desatualizados" colspan="10" />
+                    </group>
+
+                    <group colspan="4" col="4">
+                        <field name="company_id" colspan="4" readonly="0" domain="[('cnpj_cpf', '!=', False)]" attrs="{'required': True}" />
+                        <field name="operacao_id" invisible="1" />
+                        <field name="pendencia_financeira" invisible="1" />
+                        <field name="regime_tributario" invisible="1" />
+                        <field name="state" invisible="1" />
+                        <field name="operacao_pessoa_fisica_id" invisible="1" />
+                        <field name="operacao_ativo_id" invisible="1" />
+                        <field name="operacao_faturamento_antecipado_id" invisible="1" />
+
+                        <field name="pricelist_id" colspan="4" string="Tipo do orçamento" domain="[('type', '=', 'sale'), ('tipo_os_id', '!=', False)]" on_change="onchange_pricelist_id(pricelist_id, vr_total_produtos)" attrs="{'required': True}" />
+                        <field name="lista_precos_alterada" invisible="1" />
+                        <group colspan="4" col="4" attrs="{'invisible': [('lista_precos_alterada', '=', False)]}">
+                            <html>
+                            <p class="oe_form_paragraph oe_align_center ">
+                                <span style="color:red;text-align:center;">
+                                    Atenção!!! Tipo do orçamento foi alterado, por favor, clique no botão abaixo para readequar os preços dos produtos/serviços ao novo tipo do orçamento.
+                                </span>
+                            </p>
+                        </html>
+                        <button type="object" name="atualiza_lista_precos" string="Reatribuir preços seguindo as regras do novo tipo de orçamento" colspan="4"  />
+                    </group>
+                    <field name="tipo_os_id" invisible="1" />
+                        <field name="name" string="Código" />
+                        <field name="date_order" />
+                        <field name="partner_id" colspan="4" on_change="onchange_partner_id_locacao(partner_id, company_id, meses_retorno_locacao_original)" attrs="{'required': True}" />
+                        <group col="1" colspan="4" name="mensagem_pendencia_financeira" attrs="{'invisible': [('pendencia_financeira', '=',  False)] }">
+                            <html>
+                                <p class="oe_form_paragraph oe_align_center ">
+                                    <span style="color:red;text-align:center;">
+                                        Atenção!!! O cliente possui pendências financeiras! Verifique na aba Informações financeiras.
+                                    </span>
+                                </p>
+                            </html>
+                        </group>
+                        <field name="finan_contrato_id" colspan="4" domain="[('partner_id', '=', partner_id), ('company_id', '=', company_id), ('data_distrato', '=', False)]" attrs="{'invisible': [('meses_retorno_locacao_original', '=', False)]}" on_change="onchange_finan_contrato_id(finan_contrato_id, vr_mensal_locacao, vr_total_mensalidades)" />
+                        <field name="user_id" colspan="4" string="Vendedor" attrs="{'required': True}" />
+                        <field name="defeito_obs" string="Obs." colspan="4" attrs="{'readonly': [('etapa_seguinte_ids', '=', False)]}" />
+                        <field name="order_referencia_id" colspan="4" string="Referência" attrs="{'invisible': [('partner_id', '=', False)]}" domain="[('pricelist_id', '=', pricelist_id)]" on_change="onchange_order_referencia_id(order_referencia_id, pricelist_id, partner_id, date_order, context)" context="{'partner_id': partner_id, 'pricelist': pricelist_id, 'shop': shop_id, 'force_product_uom': True, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id}" />
+
+                        <!-- Campos Antigos -->
+                        <field name="shop_id" invisible="1" />
+                        <field name="incoterm" invisible="1" />
+                        <field name="picking_policy" invisible="1" />
+                        <field name="order_policy" invisible="1" />
+                        <field name="invoice_quantity" invisible="1" />
+                        <field name="create_date" invisible="1" />
+                        <field name="date_confirm" invisible="1" />
+                        <field name="fiscal_position" invisible="1" />
+                    </group>
+                    <group colspan="4" col="4">
+                        <group colspan="2" col="4" string="Resumo de Valores">
+                            <group colspan="2" col="4">
+                                <separator string="Produtos" colspan="4" />
+                                <newline />
+                                <label string="Total sem desconto" colspan="3" />
+                                <field name="vr_total_produtos_sem_desconto" nolabel="1" />
+                                <newline />
+                                <label string="Desconto" />
+                                <field name="al_desconto_rateio" nolabel="1" digits="(18, 2)" on_change="onchange_al_desconto_rateio(al_desconto_rateio, None, vr_total_produtos_sem_desconto, 'P')"/>
+                                <label string="%%, R$" />
+                                <field name="vr_desconto_rateio" nolabel="1" on_change="onchange_al_desconto_rateio(None, vr_desconto_rateio, vr_total_produtos_sem_desconto, 'P')"/>
+                                <newline />
+                                <label string="Total com desconto" colspan="3" />
+                                <field name="vr_total_produtos" nolabel="1" />
+                            </group>
+                            <group colspan="2" col="4">
+                                <separator string="Serviços" colspan="4" />
+                                <newline />
+                                <label string="Total sem desconto" colspan="3" />
+                                <field name="vr_total_servicos_sem_desconto" nolabel="1" />
+                                <newline />
+                                <label string="Desconto" />
+                                <field name="al_desconto_rateio_servicos" nolabel="1" digits="(18, 2)" on_change="onchange_al_desconto_rateio(al_desconto_rateio_servicos, None, vr_total_servicos_sem_desconto, 'S')"/>
+                                <label string="%%, R$" />
+                                <field name="vr_desconto_rateio_servicos" nolabel="1" on_change="onchange_al_desconto_rateio(None, vr_desconto_rateio_servicos, vr_total_servicos_sem_desconto, 'S')"/>
+                                <newline />
+                                <label string="Total com desconto" colspan="3" />
+                                <field name="vr_total_servicos" nolabel="1" />
+                            </group>
+                            <field name="amount_total" string="Valor total" colspan="4" bold="True" />
+                            <button type="object" name="button_dummy" string="Recalcular" colspan="4" />
+                            <field name="desconto_autorizado" invisible="1" />
+                            <field name="desconto_a_autorizar" invisible="1" />
+                            <group colspan="4" col="2"  groups="base.group_sale_manager" attrs="{'invisible': ['|', ('desconto_autorizado', '=', True),'&amp;', ('vr_desconto_rateio', '=', False), ('vr_desconto_rateio_servicos', '=', False)]}">
+                                <button type="object" name="autoriza_desconto" string="Autoriza desconto" colspan="2" />
+                            </group>
+                            <group col="4" colspan="4" string="Contrato">
+                                <field name="lo_modelo_id"  colspan="4"  domain="[('tabela', '=', 'sale.order')]" />
+                                <button name="gera_contrato_venda" string="Imprime Contrato" icon="gtk-print" type="object" colspan="4" />
+                            </group>
+                        </group>
+                        <group col="2" colspan="2">
+                            <field name="meses_retorno_locacao_original" invisible="1" />
+                            <field name="meses_retorno_locacao_excedido" invisible="1" />
+                            <group col="2" colspan="2" string="Resumo de Mensalidade" attrs="{'invisible': [('meses_retorno_locacao_original', '=', 0)]}">
+                                <field name="meses_retorno_locacao" digits="(21, 0)" on_change="onchange_locacao(meses_retorno_locacao, None, amount_total, vr_total_produtos, vr_total_servicos, vr_total_mensalidades, meses_retorno_locacao_original)" />
+                                <field name="vr_mensal_locacao" on_change="onchange_locacao(None, vr_mensal_locacao, amount_total, vr_total_produtos, vr_total_servicos, vr_total_mensalidades, meses_retorno_locacao_original)" />
+                                <group col="2" colspan="4" name="avisa_validade"
+                                       attrs="{'invisible': [('meses_retorno_locacao_excedido', '=', False)] }">
+                                    <separator string="Aviso de meses de locação excedido" colspan="10" />
+                                    <label name="mensagem_restricao" string="Atenção!!! Orçamento fora do limite de meses permitido!" colspan="2" />
+                                </group>
+                                <field name="vr_total_mensalidades" string="Demais mensalidades" />
+                                <field name="vr_mensal_atual" string="Mensalidade atual" readonly="1" />
+                                <field name="vr_mensal_total" string="Total" />
+                            </group>
+                            <group col="2" colspan="2" string="Etapa">
+                                <field name="etapa_seguinte_ids"  invisible="1"/>
+                                <field name="etapa_id" invisible="1" />
+                                <field name="etapa_id_readonly" />
+                                <field name="proxima_etapa_id" domain="[('id', 'in', etapa_seguinte_ids), ('desconto_a_autorizar', '=', desconto_a_autorizar)]" />
+                                <button name="avanca_etapa" string="Avançar Etapa" icon="gtk-go-forward" type="object" colspan="2" />
+                                <field name="codigo" readonly="1" invisible="1"/>
+                                <field name="filtro_etapa" readonly="1" invisible="1"/>
+                            </group>
+                            <group col="2" colspan="2" string="Orçamento">
+                                <button name="imprime_orcamento" string="Imprime orçamento" icon="gtk-print" type="object" colspan="2" />
+                                <button name="imprime_orcamento_espelho" string="Imprime orçamento espelho" icon="gtk-print" type="object" colspan="2" />
+                            </group>
+                        </group>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Produtos" attrs="{'invisible': [('operacao_fiscal_produto_id', '=', False)]}">
+                            <field name="item_produto_ids" colspan="4" nolabel="1"
+                            context="{'form_view_ref' : 'seguranca.sale_order_line_produto_form', 'tree_view_ref' : 'seguranca.sale_order_line_produto_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'P'}" />
+                        </page>
+                        <page string="Serviços" attrs="{'invisible': [('operacao_fiscal_servico_id', '=', False)]}">
+                            <field name="item_servico_ids" colspan="4" nolabel="1"
+                            context="{'form_view_ref' : 'seguranca.sale_order_line_servico_form', 'tree_view_ref' : 'seguranca.sale_order_line_servico_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'S'}" />
+                        </page>
+                        <page string="Mensalidades" attrs="{'invisible': [('operacao_fiscal_servico_id', '=', False)]}">
+                            <field name="item_mensalidade_ids" colspan="4" nolabel="1"
+                            context="{'form_view_ref' : 'seguranca.sale_order_line_mensalidade_form', 'tree_view_ref' : 'seguranca.sale_order_line_mensalidade_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'M'}" />
+                        </page>
+                        <page string="Fechamento">
+                            <group colspan="2" col="2">
+                                <field name="finan_formapagamento_id" required="1" />
+                                <field name="payment_term" domain="['|', ('formapagamento_id', '=', False), ('formapagamento_id', '=', finan_formapagamento_id)]" on_change="onchange_payment_term(payment_term, amount_total, vr_total_servicos, meses_retorno_locacao_original, vr_entrada, context)" required="1" />
+                                <field name="vr_entrada" on_change="onchange_payment_term(payment_term, amount_total, vr_total_servicos, meses_retorno_locacao_original, vr_entrada, context)" />
+                                <field name="carteira_id" />
+                                <field name="simulacao_parcelas_ids" invisible="1" />
+                                <field name="simulacao_parcelas_readonly_ids" nolabel="1" colspan="2">
+                                    <tree>
+                                        <field name="numero" />
+                                        <field name="data" />
+                                        <field name="valor" />
+                                    </tree>
+                                </field>
+                                <field name="dias_validade" colspan="2" on_change="onchange_dias_validade(dias_validade, date_order)" groups="base.group_sale_manager" />
+                                <field name="dt_validade"  readonly="1" colspan="2" />
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="operacao_fiscal_produto_id" domain="[('emissao', '=', '0'), ('modelo', 'in', ('55', '2D'))]"/>
+                                <field name="operacao_fiscal_servico_id" domain="[('modelo', '=', 'SE'), ('emissao', '=', '0')]"/>
+                                <field name="modalidade_frete" />
+                                <field name="transportadora_id" />
+                            </group>
+                            <field name="partner_order_id" colspan="4" required="1" domain="[('partner_id', '=', partner_id)]" />
+                            <field name="partner_invoice_id" colspan="4" required="1" domain="[('partner_id', '=', partner_id)]" />
+                            <field name="partner_shipping_id" colspan="4" required="1" domain="[('partner_id', '=', partner_id)]" string="Endereço de Instalação" />
+                        </page>
+                        <page string="Análise de margem de contribuição" groups="base.group_sale_manager">
+                            <group colspan="2" col="4">
+                                <group colspan="2" col="4">
+                                    <separator string="Produtos" colspan="4" />
+                                    <newline/>
+                                    <label string="(+) Valor dos produtos" colspan="3" />
+                                    <field name="vr_total_produtos_readonly" nolabel="1" />
+                                    <newline/>
+                                    <group colspan="3" col="3" attrs="{'invisible': [('regime_tributario', '!=', '1')]}">
+                                        <label string="(-) SIMPLES" colspan="3" />
+                                    </group>
+                                    <field name="vr_simples_produtos" nolabel="1" attrs="{'invisible': [('regime_tributario', '!=', '1')]}" />
+                                    <newline/>
+                                    <group colspan="3" col="3" attrs="{'invisible': [('regime_tributario', '=', '1')]}">
+                                        <label string="(-) ICMS" colspan="3" />
+                                    </group>
+                                    <field name="vr_icms_proprio_produtos" nolabel="1" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                                    <newline/>
+                                    <label string="(-) DIFA" colspan="3" />
+                                    <field name="vr_diferencial_aliquota_produtos" nolabel="1" />
+                                    <newline/>
+                                    <group colspan="3" col="3" attrs="{'invisible': [('regime_tributario', '=', '1')]}">
+                                        <label string="(-) IPI" colspan="3" />
+                                    </group>
+                                    <field name="vr_ipi_produtos" nolabel="1" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                                    <newline/>
+                                    <group colspan="3" col="3" attrs="{'invisible': [('regime_tributario', '=', '1')]}">
+                                        <label string="(-) PIS" colspan="3" />
+                                    </group>
+                                    <field name="vr_pis_proprio_produtos" nolabel="1" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                                    <newline/>
+                                    <group colspan="3" col="3" attrs="{'invisible': [('regime_tributario', '=', '1')]}">
+                                        <label string="(-) COFINS" colspan="3" />
+                                    </group>
+                                    <field name="vr_cofins_proprio_produtos" nolabel="1" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                                    <newline/>
+                                    <group colspan="3" col="3" attrs="{'invisible': [('regime_tributario', '=', '1')]}">
+                                        <label string="(-) CSLL" colspan="3" />
+                                    </group>
+                                    <field name="vr_csll_produtos" nolabel="1" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                                    <newline/>
+                                    <group colspan="3" col="3" attrs="{'invisible': [('regime_tributario', '=', '1')]}">
+                                        <label string="(-) IRPJ" colspan="3" />
+                                    </group>
+                                    <field name="vr_irrf_produtos" nolabel="1" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                                    <newline/>
+                                    <label string="(-) Custo" colspan="3" />
+                                    <field name="vr_produto_base_produtos" nolabel="1" />
+                                    <newline/>
+                                    <label string="(-) Comissão" colspan="3" />
+                                    <field name="vr_comissao_produtos" nolabel="1" />
+                                    <newline/>
+                                    <group colspan="1" col="2">
+                                        <group colspan="2" col="1" attrs="{'invisible': [('vr_margem_contribuicao_produtos', '&lt;', 0)]}">
+                                            <label string="(=) Margem de contribuição" />
+                                        </group>
+                                        <group colspan="2" col="1" attrs="{'invisible': ['|', ('vr_margem_contribuicao_produtos', '=', False), ('vr_margem_contribuicao_produtos', '&gt;', 0)]}">
+                                            <label string="(=) Prejuízo" />
+                                        </group>
+                                    </group>
+                                    <field name="al_margem_contribuicao_produtos" nolabel="1" />
+                                    <label string="%%, R$" />
+                                    <field name="vr_margem_contribuicao_produtos" nolabel="1" />
+                                    <newline />
+                                    <field name="margem_contribuicao_produtos_ids" mode="graph" colspan="4" nolabel="1" readonly="1" context="{'graph_view_ref': 'seguranca.sale_order_seguranca_orcamento_margem_contribuicao_produtos_graph'}"/>
+                                </group>
+                                <group colspan="2" col="4">
+                                    <separator string="Serviços" colspan="4" />
+                                    <newline/>
+                                    <label string="(+) Valor dos serviços" colspan="3" />
+                                    <field name="vr_total_servicos_readonly" nolabel="1" />
+                                    <newline/>
+                                    <group colspan="3" col="3" attrs="{'invisible': [('regime_tributario', '!=', '1')]}">
+                                        <label string="(-) SIMPLES" colspan="3" />
+                                    </group>
+                                    <field name="vr_simples_servicos" nolabel="1" attrs="{'invisible': [('regime_tributario', '!=', '1')]}" />
+                                    <newline/>
+                                    <label string="(-) ISS" colspan="3" />
+                                    <field name="vr_iss_servicos" nolabel="1" />
+                                    <newline/>
+                                    <group colspan="3" col="3" attrs="{'invisible': [('regime_tributario', '=', '1')]}">
+                                        <label string="(-) PIS" colspan="3" />
+                                    </group>
+                                    <field name="vr_pis_proprio_servicos" nolabel="1" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                                    <newline/>
+                                    <group colspan="3" col="3" attrs="{'invisible': [('regime_tributario', '=', '1')]}">
+                                        <label string="(-) COFINS" colspan="3" />
+                                    </group>
+                                    <field name="vr_cofins_proprio_servicos" nolabel="1" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                                    <newline/>
+                                    <group colspan="3" col="3" attrs="{'invisible': [('regime_tributario', '=', '1')]}">
+                                        <label string="(-) CSLL" colspan="3" />
+                                    </group>
+                                    <field name="vr_csll_servicos" nolabel="1" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                                    <newline/>
+                                    <group colspan="3" col="3" attrs="{'invisible': [('regime_tributario', '=', '1')]}">
+                                        <label string="(-) IRPJ" colspan="3" />
+                                    </group>
+                                    <field name="vr_irrf_servicos" nolabel="1" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                                    <newline/>
+                                    <label string="(-) Custo" colspan="3" />
+                                    <field name="vr_produto_base_servicos" nolabel="1" />
+                                    <newline/>
+                                    <label string="(-) Comissão" colspan="3" />
+                                    <field name="vr_comissao_servicos" nolabel="1" />
+                                    <newline/>
+                                    <group colspan="1" col="1" attrs="{'invisible': [('vr_margem_contribuicao_servicos', '&lt;', 0)]}">
+                                        <label string="(=) Margem de contribuição" />
+                                    </group>
+                                    <group colspan="1" col="1" attrs="{'invisible': ['|', ('vr_margem_contribuicao_servicos', '=', False), ('vr_margem_contribuicao_servicos', '&gt;', 0)]}">
+                                        <label string="(=) Prejuízo" />
+                                    </group>
+                                    <field name="al_margem_contribuicao_servicos" nolabel="1" />
+                                    <label string="%%, R$" />
+                                    <field name="vr_margem_contribuicao_servicos" nolabel="1" />
+                                    <newline />
+                                    <field name="margem_contribuicao_servicos_ids" mode="graph" colspan="4" nolabel="1" readonly="1" context="{'graph_view_ref': 'seguranca.sale_order_seguranca_orcamento_margem_contribuicao_produtos_graph'}"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Informações financeiras" attrs="{'invisible': [('pendencia_financeira', '=',  False)] }">
+                            <separator string="Títulos vencidos" colspan="4" />
+                            <field name="vencido_ids" readonly="1" nolabel="1" context="{'form_view_ref': 'finan.finan_receber_form', 'tree_view_ref': 'finan.finan_receber_tree', 'search_view_ref': 'finan.finan_receber_search'}" />
+                        </page>
+                        <page string="Histórico CRM">
+                            <field name="etapa_historico_ids" readonly="1" colspan="4" nolabel="1">
+                                <tree>
+                                    <field name="etapa_id" />
+                                    <field name="data_ultima_etapa" />
+                                    <field name="data_proxima_etapa" />
+                                    <field name="tempo_etapa" />
+                                </tree>
+                            </field>
+                            <field name="canal_id" colspan="4" />
+                            <field name="categoria_id" colspan="4" />
+                        </page>
+                        <page string="Comunicação e histórico">
+                            <separator string="Emails trocados e anotações" colspan="4" />
+                            <field name="mail_message_ids" colspan="4" nolabel="1" mode="tree" readonly="1">
+                                <tree string="Histórico">
+                                    <field name="date" string="Data" />
+                                    <field name="display_text" string="Texto"/>
+                                    <field name="email_to" invisible="1"/>
+                                    <field name="email_from" invisible="1"/>
+                                    <button
+                                        string="Reply" attrs="{'invisible': [('email_from', '=', False)]}"
+                                        name="%(mail.action_email_compose_message_wizard)d"
+                                        context="{'mail.compose.message.mode':'reply', 'message_id':active_id}"
+                                        icon="terp-mail-replied" type="action" />
+                                </tree>
+                            </field>
+                            <button string="Incluir anotação"
+                                    name="incluir_anotacao"
+                                    type="object"
+                                    icon="terp-document-new" />
+                            <button string="Enviar e-mail"
+                                    name="%(mail.action_email_compose_message_wizard)d"
+                                    icon="terp-mail-message-new" type="action"/>
+                            <newline/>
+                            <field name="partner_fone" invisible="1" />
+                            <field name="partner_celular" invisible="1" />
+                            <separator string="Ligações telefônicas" colspan="4" />
+                            <field name="crm_phonecall_ids" colspan="4" nolabel="1" mode="tree" context="{'default_partner_id': partner_id, 'default_phone': partner_fone, 'default_mobile': partner_celular}">
+                                <tree colors="gray:state in ('cancel','done');blue:state in ('pending',)" string="Phone Calls">
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="partner_contact"/>
+                                    <field name="partner_phone"/>
+                                    <field name="user_id"/>
+                                    <field name="categ_id" invisible="1"/>
+                                    <field name="create_date" invisible="1"/>
+                                    <field name="opportunity_id" invisible="1"/>
+                                    <button string="Meeting"
+                                            states="open,pending" icon="gtk-redo"
+                                            name="action_make_meeting" type="object" />
+                                    <field name="state"/>
+                                    <button name="case_cancel" string="Cancel" states="open,pending" type="object" icon="gtk-cancel"/>
+                                    <button name="case_open" string="Todo" states="pending" type="object" icon="gtk-go-forward"/>
+                                    <button name="case_close" string="Held" states="open,pending" type="object" icon="gtk-jump-to"/>
+                                    <button name="case_pending" string="Not Held" states="open" type="object" icon="gtk-media-pause"/>
+                                </tree>
+                                <form string="Phone Call">
+                                    <group colspan="6" col="7">
+                                        <field name="name" required="1"/>
+                                        <field name="partner_phone"/>
+                                        <field name="duration" widget="float_time"/>
+                                        <button string="Schedule a Meeting" name="action_make_meeting" icon="gtk-redo" type="object"/>
+
+                                        <field name="date"/>
+                                        <field name="user_id"/>
+                                        <field name="section_id" colspan="1" widget="selection" />
+                                        <button string="Schedule Other Call"
+                                                icon="terp-call-start"
+                                                name="%(crm.phonecall_to_phonecall_act)d"
+                                                type="action"  />
+                                    </group>
+
+                                    <group col="3" colspan="2">
+                                        <separator colspan="3" string="Contacts" />
+                                        <field name="partner_id"
+                                                on_change="onchange_partner_id(partner_id)" />
+                                        <button string="Create a Partner"
+                                                icon="terp-partner"
+                                                name="%(crm.action_crm_phonecall2partner)d"
+                                                type="action"
+                                                attrs="{'invisible':[('partner_id','!=',False)]}"
+                                                groups="base.group_partner_manager"/>
+                                        <newline/>
+                                        <field name="partner_address_id"
+                                                on_change="onchange_partner_address_id(partner_address_id)" />
+                                        <newline/>
+                                        <field name="partner_mobile" />
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <separator colspan="2" string="Categorization" />
+                                        <field name="categ_id" widget="selection"
+                                                domain="[('object_id.model', '=', 'crm.phonecall')]"/>
+                                        <field name="priority"/>
+                                        <field name="sale_order_id"/>
+                                    </group>
+                                    <separator string="Description" colspan="4" />
+                                    <field name="description" nolabel="1" colspan="4" />
+                                    <separator colspan="4" />
+                                    <group col="8" colspan="4">
+                                        <field name="state" widget="statusbar" statusbar_visible="open,done" statusbar_colors='{"pending":"red"}' select="1"/>
+                                        <button name="case_cancel" string="Cancel"
+                                                states="open,pending" type="object"
+                                                icon="gtk-cancel" />
+                                        <button name="case_open" string="Todo"
+                                                states="pending" type="object"
+                                                icon="gtk-go-forward" />
+                                        <button name="case_pending" string="Not Held"
+                                                states="open" type="object" icon="gtk-media-pause" />
+                                        <button name="case_close" string="Held"
+                                                states="open,pending" type="object"
+                                                icon="gtk-jump-to" />
+                                        <button name="case_reset" string="Reset to Todo"
+                                                states="cancel" type="object"
+                                                icon="gtk-convert" />
+                                    </group>
+                                </form>
+                            </field>
+                            <newline/>
+                            <button string="Agendar/Registrar Ligação"
+                                    name="%(integra_sale.saleorder2phonecall_act)d" icon="terp-call-start"
+                                    type="action"/>
+                        </page>
+                    </notebook>
+                    <separator string="Observações" colspan="4" />
+                    <field name="note" nolabel="1" />
+                </form>
+            </field>
+        </record>
+
+         <record id="sale_order_seguranca_orcamento_search" model="ir.ui.view">
+            <field name="name">sale.order.seguranca.orcamento.search</field>
+            <field name="model">sale.order</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Orçamentos">
+                    <field name="name" string="Código" />
+                    <field name="partner_id" />
+                    <field name="user_id" />
+                    <field name="pricelist_id" string="Tipo do orçamento" />
+                    <field name="defeito_obs" string="Obs." />
+                    <newline />
+                    <field name="date_order_from" string="De data" filter_domain="[('date_order','&gt;=',self)]" widget="calendar" />
+                    <field name="date_order_to" string="a data" filter_domain="[('date_order','&lt;=',self)]" widget="calendar" />
+
+                    <newline />
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Cliente" icon="terp-project" domain="[]" context="{'group_by': 'partner_id'}" />
+                        <filter string="Vendedor" icon="terp-project" domain="[]" context="{'group_by': 'user_id'}" />
+                        <filter string="Tipo do orçamento" icon="terp-project" domain="[]" context="{'group_by': 'pricelist_id'}" />
+                        <filter string="Etapa" icon="terp-project" domain="[]" context="{'group_by': 'etapa_id'}" />
+<!--
+                        <separator orientation="vertical" />
+                        <filter string="Data de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'data_vencimento'}" />
+                        <filter string="Mês de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'ano_mes_vencimento'}" />
+                        <filter string="Ano de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'ano_vencimento'}" />-->
+                    </group>
+
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_order_seguranca_orcamento_margem_contribuicao_produtos_graph">
+            <field name="name">sale.order.seguranca.orcamento.margem.contribuicao.produtos.graph</field>
+            <field name="model">sale.margem.contribuicao</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="Margem de contribuição dos produtos" type="pie">
+                    <field name="campo" />
+                    <field name="valor" operator="+" />
+                </graph>
+            </field>
+        </record>
+
+<!--        <record model="ir.ui.view" id="sale_order_seguranca_orcamento_margem_contribuicao_produtos_graph">
+            <field name="name">sale.order.seguranca.orcamento.margem.contribuicao.produtos.graph</field>
+            <field name="model">sale.margem.contribuicao</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="Margem de contribuição dos produtos" type="bar">
+                    <field name="campo" />
+                    <field name="valor" operator="+" />
+                </graph>
+            </field>
+        </record>-->
+
+        <record model="ir.actions.act_window" id="sale_order_seguranca_orcamento_acao">
+            <field name="name">Orçamentos</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('etapa_id.tipo', '=', 'V')]</field>
+            <field name="context">{'default_etapa_id': 2, 'default_etapa_id_readonly': 2, 'default_proxima_etapa_id': False}</field>
+            <field name="view_id" ref="sale_order_seguranca_orcamento_tree" />
+            <field name="search_view_id" ref="sale_order_seguranca_orcamento_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            action="sale_order_seguranca_orcamento_acao"
+            id="menu_sale_order_seguranca_orcamento"
+            name="Orçamentos"
+            parent="base.menu_sales"
+            sequence="2" />
+
+        <record model="ir.actions.act_window.view" id="sale_order_seguranca_orcamento_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_order_seguranca_orcamento_form"/>
+            <field name="act_window_id" ref="sale_order_seguranca_orcamento_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sale_order_seguranca_orcamento_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sale_order_seguranca_orcamento_tree"/>
+            <field name="act_window_id" ref="sale_order_seguranca_orcamento_acao"/>
+        </record>
+
+    </data>
+</openerp>

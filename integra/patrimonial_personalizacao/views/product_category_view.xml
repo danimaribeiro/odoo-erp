@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="product_category_form_view_integra" model="ir.ui.view">
+            <field name="name">product.category.form</field>
+            <field name="model">product.category</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_product.product_category_form_view_integra"/>
+            <field name="arch" type="xml">
+                <field name="state" position="after">
+                    <newline />
+                    <field name="percentual_acessorios" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

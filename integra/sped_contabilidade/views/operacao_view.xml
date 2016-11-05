@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_operacao_nfe_form">
+            <field name="name">sped.operacao.form</field>
+            <field name="model">sped.operacao</field>
+            <field name="type">form</field>
+            <field name="priority">20</field>
+            <field name="inherit_id" ref="sped.sped_operacao_nfe_emitida_form"/>
+            <field name="arch" type="xml">
+                <field name="modalidade_frete" position="after" >
+                    <field name="modelo_partida_dobrada_id" domain="[('tabela', '=', 'DF')]" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_operacao_nfse_form">
+            <field name="name">sped.operacao.nfse.form</field>
+            <field name="model">sped.operacao</field>
+            <field name="type">form</field>
+            <field name="priority">20</field>
+            <field name="inherit_id" ref="sped.sped_operacao_nfse_emitida_form"/>
+            <field name="arch" type="xml">
+                <field name="cst_iss" position="after" >
+                    <field name="modelo_partida_dobrada_id" domain="[('tabela', '=', 'DF')]"/>
+                </field>
+            </field>
+        </record>
+
+
+
+        <record model="ir.ui.view" id="sped_operacao_recibo_form">
+            <field name="name">sped.operacao.recibo.form</field>
+            <field name="model">sped.operacao</field>
+            <field name="type">form</field>
+            <field name="priority">20</field>
+            <field name="inherit_id" ref="sped.sped_operacao_recibo_locacao_emitido_form"/>
+            <field name="arch" type="xml">
+                <field name="regime_tributario" position="after" >
+                    <field name="modelo_partida_dobrada_id" domain="[('tabela', '=', 'DF')]" />
+                </field>
+            </field>
+        </record>
+
+<!--        <record model="ir.ui.view" id="sped_operacao_ecf_emitido_form">
+            <field name="name">sped.operacao.ecf.emitido.form</field>
+            <field name="model">sped.operacao</field>
+            <field name="type">form</field>
+            <field name="priority">20</field>
+            <field name="inherit_id" ref="integra_ecf.sped_operacao_ecf_emitido_form"/>
+            <field name="arch" type="xml">
+                <field name="regime_tributario" position="after" >
+                    <field name="modelo_partida_dobrada_id" domain="[('tabela', '=', 'DF')]" />
+                </field>
+            </field>
+        </record>-->
+
+    </data>
+</openerp>

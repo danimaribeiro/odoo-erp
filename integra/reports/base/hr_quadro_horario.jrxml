@@ -1,0 +1,735 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hr_quadro_horario" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="567" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="9" uuid="6fff61ce-1432-40fb-830b-18bbe5149856">
+	<property name="ireport.zoom" value="1.6934217901613458"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UID" class="java.lang.Integer"/>
+	<parameter name="COMPANY_IDS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+    etiqueta.*,
+
+    CASE
+        when upper(etiqueta.cargo) like '%VOLAN%' then null
+        when etiqueta.jornada_escala_id is not null then double_to_time(je.hora_entrada)
+        else double_to_time(jss.hora_entrada)
+    end as hora_entrada,
+
+    CASE
+        when upper(etiqueta.cargo) like '%VOLAN%' then null
+        when etiqueta.jornada_escala_id is not null then double_to_time(je.hora_saida)
+        else double_to_time(jss.hora_saida)
+    end as hora_saida,
+
+    CASE
+        when upper(etiqueta.cargo) like '%VOLAN%' then null
+        when etiqueta.jornada_escala_id is not null then double_to_time(je.hora_saida_intervalo_1)
+        else double_to_time(jss.hora_saida_intervalo_1)
+    end as hora_saida_intervalo,
+
+    CASE
+        when upper(etiqueta.cargo) like '%VOLAN%' then null
+        when etiqueta.jornada_escala_id is not null then double_to_time(je.hora_retorno_intervalo_1)
+        else double_to_time(jss.hora_retorno_intervalo_1)
+    end as hora_retorno_intervalo
+
+from
+    (
+        select
+            -- Empresa
+            rp.name as empresa_nome,
+            rp.endereco as empresa_rua,
+            rp.numero as empresa_numero,
+	  cn.descricao as atividade,
+
+            -- Funcionario
+            e.id,
+            e.nome,
+            c.name as registro,
+            coalesce(e.carteira_trabalho_numero,'--') as carteira_trabalho_numero,
+            coalesce(e.carteira_trabalho_serie,'--') as carteira_trabalho_serie,
+            coalesce(e.carteira_trabalho_estado,'--') as carteira_trabalho_estado,
+
+            -- Cargo de acordo com a data de competencia
+            (select
+                j.name
+            from
+                hr_job j
+                left join hr_contract_alteracao cac on cac.job_id = j.id and cac.tipo_alteracao = 'C' and cac.contract_id = c.id
+
+            where
+                (j.id = c.job_id) or cac.id is not null
+
+            order by
+                cac.data_alteracao desc nulls last
+
+            limit 1
+            ) as cargo,
+
+            -- Jornada de acordo com a data de competencia
+            (select
+                j.id
+
+            from
+                hr_jornada j
+                left join hr_contract_alteracao cajss on (cajss.jornada_escala_id = j.id or cajss.jornada_segunda_a_sexta_id = j.id) and cajss.tipo_alteracao = 'J' and cajss.contract_id = c.id
+
+            where
+                (j.id = c.jornada_escala_id) or (j.id = c.jornada_segunda_a_sexta_id) or (cajss.id is not null)
+
+            order by
+                cajss.data_alteracao desc nulls last
+
+            limit 1) as jornada_escala_id,
+
+            (select
+                j.id
+
+            from
+                hr_jornada j
+                left join hr_contract_alteracao cajss on cajss.jornada_segunda_a_sexta_id = j.id and cajss.tipo_alteracao = 'J' and cajss.contract_id = c.id
+
+            where
+                (j.id = c.jornada_segunda_a_sexta_id) or cajss.id is not null
+
+            order by
+                cajss.data_alteracao desc nulls last
+
+            limit 1) as jornada_segunda_a_sexta_id
+
+
+        from
+            hr_contract as c
+            join hr_employee e on e.id = c.employee_id
+            join res_company co on co.id = c.company_id
+            join res_partner rp on rp.id = co.partner_id
+            join sped_cnae cn on cn.id = rp.cnae_id
+
+        where
+            co.id in $P!{COMPANY_IDS}
+	  and c.date_end is null
+
+        order by
+            e.nome
+    ) as etiqueta
+    left join hr_jornada je on je.id = etiqueta.jornada_escala_id
+    left join hr_jornada jss on jss.id = etiqueta.jornada_segunda_a_sexta_id
+order by
+1]]>
+	</queryString>
+	<field name="empresa_nome" class="java.lang.String"/>
+	<field name="empresa_rua" class="java.lang.String"/>
+	<field name="empresa_numero" class="java.lang.String"/>
+	<field name="atividade" class="java.lang.String"/>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[unknown]]></fieldDescription>
+	</field>
+	<field name="registro" class="java.lang.String"/>
+	<field name="carteira_trabalho_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Nº da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_serie" class="java.lang.String">
+		<fieldDescription><![CDATA[Série da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_estado" class="java.lang.String">
+		<fieldDescription><![CDATA[Estado da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="cargo" class="java.lang.String"/>
+	<field name="jornada_escala_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Jornada escala]]></fieldDescription>
+	</field>
+	<field name="jornada_segunda_a_sexta_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Jornada padrão de segunda a sexta-feira]]></fieldDescription>
+	</field>
+	<field name="hora_entrada" class="java.sql.Time">
+		<fieldDescription><![CDATA[Hora de entrada]]></fieldDescription>
+	</field>
+	<field name="hora_saida" class="java.sql.Time">
+		<fieldDescription><![CDATA[Hora de saída]]></fieldDescription>
+	</field>
+	<field name="hora_saida_intervalo" class="java.sql.Time"/>
+	<field name="hora_retorno_intervalo" class="java.sql.Time"/>
+	<variable name="cont" class="java.lang.Integer" resetType="Group" resetGroup="empresa" calculation="Count">
+		<variableExpression><![CDATA[$F{nome}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<group name="empresa" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{empresa_nome}]]></groupExpression>
+		<groupHeader>
+			<band height="62" splitType="Stretch">
+				<staticText>
+					<reportElement positionType="Float" x="0" y="42" width="30" height="20" uuid="a20ec32c-274f-4eb5-9812-d23c487606e6"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nº de Ordem]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="30" y="42" width="121" height="20" uuid="8850786d-60fa-4357-9afa-98d1fe557fe7"/>
+					<box leftPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nome Empregado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="151" y="42" width="99" height="20" uuid="e2a097a6-a491-4eab-8334-f451bd8bc8c8"/>
+					<box leftPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Funcão]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="250" y="42" width="80" height="10" uuid="be218514-e461-4786-81e1-4a6caf0454ee"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Carteira Profissional]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="330" y="42" width="30" height="20" uuid="c1ba81df-2fb7-4d17-9e09-b965c99a4e44"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Entrada]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="16" uuid="59b85108-cbca-4ce4-8414-d94e285b8853"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Empregador:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="250" y="52" width="40" height="10" uuid="b84bcbcc-796d-483d-9198-132bdf72b685"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Número]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="290" y="52" width="40" height="10" uuid="faf42af5-4076-4e3e-93f3-32d98e4afa31"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Série]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="360" y="42" width="51" height="20" uuid="6c293909-e97f-4d47-b471-9f95c42a12e3"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Intervalo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="411" y="42" width="26" height="20" uuid="eb953bb6-d893-4d6e-b598-4d074c2a45cf"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Saída]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="437" y="42" width="62" height="20" uuid="307f3d8e-0621-4c24-9812-42f43931fdc4"/>
+					<box leftPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Descanso
+Semanal]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="499" y="42" width="68" height="20" uuid="e5f552c8-edb2-41ad-a83a-f3b4ea4e1c14"/>
+					<box leftPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Visto do Fiscal]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="52" y="0" width="255" height="16" uuid="bb0d8faa-f8e1-4ea0-8fc3-fbcf5d6ad6e9"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_nome}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="16" width="20" height="16" uuid="05050aca-da32-4239-811d-198445f36f09"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Rua:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="20" y="16" width="147" height="16" uuid="d0634746-d1be-4e04-b279-19f270999171"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_rua}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="167" y="16" width="23" height="16" uuid="82f6d61c-a264-40cd-904a-9d469ea0e9b5"/>
+					<box leftPadding="5">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nº:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="190" y="16" width="38" height="16" uuid="46c7c253-493f-4fb3-9e00-cd5af78925b4"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_numero}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="228" y="16" width="47" height="16" uuid="d8b536d6-ce79-4a0c-bc5f-21e360300822"/>
+					<box leftPadding="5">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Atividade:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="275" y="16" width="292" height="16" uuid="52f6aba2-0ff1-449b-abaa-e766520c3835"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{atividade}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="307" y="0" width="143" height="16" uuid="7f7f7eb2-7d81-41af-8dd4-2a914dbe9a43"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Denominação do estabelecimento:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="450" y="0" width="117" height="16" uuid="296f98e3-137d-4e7e-8560-3c61a3e92f67"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="127">
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="54" height="14" uuid="3034dc50-e6dd-4d08-b818-906ead12c56b"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Observações: ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="52" y="0" width="515" height="14" uuid="6b5bc5f1-b3b3-46f3-9872-b0df22e3eaab"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="14" width="567" height="14" uuid="5e19a615-ffc3-4f1b-b406-172d8cfe7917"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="28" width="567" height="14" uuid="42e324c5-c045-4aaf-b51e-5996a433bd0a"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="167" y="54" width="283" height="16" uuid="8e25608d-7cf3-466a-afa4-677ea25682eb"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[___________________, __________de  _________________________, 19_________]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="322" y="100" width="245" height="16" uuid="e8826dba-17a8-4637-83fe-527226bb7e32"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_nome}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="16">
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="0" width="567" height="16" uuid="8e91dd4e-addd-4a55-95df-7a257d88ec83"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isUnderline="true" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[HORÁRIO DE TRABALHO]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="###0;-###0" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="30" height="16" uuid="c4b0f96e-b77d-419a-a907-99e8b040dd5e"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{cont}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="30" y="0" width="121" height="16" uuid="1d563051-65fd-4fba-b056-5226aa0bf8cb"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="151" y="0" width="99" height="16" uuid="c1d806b1-5f09-468e-a768-d5b14e001a00"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cargo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="499" y="0" width="68" height="16" uuid="ebf87380-47a8-450c-8e4f-528951ac1ea6"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="330" y="0" width="30" height="16" uuid="3ca77e12-d4bd-40bf-a66a-82d18baad1af"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora_entrada}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="250" y="0" width="40" height="16" uuid="9775f413-146b-42aa-b2bb-f45623112ecd"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_trabalho_numero}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="290" y="0" width="40" height="16" uuid="2ee8ce14-7c5d-4b70-8e57-711650ec9093"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_trabalho_serie}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="360" y="0" width="26" height="16" uuid="e5150976-ba91-45c7-983a-027fef902e1a"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora_saida_intervalo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="386" y="0" width="25" height="16" uuid="bbc99c84-1b32-453a-9355-8df6c5cbb3f7"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora_retorno_intervalo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="437" y="0" width="62" height="16" uuid="341ed9fe-ee16-4e7a-9fad-a8c65a7a96d1"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="411" y="0" width="26" height="16" uuid="9af1b9d3-d965-471c-ac28-cbb54a1c72df"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora_saida}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="28">
+			<subreport>
+				<reportElement x="5" y="0" width="562" height="28" uuid="8e83437e-35b3-4199-8349-b0a95d938ab0"/>
+				<subreportParameter name="UID">
+					<subreportParameterExpression><![CDATA[$P{UID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rodape_retrato.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageFooter>
+</jasperReport>

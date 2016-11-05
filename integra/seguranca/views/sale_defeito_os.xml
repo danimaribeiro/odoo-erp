@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_defeito_os_tree">
+            <field name="name">sale.defeito.os.tree</field>
+            <field name="model">sale.defeito.os</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Defeitos de ordem de serviço">
+                    <field name="codigo" invisible="1" />
+                    <field name="nome" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_defeito_os_form">
+            <field name="name">sale.defeito.os.form</field>
+            <field name="model">sale.defeito.os</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Defeito de ordem de serviço">
+                    <group col="4" colspan="4">
+                        <field name="codigo" readonly="1" invisible="1" />
+                        <field name="nome" required="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="sale_defeito_os_search" model="ir.ui.view">
+            <field name="name">sale.defeito.os.search</field>
+            <field name="model">sale.defeito.os</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Defeitos de ordem de serviço">
+                    <field name="codigo" />
+                    <field name="nome" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sale_defeito_os_acao">
+            <field name="name">Defeitos de ordem de serviço</field>
+            <field name="res_model">sale.defeito.os</field>
+            <field name="view_type">form</field>
+<!--            <field name="domain">[('defeito', '=', 'O')]</field>
+            <field name="context">{'default_defeito': 'O'}</field>-->
+            <field name="view_id" ref="sale_defeito_os_tree" />
+            <field name="search_view_id" ref="sale_defeito_os_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            action="sale_defeito_os_acao"
+            id="menu_sale_defeito_os"
+            name="Defeitos de ordem de serviço"
+            parent="base.menu_sale_config_sales"
+            sequence="33" />
+
+        <record model="ir.actions.act_window.view" id="sale_defeito_os_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_defeito_os_form"/>
+            <field name="act_window_id" ref="sale_defeito_os_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sale_defeito_os_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sale_defeito_os_tree"/>
+            <field name="act_window_id" ref="sale_defeito_os_acao"/>
+        </record>
+
+    </data>
+</openerp>

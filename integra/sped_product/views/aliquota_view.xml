@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <!-- Definições da tela de alíquotas do ICMS SIMPLES -->
+        <record model="ir.actions.act_window" id="sped_aliquotaicmssn_acao">
+            <field name="name">ICMS SIMPLES Nacional</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">sped.aliquotaicmssn</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_aliquotaicmssn"
+            name="ICMS SIMPLES Nacional"
+            parent="menu_sped_fiscal_aliquota"
+            sequence="10"
+            action="sped_aliquotaicmssn_acao" />
+
+        <!-- Definições da tela de alíquotas do ICMS próprio -->
+        <record model="ir.actions.act_window" id="sped_aliquotaicmsproprio_acao">
+            <field name="name">ICMS próprio</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">sped.aliquotaicmsproprio</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_aliquotaicmsproprio"
+            name="ICMS próprio"
+            parent="menu_sped_fiscal_aliquota"
+            sequence="11"
+            action="sped_aliquotaicmsproprio_acao" />
+
+        <!-- Definições da tela de alíquotas do ICMS ST -->
+        <record model="ir.actions.act_window" id="sped_aliquotaicmsst_acao">
+            <field name="name">ICMS ST</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">sped.aliquotaicmsst</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_aliquotaicmsst"
+            name="ICMS recolhido por substituição tributária"
+            parent="menu_sped_fiscal_aliquota"
+            sequence="12"
+            action="sped_aliquotaicmsst_acao" />
+
+        <!-- Definições da tela de alíquotas do IPI -->
+        <record model="ir.actions.act_window" id="sped_aliquotaipi_acao">
+            <field name="name">IPI</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">sped.aliquotaipi</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_aliquotaipi"
+            name="IPI"
+            parent="menu_sped_fiscal_aliquota"
+            sequence="13"
+            action="sped_aliquotaipi_acao" />
+
+        <!-- Definições da tela de alíquotas do PIS e da COFINS -->
+        <record model="ir.actions.act_window" id="sped_aliquotapiscofins_acao">
+            <field name="name">PIS e COFINS</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">sped.aliquotapiscofins</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_aliquotapiscofins"
+            name="PIS e COFINS"
+            parent="menu_sped_fiscal_aliquota"
+            sequence="14"
+            action="sped_aliquotapiscofins_acao" />
+
+        <!-- Definições da tela de alíquotas do ISS -->
+        <record model="ir.actions.act_window" id="sped_aliquotaiss_acao">
+            <field name="name">ISS</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">sped.aliquotaiss</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_aliquotaiss"
+            name="ISS"
+            parent="menu_sped_fiscal_aliquota"
+            sequence="15"
+            action="sped_aliquotaiss_acao" />
+
+
+    </data>
+</openerp>

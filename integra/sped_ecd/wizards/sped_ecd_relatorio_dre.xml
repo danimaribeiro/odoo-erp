@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>      
+
+        <menuitem action="sped_ecd_relatorio_razao_acao"
+                  id="menu_sped_ecd_relatorio_dre" 
+                  name="D.R.E" 
+                  parent="menu_sped_ecd_demonstrativo" 
+                  sequence="1"/>
+
+    </data>
+</openerp>

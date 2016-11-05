@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_pagamento_tree">
+            <field name="name">finan.pagamento.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree editable="top">
+                    <field name="lancamento_id" invisible="1"/>
+                    <field name="company_id" invisible="1" />
+                    <field name="cnpj_cpf" invisible="1"  readonly="1" />
+                    <field name="raiz_cnpj" invisible="1" />
+                    <field name="tipo" invisible="1" />
+                    <field name="formapagamento_id" required="1" on_change="onchange_formapagamento(forma_pagamento_id)" />
+                    <field name="exige_numero" invisible="1" />
+                    <field name="data_quitacao" required="1" />
+                    <field name="documento_id" />
+                    <field name="numero_documento" string="Nº cheque/cartão/doc." attrs="{'required': [('exige_numero', '=', True)]}" />
+                    <field name="complemento" />
+                    <field name="valor_documento" sum="Valor do documento" on_change="onchange_juros_multa_desconto(tipo,valor_documento, valor_juros, valor_multa, valor_desconto,outros_acrescimos, context)" required="1" />
+                    <field name="valor_juros" sum="Valor dos juros" on_change="onchange_juros_multa_desconto(tipo, valor_documento, valor_juros, valor_multa, valor_desconto,outros_acrescimos, context)"/>
+                    <field name="valor_multa" sum="Valor da multa" on_change="onchange_juros_multa_desconto(tipo, valor_documento, valor_juros, valor_multa, valor_desconto, outros_acrescimos, context)"/>
+                    <field name="valor_desconto" sum="Valor desconto" on_change="onchange_juros_multa_desconto(tipo, valor_documento, valor_juros, valor_multa, valor_desconto,outros_acrescimos, context)"/>
+                    <field name="outros_acrescimos" sum="Valor Outros/Acresc." on_change="onchange_juros_multa_desconto(tipo,valor_documento, valor_juros, valor_multa, valor_desconto,outros_acrescimos, context)"/>
+                    <field name="valor" sum="Valor" string="Valor final" required="1" />
+                    <field name="res_partner_bank_id" required="1" domain="['|', ('raiz_cnpj', '=', parent.raiz_cnpj),('cnpj_cpf', '=', False)]" />
+                    <field name="conciliado" />
+                    <field name="data" string="Data de crédito/débito na conta" />
+                    <field name="retorno_id" string="Retorno" attrs="{'invisible': [('tipo', '=', 'PP')]}" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_pagamento_adiantamento_tree">
+            <field name="name">finan.pagamento.adiantamento.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree editable="top">
+                    <field name="lancamento_id" invisible="1"/>
+                    <field name="company_id" invisible="1" />
+                    <field name="cnpj_cpf" invisible="1"  readonly="1" />
+                    <field name="raiz_cnpj" invisible="1" />
+                    <field name="tipo" invisible="1" />
+                    <field name="formapagamento_id" required="1" on_change="onchange_formapagamento(forma_pagamento_id)" />
+                    <field name="exige_numero" invisible="1" />
+                    <field name="data_quitacao" required="1" />
+                    <field name="documento_id" />
+                    <field name="numero_documento" string="Nº cheque/cartão/doc." attrs="{'required': [('exige_numero', '=', True)]}" />
+                    <field name="complemento" />
+                    <field name="valor_documento" sum="Valor do documento" on_change="onchange_juros_multa_desconto(tipo,valor_documento, valor_juros, valor_multa, valor_desconto,outros_acrescimos, context)" required="1" />
+                    <field name="valor_juros" sum="Valor dos juros" on_change="onchange_juros_multa_desconto(tipo, valor_documento, valor_juros, valor_multa, valor_desconto,outros_acrescimos, context)"/>
+                    <field name="valor_multa" sum="Valor da multa" on_change="onchange_juros_multa_desconto(tipo, valor_documento, valor_juros, valor_multa, valor_desconto, outros_acrescimos, context)"/>
+                    <field name="valor_desconto" sum="Valor desconto" on_change="onchange_juros_multa_desconto(tipo, valor_documento, valor_juros, valor_multa, valor_desconto,outros_acrescimos, context)"/>
+                    <field name="outros_acrescimos" sum="Valor Outros/Acresc." on_change="onchange_juros_multa_desconto(tipo,valor_documento, valor_juros, valor_multa, valor_desconto,outros_acrescimos, context)"/>
+                    <field name="valor" sum="Valor" string="Valor final" required="1" />
+                    <field name="res_partner_bank_id" required="1" domain="[('state', 'ilike', 'ADIANTAMENTO'), '|', ('raiz_cnpj', '=', parent.raiz_cnpj),('cnpj_cpf', '=', False)]" />
+                    <field name="conciliado" />
+                    <field name="data" string="Data de crédito/débito na conta" />
+                    <field name="retorno_id" string="Retorno" invisible="1" />
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</openerp>

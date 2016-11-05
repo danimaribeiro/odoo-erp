@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finan_aging" language="groovy" printOrder="Horizontal" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="1.3636363636363722"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="NOME_EMPRESAS" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SQL" class="java.lang.String"/>
+	<parameter name="CATEGORIA_NOME" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FORMA_NOME" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[$P!{SQL}]]>
+	</queryString>
+	<field name="quantidade_dias" class="java.lang.Long"/>
+	<field name="tipo" class="java.lang.String">
+		<fieldDescription><![CDATA[unknown]]></fieldDescription>
+	</field>
+	<field name="periodo" class="java.lang.String">
+		<fieldDescription><![CDATA[Período]]></fieldDescription>
+	</field>
+	<field name="saldo" class="java.math.BigDecimal"/>
+	<field name="saldo_string" class="java.lang.String"/>
+	<variable name="saldo_1" class="java.math.BigDecimal" resetType="Group" resetGroup="tipo" calculation="Sum">
+		<variableExpression><![CDATA[$F{saldo}]]></variableExpression>
+	</variable>
+	<variable name="saldo_2" class="java.math.BigDecimal" resetType="Group" resetGroup="report" calculation="Sum">
+		<variableExpression><![CDATA[$F{saldo}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL" class="java.math.BigDecimal" calculation="System"/>
+	<variable name="quantidade_dias_1" class="java.lang.Long" resetType="Group" resetGroup="tipo" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidade_dias}]]></variableExpression>
+	</variable>
+	<variable name="quantidade_dias_2" class="java.lang.Long" resetType="Group" resetGroup="report" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidade_dias}]]></variableExpression>
+	</variable>
+	<group name="report" isReprintHeaderOnEachPage="true">
+		<groupHeader>
+			<band height="48">
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="46" height="16" uuid="012203dd-ae67-4760-ae53-f8ee5c8009f3"/>
+					<box leftPadding="0" rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Empresa:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="46" y="0" width="509" height="16" uuid="bebb4001-8202-41d6-9205-acd19faa9996"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{NOME_EMPRESAS}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="16" width="29" height="16" uuid="a33b6158-d894-4850-b0dd-72603a54cc7a"/>
+					<box leftPadding="0">
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[Data:]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="29" y="16" width="56" height="16" uuid="16bdd343-bb30-4b3d-855c-fe8487ab3ae3"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse($P{DATA_FINAL}))]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="32" width="55" height="16" uuid="a1f02356-53c4-4f26-9c09-1f9deeb93f22"/>
+					<box leftPadding="0">
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[Categoria:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="191" y="16" width="364" height="16" uuid="edfa8bf4-2879-49be-9468-fd31708b1fd0"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{FORMA_NOME}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="85" y="16" width="106" height="16" uuid="8f8b50bd-f857-499e-8b9b-db8f9a92a70b"/>
+					<box leftPadding="0">
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[Forma de Pagamento:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="55" y="32" width="500" height="16" uuid="88ec3725-cd53-4fdf-920f-9a243b9fa268"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{CATEGORIA_NOME}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="296">
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="200" y="64" width="150" height="20" uuid="6b37f2b8-1186-4d27-bd7d-63fc991fca90"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{saldo_2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="50" y="24" width="450" height="20" uuid="fa048341-1542-4ebe-b716-a8a880aacf50"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Geral Empresas:]]></text>
+				</staticText>
+				<pieChart>
+					<chart isShowLegend="true">
+						<reportElement x="50" y="96" width="450" height="200" uuid="996a81d4-1811-428c-90ce-1eb12f3f91e6"/>
+						<box>
+							<pen lineWidth="0.5"/>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<chartTitle>
+							<font fontName="DejaVu Sans" size="10"/>
+							<titleExpression><![CDATA["Gráfico Total Empresas"]]></titleExpression>
+						</chartTitle>
+						<chartSubtitle/>
+						<chartLegend>
+							<font fontName="DejaVu Sans" size="8"/>
+						</chartLegend>
+					</chart>
+					<pieDataset>
+						<dataset resetType="Group" resetGroup="report"/>
+						<keyExpression><![CDATA[$F{tipo}]]></keyExpression>
+						<valueExpression><![CDATA[$V{saldo_1}]]></valueExpression>
+						<labelExpression><![CDATA[new java.text.DecimalFormat("#,##0.00;-#,##0.00").format(BigDecimal.valueOf($V{saldo_1}))]]></labelExpression>
+					</pieDataset>
+					<piePlot isShowLabels="true" isCircular="true">
+						<plot/>
+						<itemLabel>
+							<font fontName="DejaVu Sans" size="8"/>
+						</itemLabel>
+					</piePlot>
+				</pieChart>
+				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+					<reportElement x="350" y="64" width="150" height="20" uuid="8801f63a-e2f3-4db4-9a21-458323becc3e"/>
+					<box rightPadding="5">
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{saldo_2} / $V{TOTAL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="350" y="44" width="150" height="20" uuid="56607d89-1ca0-4abd-a7e6-d5e182f50cad"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Percentual]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="200" y="44" width="150" height="20" uuid="990537f3-37d1-48d5-8333-e3b17be13dc8"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="50" y="44" width="150" height="20" uuid="689418b8-06d2-45ec-88ae-9d61de6262d3"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nº Registros]]></text>
+				</staticText>
+				<textField pattern="###0;-###0" isBlankWhenNull="true">
+					<reportElement x="50" y="64" width="150" height="20" uuid="f3a78180-5fcd-45b9-bd63-57d711b98fbb"/>
+					<box rightPadding="0">
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{quantidade_dias_2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="tipo">
+		<groupExpression><![CDATA[$F{tipo}]]></groupExpression>
+		<groupHeader>
+			<band height="49">
+				<staticText>
+					<reportElement x="270" y="29" width="120" height="20" uuid="07fecc52-6661-4855-9f55-803e2ac5b5e8"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="390" y="29" width="110" height="20" uuid="74a19027-ebf0-4947-af3f-f6d764001464"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Percentual]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="50" y="29" width="110" height="20" uuid="6e8033ad-d977-4b0d-a4f0-492ce836b212"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Periodo]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="50" y="9" width="450" height="20" uuid="2d11a361-1af2-44a3-98b2-bb39f97430ff"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Tipo: " + $F{tipo}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="160" y="29" width="110" height="20" uuid="884d231f-163c-45a1-9385-f7aaa9c27367"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nº Registros]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="270" y="0" width="120" height="20" uuid="56141f91-c9c8-4198-b60a-3af3f740bbc0"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{saldo_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+					<reportElement x="390" y="0" width="110" height="20" uuid="227e73cb-20e4-4c7b-9146-5ab39cfd6fd8"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{saldo_1} / $V{TOTAL}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="50" y="0" width="110" height="20" uuid="b431a148-b1d5-471a-acbc-b856ac385267"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total " + $F{tipo} + ":"]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0;-###0" isBlankWhenNull="true">
+					<reportElement x="160" y="0" width="110" height="20" uuid="7b52e85d-11c0-46d0-b426-07ec58145a52"/>
+					<box rightPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{quantidade_dias_1}]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="211">
+				<pieChart>
+					<chart isShowLegend="true">
+						<reportElement x="50" y="11" width="450" height="200" uuid="0ee95a27-2970-4bb7-8f82-f0e60e43d1f5"/>
+						<box>
+							<pen lineWidth="0.5"/>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<chartTitle>
+							<font fontName="DejaVu Sans" size="10"/>
+							<titleExpression><![CDATA["Gráfico " + $F{tipo}]]></titleExpression>
+						</chartTitle>
+						<chartSubtitle/>
+						<chartLegend>
+							<font fontName="DejaVu Sans" size="8"/>
+						</chartLegend>
+					</chart>
+					<pieDataset>
+						<dataset resetType="Group" resetGroup="tipo"/>
+						<keyExpression><![CDATA[$F{periodo}]]></keyExpression>
+						<valueExpression><![CDATA[$F{saldo}]]></valueExpression>
+						<labelExpression><![CDATA[$F{saldo_string}]]></labelExpression>
+					</pieDataset>
+					<piePlot isShowLabels="true" isCircular="true">
+						<plot/>
+						<itemLabel>
+							<font fontName="DejaVu Sans" size="8"/>
+						</itemLabel>
+					</piePlot>
+				</pieChart>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="48">
+			<staticText>
+				<reportElement x="477" y="8" width="23" height="10" uuid="8d73f97e-7895-4305-907e-a78f42053fda"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pág:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="477" y="18" width="23" height="10" uuid="56456d47-6224-4298-859a-9c7220053828"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="500" y="18" width="55" height="10" uuid="c5f29352-212c-48be-b91f-bb058ba7cb52"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm:ss">
+				<reportElement x="500" y="28" width="55" height="10" uuid="b58bb6b6-7ca9-41b4-9ed2-1326389a657d"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="500" y="8" width="55" height="10" uuid="a5ef6a26-7967-475d-a5f0-6f6c55cfe8b0"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="477" y="28" width="23" height="10" uuid="0db0098c-eec2-4862-989c-248111ef4620"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora:]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="5" y="22" width="50" height="16" uuid="2c08c933-acf3-41e6-b909-e1f6c942207f"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SQL">
+					<subreportParameterExpression><![CDATA[$P{SQL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="saldo_1" toVariable="TOTAL"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "finan_ageing_total.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="0" y="0" width="555" height="48" uuid="b1879b7a-56a0-4b15-b596-6b90a5313265"/>
+				<box rightPadding="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "R"?
+"Posição Cronológica das Contas a Receber - Aging"
+:
+"Posição Cronológica das Contas a Pagar - Aging"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="50" y="0" width="110" height="20" uuid="53cc8a11-cf46-4c20-aa11-c5ff9826886e"/>
+				<box rightPadding="0">
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{periodo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="270" y="0" width="120" height="20" uuid="02908549-f022-47fc-90b3-a31f58f28df5"/>
+				<box rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{saldo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<reportElement x="390" y="0" width="110" height="20" uuid="935108c1-b1e4-484f-9f86-3a575d838af1"/>
+				<box rightPadding="5">
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{saldo} / $V{TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0;-###0" isBlankWhenNull="true">
+				<reportElement x="160" y="0" width="110" height="20" uuid="f4256ac4-516a-4fdb-8de2-d4c7b51b8919"/>
+				<box rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantidade_dias}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

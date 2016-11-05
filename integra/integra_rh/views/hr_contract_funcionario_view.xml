@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_contract_funcionario_acao" model="ir.actions.act_window">
+            <field name="name">Funcionário</field>
+            <field name="res_model">hr.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_contract.hr_contract_view_tree"/>
+            <field name="domain">['!',('categoria_trabalhador', 'in', ['102','722','901','701','702','703', '104'])]</field>
+            <field name="context">{'search_default_current': 1}</field>
+        </record>
+
+        <menuitem action="hr_contract_funcionario_acao"
+        id="menu_contract_funcionario" parent="menu_hr_contratos"/>
+
+        <record model="ir.actions.act_window.view" id="hr_contract_funcionario_acao_form">
+            <field eval="5" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_contract_funcionario_acao"/>
+            <field name="view_id" ref="hr_contract_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_contract_funcionario_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_contract_funcionario_acao"/>
+            <field name="view_id" ref="hr_contract.hr_contract_view_tree"/>
+        </record>
+
+    </data>
+</openerp>

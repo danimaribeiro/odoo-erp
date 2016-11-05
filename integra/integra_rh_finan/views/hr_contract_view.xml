@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_contract_view_form_integra" model="ir.ui.view">
+            <field name="name">hr.contract.view.form.integra</field>
+            <field name="model">hr.contract</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_rh.hr_contract_form"/>
+            <field name="priority">200</field>
+            <field name="arch" type="xml">
+                <field name="company_id" position="before">
+                    <newline />
+                </field>
+                <field name="company_id" position="after">
+                    <newline />
+                    <field name="centrocusto_id" domain="['|', ('tipo', '=', 'R'), ('sintetico', '=', False), ('rateio_rh', '=', False)]" required="0"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="hr_contract_autonomo_form" model="ir.ui.view">
+            <field name="name">hr.contract.autonomo.form</field>
+            <field name="model">hr.contract</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_rh.hr_contract_autonomo_form"/>
+            <field name="priority">200</field>
+            <field name="arch" type="xml">
+                <field name="company_id" position="before">
+                    <newline />
+                </field>
+                <field name="company_id" position="after">
+                    <newline />
+                    <field name="centrocusto_id" domain="['|', ('tipo', '=', 'R'), ('sintetico', '=', False), ('rateio_rh', '=', False)]" required="0"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="hr_contract_prolabore_form" model="ir.ui.view">
+            <field name="name">hr.contract.prolabore.form</field>
+            <field name="model">hr.contract</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_rh.hr_contract_prolabore_form"/>
+            <field name="priority">200</field>
+            <field name="arch" type="xml">
+                <field name="company_id" position="before">
+                    <newline />
+                </field>
+                <field name="company_id" position="after">
+                    <newline />
+                    <field name="centrocusto_id" domain="['|', ('tipo', '=', 'R'), ('sintetico', '=', False), ('rateio_rh', '=', False)]" required="0"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="hr_contract_estagiario_form" model="ir.ui.view">
+            <field name="name">hr.contract.estagiario.form</field>
+            <field name="model">hr.contract</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_rh.hr_contract_estagiario_form"/>
+            <field name="priority">200</field>
+            <field name="arch" type="xml">
+                <field name="company_id" position="before">
+                    <newline />
+                </field>
+                <field name="company_id" position="after">
+                    <newline />
+                    <field name="centrocusto_id" domain="['|', ('tipo', '=', 'R'), ('sintetico', '=', False), ('rateio_rh', '=', False)]" required="0"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

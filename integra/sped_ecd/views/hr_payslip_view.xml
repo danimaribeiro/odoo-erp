@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_hr_payslip_form" model="ir.ui.view">
+            <field name="name">hr.payslip.form</field>
+            <field name="model">hr.payslip</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+                <field name="tipo" position="after">
+                    <field name="lote_id" invisible="1" />
+                </field>
+           
+                <field name="line_ids" position="replace">
+                    <field name="line_ids" colspan="4" nolabel="1"  attrs="{'readonly': [('lote_id', '!=', False)]}">
+                        <tree string="Estrutura do salário" editable="top" colors="orange:total == 0;red:holerite_anterior_line_id
+                            == False and deducao &gt; 0;blue:holerite_anterior_line_id == False and provento
+                            &gt; 0;green:holerite_anterior_line_id != False and provento &gt; 0;magenta:holerite_anterior_line_id
+                            != False and deducao &gt; 0">
+                            <field name="name" string="Rubrica" />
+                            <field name="code" groups="base.group_rh_valida_calculo" />
+                            <field name="simulacao_id" context="{'form_view_ref' : 'integra_rh.hr_licenca_maternidade_form', 'tree_view_ref' : 'integra_rh.hr_licenca_maternidade_tree'}" />
+                            <field name="category_id" groups="base.group_rh_valida_calculo" />
+                            <field name="sequence" groups="base.group_rh_valida_calculo" />
+                            <field name="quantity"/>
+                            <field name="rate" digits="(21, 3)" groups="base.group_rh_valida_calculo" />
+                            <field name="amount" digits="(21, 3)" groups="base.group_rh_valida_calculo"/>
+                            <field name="total"/>
+                            <field name="digitado"/>
+                            <field name="holerite_anterior_line_id" invisible="1" />
+                            <field name="provento" sum="Proventos" readonly="1"/>
+                            <field name="deducao" sum="Deduções" readonly="1"/>
+                        </tree>
+                    </field>
+                </field>
+            </field>
+        </record>
+        
+       <record model="ir.ui.view" id="hr_rescisao_form">
+            <field name="name">hr.rescisao.form</field>
+            <field name="model">hr.payslip</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_rh.hr_rescisao_form"/>
+            <field name="arch" type="xml">
+                <field name="tipo" position="after">
+                    <field name="lote_id" invisible="1" />
+                </field>
+           
+                <field name="line_ids" position="replace">
+                   <field name="line_ids" colspan="4" nolabel="1"  attrs="{'readonly': [('lote_id', '!=', False)]}">
+                        <tree string="Cálculo da Rescisão" editable="top" colors="orange:total == 0;red:holerite_anterior_line_id == False and deducao &gt; 0;blue:holerite_anterior_line_id == False  and provento &gt; 0;green:holerite_anterior_line_id != False and provento &gt; 0;magenta:holerite_anterior_line_id != False and deducao &gt; 0">
+                            <field name="name" string="Rubrica" />
+                            <field name="code" groups="base.group_rh_valida_calculo" />
+                            <field name="simulacao_id" context="{'form_view_ref' : 'integra_rh.hr_ferias_form', 'tree_view_ref' : 'integra_rh.hr_ferias_tree'}" />
+                            <field name="rubrica_rescisao_id"  />
+                            <field name="category_id" groups="base.group_rh_valida_calculo" />
+                            <field name="sequence" groups="base.group_rh_valida_calculo" />
+                            <field name="quantity"/>
+                            <field name="rate" digits="(21, 3)" groups="base.group_rh_valida_calculo" />
+                            <field name="amount" digits="(21, 3)" groups="base.group_rh_valida_calculo"/>
+                            <field name="total"/>
+                            <field name="digitado"/>
+                            <field name="holerite_anterior_line_id" invisible="1" />
+                            <field name="provento" sum="Proventos" readonly="1"/>
+                            <field name="deducao" sum="Deduções" readonly="1"/>
+                        </tree>
+                        <form string="Payslip Line">
+                            <group>
+                                <field name="name" select="1"/>
+                                <field name="code" select="1"/>
+                                <field name="category_id"/>
+                                <field name="simulacao_id" context="{'form_view_ref' : 'integra_rh.hr_ferias_form', 'tree_view_ref' : 'integra_rh.hr_ferias_tree'}" />
+                                <field name="sequence" groups="base.group_extended"/>
+                                <field name="quantity"/>
+                                <field name="rate"/>
+                                <field name="amount"/>
+                                <field name="total"/>
+                                <field name="salary_rule_id" groups="base.group_extended"/>
+                            </group>
+                        </form>
+                    </field>
+                </field>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="hr_decimo_terceiro_form">
+            <field name="name">hr.decimo_terceiro.form</field>
+            <field name="model">hr.payslip</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_rh.hr_decimo_terceiro_form"/>
+            <field name="arch" type="xml">
+                <field name="tipo" position="after">
+                    <field name="lote_id" invisible="1" />
+                </field>
+           
+                <field name="line_ids" position="replace">
+                     <field name="line_ids" colspan="4" nolabel="1"  attrs="{'readonly': [('lote_id', '!=', False)]}">
+                        <tree string="Cálculo do 13º"  editable="top" colors="orange:total == 0;red:holerite_anterior_line_id == False and deducao &gt; 0;blue:holerite_anterior_line_id == False  and provento &gt; 0;green:holerite_anterior_line_id != False and provento &gt; 0;magenta:holerite_anterior_line_id != False and deducao &gt; 0">
+                            <field name="name" string="Rubrica" />
+                            <field name="code" groups="base.group_rh_valida_calculo" />
+                            <field name="category_id" groups="base.group_rh_valida_calculo" />
+                            <field name="sequence" groups="base.group_rh_valida_calculo" />
+                            <field name="quantity"/>
+                            <field name="rate" digits="(21, 3)" groups="base.group_rh_valida_calculo" />
+                            <field name="amount" digits="(21, 3)" groups="base.group_rh_valida_calculo"/>
+                            <field name="total"/>
+                            <field name="digitado"/>
+                            <field name="holerite_anterior_line_id" invisible="1" />
+                            <field name="provento" sum="Proventos" readonly="1"/>
+                            <field name="deducao" sum="Deduções" readonly="1"/>
+                        </tree>
+                        <form string="Payslip Line">
+                            <group>
+                                <field name="name" select="1"/>
+                                <field name="code" select="1"/>
+                                <field name="category_id"/>
+                                <field name="sequence" groups="base.group_extended"/>
+                                <field name="quantity"/>
+                                <field name="rate"/>
+                                <field name="amount"/>
+                                <field name="total"/>
+                                <field name="salary_rule_id" groups="base.group_extended"/>
+                            </group>
+                        </form>
+                    </field>
+                </field>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="hr_aviso_previo_form">
+            <field name="name">hr.aviso_previo.form</field>
+            <field name="model">hr.payslip</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_rh.hr_aviso_previo_form"/>
+            <field name="arch" type="xml">
+                <field name="tipo" position="after">
+                    <field name="lote_id" invisible="1" />
+                </field>
+           
+                <field name="line_ids" position="replace" >
+                    <field name="line_ids" colspan="4" nolabel="1" attrs="{'readonly': [('lote_id', '!=', False)]}">
+                        <tree string="Cálculo do aviso prévio"  editable="top" colors="orange:total == 0;red:holerite_anterior_line_id == False and deducao &gt; 0;blue:holerite_anterior_line_id == False  and provento &gt; 0;green:holerite_anterior_line_id != False and provento &gt; 0;magenta:holerite_anterior_line_id != False and deducao &gt; 0">
+                            <field name="name" string="Rubrica" />
+                            <field name="code" groups="base.group_rh_valida_calculo" />
+                            <field name="category_id" groups="base.group_rh_valida_calculo" />
+                            <field name="sequence" groups="base.group_rh_valida_calculo" />
+                            <field name="quantity"/>
+                            <field name="rate" digits="(21, 3)" groups="base.group_rh_valida_calculo" />
+                            <field name="amount" digits="(21, 3)" groups="base.group_rh_valida_calculo"/>
+                            <field name="total"/>
+                            <field name="digitado"/>
+                            <field name="holerite_anterior_line_id" invisible="1" />
+                            <field name="provento" sum="Proventos" readonly="1"/>
+                            <field name="deducao" sum="Deduções" readonly="1"/>
+                        </tree>
+                        <form string="Payslip Line">
+                            <group>
+                                <field name="name" select="1"/>
+                                <field name="code" select="1"/>
+                                <field name="category_id"/>
+                                <field name="sequence" groups="base.group_extended"/>
+                                <field name="quantity"/>
+                                <field name="rate"/>
+                                <field name="amount"/>
+                                <field name="total"/>
+                                <field name="salary_rule_id" groups="base.group_extended"/>
+                            </group>
+                        </form>
+                    </field>    
+                </field>
+            </field>
+        </record>
+                    
+    </data>
+</openerp>

@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_contract_prolabore_form" model="ir.ui.view">
+            <field name="name">hr.contract.prolabore.form</field>
+            <field name="model">hr.contract</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <group colspan="4">
+                    <field name="name" string="Matrícula" colspan="2" />
+                    <button icon="gtk-print" name="gera_ficha_registro" string="Gerar Ficha Registro" type="object"/>
+                    <newline />
+                    <field name="employee_id" colspan="4" on_change="onchange_employee_id(employee_id)"/>
+                    <field name="company_id" colspan="4" domain="[('cnpj_cpf', '!=', False)]" required="1"/>
+                    <newline />
+                    <field name="motivo_contratacao" colspan="4" />
+                    <newline />
+                </group>
+                <notebook>
+                  <page string="Informações pessoais">
+                    <group col="2" colspan="4" name="right_column">
+                        <separator colspan="4" string="Dados pessoais"/>
+                        <field name="employee_endereco" />
+                        <field name="employee_numero" />
+                        <field name="employee_complemento" required="1" />
+                        <field name="employee_bairro" />
+                        <field name="employee_municipio_id" />
+                        <field name="employee_cep" />
+                        <field name="employee_fone" />
+                        <field name="employee_celular" />
+                        <field name="employee_email" />
+                    </group>
+                </page>
+                <page string="Admissão e salário">
+                    <group col="2" colspan="2" name="left_column">
+                        <separator colspan="2" string="Admissão"/>
+                        <field name="date_start" string="Data de admissão" on_change="onchange_date_start(date_start)" />
+                        <field name="date_end" string="Data de Rescisão" />
+                        <field name="data_transf" />
+                        <field name="contrato_transf_id" domain="[('employee_id', '=', employee_id)]" />
+                        <field name="seguro_desemprego" on_change="onchange_seguro_desemprego(seguro_desemprego)" />
+                        <field name="tipo_contrato" />
+                        <field name="tipo_admissao" />
+                        <field name="indicativo_admissao" />
+                        <field name="primeiro_emprego" />
+                        <field name="tempo_primeira_experiencia" />
+                        <field name="tempo_segunda_experiencia" on_change="onchange_data_experiencia(tempo_primeira_experiencia, tempo_segunda_experiencia, date_start)"/>
+                        <field name="final_prim_esperiencia"/>
+                        <field name="final_seg_esperiencia"/>
+                    </group>
+                    <group col="2" colspan="2" name="left_column">
+                        <separator colspan="2" string="Salário"/>
+                        <field name="wage" />
+                        <field name="unidade_salario" />
+                        <field name="horas_mensalista" />
+                        <field name="salario_variavel" invisible="1" />
+                        <field name="unidade_salario_variavel" invisible="1" />
+                        <field name="struct_id" required="1" domain="[('tipo', '=', 'N')]" />
+                        <field name="schedule_pay" />
+                    </group>
+                    <group col="2" colspan="2" name="right_column">
+                        <separator colspan="2" string="Legislação contratual"/>
+                        <field name="regime_trabalhista" required="1"/>
+                        <field name="regime_previdenciario" required="1" />
+                        <field name="natureza_atividade" required="1"/>
+                        <field name="categoria_trabalhador" required="1"/>
+                        <field name="job_id" string="Cargo/função" required="1"/>
+                        <field name="sindicato_id" domain="[('ref', '=', 'SINDICATO')]" required="0" />
+                        <field name="optante_fgts" required="1"/>
+                        <field name="data_opcao_fgts" required="1"/>
+                    </group>
+                    <group col="2" colspan="2" name="right_column">
+                        <separator colspan="2" string="Lotação e jornada de trabalho"/>
+                        <field name="department_id" />
+                        <field name="lotacao_id" />
+                        <field name="working_hours" string="Jornada de trabalho" invisible="1" />
+                        <field name="jornada_tipo" />
+                        <group col="2" colspan="2" name="right_column" attrs="{'invisible': [('jornada_tipo', '!=', '1')]}">
+                            <separator colspan="2" string="Jornada padrão"/>
+                            <field name="jornada_segunda_a_sexta_id" />
+                            <field name="jornada_sabado_id" />
+                        </group>
+                        <group col="2" colspan="2" name="right_column" attrs="{'invisible': [('jornada_tipo', '!=', '2')]}">
+                            <separator colspan="2" string="Jornada turno fixo"/>
+                            <field name="jornada_segunda_id" />
+                            <field name="jornada_terca_id" />
+                            <field name="jornada_quarta_id" />
+                            <field name="jornada_quinta_id" />
+                            <field name="jornada_sexta_id" />
+<!--                                 <field name="jornada_sabado_id" /> -->
+                            <field name="jornada_domingo_id" />
+                        </group>
+                        <group col="2" colspan="2" name="right_column" attrs="{'invisible': [('jornada_tipo', '!=', '3')]}">
+                            <separator colspan="2" string="Jornada turno flexível"/>
+                            <field name="jornada_turno" />
+                            <field name="jornada_turno_id" />
+                        </group>
+                        <group col="2" colspan="2" name="right_column" attrs="{'invisible': [('jornada_tipo', '!=', '4')]}">
+                            <separator colspan="2" string="Jornada especial/escala"/>
+                            <field name="jornada_escala" />
+                            <field name="jornada_escala_id" />
+                        </group>
+<!--                            <field name="qtde_horas_dia_trab"/>
+                        <field name="qtde_horas_mes_trab" on_change="onchange_contract_id(qtde_horas_mes_trab, unidade_salario, wage)"/>
+                        <field name="valor_salario_para_calculo"/>-->
+                    </group>
+
+                </page>
+<!--                <page string="Vínculos anteriores e cedentes">
+                    <group col="2" colspan="2" name="right_column">
+                        <separator colspan="2" string="Vínculo anterior"/>
+                        <field name="cnpj_empregador_anterior" />
+                        <field name="matricula_anterior" />
+                        <field name="data_inicio_vinculo_anterior" />
+                        <field name="obs_anterior" />
+                    </group>
+                    <group col="2" colspan="2" name="right_column">
+                        <separator colspan="2" string="Vínculo cedente"/>
+                        <field name="cnpj_empregador_cedente" />
+                        <field name="matricula_cedente" />
+                        <field name="data_inicio_vinculo_cedente" />
+                        <field name="onus_cedente" />
+                    </group>
+                </page>-->
+                <page string="Saúde ocupacional">
+                    <field name="data_atestado_saude" />
+                    <field name="medico_atestado_saude_nome"/>
+                    <newline/>
+                    <field name="medico_atestado_saude_crm_numero"/>
+                    <field name="medico_atestado_saude_crm_estado"/>
+                    <separator string="Exames" colspan="4" />
+                    <field name="exame_ids" widget="one2many_list" colspan="4" nolabel="1">
+                        <tree editable="top">
+                            <field name="exame_id" on_change="onchange_data_exame(data_exame, exame_id)"/>
+                            <field name="data_exame" on_change="onchange_data_exame(data_exame, exame_id)"/>
+                            <field name="data_validade" />
+                        </tree>
+                    </field>
+                </page>
+                <page string="Rubricas Especiais">
+                    <separator string="Rubricas específicas do contrato" colspan="4"/>
+                    <field name="regra_ids" nolabel="1" colspan="4">
+                        <tree editable="top">
+                            <field name="rule_id" />
+                            <field name="data_inicial" />
+                            <field name="data_final" />
+                            <field name="quantidade" />
+                            <field name="porcentagem" />
+                            <field name="valor" />
+                        </tree>
+                    </field>
+                </page>
+<!--                <page string="Processo judicial">
+                    <field name="numero_processo_judicial" />
+                    <newline />
+                    <field name="advogado_autor_processo" colspan="4" />
+                    <field name="advogado_empresa" colspan="4" />
+                    <separator string="Observações do processo judicial" colspan="4"/>
+                    <field name="obs_processo_judicial" nolabel="1" colspan="4"/>
+                </page>-->
+<!--                <page string="Controle de férias">
+                    <button icon="gtk-execute" name="recalcula_ferias" string="Recalcula férias" type="object"/>
+                    <button icon="gtk-execute" name="acao_demorada_recalcula_ferias" string="Recalcula férias de todos" type="object"/>
+
+                    <field name="ferias_ids" nolabel="1" readonly="1" colspan="4">
+                        <tree>
+                            <field name="data_inicial_periodo_aquisitivo" />
+                            <field name="data_final_periodo_aquisitivo_cheio" />
+                            <field name="data_inicial_periodo_concessivo" />
+                            <field name="data_final_periodo_concessivo" />
+                            <field name="data_inicial_periodo_gozo" />
+                            <field name="data_final_periodo_gozo" />
+                            <field name="data_aviso" />
+                            <field name="data_limite_gozo" />
+                            <field name="data_limite_aviso" />
+                            <field name="faltas" />
+                            <field name="afastamentos" />
+                            <field name="dias" />
+                            <field name="saldo_dias" />
+                            <field name="avos" />
+                            <field name="proporcional" />
+                            <field name="vencida" />
+                            <field name="pagamento_dobro" />
+                            <field name="perdido_afastamento" />
+                        </tree>
+                    </field>
+                </page>-->
+                <page string="Alterações contratuais">
+                    <notebook>
+                        <page string="Remuneração">
+                            <separator string="Alterações na remuneração" colspan="4"/>
+                            <field name="alteracao_remuneracao_ids" colspan="4" nolabel="1" model="form,tree" context="{'default_data_alteracao': None, 'default_wage': wage, 'default_unidade_salario': unidade_salario, 'default_horas_mensalista': horas_mensalista, 'default_salario_variavel': salario_variavel, 'default_unidade_salario_variavel': unidade_salario_variavel, 'default_struct_id': struct_id, 'default_tipo_alteracao': 'R'}">
+                                <tree editable="top">
+                                    <field name="tipo_alteracao" invisible="1" />
+                                    <field name="data_alteracao" required="1" />
+                                    <field name="wage" string="Salário" required="1" />
+                                    <field name="unidade_salario" required="1" />
+                                    <field name="horas_mensalista" required="1" />
+<!--                                        <field name="salario_variavel"/>
+                                    <field name="unidade_salario_variavel"/>-->
+                                    <field name="struct_id" string="Estrutura" domain="[('tipo_alteracao', '=', 'N')]" required="1" />
+                                    <field name="motivo_id" required="1" />
+                                    <field name="obs" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Jornada">
+                            <separator string="Alterações na jornada e escalas" colspan="4"/>
+                            <field name="alteracao_jornada_ids" colspan="4" nolabel="1" model="form,tree" context="{'default_data_alteracao': None, 'default_jornada_tipo': jornada_tipo, 'default_jornada_segunda_a_sexta_id': jornada_segunda_a_sexta_id, 'default_jornada_segunda_id': jornada_segunda_id, 'default_jornada_terca_id': jornada_terca_id, 'default_jornada_quarta_id': jornada_quarta_id, 'default_jornada_quinta_id': jornada_quinta_id, 'default_jornada_sexta_id': jornada_sexta_id, 'default_jornada_sabado_id': jornada_sabado_id, 'default_jornada_domingo_id': jornada_domingo_id, 'default_jornada_turno_id': jornada_turno_id, 'default_jornada_escala_id': jornada_escala_id, 'default_jornada_turno': jornada_turno, 'default_jornada_escala': jornada_escala, 'default_tipo_alteracao': 'J'}">
+                                <tree editable="top">
+                                    <field name="tipo_alteracao" invisible="1" />
+                                    <field name="data_alteracao" required="1" />
+                                    <field name="jornada_tipo" required="1" />
+                                    <field name="jornada_segunda_a_sexta_id" />
+<!--                                        <field name="jornada_segunda_id" />
+                                    <field name="jornada_terca_id" />
+                                    <field name="jornada_quarta_id" />
+                                    <field name="jornada_quinta_id" />
+                                    <field name="jornada_sexta_id" />-->
+                                    <field name="jornada_sabado_id" />
+<!--                                        <field name="jornada_domingo_id" />
+                                    <field name="jornada_turno" />
+                                    <field name="jornada_turno_id" />-->
+                                    <field name="jornada_escala" />
+                                    <field name="jornada_escala_id" />
+                                    <field name="motivo_id" required="1" />
+                                    <field name="obs" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Cargo e atividade">
+                            <separator string="Alterações no cago e/ou atividades" colspan="4"/>
+                            <field name="alteracao_cargo_ids" colspan="4" nolabel="1" model="form,tree" context="{'default_data_alteracao': None, 'default_regime_trabalhista': regime_trabalhista, 'default_regime_previdenciario': regime_previdenciario, 'default_natureza_atividade': natureza_atividade, 'default_categoria_trabalhador': categoria_trabalhador, 'default_job_id': job_id, 'default_tipo_alteracao': 'C'}">
+                                <tree editable="top">
+                                    <field name="tipo_alteracao" invisible="1" />
+                                    <field name="data_alteracao" required="1" />
+                                    <field name="regime_trabalhista" required="1" />
+                                    <field name="regime_previdenciario" required="1" />
+                                    <field name="natureza_atividade" required="1" />
+                                    <field name="categoria_trabalhador" required="1" />
+                                    <field name="job_id" string="Cargo/função" required="1" />
+                                    <field name="motivo_id" required="1" />
+                                    <field name="obs" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Filiação sindical">
+                            <separator string="Alterações na filiação sindical" colspan="4"/>
+                            <field name="alteracao_sindicato_ids" colspan="4" nolabel="1" model="form,tree" context="{'default_data_alteracao': None, 'default_sindicato_id': sindicato_id, 'default_tipo_alteracao': 'S'}">
+                                <tree editable="top">
+                                    <field name="tipo_alteracao" invisible="1" />
+                                    <field name="data_alteracao" required="1" />
+                                    <field name="sindicato_id" domain="[('ref', '=', 'SINDICATO')]" required="1" />
+                                    <field name="motivo_id" required="1" />
+                                    <field name="obs" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Lotação/Local de trabalho">
+                            <separator string="Alterações no local de trabalho" colspan="4"/>
+                            <field name="alteracao_lotacao_ids" colspan="4" nolabel="1" model="form,tree" context="{'default_data_alteracao': None, 'default_department_id': department_id, 'default_lotacao_id': lotacao_id, 'default_tipo_alteracao': 'L'}">
+                                <tree editable="top">
+                                    <field name="tipo_alteracao" invisible="1" />
+                                    <field name="contract_id" invisible="1" />
+                                    <field name="data_alteracao" required="1" />
+                                    <field name="department_id" />
+                                    <field name="lotacao_id" />
+                                    <field name="motivo_id" required="1" />
+                                    <field name="obs" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </page>
+                <page string="Cursos e Treinamentos">
+                    <field name="curso_ids" nolabel="1" colspan="4" >
+                        <tree editable="top" >
+                            <field name="curso_id" required="1"/>
+                            <field name="carga_horaria" required="1" />
+                            <field name="data_inicial" required="1" />
+                            <field name="data_final" required="1" />
+                            <field name="situacao" required="1" />                            
+                        </tree>
+                    </field>                     
+                </page> 
+<!--                <page string="Etiqueta">
+                    <separator colspan="4" string="Etiqueta"/>
+                    <newline/>
+                    <field name="mes" />
+                    <newline/>
+                    <field name="ano" />
+                    <newline/>
+                    <button string="Gerar etiquetas" icon="gtk-execute" name="gerar_etiqueta_unica" type="object" />
+                    <newline/>
+                    <field name="nome" invisible="1"/>
+                    <newline/>
+                    <field name="arquivo" nolabel="1" readonly="1" filename="nome"/>
+                </page>-->
+            </notebook>
+            </field>
+        </record>
+
+        <record id="hr_contract_prolabore_acao" model="ir.actions.act_window">
+            <field name="name">Pro-labore</field>
+            <field name="res_model">hr.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_contract.hr_contract_view_tree"/>
+            <field name="domain">[('categoria_trabalhador', '=', '722')]</field>
+            <field name="context">{'categoria_trabalhador': '722','default_categoria_trabalhador': '722' }</field>
+        </record>
+
+        <menuitem action="hr_contract_prolabore_acao"
+        id="menu_contract_prolabore" parent="menu_hr_contratos"/>
+
+        <record model="ir.actions.act_window.view" id="hr_contract_prolabore_acao_form">
+            <field eval="3" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_contract_prolabore_acao"/>
+            <field name="view_id" ref="hr_contract_prolabore_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_contract_prolabore_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_contract_prolabore_acao"/>
+            <field name="view_id" ref="hr_contract.hr_contract_view_tree"/>
+        </record>
+
+    </data>
+</openerp>

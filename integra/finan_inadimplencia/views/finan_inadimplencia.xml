@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_inadimplencia_wizard" >
+            <field name="name">finan.inadimplencia.wizard</field>
+            <field name="model">finan.inadimplencia</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Carta de Inadimplência">
+                    <separator string="Modelo da carta" colspan="4" />
+                    <newline/>
+                    <field name="modelo_id" colspan="4" required="1"/>
+                    <newline/>
+                    <button icon="gtk-execute" string="Gerar cartas" name="gera_modelos" type="object" colspan="4" />
+                    <separator string="Lançamentos" colspan="4" />
+                    <field name="lancamento_ids" nolabel="1" colspan="4" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_inadimplencia_wizard_acao">
+            <field name="name">Carta de Inadimplência</field>
+            <field name="res_model">finan.inadimplencia</field>
+            <field name="view_mode">form</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_inadimplencia_wizard_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_inadimplencia_wizard"/>
+            <field name="act_window_id" ref="finan_inadimplencia_wizard_acao"/>
+        </record>
+
+        <menuitem action="finan_inadimplencia_wizard_acao"
+                  id="menu_finan_inadimplencia_wizard"
+                  name="Carta de Inadimplência"
+                  parent="finan.menu_rel_tesouraria"
+                  sequence="10" />
+
+    </data>
+</openerp>

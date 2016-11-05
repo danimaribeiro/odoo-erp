@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="stock_location_form_patrimonial" model="ir.ui.view">
+            <field name="name">stock.location.form</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="company_id" position="replace"/>
+                <xpath expr="//group[3]" position="before">
+                    <group colspan="4">
+                        <separator string="Empresa única com permissão de usar este local" colspan="4" />
+                        <field name="company_id" nolabel="1" colspan="4" />
+                        <newline />
+                        <separator string="Empresas com permissão de usar este local" colspan="4" />
+                        <field name="company_ids" colspan="4" nolabel="1" />
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

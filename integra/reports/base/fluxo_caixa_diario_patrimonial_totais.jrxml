@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fluxo_caixa_diario_patrimonial_totais" language="groovy" pageWidth="555" pageHeight="752" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="93a9b03b-fc37-4d61-920b-35af9ac8ddeb">
+	<property name="ireport.zoom" value="1.771561000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SQL_RELATORIO_SUB" class="java.lang.String"/>
+	<parameter name="SALDO_ANTERIOR_1" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[$P!{SQL_RELATORIO_SUB}]]>
+	</queryString>
+	<field name="data" class="java.sql.Date"/>
+	<field name="valor_entrada" class="java.math.BigDecimal"/>
+	<field name="valor_saida" class="java.math.BigDecimal"/>
+	<field name="diferenca" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Diferença]]></fieldDescription>
+	</field>
+	<variable name="valor_entrada_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_entrada}]]></variableExpression>
+	</variable>
+	<variable name="valor_saida_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_saida}]]></variableExpression>
+	</variable>
+	<variable name="diferenca_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{diferenca}]]></variableExpression>
+	</variable>
+	<variable name="saldo" class="java.math.BigDecimal" incrementType="Column">
+		<variableExpression><![CDATA[$V{_saldo} == 0 ?
+    $F{diferenca} + $P{SALDO_ANTERIOR_1}
+:
+$F{diferenca} + $V{saldo}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="_saldo" class="java.lang.Integer" incrementType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$V{_saldo} + 1]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<pageHeader>
+		<band height="46">
+			<staticText>
+				<reportElement x="0" y="20" width="110" height="12" uuid="56fac4a3-0801-40c5-86c2-7d006760967d"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="439" y="20" width="115" height="12" uuid="528a55d6-70a3-4a5c-ada0-b9cb21ee7fbc"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="110" y="20" width="110" height="12" uuid="0323a03c-c0eb-468b-a3e9-0d7ba1da2416"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Entrada ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="330" y="20" width="110" height="12" uuid="baabfdcf-f636-406e-9e72-a22004cd34f6"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Diferença]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="220" y="20" width="110" height="12" uuid="8853f3fc-d868-4299-83a7-c62eb0e4a732"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="20" uuid="572d808f-4066-4c86-8928-9d3357b8fa66"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAIS POR DATA EMPRESA/GRUPO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="359" y="32" width="80" height="14" uuid="abf1c5b9-9e81-4a94-b25b-7508024f1ceb"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Saldo Anterior:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="440" y="32" width="114" height="14" uuid="6c5fb50f-f814-44e5-bf1f-4718025702f9"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SALDO_ANTERIOR_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="12">
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="330" y="0" width="110" height="12" uuid="62da5be3-97ca-4623-92a3-d42835fa09e0"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{diferenca}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="110" y="0" width="110" height="12" uuid="c74d3427-66e9-457e-b9bd-89b44d2b0640"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_entrada}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="440" y="0" width="115" height="12" uuid="cdd0e711-9c2d-4e70-b9ad-36545571ad8b"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{saldo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="110" height="12" uuid="41750a11-33f2-44dc-b8d0-3f5a99e6d242"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="220" y="0" width="110" height="12" uuid="57777739-c032-4813-a825-363babccfafc"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_saida}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="12">
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="220" height="12" uuid="457d0f18-cba0-4fee-94bb-fbffaf15ab20"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_entrada_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="330" y="0" width="110" height="12" uuid="dd462510-13af-4a96-b524-13a9ff00eb48"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{diferenca_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="220" y="0" width="110" height="12" uuid="2e996031-e459-4aed-b438-25f6f8f24678"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_saida_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="440" y="0" width="115" height="12" uuid="f5ef532d-1a15-4a16-a936-24ed93513e12"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{saldo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

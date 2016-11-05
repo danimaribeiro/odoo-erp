@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="orcamento_central_traducao" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="1.7715610000000124"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="REGISTRO_IDS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select distinct
+--Empresa Cliente
+rpa.name as nome_cliente,
+rpa.function as departemento,
+rpa.email as email,
+rpa.phone as telefone,
+rp.name as cliente,
+coalesce(rp.cidade,'') as cliente_cidade,
+coalesce(rp.estado,'') as cliente_estado,
+coalesce(rc.name,'') as cliente_pais,
+
+--Empresa
+ru.name as nome_usuario,
+coalesce(ru.fone,'') as fone_usuario,
+coalesce(ru.mobile,'') as celular_usuario,
+ru.user_email as email_usuario,
+rpu.name as empresa_usuario,
+coalesce(rpu.cidade,'') as usuario_cidade,
+coalesce(rpu.estado,'') as usuario_estado,
+so.name as job,
+cast(c.photo as varchar) as photo,
+
+--produto
+
+pp.name_template as produto,
+sol.product_uom_qty as quantidade,
+pu.name as unidade_medida,
+sol.discount as desconto,
+sol.price_unit as preco_unitario,
+so.amount_total as valor_total,
+apt.name as condicao_pagamento,
+so.picking_policy as prazo,
+so.note
+
+from sale_order so
+join sale_order_line sol on sol.order_id = so.id
+join product_product pp on pp.id = sol.product_id
+join product_template pt on pt.id = pp.product_tmpl_id
+join product_uom pu on pu.id = pt.uom_id
+join res_partner rp on rp.id = so.partner_id
+join res_users ru on ru.id = so.create_uid
+left join res_partner_address rpa on rpa.partner_id = rp.id
+left join res_country as rc on rc.id = rpa.country_id
+join res_company c on c.id = ru.company_id
+join res_partner rpu on rpu.id = c.partner_id
+left join account_payment_term apt on apt.id = so.payment_term]]>
+	</queryString>
+	<field name="nome_cliente" class="java.lang.String"/>
+	<field name="departemento" class="java.lang.String"/>
+	<field name="email" class="java.lang.String">
+		<fieldDescription><![CDATA[Email]]></fieldDescription>
+	</field>
+	<field name="telefone" class="java.lang.String"/>
+	<field name="cliente" class="java.lang.String"/>
+	<field name="cliente_cidade" class="java.lang.String"/>
+	<field name="cliente_estado" class="java.lang.String"/>
+	<field name="cliente_pais" class="java.lang.String"/>
+	<field name="nome_usuario" class="java.lang.String"/>
+	<field name="fone_usuario" class="java.lang.String"/>
+	<field name="celular_usuario" class="java.lang.String"/>
+	<field name="email_usuario" class="java.lang.String"/>
+	<field name="empresa_usuario" class="java.lang.String"/>
+	<field name="usuario_cidade" class="java.lang.String"/>
+	<field name="usuario_estado" class="java.lang.String"/>
+	<field name="job" class="java.lang.String"/>
+	<field name="photo" class="java.lang.String">
+		<fieldDescription><![CDATA[Logo Base64]]></fieldDescription>
+	</field>
+	<field name="produto" class="java.lang.String"/>
+	<field name="quantidade" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Quantidade]]></fieldDescription>
+	</field>
+	<field name="unidade_medida" class="java.lang.String"/>
+	<field name="desconto" class="java.math.BigDecimal"/>
+	<field name="preco_unitario" class="java.math.BigDecimal"/>
+	<field name="valor_total" class="java.math.BigDecimal"/>
+	<field name="condicao_pagamento" class="java.lang.String"/>
+	<field name="prazo" class="java.lang.String"/>
+	<field name="note" class="java.lang.String">
+		<fieldDescription><![CDATA[Note]]></fieldDescription>
+	</field>
+	<group name="orcamento">
+		<groupHeader>
+			<band height="16">
+				<staticText>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="305" height="12" uuid="22b6c548-a9cd-42b2-84e4-74940a847090"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Descriação]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="305" y="0" width="48" height="12" uuid="f4be3abc-41ac-4a21-9a19-8228a3e01cb7"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Qtd.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="353" y="0" width="43" height="12" uuid="d1e5c7a4-1171-4584-996d-f6372bbc7d49"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[UND]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="453" y="0" width="48" height="12" uuid="19281911-8982-42f8-ad03-e0b1ef48885f"/>
+					<box rightPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Desconto]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="396" y="0" width="57" height="12" uuid="13e25a92-c4ae-4ed7-a336-561adb2f698e"/>
+					<box rightPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Preço Unit.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="501" y="0" width="54" height="12" uuid="531daae0-4f32-4086-bf39-8348e306b6a5"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="89" splitType="Stretch">
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="501" y="0" width="54" height="16" uuid="a1217621-3e6d-401f-beb7-6ed912babd34"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{valor_total}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="432" y="0" width="69" height="16" uuid="cbd08b4c-390a-45e7-9dd9-c8307dc0b489"/>
+					<box rightPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor Total:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="16" width="95" height="16" uuid="7b952ab0-3bb3-4ada-a5a6-445f2a6f99d7"/>
+					<box leftPadding="5" rightPadding="0">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Forma de pagamneto.:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="95" height="16" uuid="822eeb5f-8e76-4f7d-89d2-5ae33f10f983"/>
+					<box leftPadding="5" rightPadding="0">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Prazo de Entrega.......:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="95" y="16" width="337" height="16" uuid="d5404b84-c849-4289-800b-04bc9b19f226"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{condicao_pagamento}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="95" y="0" width="337" height="16" uuid="3dc462eb-e543-4670-9aa0-8b4a7181790a"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{prazo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="0" y="48" width="555" height="41" uuid="d3ce48f2-425a-4279-9b0b-ca9772b8d10c"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{note}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="32" width="555" height="16" uuid="fd3c5c12-15d4-4960-99d6-85fdd8afd543"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Informações Complementares]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="81">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="0" width="117" height="73" uuid="49a9d47b-0d34-400d-b9f9-5844d8e9b7bc"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<imageExpression><![CDATA[new java.io.StringBufferInputStream(new org.w3c.tools.codec.Base64Decoder($F{photo}).processString())]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="95" y="0" width="460" height="28" uuid="39f53746-7b72-40a4-9563-aa199fe8556c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CENTRAL DE TRADUÇÕES LTDA.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="95" y="38" width="150" height="10" uuid="d993fba6-131b-4a90-b1bc-dbfe403d5abd"/>
+				<box leftPadding="30">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[São Paulo - SP - Brasil]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="95" y="48" width="150" height="25" uuid="a75c3ba3-2d95-4d56-aa1b-489d422e281c"/>
+				<box leftPadding="30">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Av.Paulista,352 - 8º Andar.
+São Paulo - SP - CEP:01310-100
+Fone/Fax: (11) 3287-3200
+E-mail: sp@centraldetracucoes.com.br
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="245" y="38" width="160" height="10" uuid="70518021-51f2-42ab-a270-523a4e135341"/>
+				<box leftPadding="30">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rio de Janeiro - RJ - Brasil]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="245" y="48" width="160" height="25" uuid="efd9388d-5f87-43c2-a641-3c9963a8c5fe"/>
+				<box leftPadding="30">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Av.Rio Branco,156 - Edifício Av. Central
+28º Andar, conjunto 2826.
+Rio de Janeiro - RJ - CEP:20040-003
+Fone/Fax: (21) 2524-2525
+E-mail: rj@centraldetracucoes.com.br
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="48" width="150" height="25" uuid="027afa64-24ca-4bba-93b7-2677c787e4a6"/>
+				<box leftPadding="30"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[Av.Juscelino Kubitscheck, 410
+Bloco A - 3º Andar
+Joinville - SC - CEP:89201-100
+Fone/Fax: (47) 3422-0038
+E-mail: sc@centraldetracucoes.com.br
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="38" width="150" height="10" uuid="3c47895b-7eb3-4be3-86bb-7cd913cfb531"/>
+				<box leftPadding="30"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Joinville - SC - Brasil]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="139" splitType="Stretch">
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="68" height="16" isPrintWhenDetailOverflows="true" uuid="7cefff3b-7e1d-43ae-9c4d-4fa7b56c0ee6"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Para....................:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="16" width="68" height="16" uuid="6c706ccc-53d5-4274-a7d9-80306686af65"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Departamento..:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="32" width="68" height="16" uuid="0ebe22de-793a-4420-adc0-0bf7fd601a73"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[E-mail................:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="48" width="68" height="16" uuid="d774a71a-fd32-42ac-8b1e-d279399070a5"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fone..................:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="64" width="68" height="16" uuid="dc6fbbd8-0a2d-4547-8f76-50465028dde4"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empresa...........:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="80" width="68" height="16" uuid="5190cc52-b2ad-4e64-ba79-ffa29a38242e"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cidade/UF/País:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="68" y="0" width="209" height="16" uuid="d7ec0153-053d-4a49-8559-8398cd9add61"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome_cliente}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="277" y="80" width="71" height="16" uuid="f1bcb31c-2f02-4d9d-a391-ffa9620c4630"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cidade/UF/País.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="277" y="48" width="71" height="16" uuid="d60a93ee-51f6-4adf-b9f7-7cd08bf55c61"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fone...................:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="277" y="0" width="71" height="16" uuid="f1a84e6e-76a5-446c-8013-6247a742053d"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[De....................:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="277" y="64" width="71" height="16" uuid="9f0455c5-dcf0-4681-b434-6a5eb0836bcb"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empresa............:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="277" y="32" width="71" height="16" uuid="094c7181-0e4f-4e57-ad0d-14f79d6bebf1"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[E-mail.................:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="277" y="16" width="71" height="16" uuid="2b28fdfb-0e15-47a1-b1e8-231484a1bb75"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Departamento...:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="68" y="16" width="209" height="16" uuid="4bde8b1b-e2ed-44bc-89ba-be1b24ea170d"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{departemento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="68" y="32" width="209" height="16" uuid="50b966f7-6967-4d59-955d-506b62dc799b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="68" y="64" width="209" height="16" uuid="13ed8028-03bf-408e-9bb7-72b46addce13"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="68" y="80" width="209" height="16" uuid="bef72580-cd11-4b98-a292-165138a33cc1"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente_cidade} + "-" + $F{cliente_estado} + "-" + $F{cliente_pais}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="68" y="48" width="209" height="16" uuid="99487462-e953-4cc5-84ff-5556481b6fd8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{telefone}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="348" y="16" width="207" height="16" uuid="ef8b107d-06a1-4317-b0b3-fcae2752695d"/>
+				<box leftPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Comercial"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="348" y="32" width="207" height="16" uuid="57db915d-ef92-44cd-bc5d-ef70979259e3"/>
+				<box leftPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{email_usuario}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="348" y="48" width="207" height="16" uuid="3d4e39ec-975b-4fac-b0b8-e382bf619db8"/>
+				<box leftPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fone_usuario} + "-" + $F{celular_usuario}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="348" y="0" width="207" height="16" uuid="f6afe46a-9d20-4ced-ae7f-7cf55d082df4"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome_usuario}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="348" y="64" width="207" height="16" uuid="f5ebec3f-4607-4461-b841-56973ea90a43"/>
+				<box leftPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_usuario}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="348" y="80" width="207" height="16" uuid="b387fbaf-ac79-476d-a44e-f54489e134bc"/>
+				<box leftPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{usuario_cidade} + "-" + $F{usuario_estado} + "- Brasil"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="348" y="96" width="207" height="16" uuid="475210bc-9cfb-4a0b-b93c-317a26c6bd01"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{job}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="277" y="96" width="71" height="16" uuid="a1755fdb-ab8a-4557-b2b0-e5ba9a7760cb"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ref. JOB #........:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="96" width="277" height="16" uuid="955c78cc-2df0-45c7-ac4c-0f51006f2dde"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="123" width="555" height="16" uuid="34b504b8-cd12-4a22-9a6b-c10be7a6b881"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[-- DISCRIMINAÇÃO DOS SERVIÇOS --]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="0" width="305" height="12" uuid="7c38fee7-1225-4c15-80f2-7768b46a12d4"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{produto}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="305" y="0" width="48" height="12" uuid="0712535b-f618-4a0a-97ff-746493338db3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantidade}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="353" y="0" width="43" height="12" uuid="a4d2ce5c-91e2-43e8-8069-4dc8ddfcebb8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unidade_medida}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="396" y="0" width="57" height="12" uuid="54efb28d-0e89-4bd9-ac8f-bde9e6b9724f"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{preco_unitario}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="453" y="0" width="48" height="12" uuid="1063b9cd-0730-49b5-a942-fba91a7ba9c8"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desconto}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="501" y="0" width="54" height="12" uuid="64a98fa8-e353-4ad6-8f2e-e404efa08571"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{preco_unitario} * $F{quantidade}) - $F{desconto}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="12">
+			<textField evaluationTime="Report">
+				<reportElement x="536" y="0" width="24" height="12" uuid="ae1e62c5-562b-45d8-b4e7-ef521ffd8f65"/>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="452" y="0" width="84" height="12" uuid="0876a19d-9b86-4b65-a600-79d03d8e473f"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="255" splitType="Immediate">
+			<staticText>
+				<reportElement positionType="Float" x="0" y="0" width="555" height="255" uuid="2f68f712-9436-445d-ac53-d0e67effb487"/>
+				<box leftPadding="5" rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Observações:
+
+    1. A lauda é a unidade padrão de cobrança de serviços de tradução. Chamamos de lauda folha A4 contendo 1000 caracteres sem espaço.
+
+    2. Os preços praticados pela Central de Traduções estão vinculados à alta qualidade dos serviços prestados e à confiança que nossos clientes públicos e privados, aprenderam a associar à nossa empresa.
+
+    3. Material entregue idêntico ao original sem custo adicional para editoração eletrônica;
+
+    4. No caso de terminologia própria, o cliente deverá fornecer o glossário a ser utilizado, o não fornecimento desse glossário antes da execução do trabalho poderá acarretar divergências de termos que não serão de responsabilidade da CT, porém executaremos se necessárias alterações posteriores de terminologia sem nenhum custo adicional.
+
+    5. Não se deve avaliar a propriedade dos preços de serviços de tradução tomando-se exclusivamente o critério preço/lauda/palavra. Com freqüência somos solicitados a corrigir, em caráter de extrema urgência, traduções contratadas unicamente em função do baixo preço. Por isso, sabemos bem que o prejuízo causado por uma tradução mal feita não se limita ao valor desembolsado e nem ao custeio adicional de uma versão corrigida.
+
+Para o aceite, solicitamos assinar a APROVAÇÃO e nos enviar via fax este documento datado e assinado.
+
+Outrossim, estamos à sua inteira disposição para quaisquer esclarecimentos que se fizerem necessários.
+
+Atenciosamente,
+
+
+Elaine Alves
+(47) 3422 0038]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="210" width="203" height="16" uuid="2e6558ac-f5ff-4051-849a-64027ecad1a2"/>
+				<box leftPadding="5">
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_usuario}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

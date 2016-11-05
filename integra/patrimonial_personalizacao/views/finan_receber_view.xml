@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_receber_contrato_tree">
+            <field name="name">finan.receber.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan_contrato.finan_receber_contrato_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="contrato_id" position="after">
+                    <field name="vendedor_id" readonly="1" />
+<!--                     <field name="hr_department_id" readonly="1" /> -->
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_contrato_search">
+            <field name="name">finan.receber.search</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan_contrato.finan_receber_contrato_search"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="contrato_id" position="after">
+                    <field name="vendedor_id" />
+<!--                     <field name="hr_department_id" /> -->
+                </field>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="finan_receber_form">
+            <field name="name">finan.receber.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="sugestao_bank_id" position="replace">
+                    <field name="sugestao_bank_id" string="Previsão de crédito na conta" domain="['|', ('raiz_cnpj', '=', raiz_cnpj),('cnpj_cpf', '=', False)]" />
+                </field>                
+            </field>
+        </record>
+
+    </data>
+</openerp>

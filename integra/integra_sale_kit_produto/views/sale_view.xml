@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="sale_order_form">
+        <field name="name">sale_order_form</field>
+        <field name="model">sale.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <button string="Cancel Order" position="replace">
+            </button>
+            <field name="date_confirm" position="after">
+                <field name="dias_validade" colspan="2" on_change="onchange_dias_validade(dias_validade, date_order)" groups="base.group_sale_manager" />
+                <field name="dt_validade"  readonly="1" colspan="2" />
+                <separator string="Motivo Cancelamento" colspan="2" />
+                <field name="motivo_cancelamento_id" colspan="2" />
+                <button name="action_cancel" states="manual,progress" string="Cancel Order" type="object" icon="gtk-cancel" />
+            </field>
+
+            <field name="date_order" position="replace">
+                <field name="date_order" on_change="onchange_date_order(date_order, dias_validade)" />
+            </field>
+
+            <page string="Other Information" position="after">
+                <page string="Comunicação e histórico">
+                    <separator string="Emails trocados e anotações" colspan="4" />
+                    <field name="mail_message_ids" colspan="4" nolabel="1" mode="tree" readonly="1">
+                        <tree string="Histórico">
+                            <field name="date" string="Data" />
+                            <field name="display_text" string="Texto"/>
+                            <field name="email_to" invisible="1"/>
+                            <field name="email_from" invisible="1"/>
+                            <button
+                                string="Reply" attrs="{'invisible': [('email_from', '=', False)]}"
+                                name="%(mail.action_email_compose_message_wizard)d"
+                                context="{'mail.compose.message.mode':'reply', 'message_id':active_id}"
+                                icon="terp-mail-replied" type="action" />
+                        </tree>
+                    </field>
+                    <button string="Incluir anotação"
+                            name="incluir_anotacao"
+                            type="object"
+                            icon="terp-document-new" />
+                    <button string="Enviar e-mail"
+                            name="%(mail.action_email_compose_message_wizard)d"
+                            icon="terp-mail-message-new" type="action"/>
+                    <newline/>
+                    <field name="partner_fone" invisible="1" />
+                    <field name="partner_celular" invisible="1" />
+                    <separator string="Ligações telefônicas" colspan="4" />
+                    <field name="crm_phonecall_ids" colspan="4" nolabel="1" mode="tree" context="{'default_partner_id': partner_id, 'default_phone': partner_fone, 'default_mobile': partner_celular}">
+                        <tree colors="gray:state in ('cancel','done');blue:state in ('pending',)" string="Phone Calls">
+                            <field name="date"/>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="partner_contact"/>
+                            <field name="partner_phone"/>
+                            <field name="user_id"/>
+                            <field name="categ_id" invisible="1"/>
+                            <field name="create_date" invisible="1"/>
+                            <field name="opportunity_id" invisible="1"/>
+                            <button string="Meeting"
+                                    states="open,pending" icon="gtk-redo"
+                                    name="action_make_meeting" type="object" />
+                            <field name="state"/>
+                            <button name="case_cancel" string="Cancel" states="open,pending" type="object" icon="gtk-cancel"/>
+                            <button name="case_open" string="Todo" states="pending" type="object" icon="gtk-go-forward"/>
+                            <button name="case_close" string="Held" states="open,pending" type="object" icon="gtk-jump-to"/>
+                            <button name="case_pending" string="Not Held" states="open" type="object" icon="gtk-media-pause"/>
+                        </tree>
+                        <form string="Phone Call">
+                            <group colspan="6" col="7">
+                                <field name="name" required="1"/>
+                                <field name="partner_phone"/>
+                                <field name="duration" widget="float_time"/>
+                                <button string="Schedule a Meeting" name="action_make_meeting" icon="gtk-redo" type="object"/>
+
+                                <field name="date"/>
+                                <field name="user_id"/>
+                                <field name="section_id" colspan="1" widget="selection" />
+                                <button string="Schedule Other Call"
+                                        icon="terp-call-start"
+                                        name="%(crm.phonecall_to_phonecall_act)d"
+                                        type="action"  />
+                            </group>
+
+                            <group col="3" colspan="2">
+                                <separator colspan="3" string="Contacts" />
+                                <field name="partner_id"
+                                        on_change="onchange_partner_id(partner_id)" />
+                                <button string="Create a Partner"
+                                        icon="terp-partner"
+                                        name="%(crm.action_crm_phonecall2partner)d"
+                                        type="action"
+                                        attrs="{'invisible':[('partner_id','!=',False)]}"
+                                        groups="base.group_partner_manager"/>
+                                <newline/>
+                                <field name="partner_address_id"
+                                        on_change="onchange_partner_address_id(partner_address_id)" />
+                                <newline/>
+                                <field name="partner_mobile" />
+                            </group>
+                            <group col="2" colspan="2">
+                                <separator colspan="2" string="Categorization" />
+                                <field name="categ_id" widget="selection"
+                                        domain="[('object_id.model', '=', 'crm.phonecall')]"/>
+                                <field name="priority"/>
+                                <field name="sale_order_id"/>
+                            </group>
+                            <separator string="Description" colspan="4" />
+                            <field name="description" nolabel="1" colspan="4" />
+                            <separator colspan="4" />
+                            <group col="8" colspan="4">
+                                <field name="state" widget="statusbar" statusbar_visible="open,done" statusbar_colors='{"pending":"red"}' select="1"/>
+                                <button name="case_cancel" string="Cancel"
+                                        states="open,pending" type="object"
+                                        icon="gtk-cancel" />
+                                <button name="case_open" string="Todo"
+                                        states="pending" type="object"
+                                        icon="gtk-go-forward" />
+                                <button name="case_pending" string="Not Held"
+                                        states="open" type="object" icon="gtk-media-pause" />
+                                <button name="case_close" string="Held"
+                                        states="open,pending" type="object"
+                                        icon="gtk-jump-to" />
+                                <button name="case_reset" string="Reset to Todo"
+                                        states="cancel" type="object"
+                                        icon="gtk-convert" />
+                            </group>
+                        </form>
+                    </field>
+                    <newline/>
+                    <button string="Agendar/Registrar Ligação"
+                            name="%(saleorder2phonecall_act)d" icon="terp-call-start"
+                            type="action"/>
+                </page>
+            </page>
+
+        </field>
+    </record>
+
+</data>
+</openerp>

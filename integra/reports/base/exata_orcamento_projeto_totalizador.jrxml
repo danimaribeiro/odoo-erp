@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="exata_orcamento_projeto_totalizador" language="groovy" pageWidth="511" pageHeight="555" orientation="Landscape" columnWidth="511" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="844f353b-2f47-44c2-9c08-70e6cc1c0329">
+	<property name="ireport.zoom" value="0.8264462809917362"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ORCAMENTO_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+coalesce(ep.nome_completo,'Etapa sem nome') as etapa_pai,
+coalesce(sum(pi.vr_produto), 0 ) as vr_produto,
+coalesce(po.vr_produto * 100, 0) as vr_projeto,
+coalesce(sum(pi.vr_risco), 0 ) as vr_risco
+
+from project_orcamento_item pi
+join project_orcamento po on po.id = pi.orcamento_id
+left join project_orcamento_etapa pe on pe.id = pi.etapa_id
+left join project_orcamento_etapa ep on ep.id = pe.parent_id
+left join product_product pd on pd.id = pi.product_id
+left join product_template pt on pt.id = pd.product_tmpl_id
+left join product_uom uom on uom.id = pt.uom_id
+left join project_project pp on pp.id = po.project_id
+left join account_analytic_account a on a.id = pp.analytic_account_id
+
+where
+po.id = $P{ORCAMENTO_ID}
+
+group by
+etapa_pai,
+vr_projeto
+
+order by
+etapa_pai]]>
+	</queryString>
+	<field name="etapa_pai" class="java.lang.String"/>
+	<field name="vr_produto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor dos produtos/serviços]]></fieldDescription>
+	</field>
+	<field name="vr_projeto" class="java.math.BigDecimal"/>
+	<field name="vr_risco" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor risco]]></fieldDescription>
+	</field>
+	<variable name="vr_produto_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_produto}]]></variableExpression>
+	</variable>
+	<variable name="vr_risco_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_risco}]]></variableExpression>
+	</variable>
+	<title>
+		<band height="21">
+			<staticText>
+				<reportElement x="0" y="0" width="511" height="21" uuid="b65bb662-ab40-4acb-b4e9-9c39969943d9"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESUMO DO ORÇAMENTO POR ETAPA]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="282" height="20" uuid="a98bbef0-1f5b-484a-aba7-742bdfbed42b"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ETAPA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="282" y="0" width="90" height="20" uuid="0749d37e-8bd8-43b0-a21b-399582a16a59"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="372" y="0" width="90" height="20" uuid="16192d79-e039-4e16-bbee-25b30c88fa70"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor risco]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="462" y="0" width="49" height="20" uuid="eefa6896-b8f8-4f2c-9449-b089f53b541a"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="282" height="20" uuid="8472252a-d8ac-4582-ba7c-67d275f3b4f8"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{etapa_pai}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="282" y="0" width="90" height="20" uuid="db46d56b-e2f9-41f2-88c1-46c4a4b0d692"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_produto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="372" y="0" width="90" height="20" uuid="2376f7b6-429e-422a-b63b-dfb94bc154f8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_risco}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %">
+				<reportElement x="462" y="0" width="49" height="20" uuid="06d2470e-56f1-4ec3-9d64-593e3098ef27"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_produto} > 0 &&  $F{vr_projeto} > 0 ?
+($F{vr_produto} / $F{vr_projeto}) * 100
+:
+0]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="208">
+			<pieChart>
+				<chart isShowLegend="true">
+					<reportElement x="0" y="0" width="511" height="208" uuid="6151ec6f-af79-43f3-a0c4-5150e2587f42"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<chartTitle>
+						<font size="8"/>
+						<titleExpression><![CDATA["GRÁFICO DO ORCAMENTO"]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend>
+						<font size="8"/>
+					</chartLegend>
+				</chart>
+				<pieDataset>
+					<keyExpression><![CDATA[$F{etapa_pai}]]></keyExpression>
+					<valueExpression><![CDATA[$F{vr_produto}]]></valueExpression>
+				</pieDataset>
+				<piePlot isShowLabels="true" isCircular="true">
+					<plot/>
+					<itemLabel>
+						<font fontName="SansSerif" size="8"/>
+					</itemLabel>
+				</piePlot>
+			</pieChart>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band height="20">
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="282" y="0" width="90" height="20" uuid="8022ffcf-c8c8-481a-b081-55fab31de85b"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_produto_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="372" y="0" width="90" height="20" uuid="8fdaa52c-a2bf-41e4-8cd5-71e1d629e149"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_risco_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="282" height="20" uuid="d47c948d-7037-4a58-8348-5863a8e6518d"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="462" y="0" width="49" height="20" uuid="287bf762-ff75-497d-9bc7-8756c0c78369"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_employee_form_integra" >
+            <field name="name">hr.employee.form.integra</field>
+            <field name="model">hr.employee</field>
+            <field name="type">form</field>                   
+            <field name="inherit_id" ref="integra_rh.view_employee_form_integra"/>
+            <field name="arch" type="xml">
+                <field name="roc_numero" position="replace">
+                    <field name="roc_numero" string="Registro no órgão de classe(CRECI)" /> 
+                </field>   
+                <field name="roc_orgao_emissor" position="replace">
+                    <field name="roc_orgao_emissor" string="Órgão emisssor do CRECI" /> 
+                </field>                    
+                <field name="roc_data_expedicao" position="replace">
+                    <field name="roc_data_expedicao" string="Data de expedição do CRECI" /> 
+                </field>   
+                <field name="roc_data_validade" position="replace">
+                    <field name="roc_data_validade" string="Data de validade do CRECI" /> 
+                </field>   
+               
+            </field>
+        </record>
+        
+    </data>
+</openerp>

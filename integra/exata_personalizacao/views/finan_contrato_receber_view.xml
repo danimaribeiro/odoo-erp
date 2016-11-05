@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="finan_contrato_receber_imovel_form">
+            <field name="name">finan.contrato.receber.imovel.form</field>
+            <field name="model">finan.contrato</field>
+            <field name="inherit_id" ref="construtora.finan_contrato_receber_imovel_form"/>
+            <field name="type">form</field>  
+            <field name="arch" type="xml">
+                <field name="valor_comissao" position="before">
+                    <field name="data_comissao" colspan="2"/>
+                    <field name="vezes" colspan="2"/>
+                </field>                
+                <button name="gera_modelos" position="after" >
+                    <newline />
+                    <button icon="gtk-print" name="imprimir_contrato_fechamento" string="Imprimir Fechamento Contrato" type="object" attrs="{'invisible': [('situacao_imovel', '!=', 'A')]}"/>
+                </button>             
+                <field name="comissao_ids" position="after">
+                    <button icon="gtk-execute" name="gera_lancamento_comissao" string="Gerar Lançamentos Comissões" type="object" attrs="{'invisible': [('comissao_ids', '=', False)]}"/>
+                    <button icon="gtk-print" name="imprimir_contrato_comissao" string="Imprimir Fichar de Controle Comissões" type="object" attrs="{'invisible': [('comissao_ids', '=', False)]}"/>
+                </field>                
+            </field>
+        </record>
+        
+         <record model="ir.ui.view" id="finan_contrato_comissao_imovel_form">
+            <field name="name">finan.contrato.comissao.imovel.form</field>
+            <field name="model">finan.contrato.comissao</field>
+            <field name="inherit_id" ref="construtora.finan_contrato_comissao_imovel_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="data_inicial" position="replace">
+                </field>
+                <field name="vezes" position="replace">
+                </field>
+                <field name="parcelas_manual" position="replace">
+                </field>                
+                <field name="parcela_ids" position="replace">
+                    <field name="parcela_ids" nolabel="1" readonly="1" colspan="4">                
+                        <tree editable="bottom">
+                            <field name="parcela" required="1" />
+                            <field name="data_vencimento" required="1"/>
+                            <field name="valor" required="1"/>
+                        </tree>
+                    </field>
+                </field>                
+            </field>
+        </record>
+        
+         <record model="ir.ui.view" id="finan_contrato_comissao_imovel_tree">
+            <field name="name">finan.contrato.comissao.imovel.tree</field>
+            <field name="model">finan.contrato.comissao</field>
+            <field name="inherit_id" ref="construtora.finan_contrato_comissao_imovel_tree"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="data_inicial" position="replace">
+                </field>
+                <field name="vezes" position="replace">
+                </field>
+            </field>
+        </record>
+        
+    </data>
+</openerp>

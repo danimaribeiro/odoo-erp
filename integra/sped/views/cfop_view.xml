@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_cfop_tree_filter">
+            <field name="name">cfop.search</field>
+            <field name="model">sped.cfop</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="CFOP">
+                    <filter name="entrada" string="Entrada" domain="[('entrada_saida','=','0')]"/>
+                    <filter name="saida" string="Saída" domain="[('entrada_saida','=','1')]"/>
+                    <filter name="dentro_estado" string="Dentro do estado" domain="[('dentro_estado','=',1)]"/>
+                    <filter name="fora_estado" string="Fora do estado" domain="[('fora_estado','=',1)]"/>
+                    <filter name="fora_pais" string="Fora do país" domain="[('fora_pais','=',1)]"/>
+                    <separator orientation="vertical"/>
+                    <field name="codigo"/>
+                    <field name="descricao"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_cfop_tree_view">
+            <field name="name">cfop.tree</field>
+            <field name="model">sped.cfop</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="codigo"/>
+                    <field name="descricao"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_cfop_form_view">
+            <field name="name">cfop.form</field>
+            <field name="model">sped.cfop</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Form CFOP">
+                    <field name="codigo" />
+                    <newline/>
+                    <field name="descricao" colspan="4" />
+                    <newline/>
+                    <group col="2" colspan="2" string="Característica">
+                        <field name="entrada_saida" colspan="1" />
+                        <field name="dentro_estado" colspan="1" />
+                        <field name="fora_estado" colspan="1" />
+                        <field name="fora_pais" colspan="1" />
+                    </group>
+<!--                     <newline/> -->
+                    <group col="2" colspan="2" string="Configuração do ICMS">
+                        <field name="gera_icms_proprio"/>
+                        <field name="gera_icms_st"/>
+                        <field name="gera_icms_sn"/>
+                    </group>
+                    <newline/>
+                    <group col="2" colspan="2" string="Configuração do IPI">
+                        <field name="gera_ipi"/>
+                    </group>
+                    <group col="2" colspan="2" string="Configuração do PIS-COFINS">
+                        <field name="gera_pis_cofins"/>
+                        <field name="natureza_bc_credito_pis_cofins"/>
+                    </group>
+                    <newline/>
+                    <group col="2" colspan="2" string="Equivalências">
+                        <field name="cfop_entrada_id" attrs="{'invisible': [('entrada_saida', '=', '0')], 'domain': [('entrada_saida', '=', '1')]}"/>
+                        <field name="cfop_dentro_estado_id"/>
+                        <field name="cfop_fora_estado_id"/>
+                        <field name="cfop_fora_pais_id"/>
+                    </group>
+                    <newline/>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="sped_cfop_acao">
+            <field name="name">CFOP</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">sped.cfop</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_cfop" name="CFOP" parent="sped_base.menu_sped_fiscal_tabela" sequence="10" action="sped_cfop_acao" />
+    </data>
+</openerp>

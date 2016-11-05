@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_nfse_emitida_form">
+            <field name="name">sped.nfse.emitida.form</field>
+            <field name="model">sped.documento</field>
+            <field name="inherit_id" ref="sped.sped_nfse_emitida_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Produtos/Serviços" position="replace" />
+                <page string="Destinatário/Remetente" position="replace">
+                    <page string="Cliente e serviços">
+                        <separator string="Cliente" colspan="4" />
+                        <field name="partner_id" colspan="4" on_change="onchange_partner_id(partner_id)" />
+                        <newline />
+                        <field name="municipio_fato_gerador_id" colspan="4" />
+                        <newline />
+                        <field name="partner_cnpj_cpf" colspan="2" />
+                        <field name="partner_ie" colspan="2" />
+                        <newline />
+                        <field name="partner_razao_social" colspan="4" />
+                        <field name="partner_fantasia" colspan="4" />
+                        <field name="partner_endereco" colspan="4" />
+                        <field name="partner_numero" colspan="2" />
+                        <field name="partner_complemento" colspan="2" />
+                        <field name="partner_bairro" colspan="2" />
+                        <newline />
+                        <field name="partner_municipio_id" colspan="4" />
+                        <field name="partner_cep" colspan="2" />
+                        <separator string="Serviços" colspan="4" />
+                        <field name="documentoitem_ids" colspan="4" nolabel="1"
+                        context="{'partner_id': partner_id, 'entrada_saida': entrada_saida, 'data_emissao': data_emissao, 'regime_tributario': regime_tributario, 'operacao_id': operacao_id, 'company_id': company_id, 'emissao': emissao, 'modelo': modelo, 'municipio_fato_gerador_id': municipio_fato_gerador_id, 'form_view_ref' : 'sped_documentoitem_form', 'tree_view_ref' : 'sped_documentoitem_tree'}" mode="tree,form" />
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

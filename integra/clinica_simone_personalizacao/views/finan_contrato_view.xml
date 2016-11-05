@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        
+       <record model="ir.ui.view" id="finan_contrato_receber_tree">
+            <field name="name">finan.contrato.receber.tree</field>
+            <field name="model">finan.contrato</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_receber_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                    <field name="vendedor_id" position="replace">
+                        <field name="vendedor_id" string="Personal" />
+                    </field>
+                    
+                    <field name="hr_department_id" position="replace">                    
+                    </field>
+                    
+                    <field name="res_partner_category_id" position="replace">
+                    </field>
+                    
+                    <field name="grupo_economico_id" position="replace">
+                    </field>       
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="finan_contrato_receber_search">
+            <field name="name">finan.contrato.receber.search</field>
+            <field name="model">finan.contrato</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_receber_search"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">                    
+                <field name="hr_department_id" position="replace">
+                </field>
+                  
+                <field name="res_partner_category_id" position="replace">
+                </field>
+                  
+                <field name="grupo_economico_id" position="replace">
+                </field>  
+                
+    
+                <filter string="Posto"  position="replace"> 
+                </filter>  
+                <filter string="Categoria"  >
+                </filter>  
+                <filter string="Grupo econômico" icon="terp-project" domain="[]" context="{'group_by': 'grupo_economico_id'}" >
+                </filter>  
+                    
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_receber_form">
+            <field name="name">finan.contrato.receber.form</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_receber_form"/>
+            <field name="arch" type="xml">
+                <field name="product_id" position="replace">
+                    <field name="product_id" domain="[('type', '=', 'service')]" on_change="onchange_product_id(product_id)"/>
+                </field>
+                
+                <field name="vendedor_id" position="replace">
+                    <field name="vendedor_id" string="Personal" colspan="4" />
+                </field>
+                
+                <field name="hr_department_id" position="replace" >
+                </field>
+                
+                <field name="res_partner_category_id" position="replace">
+                </field>
+                
+                <field name="grupo_economico_id" position="replace">
+                </field>
+                
+                <field name="endereco_prestacao_id" position="replace">
+                </field>
+    
+            </field>
+        </record>       
+
+    </data>
+</openerp>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="sped_comunicacao_recebida_form" model="ir.ui.view">
+            <field name="name">sped.comunicacao.recebida.form</field>
+            <field name="model">sped.documento</field>
+            <field name="inherit_id" ref="sped.sped_comunicacao_recebida_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Totais" position="after">
+                    <page string="Financeiro">
+                        <field name="finan_lancamento_id" colspan="4" invisible="[('finan_lancamento_id', '=', False)]" readonly="1" />
+                        <field name="finan_contrato_id" colspan="4" invisible="[('finan_contrato_id', '=', False)]" readonly="1" />
+                        <group colspan="4">
+                            <separator string="Integração financeira" colspan="10" />
+                            <field name="finan_conta_id" colspan="4" domain="[('sintetica', '=', False)]" required="1" />
+                            <newline />
+                            <field name="finan_documento_id" colspan="2" attrs="{'required': [('forma_pagamento', '!=', '2')]}" />
+                            <newline />
+                            <field name="finan_centrocusto_id" colspan="4" domain="[('sintetico', '=', False)]" />
+                            <newline />
+                            <field name="res_partner_bank_id" colspan="4" />
+                        </group>
+                        <field name="forma_pagamento" invisible="1" />
+                        <newline />
+                        <field name="payment_term_id" on_change="onchange_payment_term(payment_term_id, vr_fatura, vr_nf,  data_emissao, duplicata_ids)" colspan="4" />
+                        <button name="botao_regera_duplicatas" type="object" string="Atualizar financeiro" colspan="4" />
+                        <separator string="Vencimentos" colspan="4" />
+                        <field name="duplicata_ids" colspan="4" nolabel="1">
+                            <tree string="Duplicatas">
+                                <field name="numero" />
+                                <field name="data_vencimento" />
+                                <field name="valor" />
+                            </tree>
+                        </field>
+                    </page>
+                </page>
+            </field>
+        </record>
+    </data>
+</openerp>

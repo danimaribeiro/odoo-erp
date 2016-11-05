@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_operacao_tree">
+            <field name="name">sped.operacao.tree</field>
+            <field name="model">sped.operacao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id" />
+                    <field name="codigo" />
+                    <field name="nome" />
+                    <field name="entrada_saida" />
+                    <field name="modelo" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_operacao_nfe_form">
+            <field name="name">sped.operacao.nfe.form</field>
+            <field name="model">sped.operacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Operações Fiscais - NF-e - modelo 55">
+                    <field name="company_id" colspan="4" />
+                    <field name="modelo" readonly="1" />
+                    <newline />
+                    <field name="codigo" />
+                    <newline />
+                    <field name="nome" colspan="4" />
+                    <newline/>
+                    <field name="entrada_saida" />
+                    <field name="regime_tributario" />
+                    <field name="forma_pagamento" />
+                    <field name="finalidade_nfe" />
+                    <field name="modalidade_frete" />
+                    <field name="naturezaoperacao_id" colspan="4" />
+                    <newline/>
+                    <notebook colspan="4">
+                        <page string="Itens da operação">
+                            <group colspan="4" attrs="{'invisible': [('regime_tributario', '!=', '1')]}">
+                                <separator string="Itens da operação" colspan="4" />
+                                <field name="operacaoitem_simples_ids" nolabel="1" colspan="4" mode="tree,form">
+                                    <tree editable="top">
+                                        <field name="familiatributaria_id"/>
+                                        <field name="cfop_id"/>
+                                        <field name="cst_icms_sn" required="[('regime_tributario', '=', '1')]" />
+                                    </tree>
+                                    <form>
+                                        <field name="familiatributaria_id"/>
+                                        <newline/>
+                                        <field name="cfop_id" />
+                                        <newline/>
+                                        <field name="cst_icms_sn" required="[('regime_tributario', '=', '1')]"/>
+                                    </form>
+                                </field>
+                            </group>
+                            <group attrs="{'invisible': [('regime_tributario', '=', '1')]}" colspan="4">
+                                <separator string="Itens da operação" colspan="4" />
+                                <field name="operacaoitem_normal_ids" nolabel="1" colspan="4" mode="tree,form">
+                                    <tree editable="top">
+                                        <field name="familiatributaria_id"/>
+                                        <field name="cfop_id"/>
+                                        <field name="cst_icms" required="[('regime_tributario', '!=', '1')]"/>
+                                        <field name="al_pis_cofins_id" required="[('regime_tributario', '!=', '1')]"/>
+                                        <field name="cst_ipi"/>
+                                    </tree>
+                                    <form>
+                                        <field name="familiatributaria_id"/>
+                                        <newline/>
+                                        <field name="cfop_id" />
+                                        <newline/>
+                                        <field name="cst_icms" required="[('regime_tributario', '!=', '1')]" />
+                                        <newline/>
+                                        <field name="al_pis_cofins_id" required="[('regime_tributario', '!=', '1')]" />
+                                        <newline/>
+                                        <field name="cst_ipi"/>
+                                        <newline/>
+                                        <field name="previdencia_retido" />
+<!--                                         <field name="al_previdencia" /> -->
+                                    </form>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Retenções de tributos">
+                            <separator string="Retenção de tributos federais" colspan="4" />
+                            <field name="limite_retencao_pis_cofins_csll" colspan="4" />
+                            <newline />
+                            <field name="pis_cofins_retido" />
+                            <field name="al_pis_retido" />
+                            <newline/>
+                            <separator colspan="2" />
+                            <field name="al_cofins_retido" />
+                            <newline/>
+                            <field name="csll_retido" />
+                            <field name="al_csll" />
+                            <field name="irrf_retido" />
+                            <field name="al_irrf" />
+                            <field name="previdencia_retido" />
+<!--                             <field name="al_previdencia" /> -->
+                        </page>
+                        <page string="Informações adicionais">
+                            <separator string="Informações adicionais de interesse do fisco" colspan="4" />
+                            <field name="infadfisco" colspan="4" nolabel="1"/>
+                            <newline/>
+                            <separator string="Informações complementares" colspan="4" />
+                            <field name="infcomplementar" colspan="4" nolabel="1" />
+                        </page>
+                        <page string="Usuários permitidos">
+                            <separator string="Usuários com permissão de usar esta operação" colspan="4" />
+                            <field name="user_ids" colspan="4" nolabel="1" />
+                        </page>
+                        <page string="Empresas permitidas">
+                            <separator string="Empresas com permissão de usar esta operação" colspan="4" />
+                            <field name="company_ids" colspan="4" nolabel="1" />
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_operacao_nfe_acao">
+            <field name="name">Operações fiscais - NF-e</field>
+            <field name="domain">[('modelo', '=', '55')]</field>
+            <field name="context">{'default_modelo': '55'}</field>
+            <field name="res_model">sped.operacao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_operacao_nfe"
+            name="Operações Fiscais - NF-e"
+            parent="sped_base.menu_sped_fiscal_tabela" sequence="50" action="sped_operacao_nfe_acao" />
+
+        <record model="ir.actions.act_window.view" id="sped_operacao_nfe_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_operacao_nfe_form"/>
+            <field name="act_window_id" ref="sped_operacao_nfe_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_operacao_nfe_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sped_operacao_tree"/>
+            <field name="act_window_id" ref="sped_operacao_nfe_acao"/>
+        </record>
+
+        <record model="ir.ui.view" id="sped_operacao_nfse_form">
+            <field name="name">sped.operacao.nfse.form</field>
+            <field name="model">sped.operacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Operações Fiscais - NFS-e - modelo SE">
+                    <field name="company_id" colspan="4" />
+                    <field name="modelo" readonly="1" />
+                    <newline />
+                    <field name="codigo" />
+                    <newline />
+                    <field name="nome" colspan="4" />
+                    <newline/>
+                    <field name="entrada_saida" />
+                    <field name="regime_tributario" />
+                    <field name="forma_pagamento" />
+                    <newline/>
+                    <field name="cnae_id" colspan="4" />
+                    <field name="servico_id" colspan="4" />
+                    <field name="natureza_tributacao_nfse" colspan="4" />
+                    <field name="cst_iss" />
+                    <newline/>
+                    <notebook colspan="4">
+                        <page string="Itens da operação">
+                            <group colspan="4">
+                                <field name="operacaoitem_servico_ids" nolabel="1" colspan="4" mode="tree,form">
+                                    <tree editable="top">
+                                        <field name="familiatributaria_id"/>
+                                        <field name="cfop_id" domain="[('codigo', 'in', ['5933','5949','6933','6949'])]"/>
+<!--                                         <field name="cst_iss" required="1" /> -->
+                                        <field name="al_pis_cofins_id" required="[('regime_tributario', '!=', '1')]" />
+                                    </tree>
+                                    <form string="Ítens da operação fiscal">
+                                        <field name="familiatributaria_id"/>
+                                        <newline/>
+                                        <field name="cfop_id" domain="[('codigo', 'in', ['5933','5949','6933','6949'])]"/>
+                                        <newline/>
+<!--                                        <field name="cst_iss" required="1" />
+                                        <newline/>-->
+                                        <field name="al_pis_cofins_id" required="[('regime_tributario', '!=', '1')]" />
+<!--                                        <newline/>
+                                        <field name="previdencia_retido" />
+                                        <field name="al_previdencia" />-->
+                                    </form>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Retenções de tributos">
+                            <separator string="Retenção de tributos federais" colspan="4" />
+                            <field name="limite_retencao_pis_cofins_csll" colspan="4" />
+                            <newline />
+                            <field name="pis_cofins_retido" />
+                            <field name="al_pis_retido" />
+                            <newline/>
+                            <separator colspan="2" />
+                            <field name="al_cofins_retido" />
+                            <newline/>
+                            <field name="csll_retido" />
+                            <field name="al_csll" />
+                            <field name="irrf_retido" />
+                            <field name="al_irrf" />
+                            <field name="previdencia_retido" />
+<!--                             <field name="al_previdencia" /> -->
+                        </page>
+                        <page string="Informações adicionais">
+                            <separator string="Informações adicionais de interesse do fisco" colspan="4" />
+                            <field name="infadfisco" colspan="4" nolabel="1"/>
+                            <newline/>
+                            <separator string="Informações complementares" colspan="4" />
+                            <field name="infcomplementar" colspan="4" nolabel="1" />
+                        </page>
+                        <page string="Usuários permitidos">
+                            <separator string="Usuários com permissão de usar esta operação" colspan="4" />
+                            <field name="user_ids" colspan="4" nolabel="1" />
+                        </page>
+                        <page string="Empresas permitidas">
+                            <separator string="Empresas com permissão de usar esta operação" colspan="4" />
+                            <field name="company_ids" colspan="4" nolabel="1" />
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_operacao_nfse_acao">
+            <field name="name">Operações fiscais - NFS-e</field>
+            <field name="domain">[('modelo', '=', 'SE')]</field>
+            <field name="context">{'default_modelo': 'SE'}</field>
+            <field name="res_model">sped.operacao</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+
+        <menuitem id="menu_sped_operacao_nfse"
+            name="Operações fiscais - NFS-e"
+            parent="sped_base.menu_sped_fiscal_tabela" sequence="51" action="sped_operacao_nfse_acao" />
+
+        <record model="ir.actions.act_window.view" id="sped_operacao_nfse_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_operacao_nfse_form"/>
+            <field name="act_window_id" ref="sped_operacao_nfse_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_operacao_nfse_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sped_operacao_tree"/>
+            <field name="act_window_id" ref="sped_operacao_nfse_acao"/>
+        </record>
+
+    </data>
+</openerp>

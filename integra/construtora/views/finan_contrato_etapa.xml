@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_etapa_tree">
+            <field name="name">finan.contrato.etapa.tree</field>
+            <field name="model">finan.contrato.etapa</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="codigo" />
+                    <field name="nome" />
+                    <field name="tipo" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_etapa_form">
+            <field name="name">finan.contrato.etapa.form</field>
+            <field name="model">finan.contrato.etapa</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Cadastro de Etapa">
+                    <group col="6" colspan="4">
+                        <group col="2" colspan="2">
+                            <field name="codigo" readonly="1"/>
+                            <field name="nome" required="1"/>
+                            <field name="tipo_proxima_etapa" required="1"/>
+                            <field name="tipo_negociacao" />
+                            <field name="tipo" />
+                        </group>
+                        <group col="4" colspan="4">
+                        </group>
+                    </group>
+                    <field name="etapa_seguinte_ids" nolabel="1" />
+                </form>
+            </field>
+        </record>
+
+         <record id="finan_contrato_etapa_search" model="ir.ui.view">
+            <field name="name">finan.contrato.etapa.search</field>
+            <field name="model">finan.contrato.etapa</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Cadastro de Etapa">
+                    <field name="nome" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_contrato_etapa_acao">
+            <field name="name">Cadastro de Etapa</field>
+            <field name="res_model">finan.contrato.etapa</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="finan_contrato_etapa_tree" />
+            <field name="search_view_id" ref="finan_contrato_etapa_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="finan_contrato_etapa_acao"
+            id="menu_finan_contrato_etapa"
+            name="Etapas da Proposta"
+            parent="base.menu_sale_config_sales"
+            sequence="30" />
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_etapaform_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_contrato_etapa_form"/>
+            <field name="act_window_id" ref="finan_contrato_etapa_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_etapa_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_contrato_etapa_tree"/>
+            <field name="act_window_id" ref="finan_contrato_etapa_acao"/>
+        </record>
+
+    </data>
+</openerp>

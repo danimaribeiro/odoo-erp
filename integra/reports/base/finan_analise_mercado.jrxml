@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finan_analise_contratos" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="336"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/ari/openerp/openerp_integra/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="META_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+  cm.*,
+  vendedor.name,
+
+  replace(replace(replace(replace(cast(array(select distinct
+      c.name
+
+  from comercial_meta_company cmc
+  join res_company c on c.id = cmc.company_id
+  where
+      cmc.meta_id = cm.id
+  order by
+      c.name
+  ) as varchar), '"', ''), ',', ' • '), '{', ''), '}', '') as cidades
+
+
+from comercial_meta cm
+join res_users vendedor on vendedor.id = cm.vendedor_id
+
+
+where
+    cm.id = $P{META_ID}]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="create_uid" class="java.lang.Integer"/>
+	<field name="create_date" class="java.sql.Timestamp"/>
+	<field name="write_date" class="java.sql.Timestamp"/>
+	<field name="write_uid" class="java.lang.Integer"/>
+	<field name="vr_reducao_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Diminuições de mensalidades]]></fieldDescription>
+	</field>
+	<field name="vr_diferenca_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Diferença de mensalidades]]></fieldDescription>
+	</field>
+	<field name="data_final" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data final]]></fieldDescription>
+	</field>
+	<field name="meta_vr_novos_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Meta de contratos novos]]></fieldDescription>
+	</field>
+	<field name="vr_anterior_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor período anterior]]></fieldDescription>
+	</field>
+	<field name="vr_rescindidos_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor dos rescindidos]]></fieldDescription>
+	</field>
+	<field name="qtd_rescindidos_total_moved0" class="java.lang.Double">
+		<fieldDescription><![CDATA[Quant. de contratos rescindidos]]></fieldDescription>
+	</field>
+	<field name="data_inicial" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data inicial]]></fieldDescription>
+	</field>
+	<field name="hr_department_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Departamento/posto]]></fieldDescription>
+	</field>
+	<field name="vr_vendas_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Faturamento de vendas]]></fieldDescription>
+	</field>
+	<field name="qtd_novos_total_moved0" class="java.lang.Double">
+		<fieldDescription><![CDATA[Quant. de contratos novos]]></fieldDescription>
+	</field>
+	<field name="vr_novos_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Contratos novos]]></fieldDescription>
+	</field>
+	<field name="vendedor_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Vendedor]]></fieldDescription>
+	</field>
+	<field name="media_perdas_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Média de perdas]]></fieldDescription>
+	</field>
+	<field name="vr_regulares_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor dos regulares]]></fieldDescription>
+	</field>
+	<field name="vr_rescindidos_anterior_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor dos rescindidos anterior]]></fieldDescription>
+	</field>
+	<field name="qtd_baixados_total_moved0" class="java.lang.Double">
+		<fieldDescription><![CDATA[Quant. de contratos baixados]]></fieldDescription>
+	</field>
+	<field name="qtd_rescindidos_anterior_total_moved0" class="java.lang.Double">
+		<fieldDescription><![CDATA[Quant. de contratos rescindidos anterior]]></fieldDescription>
+	</field>
+	<field name="vr_faturamento_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Faturamento de vendas]]></fieldDescription>
+	</field>
+	<field name="qtd_regulares_anterior_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Quant. de contratos regulares anterior]]></fieldDescription>
+	</field>
+	<field name="qtd_baixados_anterior_total_moved0" class="java.lang.Double">
+		<fieldDescription><![CDATA[Quant. de contratos baixados anterior]]></fieldDescription>
+	</field>
+	<field name="vr_regulares_anterior_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor dos regulares anterior]]></fieldDescription>
+	</field>
+	<field name="qtd_regulares_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Quant. de contratos regulares]]></fieldDescription>
+	</field>
+	<field name="vr_novos_anterior_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Contratos novos anterior]]></fieldDescription>
+	</field>
+	<field name="qtd_anterior_total_moved0" class="java.lang.Double">
+		<fieldDescription><![CDATA[Quant. anterior total]]></fieldDescription>
+	</field>
+	<field name="vr_baixados_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor dos baixados]]></fieldDescription>
+	</field>
+	<field name="vr_baixados_anterior_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor dos baixados anterior]]></fieldDescription>
+	</field>
+	<field name="qtd_novos_anterior_total_moved0" class="java.lang.Double">
+		<fieldDescription><![CDATA[Quant. de contratos novos anterior]]></fieldDescription>
+	</field>
+	<field name="vr_perdas_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor de perdas]]></fieldDescription>
+	</field>
+	<field name="qtd_baixados_total" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Quant. de contratos baixados]]></fieldDescription>
+	</field>
+	<field name="qtd_baixados_anterior_total" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Quant. de contratos baixados anterior]]></fieldDescription>
+	</field>
+	<field name="qtd_novos_total" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Quant. de contratos novos]]></fieldDescription>
+	</field>
+	<field name="percentual_diminuicao_financeira" class="java.lang.Double">
+		<fieldDescription><![CDATA[Diminuição financeira da carteira]]></fieldDescription>
+	</field>
+	<field name="qtd_novos_anterior_total" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Quant. de contratos novos anterior]]></fieldDescription>
+	</field>
+	<field name="qtd_rescindidos_total" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Quant. de contratos rescindidos]]></fieldDescription>
+	</field>
+	<field name="qtd_anterior_total" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Quant. anterior total]]></fieldDescription>
+	</field>
+	<field name="qtd_rescindidos_anterior_total" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Quant. de contratos rescindidos anterior]]></fieldDescription>
+	</field>
+	<field name="percentual_crescimento_financeiro" class="java.lang.Double">
+		<fieldDescription><![CDATA[Crescimento financeiro da carteira]]></fieldDescription>
+	</field>
+	<field name="percentual_crescimento_quantitativo" class="java.lang.Double">
+		<fieldDescription><![CDATA[Crescimento quantitativo da carteira]]></fieldDescription>
+	</field>
+	<field name="meta_vr_venda_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Meta de faturamento de vendas]]></fieldDescription>
+	</field>
+	<field name="meta_percentual_crescimento_financeiro" class="java.lang.Double">
+		<fieldDescription><![CDATA[Meta de crescimento financeiro]]></fieldDescription>
+	</field>
+	<field name="meta_percentual_diminuicao_financeira" class="java.lang.Double">
+		<fieldDescription><![CDATA[Meta de diminuição financeira]]></fieldDescription>
+	</field>
+	<field name="meta_vr_vendas_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Meta de faturamento de vendas]]></fieldDescription>
+	</field>
+	<field name="name_moved0" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Vendedor]]></fieldDescription>
+	</field>
+	<field name="percentual_atingido_crescimento_financeiro" class="java.lang.Double">
+		<fieldDescription><![CDATA[Perc. atingido de crescimento financeiro]]></fieldDescription>
+	</field>
+	<field name="percentual_atingido_diminuicao_financeira" class="java.lang.Double">
+		<fieldDescription><![CDATA[Perc. atingido de diminuição financeira]]></fieldDescription>
+	</field>
+	<field name="teto_variavel" class="java.lang.Double">
+		<fieldDescription><![CDATA[Teto variável]]></fieldDescription>
+	</field>
+	<field name="carteira" class="java.lang.Double">
+		<fieldDescription><![CDATA[Carteira]]></fieldDescription>
+	</field>
+	<field name="percentual_atingido_vr_novos_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Perc. atingido de contratos novos]]></fieldDescription>
+	</field>
+	<field name="percentual_atingido_vr_vendas_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Perc. atingido de faturamento de vendas]]></fieldDescription>
+	</field>
+	<field name="percentual_repres_crescimento_financeiro" class="java.lang.Double">
+		<fieldDescription><![CDATA[Perc. repres. de crescimento financeiro]]></fieldDescription>
+	</field>
+	<field name="vr_variavel_vr_vendas_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Variável de faturamento de vendas]]></fieldDescription>
+	</field>
+	<field name="vr_variavel_diminuicao_financeira" class="java.lang.Double">
+		<fieldDescription><![CDATA[Variável de diminuição financeira]]></fieldDescription>
+	</field>
+	<field name="percentual_repres_diminuicao_financeira" class="java.lang.Double">
+		<fieldDescription><![CDATA[Perc. repres. de diminuição financeira]]></fieldDescription>
+	</field>
+	<field name="vr_variavel_vr_novos_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Variável de contratos novos]]></fieldDescription>
+	</field>
+	<field name="percentual_aplicado" class="java.lang.Double">
+		<fieldDescription><![CDATA[Perc. variável]]></fieldDescription>
+	</field>
+	<field name="percentual_repres_vr_vendas_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Perc. repres. de faturamento de vendas]]></fieldDescription>
+	</field>
+	<field name="percentual_repres_vr_novos_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[Perc. repres. de contratos novos]]></fieldDescription>
+	</field>
+	<field name="vr_variavel_crescimento_financeiro" class="java.lang.Double">
+		<fieldDescription><![CDATA[Variável de crescimento financeiro]]></fieldDescription>
+	</field>
+	<field name="vr_variavel" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor variável]]></fieldDescription>
+	</field>
+	<field name="user_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Account Manager]]></fieldDescription>
+	</field>
+	<field name="meta_vr_novos_real" class="java.lang.Double">
+		<fieldDescription><![CDATA[Meta de contratos novos]]></fieldDescription>
+	</field>
+	<field name="data_fechamento" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[Data de fechamento]]></fieldDescription>
+	</field>
+	<field name="meta_vr_novos_deficit" class="java.lang.Double">
+		<fieldDescription><![CDATA[Déficit de contratos novos]]></fieldDescription>
+	</field>
+	<field name="fechado" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Fechar cálculo?]]></fieldDescription>
+	</field>
+	<field name="meta_vr_novos_superavit" class="java.lang.Double">
+		<fieldDescription><![CDATA[Crédito meta mês anterior]]></fieldDescription>
+	</field>
+	<field name="saldo_vr_novos_mes" class="java.lang.Double">
+		<fieldDescription><![CDATA[Saldo mês]]></fieldDescription>
+	</field>
+	<field name="saldo_vr_novos_total" class="java.lang.Double"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="carteira_inicial" class="java.lang.Double">
+		<fieldDescription><![CDATA[Carteira inicial]]></fieldDescription>
+	</field>
+	<field name="indicador_corporativo" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Indicadores corporativos?]]></fieldDescription>
+	</field>
+	<field name="vr_retencao_carteira" class="java.lang.Double">
+		<fieldDescription><![CDATA[Retenção da carteira]]></fieldDescription>
+	</field>
+	<field name="percentual_retencao_carteira" class="java.lang.Double">
+		<fieldDescription><![CDATA[Perc. retenção da carteira]]></fieldDescription>
+	</field>
+	<field name="vr_variavel_retencao_carteira" class="java.lang.Double">
+		<fieldDescription><![CDATA[Variável de retenção da carteira]]></fieldDescription>
+	</field>
+	<field name="meta_percentual_retencao_carteira" class="java.lang.Double">
+		<fieldDescription><![CDATA[Meta de retenção da carteira]]></fieldDescription>
+	</field>
+	<field name="percentual_atingido_retencao_carteira" class="java.lang.Double">
+		<fieldDescription><![CDATA[Perc. atingido de retenção da carteira]]></fieldDescription>
+	</field>
+	<field name="percentual_repres_retencao_carteira" class="java.lang.Double">
+		<fieldDescription><![CDATA[Perc. respres. de retenção da carteira]]></fieldDescription>
+	</field>
+	<field name="incluir_somente_vigilancia" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Incluir SOMENTE serviços de vigilância?]]></fieldDescription>
+	</field>
+	<field name="incluir_vigilancia" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Incluir serviços de vigilância?]]></fieldDescription>
+	</field>
+	<field name="saldo_acumulado_crescimento_financeiro" class="java.lang.Double"/>
+	<field name="saldo_crescimento_financeiro" class="java.lang.Double"/>
+	<field name="cidades" class="java.lang.String"/>
+	<detail>
+		<band height="560">
+			<textField>
+				<reportElement positionType="Float" x="0" y="24" width="555" height="20" uuid="385fc5b8-99af-49c7-86dc-557483328107"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ANÁLISE DE MERCADO"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="204" width="438" height="15" uuid="c03ba248-f0a6-4398-b890-38e8828bd3d9"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(valor dos novos - valor dos rescindidos ± diferença de mensalidades) ÷ carteira inicial"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="85" y="266" width="45" height="15" uuid="6697f554-17ba-4876-b345-9c8d5871bab7"/>
+				<box bottomPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_reducao_total}.abs()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="300" width="438" height="15" uuid="9c28e876-ce0f-44d0-b210-233a06ed6fa7"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(quant. de contratos novos - quant. de contratos rescindidos) ÷ quant. do período anterior"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="215" y="218" width="224" height="15" uuid="6c222afd-1cfc-4b91-86fd-a13be0271a94"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_inicial}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="252" width="438" height="15" uuid="9a3336e6-f40f-4d3b-b908-360aa35c9bc3"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(valor dos rescindidos + diminuições de mensalidades) ÷ carteira inicial"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="20" y="218" width="45" height="15" uuid="7ecb3cad-a6c5-4f2d-a482-e282588de84e"/>
+				<box bottomPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_novos_total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="185" width="438" height="19" uuid="33e8d72d-feb1-47f6-8974-da1e254ccc90"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["3. Crescimento financeiro:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="438" y="299" width="117" height="30" uuid="344beccf-e3ad-4fa1-ae3a-ecf542e32205"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtd_anterior_total} <= 0?
+0
+:
+(
+ (
+   $F{qtd_novos_total}
+ - $F{qtd_rescindidos_total}
+)
+ / ($F{qtd_anterior_total})
+)]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="130" y="314" width="20" height="15" uuid="954f0cc7-d14f-4697-9232-581f4945d4d7"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[") ÷ "]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="402" y="147" width="38" height="19" uuid="6a8a224e-9ed7-4bf9-ab39-172cd093d39b"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R\$"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="85" y="218" width="45" height="15" uuid="efde54b8-b517-4428-bfca-e32b13ca82ec"/>
+				<box bottomPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_rescindidos_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement positionType="Float" x="20" y="314" width="45" height="15" uuid="6abd496b-7a8d-4898-aa53-9fe92c9ae634"/>
+				<box bottomPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtd_novos_total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="147" width="402" height="19" uuid="f1788da4-0a57-4e0e-aad2-034172e0244c"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["1. Novos contratos:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="65" y="314" width="20" height="15" uuid="b329ff7a-ff73-4db5-9ef5-dcc1330911f6"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" - "]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="438" y="203" width="117" height="30" uuid="82d5186b-170e-46d1-b7fe-e7bd516928f1"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_inicial} <= 0?
+0
+:
+(
+ (
+   $F{vr_novos_total}
+ - $F{vr_rescindidos_total}
+ + $F{vr_diferenca_total}
+)
+ / ($F{carteira_inicial})
+)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="281" width="438" height="19" uuid="1404eea8-7f61-47a5-af3c-ec91bcea1bc8"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["5. Crescimento quantitativo:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="65" y="266" width="20" height="15" uuid="6c1a67db-477d-4408-bf5e-bb93768a6161"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" + "]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="65" y="218" width="20" height="15" uuid="4d76838e-551c-4af5-9452-2e9d27218d42"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" - "]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="438" y="185" width="117" height="19" uuid="f6b51cff-9c54-4b11-91db-3d9e4316ec05"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(%)"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="0" y="266" width="20" height="15" uuid="db4619c2-bdd8-4cc6-84d8-1b76d497e4ff"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["("]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="130" y="266" width="20" height="15" uuid="bccd0774-7031-4374-8ffd-7a8ee65bb42c"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[") ÷ "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="233" width="438" height="19" uuid="9b0a676a-a0cb-42f3-81b9-b1dba6d8add8"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["4. Diminuição financeira da carteira:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="438" y="147" width="117" height="19" uuid="097caa7f-c1eb-4545-9fc8-9ae00d79bf3a"/>
+				<box bottomPadding="2">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_novos_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="438" y="251" width="117" height="30" uuid="83940a45-838b-463a-a40c-fdf01b93ecb8"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_inicial} <= 0?
+0
+:
+(
+ (
+   $F{vr_rescindidos_total}
+ + $F{vr_reducao_total}.abs()
+)
+ / ($F{carteira_inicial})
+)]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="20" y="266" width="45" height="15" uuid="18ef5cfd-375c-4491-81ef-5418e4105587"/>
+				<box bottomPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_rescindidos_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="438" y="233" width="117" height="19" uuid="f380ca7a-d659-43df-9d3c-df33e710e4d4"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(%)"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="0" y="218" width="20" height="15" uuid="f27eaadb-9c47-4efc-92b9-df534f72b53e"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["("]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="0" y="314" width="20" height="15" uuid="6bde4ad5-03c5-4307-a523-fdbc7025b109"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["("]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="166" width="402" height="19" uuid="8a4a50cd-a0ec-46da-9d0c-0cfb4054f352"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["2. Faturamento de vendas:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="438" y="281" width="117" height="19" uuid="5c0750d7-a5ac-4673-aef7-c5d731ab3ee1"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(%)"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="150" y="266" width="289" height="15" uuid="00ae78c4-36e8-4d57-97cd-a34d622a1f01"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_inicial}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="195" y="218" width="20" height="15" uuid="e7264cfb-60a7-476d-9d47-86257df19449"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[") ÷ "]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="130" y="218" width="20" height="15" uuid="1c25d940-dfba-45e4-b989-234cbb6d528c"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" ± "]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement positionType="Float" x="150" y="218" width="45" height="15" uuid="603aa0c9-ebbf-4d33-a7ce-209f2ac34b49"/>
+				<box bottomPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_diferenca_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement positionType="Float" x="150" y="314" width="289" height="15" uuid="bd6169c2-0aad-4c7e-b8e7-43ad63b3b3db"/>
+				<box bottomPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtd_anterior_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement positionType="Float" x="85" y="314" width="45" height="15" uuid="cb8d3416-c346-4192-8a75-4ff6d739f23a"/>
+				<box bottomPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtd_rescindidos_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="438" y="166" width="117" height="19" uuid="ed0c8a9a-7107-4b6d-a83e-ff85646559c1"/>
+				<box bottomPadding="2">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_vendas_total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="439" y="0" width="57" height="24" uuid="87480f2e-8c29-4ea4-bd86-8c2f1f3a29c1"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATA:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="496" y="0" width="59" height="24" uuid="8b77a01d-82a3-4b95-b6ed-1fad778feab9"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="65" width="64" height="20" uuid="50594b64-b600-40f6-9597-df1408c621c1"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Período de]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement positionType="Float" x="64" y="65" width="66" height="20" uuid="b0fc8700-b974-46a2-bd30-89af0581cf80"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_inicial}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="130" y="65" width="30" height="20" uuid="69c9fe9d-891e-413c-af77-be9096df1286"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[até]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement positionType="Float" x="162" y="65" width="100" height="20" uuid="f4ea88ab-9b43-4405-9b2b-ac456f1e0c39"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_final}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="45" width="65" height="20" uuid="098e1aa7-ac80-4c4f-a184-34ad7cf48077"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidades:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="66" y="45" width="489" height="20" uuid="6d18c7a5-f043-4eca-9773-2a24d5ae686c"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cidades}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="109" width="402" height="19" uuid="bf48e80d-1e71-41b1-a930-8aeee68c093a"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Carteira inicial"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="402" y="109" width="38" height="19" uuid="b806b9b4-9208-416b-9568-895f4c3ff5f8"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R\$"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="438" y="109" width="117" height="19" uuid="5fbc7f60-b8cc-4f7f-82d7-64c3e0ce5cba"/>
+				<box bottomPadding="2">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_inicial}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="128" width="402" height="19" uuid="51406868-22ea-4bd2-aa1e-e6d05a719f84"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Carteira final"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="402" y="128" width="38" height="19" uuid="38144fe6-da1f-47eb-8eaf-0996469a41c4"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R\$"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="438" y="128" width="117" height="19" uuid="3983869e-b6b9-46d2-a50d-7c636dadc00f"/>
+				<box bottomPadding="2">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="402" y="166" width="38" height="19" uuid="284f9976-c40c-4cd9-a713-64250fceb865"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R\$"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

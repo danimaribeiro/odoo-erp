@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_motivocancelamento_tree">
+            <field name="name">sale.motivocancelamento.tree</field>
+            <field name="model">sale.motivocancelamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_motivocancelamento_form">
+            <field name="name">sale.motivocancelamento.form</field>
+            <field name="model">sale.motivocancelamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Motivo para Cancelamento">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="nome" colspan="4" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_motivocancelamento_search">
+            <field name="name">sale.motivocancelamento.search</field>
+            <field name="model">sale.motivocancelamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Motivos para baixa">
+                    <field name="nome" select="1" />
+                    <newline />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sale_motivocancelamento_acao">
+            <field name="name">Motivos para Cancelamento</field>
+            <field name="res_model">sale.motivocancelamento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="sale_motivocancelamento_tree" />
+        </record>
+        
+        <menuitem action="sale_motivocancelamento_acao"
+            id="menu_sale_motivocancelamento" name="Motivos para Cancelamento" parent="base.menu_sale_config_sales" />
+    </data>
+</openerp>

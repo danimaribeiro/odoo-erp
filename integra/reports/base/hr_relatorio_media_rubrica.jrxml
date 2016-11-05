@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hr_relatorio_media_rubrica" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="814" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="1.0245201830476136"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/ari/openerp/openerp_integra/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SLIPS_IDS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+rp.name as empresa,
+h.id,
+e.nome,
+hs.name
+
+from hr_payslip h
+join hr_payroll_structure hs on hs.id = h.struct_id
+join hr_employee e on e.id = h.employee_id
+join res_company c on c.id = h.company_id
+join res_partner rp on rp.id = c.partner_id
+
+
+where h.id in $P!{SLIPS_IDS}]]>
+	</queryString>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[Descrição]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String"/>
+	<group name="payslip" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{id}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<staticText>
+					<reportElement x="0" y="0" width="28" height="14" uuid="f8570a12-6501-4b24-b078-056a964df385"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Tipo:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="28" y="0" width="786" height="14" uuid="8ec59686-92ee-4a0e-92d8-d59b58053751"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans Mono" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="10">
+				<staticText>
+					<reportElement x="0" y="0" width="697" height="10" uuid="3bfe9ccc-0f64-4276-8179-5ca1ab0502f3"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[media = (soma dos valores mensais ÷ nº de meses trabalhados) × (nº de avos de direito ÷ nº de meses do período aquisitivo)]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="47">
+			<staticText>
+				<reportElement x="0" y="0" width="814" height="47" uuid="f3a0f342-8326-4c62-af6a-2ac87264c601"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Relatório Médias por Rubricas]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="767" y="20" width="47" height="10" uuid="11cf1411-663e-465b-be65-d184575de58d"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm:ss">
+				<reportElement x="767" y="30" width="47" height="10" uuid="616a94d5-6a5a-466d-b00c-18a3af7970dd"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="744" y="20" width="23" height="10" uuid="6ab04aef-87ea-4a0c-bb80-d259e2108e83"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="744" y="10" width="23" height="10" uuid="cec7371c-43de-4d14-87a8-1f6557e87526"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pág:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="744" y="30" width="23" height="10" uuid="16653a63-a342-4698-af74-0ecc30dc51d7"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="767" y="10" width="47" height="10" uuid="089091f4-ff8d-4edd-a916-afdefd07bcc8"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="33">
+			<staticText>
+				<reportElement x="0" y="0" width="46" height="14" uuid="7651dfd5-87c7-4364-bab7-e0360934f2df"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empresa:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="14" width="59" height="14" uuid="43a645ee-ef93-4cb5-a1d1-90bf0eaa7e28"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Funcionario:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="59" y="14" width="755" height="14" uuid="0556e761-83c7-4da2-87bb-e348e2f10faa"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="46" y="0" width="768" height="14" uuid="eb8286b9-c675-44c7-af72-b38b18e55b8b"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="40" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="814" height="40" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="c945dd74-e6f2-4c35-8488-8e8b17ff98eb"/>
+				<subreportParameter name="SLIP_ID">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "hr_relatorio_media_rubrica_lancamento.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="esocial_tabela_03_tree">
+            <field name="name">Tabela 3 - Rubricas da Folha de Pagamento</field>
+            <field name="model">esocial.tabela_03</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <group>
+                        <field name="codigo"/>
+                        <field name="nome"/>
+                        <field name="descricao"/>
+                     </group>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="esocial_tabela_03_form">
+            <field name="name">Tabela 3 - Rubricas da Folha de Pagamento</field>
+            <field name="model">esocial.tabela_03</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Tabela 1">
+                    <group col="4" colspan="4">
+                        <separator string="Campos" colspan="4" />
+                        <field name="codigo" />
+                        <field name="nome" />
+                        <field name="descricao" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="esocial_tabela_03_search">
+            <field name="name">Tabela 3 - Rubricas da Folha de Pagamento</field>
+            <field name="model">esocial.tabela_03</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Tabela ">
+                    <group col="4" colspan="4">
+                        <separator string="Campos" colspan="4" />
+                        <field name="codigo" />
+                        <field name="nome" />
+                        <field name="descricao" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="esocial_tabela_03_acao">
+           <field name="name">Tabela 3 - Rubricas da Folha de Pagamento</field>
+            <field name="res_model">esocial.tabela_03</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,search</field>
+        </record>
+
+        <menuitem action="esocial_tabela_03_acao" id="esocial_menu_tabela_03" name="Rubricas da Folha de Pagamento" parent="esocial_menu_tabelas" sequence="3" />
+    </data>
+</openerp>

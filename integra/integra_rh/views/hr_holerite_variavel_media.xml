@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_holerite_variavel_media_form">
+            <field name="name">hr.holerite_variavel.media.form</field>
+            <field name="model">hr.holerite_variavel_media</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Variáveis de Média">
+                    <group colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="contract_id" colspan="4" required="1" />
+                        <field name="ano" required="1" />
+                        <field name="mes" required="1" />
+                        <button icon="gtk-execute" name="busca_entradas" context="{'contract_id': contract_id, 'default_contract_id': contract_id}" string="Buscar lançamentos" type="object" colspan="2"/>
+                        <button icon="gtk-print" name="gera_relatorio_media" string="Gerar relatório" type="object" colspan="2"/>
+                        <field name="nome" invisible="1" />
+                        <field name="nome_csv" invisible="1"/>
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                        <newline/>
+                        <field name="arquivo_csv" nolabel="1" readonly="1" filename="nome_csv" colspan="4"/>
+                        <newline/>
+                        <separator string="Lançamentos" colspan="4"/>
+                        <field name="input_ids" colspan="4" nolabel="1" context="{'default_contract_id': contract_id, 'default_ano': ano}">
+                            <tree editable="top" colors="blue:digitado_media == False">
+                                <field name="ano" required="1"/>
+                                <field name="mes" required="1"/>
+                                <field name="contract_id" domain="[('date_end', '=', False)]" required="1" />
+                                <field name="employee_id" invisible="1" />
+                                <field name="salary_rule_id" domain="[('tipo_media', '!=', False)]" required="1" string="Rubrica" on_change="onchange_salary_rule_id(salary_rule_id)"/>
+                                <field name="tipo_media" readonly="1" />
+                                <field name="horas" sum="Horas" on_change="onchange_horas(horas, False)" widget="float_time" />
+                                <field name="quantity" on_change="onchange_horas(False, amount)" />
+                                <field name="rate" digits="(21, 3)" invisible="1" />
+                                <field name="total" digits="(21, 3)" sum="Valor" />
+                                <field name="slip_id" readonly="1" />
+                                <field name="company_id" invisible="1" />
+                                <field name="digitado_media" invisible="1" />
+                                <field name="digitado" invisible="1" />
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_holerite_variavel_media_acao">
+            <field name="name">Variáveis de Média</field>
+            <field name="res_model">hr.holerite_variavel_media</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_holerite_variavel_media_form" />
+        </record>
+
+        <menuitem action="hr_holerite_variavel_media_acao"
+            id="menu_hr_holerite_variavel_media" name="Variáveis de Média" parent="hr_payroll.menu_hr_root_payroll" />
+
+    </data>
+</openerp>

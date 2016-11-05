@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record forcecreate="True" model="ir.actions.server" id="sped_nfse_consulta_server_action">
+            <field name="name">Forçar consulta de NFS-e</field>
+            <field name="model_id" ref="model_sped_documento"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.consulta_nfse_automatico(context=context)</field>
+        </record>
+
+        <record model="ir.values" id="sped_nfse_consulta_values" >
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'sped.documento'" name="model"/>
+            <field name="name">Valores consulta NFS-e</field>
+            <field eval="'ir.actions.server,%d'%sped_nfse_consulta_server_action" name="value"/>
+            <field eval="True" name="object"/>
+        </record>
+
+    </data>
+</openerp>
+

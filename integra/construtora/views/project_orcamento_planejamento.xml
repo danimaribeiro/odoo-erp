@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="project_orcamento_planejamento_tree">
+            <field name="name">project.orcamento.planejamento.tree</field>
+            <field name="model">project.orcamento.item</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="red: percentual_planejado != 100.00">
+                    <field name="project_id" />
+                    <field name="orcamento_id" />
+                    <field name="etapa_id" />
+                    <field name="codigo_completo" />
+                    <field name="ordem" />
+                    <field name="product_id" />
+                    <field name="uom_id" />
+                    <field name="quantidade" />
+                    <field name="vr_unitario" />
+                    <field name="vr_produto" />
+                    <field name="risco" />
+                    <field name="quantidade_risco" />
+                    <field name="vr_risco" />
+                    <field name="percentual_planejado" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="project_orcamento_planejamento_form">
+            <field name="name">project.orcamento.planejamento.form</field>
+            <field name="model">project.orcamento.item</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Planejamento de execução">
+                    <group col="4" colspan="4">
+                        <field name="project_id" colspan="4" readonly="1" />
+                        <field name="orcamento_id" colspan="4" readonly="1" />
+                        <field name="etapa_id" colspan="4" readonly="1" />
+                        <field name="codigo_completo" colspan="2" readonly="1" />
+<!--                         <field name="ordem" colspan="2" readonly="1" /> -->
+                        <field name="product_id" colspan="4" readonly="1" />
+                        <field name="quantidade" colspan="2" readonly="1" />
+                        <field name="uom_id" colspan="2" readonly="1" />
+                        <field name="vr_produto" colspan="2" readonly="1" />
+                        <field name="vr_unitario" colspan="2" readonly="1" />
+                    </group>
+                    <newline />
+                    <separator string="Planejamento" colspan="4" />
+                    <field name="planejamento_ids" colspan="4" nolabel="1"  >
+                        <tree>
+                            <field name="data_inicial_execucao" required="1" />
+                            <field name="data_final_execucao" required="1" />
+                            <field name="data_compra" required="1" />
+                            <field name="percentual" sum="percentual" on_change="onchange_percentual_quantidade_vr_produto(parent.quantidade, parent.vr_produto, percentual, 0, 0, context)" />
+                            <field name="quantidade" sum="quantidade" on_change="onchange_percentual_quantidade_vr_produto(parent.quantidade, parent.vr_produto, 0, quantidade, 0, context)"/>
+                            <field name="vr_produto" sum="vr_produto" on_change="onchange_percentual_quantidade_vr_produto(parent.quantidade, parent.vr_produto, 0, 0, vr_produto, context)" />
+                        </tree>
+                        <form string="Item de planejamento">
+                            <field name="data_inicial_execucao" required="1" />
+                            <field name="data_final_execucao" required="1" />
+                            <newline />
+                            <field name="percentual" sum="percentual" on_change="onchange_percentual_quantidade_vr_produto(parent.quantidade, parent.vr_produto, percentual, 0, 0, context)" />
+                            <newline />
+                            <field name="quantidade" sum="quantidade" on_change="onchange_percentual_quantidade_vr_produto(parent.quantidade, parent.vr_produto, 0, quantidade, 0, context)"/>
+                            <field name="vr_produto" sum="vr_produto" on_change="onchange_percentual_quantidade_vr_produto(parent.quantidade, parent.vr_produto, 0, 0, vr_produto, context)" />
+                            <newline />
+                            <separator string="Planejamento financeiro" colspan="4" />
+                            <field name="condicoes_ids" colspan="4" nolabel="1">
+                                <tree>
+                                    <field name="numero" />
+                                    <field name="data_vencimento" required="1" />
+                                    <field name="valor" required="1" />
+                                </tree>
+                            </field>
+                        </form>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="project_orcamento_planejamento_search">
+            <field name="name">project.orcamento.planejamento.search</field>
+            <field name="model">project.orcamento.item.planejamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Planejamentos">
+                    <field name="project_id" />
+                    <field name="codigo_completo" string="Orçamento" filter_domain="[('orcamento_id.versao', 'ilike', self)]"/>
+                    <field name="etapa_id"  />
+                    <field name="product_id"  />
+                    <newline />
+                    
+                    <!--<field name="data_compra_from" string="De compra" filter_domain="[('data_compra','&gt;=',self)]" widget="calendar" />
+                    <field name="data_compra_to" string="A compra" filter_domain="[('data_compra','&lt;=',self)]" widget="calendar" />-->
+                    
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Projeto" icon="terp-project" domain="[]" context="{'group_by': 'project_id'}" />
+                        <filter string="Orçamento" icon="terp-project" domain="[]" context="{'group_by': 'orcamento_id'}" />
+                        <filter string="Etapa" icon="terp-project" domain="[]" context="{'group_by': 'etapa_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="project_orcamento_planejamento_acao">
+            <field name="name">Planejamentos</field>
+            <field name="res_model">project.orcamento.item</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('situacao', '=', 'A')]</field>
+            <field name="context">{'search_default_codigo_completo': 'Informe'}</field>
+            <field name="search_view_id" ref="project_orcamento_planejamento_search" />
+        </record>
+
+        <menuitem action="project_orcamento_planejamento_acao"
+            id="menu_project_orcamento_planejamento" name="Planejamentos" parent="project.menu_project_management" />
+
+    </data>
+</openerp>

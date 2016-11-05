@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_cobranca_juridica" >
+            <field name="name">finan.cobranca.juridica</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Planilha para Cobrança Jurídica">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="company_id" required="1" colspan="4"  />
+                        <newline/>
+                        <field name="formapagamento_id" string="Forma de pagamento" required="1" />
+                        <newline/>                        
+                        <field name="data_inicial" />                        
+                        <field name="data_final" />
+                        <newline/>
+                        <newline/>
+                        <field name="partner_ids" string="Clientes" colspan="4" />
+                        <newline/>
+                        <field name="nome_csv" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar planilha" name="gera_cobranca_juridica" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo_csv" nolabel="1" readonly="1" filename="nome_csv" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_cobranca_juridica_acao">
+            <field name="name">Planilha de cobrança jurídica</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_cobranca_juridica_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_cobranca_juridica"/>
+            <field name="act_window_id" ref="finan_cobranca_juridica_acao"/>
+        </record>
+
+        <menuitem action="finan_cobranca_juridica_acao"
+                  id="menu_finan_cobranca_juridica" name="Planilha de cobrança jurídica" parent="finan.menu_rel_conta_receber" sequence="50" />
+
+    </data>
+</openerp>

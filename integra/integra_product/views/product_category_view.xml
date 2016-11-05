@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="product_category_form_view_integra" model="ir.ui.view">
+            <field name="name">product.category.form_integra</field>
+            <field name="model">product.category</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                <field name="type" position="after">
+                    <field name="state" string="Situação padrão" />
+                    <separator string="Aquisições" colspan="4"/>
+                    <group col="2" colspan="2">
+                        <field name="product_type" string="Tipo de produto"/>
+                        <field name="procure_method" string="Método de aquisição"/>
+                        <field name="supply_method" string="Método de reposição"/>
+                    </group>
+                    <separator string="Contabilidade" colspan="4"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="product_normal_form_view_integra" model="ir.ui.view">
+            <field name="name">product.normal.form_integra</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <data>
+                    <page string="Information" position="replace" />
+                    <page string="Procurement &amp; Locations" position="before">
+                        <page string="Information">
+                            <group colspan="2" col="2" name="status" groups="base.group_extended">
+                                <separator string="Status" colspan="2"/>
+                                <field name="categ_id" on_change="onchange_categ_id(categ_id)"/>
+                                <field name="state"/>
+                                <field name="product_manager"/>
+                            </group>
+
+                            <group colspan="2" col="2">
+                                <separator string="Procurement" colspan="2"/>
+                                <field name="type"/>
+                                <field name="procure_method" groups="base.group_extended"/>
+                                <field name="supply_method"/>
+                            </group>
+
+                            <group colspan="2" col="2">
+                                <separator string="Base Prices" colspan="2"/>
+                                <field name="list_price"/>
+                                <field groups="base.group_extended" name="cost_method"/>
+                                <field name="standard_price" attrs="{'readonly':[('cost_method','=','average')]}" groups="base.group_extended"/>
+                                <newline/>
+                                <field name="price_margin" groups="product.group_product_variant"/>
+                                <field name="price_extra" groups="product.group_product_variant"/>
+                            </group>
+
+                            <group colspan="2" col="2" groups="base.group_extended">
+                                <separator string="Weights" colspan="2"/>
+                                <field digits="(14, 3)" name="volume" attrs="{'readonly':[('type','=','service')]}"/>
+                                <field name="weight" attrs="{'readonly':[('type','=','service')]}"/>
+                                <field name="weight_net" attrs="{'readonly':[('type','=','service')]}"/>
+                            </group>
+
+                            <group colspan="2" col="2" name="uom">
+                                <separator string="Unit of Measure" colspan="2"/>
+                                <field name="uom_id" on_change="onchange_uom(uom_id,uom_po_id)"/>
+                                <field name="uom_po_id" groups="base.group_extended"/>
+                            </group>
+
+                            <group colspan="2" col="2" name="uos" groups="product.group_uos">
+                                <separator string="Second UoM" colspan="2"/>
+                                <field name="uos_id"/>
+                                <field name="uos_coeff"/>
+                                <field name="mes_type"/>
+                            </group>
+                        </page>
+                    </page>
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>

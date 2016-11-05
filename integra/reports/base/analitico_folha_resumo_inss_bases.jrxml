@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="analitico_folha_resumo_inss" language="groovy" pageWidth="502" pageHeight="802" whenNoDataType="BlankPage" columnWidth="502" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="193a605c-82b2-4b8e-9890-a10ca82cc708">
+	<property name="ireport.zoom" value="1.4641000000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="CNPJ" class="java.lang.String"/>
+	<parameter name="TIPOS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+
+cast(coalesce(sum(
+case
+   when r.code like 'BASE%' and ct.categoria_trabalhador = '722' then
+   cast(hl.total as numeric(18,2))
+   else 0
+end), 0) as numeric(18,2)) as base_prolabore,
+
+cast(coalesce(sum(
+case
+   when r.code like 'BASE%' and ct.categoria_trabalhador not in ('722','701','702','703') then
+   cast(hl.total as numeric(18,2))
+   else 0
+end), 0) as numeric(18,2)) as base_funcionario,
+
+cast(coalesce(sum(
+case
+   when r.code like 'BASE%' and ct.categoria_trabalhador in ('701','702','703') then
+   cast(hl.total as numeric(18,2))
+   else 0
+end), 0) as numeric(18,2)) as base_autonomo
+
+
+from hr_payslip_line hl
+join hr_payslip h on h.id = hl.slip_id
+join res_company c on c.id = h.company_id
+join res_partner p on p.id = c.partner_id
+join hr_contract ct on ct.id = h.contract_id
+join hr_salary_rule r on r.id = hl.salary_rule_id
+
+where
+  h.tipo in $P!{TIPOS} and (h.simulacao = False or h.simulacao is null)
+  and r.code in ('INSS', 'INSS_13', 'INSS_13_AP', 'BASE_INSS', 'BASE_INSS_13', 'DIFERENCA_INSS') and hl.code != 'BASE_INSS_anterior'
+  and (
+    (h.tipo in ('N', 'D') and h.date_from >= cast($P{DATA_INICIAL} as date) and h.date_to <= cast($P{DATA_FINAL} as date))
+     or (h.tipo = 'R' and h.data_afastamento between cast($P{DATA_INICIAL} as date) and cast($P{DATA_FINAL} as date))
+  )
+  and p.cnpj_cpf = $P{CNPJ}]]>
+	</queryString>
+	<field name="base_prolabore" class="java.math.BigDecimal"/>
+	<field name="base_funcionario" class="java.math.BigDecimal"/>
+	<field name="base_autonomo" class="java.math.BigDecimal"/>
+	<detail>
+		<band height="42">
+			<staticText>
+				<reportElement x="0" y="0" width="401" height="14" uuid="c8efcc6a-66ab-4926-aded-f3d238ea60c7"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INSS empresa - funcionários]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="14" width="401" height="14" uuid="493d739c-b0f3-4713-a57c-7ef91d2d6227"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INSS empresa - pro-labore]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="28" width="401" height="14" uuid="ee5e5f92-5d1c-4e98-bc51-57aab9e755ae"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INSS empresa - autônomos]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="401" y="28" width="101" height="14" uuid="8cf41146-e410-40fb-bd17-651457bef4cd"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_autonomo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="401" y="14" width="101" height="14" uuid="c9f5ec9f-5d9f-4f4f-9aae-cca8013ccdb1"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_prolabore}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="401" y="0" width="101" height="14" uuid="4dcfebed-3a88-4a49-a7f2-9e6749c67d44"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_funcionario}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="14">
+			<textField pattern="#,##0.00">
+				<reportElement x="401" y="0" width="101" height="14" uuid="5df3db34-4800-4be5-9850-77d11623e3e8"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_funcionario} + $F{base_prolabore} + $F{base_autonomo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="401" height="14" uuid="54a7adb2-ec56-4023-bda1-5fd414123ef9"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Totalização bruto do INSS]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

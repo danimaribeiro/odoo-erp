@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_relatorio_regra_estrututa_form" >
+            <field name="name">hr.relatorio.regra.salario.form</field>
+            <field name="model">hr.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório Regras de Salário">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <field name="rule_id" colspan="4"/>                        
+                        <newline/>      
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_regra_salario" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_relatorio_regra_estrututa_acao">
+            <field name="name">Relatório Regras de Salário</field>
+            <field name="res_model">hr.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_relatorio_regra_estrututa_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_relatorio_regra_estrututa_form"/>
+            <field name="act_window_id" ref="hr_relatorio_regra_estrututa_acao"/>
+        </record>
+
+        <menuitem action="hr_relatorio_regra_estrututa_acao"
+                  id="menu_hr_relatorio_regra_estrututa"
+                  name="Regras de Salário"
+                  parent="menu_hr_relatorio_config"
+                  sequence="02" />
+
+    </data>
+</openerp>

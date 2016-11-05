@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_conta_form">
+            <field name="name">finan.conta.form</field>
+            <field name="model">finan.conta</field>
+            <field name="inherit_id" ref="finan.finan_conta_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="nome" position="after">
+<!--                     <field name="user_id" colspan="4" /> -->
+                    <field name="hr_department_id" colspan="4" />
+<!--                     <button type="object" name="ajusta_departamentos" string="Ajusta departamentos" colspan="4" /> -->
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_conta_tree">
+            <field name="name">finan.conta.tree</field>
+            <field name="model">finan.conta</field>
+            <field name="inherit_id" ref="finan.finan_conta_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="nome_completo" position="after">
+                    <field name="hr_department_id" colspan="4" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_conta_search">
+            <field name="name">finan.conta.search</field>
+            <field name="model">finan.conta</field>
+            <field name="inherit_id" ref="finan.finan_conta_search"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <field name="nome_completo" position="after">
+                    <field name="hr_department_id" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

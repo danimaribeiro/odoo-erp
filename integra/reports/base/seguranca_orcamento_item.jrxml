@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="seguranca_orcamento_item" language="groovy" pageWidth="539" pageHeight="842" columnWidth="539" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a9632c67-754f-4d06-a792-04deefb1301f">
+	<property name="ireport.zoom" value="1.9487171000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="OS_ID" class="java.lang.Integer"/>
+	<parameter name="MOSTRA_MARGEM_CONTRIBUICAO" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO_ITEM" class="java.lang.String">
+		<defaultValueExpression><![CDATA[P]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EH_VENDA" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IGNORA_IMPOSTOS" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EH_LOCACAO" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EH_OS" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+    ol.order_id as os_id,
+    p.default_code as produto_codigo,
+    p.name_template as produto_nome,
+    ol.name as descricao,
+    u.name as unidade,
+    coalesce(ol.product_uom_qty, 0) as quantidade,
+    coalesce(ol.vr_unitario_venda_impostos, 0) as vr_unitario,
+    coalesce(ol.vr_total_venda_impostos, 0) as vr_produtos,
+    coalesce(ol.discount, 0) as vr_desconto,
+    coalesce(ol.vr_simples, 0) as vr_simples,
+    coalesce(ol.vr_icms_proprio, 0) as vr_icms_proprio,
+    coalesce(ol.vr_diferencial_aliquota, 0) as vr_diferencial_aliquota,
+    coalesce(ol.vr_ipi, 0) as vr_ipi,
+    coalesce(ol.vr_iss, 0) as vr_iss,
+    coalesce(ol.vr_pis_proprio, 0) as vr_pis_proprio,
+    coalesce(ol.vr_cofins_proprio, 0) as vr_cofins_proprio,
+    coalesce(ol.vr_csll, 0) as vr_csll,
+    coalesce(ol.vr_irrf, 0) as vr_irrf,
+    coalesce(ol.total_imposto, 0) as total_imposto,
+    coalesce(ol.vr_produto_base, 0) as vr_produto_base,
+    coalesce(ol.vr_comissao, 0) as vr_comissao,
+    coalesce(ol.vr_margem_contribuicao, 0) as vr_margem_contribuicao,
+    coalesce(ol.al_margem_contribuicao, 0) as al_margem_contribuicao
+
+
+from
+    sale_order_line ol
+    join product_product p on p.id = ol.product_id
+    join product_template t on t.id = p.product_tmpl_id
+    join product_uom u on u.id = t.uom_id
+
+where
+    ol.tipo_item = $P{TIPO_ITEM}
+    and ol.order_id = $P{OS_ID}
+
+order by
+    p.name_template]]>
+	</queryString>
+	<field name="os_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[OS]]></fieldDescription>
+	</field>
+	<field name="produto_codigo" class="java.lang.String">
+		<fieldDescription><![CDATA[Código do produto original]]></fieldDescription>
+	</field>
+	<field name="produto_nome" class="java.lang.String"/>
+	<field name="descricao" class="java.lang.String">
+		<fieldDescription><![CDATA[Descrição]]></fieldDescription>
+	</field>
+	<field name="unidade" class="java.lang.String">
+		<fieldDescription><![CDATA[Unidade do produto original]]></fieldDescription>
+	</field>
+	<field name="quantidade" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Quantidade]]></fieldDescription>
+	</field>
+	<field name="vr_unitario" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor unitário]]></fieldDescription>
+	</field>
+	<field name="vr_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do produto/serviço]]></fieldDescription>
+	</field>
+	<field name="vr_desconto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do desconto]]></fieldDescription>
+	</field>
+	<field name="vr_simples" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do SIMPLES Nacional]]></fieldDescription>
+	</field>
+	<field name="vr_icms_proprio" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ICMS próprio]]></fieldDescription>
+	</field>
+	<field name="vr_diferencial_aliquota" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do diferencial de alíquota]]></fieldDescription>
+	</field>
+	<field name="vr_ipi" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do IPI]]></fieldDescription>
+	</field>
+	<field name="vr_iss" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ISS]]></fieldDescription>
+	</field>
+	<field name="vr_pis_proprio" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do PIS próprio]]></fieldDescription>
+	</field>
+	<field name="vr_cofins_proprio" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do COFINS própria]]></fieldDescription>
+	</field>
+	<field name="vr_csll" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da CSLL]]></fieldDescription>
+	</field>
+	<field name="vr_irrf" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do IRRF]]></fieldDescription>
+	</field>
+	<field name="total_imposto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total dos impostos]]></fieldDescription>
+	</field>
+	<field name="vr_produto_base" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor base do produto/serviço original]]></fieldDescription>
+	</field>
+	<field name="vr_comissao" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor comissão]]></fieldDescription>
+	</field>
+	<field name="vr_margem_contribuicao" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Margem de contribuição]]></fieldDescription>
+	</field>
+	<field name="al_margem_contribuicao" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Margem de contribuição]]></fieldDescription>
+	</field>
+	<variable name="vr_produtos_1" class="java.math.BigDecimal" resetType="Group" resetGroup="Orçamento" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_produtos}]]></variableExpression>
+	</variable>
+	<group name="Orçamento">
+		<groupExpression><![CDATA[$F{os_id}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<printWhenExpression><![CDATA[($P{EH_VENDA} && (! $P{EH_OS})) || ($P{EH_LOCACAO} &&  (! $P{EH_OS}) && ($P{TIPO_ITEM} != "P")) || $P{MOSTRA_MARGEM_CONTRIBUICAO}]]></printWhenExpression>
+				<textField pattern="#,##0.00">
+					<reportElement x="339" y="0" width="39" height="12" uuid="0956cf18-520b-4de6-b404-5aec7b2bab47"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Qtd."]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="378" y="0" width="65" height="12" uuid="e7a289d8-964a-4cd6-9129-1904e17fff53"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Vr. unitário"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="443" y="0" width="96" height="12" uuid="8c53689e-d11a-44f7-b172-fb22b0196082"/>
+					<box rightPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Vr. " +
+($P{TIPO_ITEM} == "P"?
+"produto"
+:
+$P{TIPO_ITEM} == "S"?
+"serviço"
+:
+"mensalidade")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="339" height="12" uuid="80c0ad15-8f9c-48b9-9238-2486bd0f9a3a"/>
+					<box leftPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{TIPO_ITEM} == "P"?
+"Produto"
+:
+$P{TIPO_ITEM} == "S"?
+"Serviço"
+:
+"Mensalidade"]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="14">
+				<printWhenExpression><![CDATA[($P{EH_OS}) || ($P{EH_LOCACAO} && ($P{TIPO_ITEM} == "P")) && (!$P{MOSTRA_MARGEM_CONTRIBUICAO})]]></printWhenExpression>
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="539" height="12" uuid="3e0dd2d7-d4fb-40db-8a1a-176e3597a9ac"/>
+					<box leftPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{TIPO_ITEM} == "P"?
+"Produto"
+:
+$P{TIPO_ITEM} == "S"?
+"Serviço"
+:
+"Mensalidade"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="339" y="0" width="39" height="12" uuid="3b27324c-a6f9-4272-8c33-58d140f103b9"/>
+					<box rightPadding="0">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Qtd."]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="24">
+				<printWhenExpression><![CDATA[(! $P{EH_OS}) && ((! $P{EH_LOCACAO}) || ($P{TIPO_ITEM} != "P"))]]></printWhenExpression>
+				<textField pattern="#,##0.00" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="443" y="0" width="96" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="29b5a386-825f-4951-ac2f-16392904e576"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None" markup="none">
+						<font fontName="DejaVu Sans" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{vr_produtos_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="443" height="12" uuid="94ba65ec-48f9-4408-b6a4-2be87be56e29"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{TIPO_ITEM} == "P"?
+"Total dos Produtos"
+:
+$P{TIPO_ITEM} == "S"?
+"Total dos Serviços"
+:
+"Total das Mensalidades"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="16">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="539" height="16" backcolor="#CCCCCC" uuid="d15c0934-d9fd-4b19-89e4-0cf15f4f717c"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO_ITEM} == "P"?
+"Produtos"
+:
+$P{TIPO_ITEM} == "S"?
+"Serviços"
+:
+"Mensalidades"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<printWhenExpression><![CDATA[($P{EH_VENDA} && (! $P{EH_OS})) || ($P{EH_LOCACAO} &&  (! $P{EH_OS}) && ($P{TIPO_ITEM} != "P")) || $P{MOSTRA_MARGEM_CONTRIBUICAO}]]></printWhenExpression>
+			<textField pattern="#,##0.00">
+				<reportElement x="443" y="0" width="96" height="12" uuid="839f6c3e-9311-45df-b85d-767216b63eb5"/>
+				<box rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_produtos}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="339" y="0" width="39" height="12" uuid="639308a4-fbae-44fd-b358-1c3a60e19c7e"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantidade}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="339" height="12" uuid="e442eab9-40b3-4668-a8e8-5f43b1e7d16f"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="378" y="0" width="65" height="12" uuid="10c8fa53-4972-4088-8162-24e91ee99f73"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_unitario}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="12">
+			<printWhenExpression><![CDATA[($P{EH_OS}) || ($P{EH_LOCACAO} && ($P{TIPO_ITEM} == "P")) && (!$P{MOSTRA_MARGEM_CONTRIBUICAO})]]></printWhenExpression>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="339" height="12" uuid="d94ac436-9d8b-46c0-8a24-d330c2a24ed1"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="339" y="0" width="39" height="12" uuid="601137be-2faf-4824-9acf-51c6fa9279ff"/>
+				<box rightPadding="0">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantidade}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="378" y="0" width="161" height="12" uuid="f296845d-ad45-48da-ba5d-c276e5e65149"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<noData>
+		<band height="64">
+			<printWhenExpression><![CDATA[$P{EH_OS} && ($P{TIPO_ITEM} == "P" || $P{TIPO_ITEM} == "S")]]></printWhenExpression>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="539" height="16" backcolor="#CCCCCC" uuid="58afaf98-369d-4f61-9ce4-de2e709fb588"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO_ITEM} == "P"?
+"Produtos"
+:
+$P{TIPO_ITEM} == "S"?
+"Serviços"
+:
+"Mensalidades"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="16" width="539" height="12" uuid="04a150bd-348c-45f2-a034-92c820850bab"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="28" width="539" height="12" uuid="5fdc8cf8-3608-49d9-a918-9258c35654a9"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="40" width="539" height="12" uuid="3437d6a9-f5dd-4e84-ae39-159e3d909cfb"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="52" width="539" height="12" uuid="0b81dccb-340e-4572-aa8c-bbcb0b5045c8"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+		</band>
+	</noData>
+</jasperReport>

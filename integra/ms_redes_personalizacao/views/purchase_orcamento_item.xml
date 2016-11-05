@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="purchase_orcamento_item_form">
+        <field name="name">purchase.orcamento.item.form</field>
+        <field name="model">project.orcamento.item</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="construtora.purchase_orcamento_item_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <field name="quantidade_risco" position="replace">
+                <field name="quantidade_risco" invisible="1" />
+                <field name="vr_unitario_risco" on_change="onchange_quantidade_vr_unitario_risco(quantidade, vr_unitario, 0, vr_unitario_risco)" />
+            </field>
+            <field name="risco" position="replace">
+                <field name="risco" on_change="onchange_quantidade_vr_unitario_risco(quantidade, vr_unitario, risco, 0)" string="Margem"/>
+            </field>
+
+            <field name="quantidade" position="replace">
+                <field name="quantidade" on_change="onchange_quantidade_vr_unitario_risco(quantidade, vr_unitario, risco, 0)" />
+            </field>
+
+            <field name="vr_unitario" position="replace">
+                <field name="vr_unitario" on_change="onchange_quantidade_vr_unitario_risco(quantidade, vr_unitario, risco, 0)" />
+            </field>
+
+            <field name="planejamento_ids" position="after">
+                <button name="gera_task" string="Gerar tarefa" icon="gtk-convert" type="object" context="{}" />
+                <field name="task_id" readonly="1" />
+            </field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="purchase_orcamento_item_tree">
+        <field name="name">purchase.orcamento.item.tree</field>
+        <field name="model">project.orcamento.item</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="construtora.purchase_orcamento_item_tree"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <field name="quantidade_risco" position="replace">
+                <field name="quantidade_risco" invisible="1" />
+                <field name="vr_unitario_risco" on_change="onchange_quantidade_vr_unitario_risco(quantidade, vr_unitario, 0, vr_unitario_risco)" />
+            </field>
+            <field name="risco" position="replace">
+                <field name="risco" on_change="onchange_quantidade_vr_unitario_risco(quantidade, vr_unitario, risco, 0)" string="Margem"/>
+            </field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="purchase_orcamento_item_composicao_form">
+        <field name="name">project.orcamento.item.composicao.form</field>
+        <field name="model">project.orcamento.item</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="integra_kit_componente.purchase_orcamento_item_form"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <field name="itens_componente_ids" position="replace">
+                <field name="itens_componente_ids" nolabel="1" colspan="4">
+                    <tree editable="bottom">
+                        <field name="project_id" invisible="1" />
+                        <field name="orcamento_id" invisible="1" />
+                        <field name="etapa_id" invisible="1" />
+                        <field name="codigo_completo" invisible="1" />
+                        <field name="ordem" invisible="1" />
+                        <field name="product_id" on_change="onchange_product_id(product_id, project_id)" />
+                        <field name="uom_id" readonly="1" />
+                        <field name="quantidade_referencia" on_change="onchange_quantidade_componente(quantidade_componente, quantidade_referencia, vr_unitario, risco)" string="Quantidade referência" />
+                        <field name="quantidade_componente" on_change="onchange_quantidade_componente(quantidade_componente, quantidade_referencia, vr_unitario, risco)" string="Quantidade composição" />
+                        <field name="quantidade" on_change="onchange_quantidade_vr_unitario_risco(quantidade, vr_unitario, risco, 0)" string="Quantidade total" />
+                        <field name="vr_unitario" on_change="onchange_quantidade_vr_unitario_risco(quantidade, vr_unitario, risco, 0)" />
+                        <field name="vr_produto" sum="vr_produto" />
+                        <field name="risco" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario, risco)" string="Margem"/>
+                        <field name="quantidade_risco" invisible="1" />
+                        <field name="vr_unitario_risco" on_change="onchange_quantidade_vr_unitario_risco(quantidade, vr_unitario, 0, vr_unitario_risco)" />
+                        <field name="vr_risco" sum="vr_risco" string="Valor com margem" />
+                        <field name="percentual_planejado" invisible="1" />
+                        <field name="data_inicial_execucao" invisible="1" />
+                        <field name="data_final_execucao" invisible="1" />
+                        <field name="dias_execucao" invisible="1" />
+                    </tree>
+                </field>
+            </field>
+        </field>
+    </record>
+
+</data>
+</openerp>

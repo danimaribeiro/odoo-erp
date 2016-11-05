@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="ordem_servico_gera_nota_wizard" >
+            <field name="name">ordem.servico.gera.nota.wizard</field>
+            <field name="model">ordem.servico.gera_nota</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Emitir NF das OSs">
+                    <group colspan="4">
+                        <separator string="Confirmar período" colspan="4"/>
+                        <newline/>
+                        <field name="data_inicial" required="1"/>
+                        <field name="data_final" required="1"/>
+                        <field name="etapa_id" colspan="4" required="1" />
+                        <field name="marca_id" colspan="4" on_change="onchange_marca_id(marca_id)" />
+                        <field name="os_id" colspan="4"/>
+
+                        <separator string="Dados da geração das NFs" colspan="4" />
+                        <field name="company_id" colspan="4" />
+                        <field name="operacao_id" colspan="4" domain="[('modelo', '=', '55'), ('emissao', '=', '0'), ('entrada_saida', '=', '1')]" />
+                        <field name="partner_id" colspan="4" string="Destinatário" />
+<!--                        <field name="operacao_produto_id" colspan="4" domain="[('emissao', '=', '0'), ('modelo', 'in', ('55', '2D'))]"/>
+                        <field name="operacao_servico_id" colspan="4" domain="[('emissao', '=', '0'), ('modelo', '=', 'SE')]"/>-->
+                        <newline/>
+                        <button icon="gtk-execute" name="busca_oss" string="Buscar OSs" type="object" colspan="2"/>
+                        <button icon="gtk-execute" name="gera_notas" string="Gerar notas" type="object" colspan="2"/>
+                        <separator string="Ordens de Serviço" colspan="4"/>
+                        <field name="os_ids" colspan="4" nolabel="1" readonly="1">
+                            <tree>
+                                <field name="numero" />                    
+                                <field name="data" />                    
+                                <field name="partner_id" />
+                                <field name="product_id" />                    
+                                <field name="marca" />                    
+                                <field name="tecnico_id" />                                                           
+                                <field name="etapa_id" />                                                           
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="ordem_servico_gera_nota_wizard_acao">
+            <field name="name">Gerar NFs das OSs</field>
+            <field name="res_model">ordem.servico.gera_nota</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+<!--             <field name="form_view_id">ordem_servico_gera_nota_wizard</field> -->
+        </record>
+
+        <record model="ir.actions.act_window.view" id="ordem_servico_gera_nota_wizard_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="ordem_servico_gera_nota_wizard"/>
+            <field name="act_window_id" ref="ordem_servico_gera_nota_wizard_acao"/>
+        </record>
+
+        <menuitem 
+            action="ordem_servico_gera_nota_wizard_acao"
+            id="menu_ordem_servico_gera_nota_wizard" 
+            name="Gerar NFs" 
+            parent="menu_assitencia_tecnica" 
+            sequence="10"        
+            groups="group_assitencia_tecnica_manager"/>
+
+    </data>
+</openerp>

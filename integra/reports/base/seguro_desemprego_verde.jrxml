@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="seguro_desemprego_verde" language="groovy" pageWidth="595" pageHeight="842" columnWidth="547" leftMargin="31" rightMargin="17" topMargin="96" bottomMargin="333" uuid="4efcd247-6fd7-43d1-ab71-9df59e11b587">
+	<property name="ireport.zoom" value="1.7715610000000042"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="REGISTRO_IDS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+
+--empresa
+c.cnpj_cpf as empresa_cnpj,
+cnae.codigo as empresa_cnae,
+rp.razao_social,
+rp.endereco as empresa_endereco,
+rp.numero as empresa_numero,
+rp.bairro as empresa_bairro,
+rp.cidade as empresa_cidade,
+rp.estado as empresa_estado,
+rp.cep as empresa_cep,
+
+--empregado
+e.nome as empregado_nome,
+e.nome_mae as empregado_mae,
+e.endereco || ' ' || e.numero as empregado_endereco,
+e.complemento as empregado_complemento,
+e.cep as empregado_cep,
+e.estado as empregado_estado,
+e.cpf as empregado_cpf,
+e.fone as empregado_telefone,
+e.nis as empregado_pis,
+e.carteira_trabalho_numero as ctps_numero,
+right(e.carteira_trabalho_serie,3) as ctps_serie,
+e.carteira_trabalho_estado as ctps_uf,
+cbo.codigo as cbo,
+j.name as ocupacao,
+to_char(e.data_nascimento, 'ddmmyy') as empregado_nascimento,
+e.banco_agencia as empregador_banco_agencia,
+bk.bic as empregado_banco,
+--contrato
+to_char(co.date_start, 'ddmmyy') as data_admissao,
+to_char(h.data_afastamento, 'ddmmyy') as data_dispensa,
+case
+when e.sexo = 'M' then
+1
+else
+2
+end as empregado_sexo,
+e.grau_instrucao as gra_instrucao,
+round(co.horas_mensalista / 30.0 * 6) as horas__trab_semana,
+
+case
+  when h.aviso_previo_indenizado then 1
+  else 2
+end as aviso_previo_indenizado,
+
+(select aps.valor from (select h.date_from, sum(coalesce(hl.total, 0.00)) as valor
+from hr_payslip_line hl
+join hr_payslip h on h.id = hl.slip_id
+where
+h.contract_id = co.id
+and hl.code in ('BRUTO', 'BRUTO_anterior') and h.tipo = 'N'
+group by
+h.date_from
+order by
+h.date_from desc limit 1 offset 2) as aps) as antiltimo_salario,
+
+(select ps.valor from (select h.date_from, sum(coalesce(hl.total, 0.00)) as valor
+from hr_payslip_line hl
+join hr_payslip h on h.id = hl.slip_id
+where
+h.contract_id = co.id
+and hl.code in ('BRUTO', 'BRUTO_anterior') and h.tipo = 'N'
+group by
+h.date_from
+order by
+h.date_from desc limit 1 offset 1) as ps) as penultimo_salario,
+
+(select us.valor from (select h.date_from, sum(coalesce(hl.total, 0.00)) as valor
+from hr_payslip_line hl
+join hr_payslip h on h.id = hl.slip_id
+where
+h.contract_id = co.id
+and hl.code in ('BRUTO', 'BRUTO_anterior') and h.tipo = 'N'
+group by
+h.date_from
+order by
+h.date_from desc limit 1) as us) as ultimo_salario,
+
+(select h.date_from
+from hr_payslip h
+where
+h.contract_id = co.id and h.tipo = 'N'
+order by
+h.date_from desc limit 1 offset 2) as antiltimo_salario_data,
+
+(select h.date_from
+from hr_payslip h
+where
+h.contract_id = co.id and h.tipo = 'N'
+order by
+h.date_from desc limit 1 offset 1) as penultimo_salario_data,
+
+(select h.date_from
+from hr_payslip h
+where
+h.contract_id = co.id and h.tipo = 'N'
+order by
+h.date_from desc limit 1 ) as ultimo_salario_data,
+
+case
+  when extract(year from age(h.data_afastamento, co.date_start)) * 12 + extract(month from age(h.data_afastamento, co.date_start)) > 36 then 36
+  else extract(year from age(h.data_afastamento, co.date_start)) * 12 + extract(month from age(h.data_afastamento, co.date_start))
+end as meses_trabalhados
+
+from hr_payslip as h
+join hr_contract as co on co.id = h.contract_id
+join hr_employee as e on e.id = h.employee_id
+join res_company as c on c.id =  co.company_id
+join res_partner as rp on rp.id = c.partner_id
+left join sped_cnae as cnae on cnae.id = rp.cnae_id
+left join hr_job as j on j.id = co.job_id
+left join hr_cbo as cbo on cbo.id = j.cbo_id
+left join res_bank as bk on bk.id = e.bank_id
+
+where
+  h.id in $P!{REGISTRO_IDS} and h.tipo = 'R'
+
+order by
+e.nome]]>
+	</queryString>
+	<field name="empresa_cnpj" class="java.lang.String"/>
+	<field name="empresa_cnae" class="java.lang.String"/>
+	<field name="razao_social" class="java.lang.String"/>
+	<field name="empresa_endereco" class="java.lang.String"/>
+	<field name="empresa_numero" class="java.lang.String"/>
+	<field name="empresa_bairro" class="java.lang.String"/>
+	<field name="empresa_cidade" class="java.lang.String"/>
+	<field name="empresa_estado" class="java.lang.String"/>
+	<field name="empresa_cep" class="java.lang.String"/>
+	<field name="empregado_nome" class="java.lang.String"/>
+	<field name="empregado_mae" class="java.lang.String"/>
+	<field name="empregado_endereco" class="java.lang.String"/>
+	<field name="empregado_complemento" class="java.lang.String"/>
+	<field name="empregado_cep" class="java.lang.String"/>
+	<field name="empregado_estado" class="java.lang.String"/>
+	<field name="empregado_cpf" class="java.lang.String"/>
+	<field name="empregado_telefone" class="java.lang.String"/>
+	<field name="empregado_pis" class="java.lang.String"/>
+	<field name="ctps_numero" class="java.lang.String"/>
+	<field name="ctps_serie" class="java.lang.String"/>
+	<field name="ctps_uf" class="java.lang.String"/>
+	<field name="cbo" class="java.lang.String"/>
+	<field name="ocupacao" class="java.lang.String">
+		<fieldDescription><![CDATA[Ocupação]]></fieldDescription>
+	</field>
+	<field name="empregado_nascimento" class="java.lang.String"/>
+	<field name="empregador_banco_agencia" class="java.lang.String"/>
+	<field name="empregado_banco" class="java.lang.String"/>
+	<field name="data_admissao" class="java.lang.String"/>
+	<field name="data_dispensa" class="java.lang.String"/>
+	<field name="empregado_sexo" class="java.lang.Integer"/>
+	<field name="gra_instrucao" class="java.lang.String"/>
+	<field name="horas__trab_semana" class="java.math.BigDecimal"/>
+	<field name="aviso_previo_indenizado" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Aviso prévio indenizado?]]></fieldDescription>
+	</field>
+	<field name="antiltimo_salario" class="java.math.BigDecimal"/>
+	<field name="penultimo_salario" class="java.math.BigDecimal"/>
+	<field name="ultimo_salario" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Último salário]]></fieldDescription>
+	</field>
+	<field name="antiltimo_salario_data" class="java.sql.Date"/>
+	<field name="penultimo_salario_data" class="java.sql.Date"/>
+	<field name="ultimo_salario_data" class="java.sql.Date"/>
+	<field name="meses_trabalhados" class="java.lang.Double"/>
+	<variable name="SOMA_SALARIO" class="java.lang.String">
+		<variableExpression><![CDATA[$F{antiltimo_salario}+$F{penultimo_salario}+$F{ultimo_salario}]]></variableExpression>
+	</variable>
+	<variable name="cnpj" class="java.lang.String">
+		<variableExpression><![CDATA[(((($F{empresa_cnpj}.replace(".","")).replace("-","")).replace("/","")).split("")).join(" ")]]></variableExpression>
+	</variable>
+	<variable name="anti_mes" class="java.lang.String">
+		<variableExpression><![CDATA[new SimpleDateFormat("MM").format($F{antiltimo_salario_data})]]></variableExpression>
+	</variable>
+	<variable name="valor_anti" class="java.lang.String">
+		<variableExpression><![CDATA[$F{antiltimo_salario}.toPlainString()]]></variableExpression>
+	</variable>
+	<variable name="valor_penu" class="java.lang.String">
+		<variableExpression><![CDATA[$F{penultimo_salario}.toPlainString()]]></variableExpression>
+	</variable>
+	<variable name="valor_ulti" class="java.lang.String">
+		<variableExpression><![CDATA[$F{ultimo_salario}.toPlainString()]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="413" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="547" height="14" uuid="124fb695-ea1b-4dca-95fe-4332ead0630d"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empregado_nome}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="36" width="547" height="14" uuid="c1bfda25-f2e5-45d6-b9c4-d9fed5846114"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empregado_mae}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="72" width="547" height="14" uuid="cc86a071-04a5-45aa-b824-c6f87677380f"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empregado_endereco}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="108" width="201" height="14" uuid="721d0606-a2f1-4884-9793-b9347b46a06e"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empregado_complemento}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="212" y="108" width="128" height="14" uuid="6ba3d364-0846-428f-af2f-3316a47d5620"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empregado_cep}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="359" y="108" width="28" height="14" uuid="b2413c3c-58c3-4c5e-b9dd-b2f1a67f9657"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empregado_estado}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="397" y="108" width="150" height="14" uuid="9a11c3f9-e604-402d-9be2-5c9a2faf55c4"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empregado_telefone}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="143" width="167" height="14" uuid="ad910edb-ae06-47ac-8bcf-ebe1651e2a03"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[((($F{empregado_cpf}.replace(".","")).replace("-","")).split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="143" width="42" height="14" uuid="dbe6aea3-bb40-4610-bce4-b93160656939"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ctps_serie}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="143" width="157" height="14" uuid="f216c21d-9820-41c8-b47f-10356bed2209"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empregado_pis}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="182" y="143" width="98" height="14" uuid="30c7dca1-0844-423f-bef2-3282c2608dd6"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ctps_numero}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="322" y="143" width="28" height="14" uuid="7bbbf769-eb5e-4790-b125-e958663d90ae"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ctps_uf}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="313" y="180" width="67" height="14" uuid="5d8f2b16-2143-4fb9-baa0-3cdbe2976fa4"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empresa_cnae}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="93" y="180" width="201" height="14" uuid="523d2a74-fc5d-466d-98bb-e7422ea1005b"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{cnpj}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="56" y="180" width="14" height="14" uuid="c65fce4a-8dd6-4537-aabd-82422d1dcfce"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{cnpj}.length() != 14 ?
+"1"
+:
+"2"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="102" y="216" width="278" height="14" uuid="8c963c1d-ff52-4951-80c5-252fbab24bde"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ocupacao}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="216" width="101" height="14" uuid="7f57ddac-ef57-4de1-ad2c-adad46a206d8"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="5.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{cbo}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="0" y="286" width="85" height="14" uuid="4ae00c21-79b6-4dc9-9cb8-8f15cc0181fd"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{data_admissao}.replace("/","")).split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="106" y="286" width="85" height="14" uuid="8c2f3aee-c74e-45fe-b33a-c02f99187194"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{data_dispensa}.replace("/","")).split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="265" y="286" width="15" height="14" uuid="d5ea06e8-fb77-4080-b760-37d3738a88c0"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empregado_sexo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="352" y="286" width="15" height="14" uuid="b54db32a-f8dc-4ce5-8db5-0c734db76a6e"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gra_instrucao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="391" y="286" width="85" height="14" uuid="b18055c7-b4b2-459f-8475-efd947b33b17"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{empregado_nascimento}).split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="498" y="286" width="29" height="14" uuid="53404ff2-c190-4380-bcc1-7242f98bf979"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{horas__trab_semana}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="358" width="140" height="14" uuid="b495861f-0b5b-4a6c-bd9a-93b42ebc3c96"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($V{SOMA_SALARIO}.replace("."," ")).split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="407" y="322" width="140" height="14" uuid="29215e00-3273-4f02-b2e8-0c0da060e6a2"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($V{valor_ulti}.replace("."," ")).split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="216" y="322" width="140" height="14" uuid="3c89862e-db49-42ff-be5a-23f05d1e18d2"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($V{valor_penu}.replace("."," ")).split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM">
+				<reportElement x="0" y="322" width="28" height="14" uuid="e55fafc4-960f-4df7-80d3-6b4bd8175385"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($V{anti_mes}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="34" y="322" width="140" height="14" uuid="818fc8c7-7f2d-4098-960d-6cb2add3424a"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($V{valor_anti}.replace("."," ")).split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM">
+				<reportElement x="182" y="322" width="28" height="14" uuid="edc3327b-d4b3-43e8-94fc-1ea535623aa5"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{penultimo_salario_data}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM">
+				<reportElement x="366" y="322" width="28" height="14" uuid="a479a9c9-786c-410f-994a-bd5303ef1fc4"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ultimo_salario_data}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement x="518" y="358" width="29" height="14" uuid="bdad2e6a-4881-4749-8b8f-9ba835bb2389"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{meses_trabalhados}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="176" y="358" width="56" height="14" uuid="574a9f6f-b982-4425-bde8-ec7a7d985ee2"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empregado_banco}.split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="142" y="399" width="15" height="14" uuid="209c2243-5bdd-41ab-8875-dce45df48a6f"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{antiltimo_salario} != null && $F{penultimo_salario} != null && $F{ultimo_salario} != null ?
+"1"
+:
+"2"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="278" y="399" width="15" height="14" uuid="caddb8f8-cac4-44be-bd1d-5e0096fcb487"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{aviso_previo_indenizado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="232" y="358" width="86" height="14" uuid="654c57ec-5f70-4be5-a587-e0bf4dede726"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans Mono" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{empregador_banco_agencia}.replace("-","")).split("")).join(" ")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="397" y="184" width="150" height="10" uuid="a4f3074a-bcdd-463b-95a3-9d064ad70689"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_cnpj}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="397" y="194" width="150" height="10" uuid="1a7e1ea8-7cfe-4297-a744-42a80077fc23"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{razao_social}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="397" y="204" width="150" height="10" uuid="6a2a162a-ce23-44b8-9b53-fb5c049d5c99"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_endereco} + ", " + $F{empresa_numero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="397" y="214" width="150" height="10" uuid="eb3e6d82-c2b4-4738-ba19-a9e827b48d33"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_bairro}+ " - " + $F{empresa_cep}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="397" y="224" width="150" height="10" uuid="0605454e-4aa7-4559-afba-1de66a3cc432"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_cidade} + " - " + $F{empresa_estado}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

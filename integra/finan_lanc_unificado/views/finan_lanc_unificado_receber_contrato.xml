@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_lanc_unificado_receber_contrato_tree">
+            <field name="name">finan.lanc.unificado.receber.contrato.tree</field>
+            <field name="model">finan.lanc.unificado</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="tipo" invisible="1" />
+                    <field name="company_id" />
+                    <field name="data_vencimento" string="Data vencimento" />
+                    <field name="partner_id" string="Cliente" />
+                    <field name="contrato_id" />
+                    <field name="documento_id" />
+                    <field name="valor" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_lanc_unificado_receber_contrato_form">
+            <field name="name">finan.lanc.unificado.receber.contrato.form</field>
+            <field name="model">finan.lanc.unificado</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Unificar Lançamentos">
+                    <group colspan="4" col="4">
+                        <field name="tipo" invisible="1" />
+                        <field name="company_id" colspan="4"  required="1" attrs="{'readonly': [('uni_lanc_id', '!=', False)]}" />
+                        <field name="partner_id" colspan="4" required="1" string="Cliente" attrs="{'readonly': [('uni_lanc_id', '!=', False)]}" />
+                        <field name="contrato_id" colspan="4" required="1" domain="[('company_id', '=', company_id), ('partner_id', '=', partner_id), ('natureza', 'in', ('R', 'RI'))]" on_change="onchange_contrato_id(contrato_id)" attrs="{'readonly': [('uni_lanc_id', '!=', False)]}" />
+                        <field name="natureza" required="1" invisible="1" />
+                        <field name="data" required="1" attrs="{'readonly': [('uni_lanc_id', '!=', False)]}" />
+                        <field name="data_vencimento" required="1" attrs="{'readonly': [('uni_lanc_id', '!=', False)]}" />
+                        <field name="documento_id" required="1" attrs="{'readonly': [('uni_lanc_id', '!=', False)]}" />
+                        <field name="centrocusto_id" required="0" colspan="4" attrs="{'readonly': [('uni_lanc_id', '!=', False)]}" />
+                        <field name="conta_id" required="1" colspan="4" attrs="{'readonly': [('uni_lanc_id', '!=', False)]}" />
+                        <field name="sugestao_bank_id" colspan="4" attrs="{'readonly': [('uni_lanc_id', '!=', False)]}" />
+                        <field name="carteira_id" colspan="4" attrs="{'readonly': [('uni_lanc_id', '!=', False)]}" />
+                        <field name="uni_lanc_id" invisible="1" readonly="1" colspan="4" context="{'form_view_ref': 'finan.finan_receber_form', 'tree_view_ref': 'finan.finan_receber_tree', 'search_view_ref': 'finan.finan_receber_search'}" />
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Renegociação" attrs="{'invisible': [('uni_lanc_id', '=', False)]}">
+                            <group colspan="4" col="4">
+                                <field name="valor" colspan="2" />
+                                <newline />
+                                <field name="data_inicio" colspan="2" attrs="{'required': [('uni_lanc_id', '!=', False)]}" />
+                                <newline />
+                                <field name="duracao" colspan="2" attrs="{'required': [('uni_lanc_id', '!=', False)]}" />
+                                <button icon="gtk-execute" string="Confirmar parcelamento" name="gerar_parcelamento" type="object" attrs="{'invisible': [('uni_lanc_id', '=', False)]}" colspan="4" />
+                                <newline />
+                                <field name="parcelamento_id" invisible="1" />
+                                <group colspan="4" col="4" attrs="{'invisible': [('parcelamento_id', '=', False)]}">
+                                    <separator string="Lançamentos parcelados" colspan="4" />
+                                    <field name="parcelado_ids" nolabel="1" colspan="4" readonly="1" context="{'form_view_ref': 'finan.finan_receber_form', 'tree_view_ref': 'finan.finan_receber_tree', 'search_view_ref': 'finan.finan_receber_search'}" />
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Lançamentos a renegociar">
+                            <button icon="gtk-execute" string="Confirmar o valor a renegociar" name="gerar_lancamento_unificado" type="object" attrs="{'invisible': ['|', ('company_id', '=', False), ('uni_lanc_id', '!=', False)]}" colspan="4" />
+                            <newline />
+                            <field name="lancamento_ids" colspan="4" nolabel="1" domain="[('tipo', '=', natureza), ('company_id', '=', company_id), ('partner_id', '=', partner_id), ('contrato_id', '=', contrato_id), ('situacao', 'in', ['A vencer','Vencido','Vence hoje'])]"  attrs="{'readonly': [('uni_lanc_id', '!=', False)]}" context="{'form_view_ref': 'finan.finan_receber_form', 'tree_view_ref': 'finan.finan_receber_tree', 'search_view_ref': 'finan.finan_receber_search'}">
+                                <tree string="Duplicatas">
+                                    <field name="data_vencimento" />
+                                    <field name="numero_documento" />
+                                    <field name="valor_saldo" sum="Valor" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_lanc_unificado_receber_contrato_search">
+            <field name="name">finan.lanc.unificado.receber.contrato.search</field>
+            <field name="model">finan.lanc.unificado</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Renegociações de contratos">
+                    <field name="company_id" />
+                    <field name="partner_id"  />
+                    <field name="contrato_id"  />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_lanc_unificado_receber_contrato_acao">
+            <field name="name">Renegociação de contrato</field>
+            <field name="res_model">finan.lanc.unificado</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_lanc_unificado_receber_contrato_tree" />
+            <field name="domain">[('natureza', '=', 'R'), ('tipo', '=', 'R')]</field>
+            <field name="context">{'natureza': 'R', 'default_natureza': 'R', 'default_ativo': False, 'default_tipo': 'R'}</field>
+            <field name="search_view_id" ref="finan_lanc_unificado_receber_contrato_search" />
+        </record>
+
+        <menuitem
+            action="finan_lanc_unificado_receber_contrato_acao"
+            id="menu_finan_lanc_unificado_receber_contrato"
+            name="Renegociação de contrato"
+            parent="finan.menu_finan_conta_receber" />
+
+        <record model="ir.actions.act_window.view" id="finan_lanc_unificado_receber_contrato_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_lanc_unificado_receber_contrato_form"/>
+            <field name="act_window_id" ref="finan_lanc_unificado_receber_contrato_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_lanc_unificado_receber_contrato_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_lanc_unificado_receber_contrato_tree"/>
+            <field name="act_window_id" ref="finan_lanc_unificado_receber_contrato_acao"/>
+        </record>
+
+    </data>
+</openerp>

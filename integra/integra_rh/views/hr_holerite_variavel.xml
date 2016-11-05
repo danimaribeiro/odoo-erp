@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_holerite_variavel_form">
+            <field name="name">hr.holerite_variavel.form</field>
+            <field name="model">hr.holerite_variavel</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Variáveis da Folha">
+                    <group colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="mes" required="1" on_change="onchange_ano_mes(ano, mes)" />
+                        <field name="ano" required="1" on_change="onchange_ano_mes(ano, mes)" />
+                        <field name="data_inicial" invisible="1" />
+                        <field name="data_final" invisible="1" />
+                        <field name="company_id" colspan="4" required="1" />
+                        <field name="rule_id" colspan="4" required="1" domain="[('manual', '=', True)]" />
+                        <field name="exige_valor" invisible="1" />
+                        <button icon="gtk-execute" name="busca_entradas" context="{'mes': mes, 'ano': ano, 'data_inicial': data_inicial, 'data_final': data_final, 'company_id': company_id, 'rule_id': rule_id}" string="Buscar lançamentos" type="object" colspan="2"/>
+                        <separator string="Lançamentos" colspan="4"/>
+                        <field name="input_ids" colspan="4" nolabel="1" context="{'default_data_inicial': data_inicial, 'default_data_final': data_final, 'default_rule_id': rule_id, 'default_exige_valor': exige_valor}">
+                            <tree editable="top">
+                                <field name="contract_id" domain="['|', ('company_id', '=', parent.company_id), ('parent_company_id', '=', parent.company_id), '|', ('date_end', '=', False),('date_end', '&gt;', data_final)]" required="1" on_change="onchange_contract_id(contract_id)" />
+                                <field name="employee_id" invisible="1" />
+                                <field name="rule_id" domain="[('manual', '=', True)]" invisible="1"/>
+                                <field name="exige_valor" invisible="1" />
+                                <field name="horas" sum="Horas" on_change="onchange_horas(horas, False)" widget="float_time" />
+                                <field name="amount" sum="Valor" on_change="onchange_horas(False, amount)" />
+                                <field name="data_inicial" invisible="1" />
+                                <field name="data_final" invisible="1" />
+                                <field name="payslip_id" readonly="1" />
+                                <field name="company_id" invisible="1" />
+                                <field name="code" invisible="1" />
+                                <field name="sequence" invisible="1" />
+                                <field name="name" invisible="1" />
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_holerite_variavel_acao">
+            <field name="name">Variáveis da Folha</field>
+            <field name="res_model">hr.holerite_variavel</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_holerite_variavel_form" />
+        </record>
+
+        <menuitem action="hr_holerite_variavel_acao"
+            id="menu_hr_holerite_variavel" name="Variáveis da Folha" parent="hr_payroll.menu_hr_root_payroll" />
+
+    </data>
+</openerp>

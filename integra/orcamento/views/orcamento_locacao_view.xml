@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="orcamento_orcamento_locacao_form" >
+            <field name="name">orcamento.orcamento_locacao_form</field>
+            <field name="model">orcamento.orcamento_locacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <group colspan="10">
+                    <field name="sale_order_id" invisible="1" />
+                    <field name="orcamento_categoria_id" readonly="1" />
+                    <newline/>
+                    <field name="vr_total_margem_desconto" sum="Valor total" readonly="1" />
+                    <newline/>
+                    <field name="margem" invisible="1" />
+                    <field name="desconto" invisible="1" />
+                    <field name="meses_retorno_investimento" on_change="on_change_meses_retorno_investimento(sale_order_id, orcamento_categoria_id, meses_retorno_investimento)" />
+                    <field name="vr_mensal" sum="Valor mensal" readonly="1" />
+                </group>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="orcamento_orcamento_locacao_tree" >
+            <field name="name">orcamento.orcamento_locacao_tree</field>
+            <field name="model">orcamento.orcamento_locacao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="sale_order_id" invisible="1" />
+                    <field name="orcamento_categoria_id" readonly="1" />
+                    <field name="vr_total_margem_desconto" sum="Valor total" readonly="1" />
+                    <field name="margem" invisible="1" />
+                    <field name="desconto" invisible="1" />
+                    <field name="meses_retorno_investimento" on_change="on_change_meses_retorno_investimento(sale_order_id, orcamento_categoria_id, meses_retorno_investimento)" />
+                    <field name="vr_mensal" sum="Valor mensal" on_change="on_change_valor_mensal(sale_order_id, orcamento_categoria_id, vr_total_margem_desconto, vr_mensal)" />
+                    <field name="vr_comissao_locacao" sum="Valor comissão" readonly="1" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="orcamento_orcamento_locacao_graph" >
+            <field name="name">orcamento.orcamento_locacao_graph</field>
+            <field name="model">orcamento.orcamento_locacao</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="Categorias de orçamento" type="pie">
+                    <field name="orcamento_categoria_id"/>
+                    <field name="vr_mensal" operator="+"/>
+                </graph>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="orcamento_orcamento_resumo_form" >
+            <field name="name">orcamento.orcamento_resumo_form</field>
+            <field name="model">orcamento.orcamento_locacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <group colspan="10">
+                    <field name="sale_order_id" invisible="1" />
+                    <field name="orcamento_categoria_id" readonly="1" />
+                    <newline/>
+                    <field name="vr_total" sum="Valor total" readonly="1" />
+                    <newline/>
+                    <field name="meses_retorno_investimento" invisible="1" />
+                    <field name="margem" on_change="on_change_margem(sale_order_id, orcamento_categoria_id, margem, meses_retorno_investimento)" />
+                    <field name="desconto" on_change="on_change_desconto(sale_order_id, orcamento_categoria_id, desconto, meses_retorno_investimento)" />
+                    <newline/>
+                    <field name="vr_total_margem_desconto" sum="Valor total + margem - desconto" readonly="1" />
+                    <field name="vr_comissao" sum="Valor comissão" readonly="1" />
+                </group>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="orcamento_orcamento_resumo_tree" >
+            <field name="name">orcamento.orcamento_resumo_tree</field>
+            <field name="model">orcamento.orcamento_locacao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="sale_order_id" invisible="1" />
+                    <field name="orcamento_categoria_id" readonly="1" />
+                    <field name="vr_total" sum="Valor total" readonly="1" />
+                    <field name="meses_retorno_investimento" invisible="1" />
+                    <field name="margem" on_change="on_change_margem(sale_order_id, orcamento_categoria_id, margem, meses_retorno_investimento)" />
+                    <field name="desconto" on_change="on_change_desconto(sale_order_id, orcamento_categoria_id, desconto, meses_retorno_investimento)" />
+                    <field name="vr_total_margem_desconto" sum="Valor total com margem e desconto" readonly="1" />
+                    <field name="vr_comissao" sum="Valor comissao" readonly="1" />
+                </tree>
+            </field>
+        </record>
+
+
+   </data>
+</openerp>

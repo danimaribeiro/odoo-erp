@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_documentoitem_form">
+            <field name="name">sped.documentoitem.form</field>
+            <field name="model">sped.documentoitem</field>
+            <field name="inherit_id" ref="sped.sped_documentoitem_form"/>
+            <field name="priority" eval="100"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Impostos" position="after">
+                    <page string="Estoque">
+                        <field name="vr_unitario_custo_estoque" />
+                        <field name="vr_custo_estoque" />
+                        <field name="fator_quantidade" on_change="onchange_fator_quantidade(quantidade, fator_quantidade)"/>
+                        <field name="quantidade_estoque" />
+                        <separator string="Local de origem" colspan="4" />
+                        <field name="stock_location_id" nolabel="1" colspan="4" />
+                        <separator string="Local de destino" colspan="4" />
+                        <field name="stock_location_dest_id" nolabel="1" colspan="4" />
+                        <separator string="Item pedido de compra" colspan="4" />
+                        <field name="stock_move_picking_id" domain="[('partner_id', '=', partner_id), ('product_id', '=', produto_id),('picking_id','!=', False), ('purchase_line_id', '!=', False)]" nolabel="1" colspan="4" />
+                    </page>
+                </page>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_documentoitem_tree">
+            <field name="name">sped.documentoitem.tree</field>
+            <field name="model">sped.documentoitem</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="sped.sped_documentoitem_tree"/>
+            <field name="arch" type="xml">
+                <field name="produto_id" position="after">
+                    <field name="stock_location_id" invisible="1" />
+                    <field name="stock_location_dest_id" invisible="1" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

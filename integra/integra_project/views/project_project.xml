@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="project.view_project" model="ir.ui.view">
+            <field name="name">project.project.tree</field>
+            <field name="model">project.project</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="project.view_project"/>
+            <field name="arch" type="xml">
+                <tree colors="red:date and (date&lt;current_date) and (state == 'open');blue:state in ('draft','pending');grey: state in ('close','cancelled')" string="Projects">
+                    <field name="sequence" invisible="1"/>
+                    <field name="date" invisible="1"/>
+                    <field name="nome_completo" />
+                    <field name="user_id" string="Project Manager" invisible="1" />
+                    <field name="partner_id" string="Partner" invisible="1" />
+                    <field name="parent_id" string="Parent" invisible="1"/>
+                    <field name="planned_hours" widget="float_time" invisible="1" />
+                    <field name="total_hours" widget="float_time" invisible="1" />
+                    <field name="effective_hours" widget="float_time" invisible="1" />
+                    <field name="progress_rate" widget="progressbar" invisible="1" />
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</openerp>

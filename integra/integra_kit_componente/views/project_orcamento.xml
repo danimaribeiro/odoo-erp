@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="purchase_orcamento_item_form">
+        <field name="name">project.orcamento.item.form</field>
+        <field name="model">project.orcamento.item</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="construtora.purchase_orcamento_item_form"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">                  
+            <field name="planejamento_ids" position="after">                               
+                <field name="itens_componente_ids" nolabel="1" colspan="4">
+                    <tree editable="bottom">
+                        <field name="project_id" invisible="1" />
+                        <field name="orcamento_id" invisible="1" />
+                        <field name="etapa_id" invisible="1" />
+                        <field name="codigo_completo" invisible="1" />
+                        <field name="ordem" invisible="1" />
+                        <field name="product_id" on_change="onchange_product_id(product_id, project_id)" />
+                        <field name="uom_id" readonly="1" />
+                        <field name="quantidade_componente" on_change="onchange_quantidade_componente(quantidade_componente, parent.quantidade, vr_unitario, parent.risco)" string="Quantidade composição" />
+                        <field name="quantidade" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario, risco)" />
+                        <field name="vr_unitario" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario, risco)" />
+                        <field name="vr_produto" sum="vr_produto" />
+                        <field name="risco" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario, risco)" string="Margem"/>
+                        <field name="quantidade_risco" />
+                        <field name="vr_risco" sum="vr_risco" />
+                        <field name="percentual_planejado" invisible="1" />
+                        <field name="data_inicial_execucao" invisible="1" />
+                        <field name="data_final_execucao" invisible="1" />
+                        <field name="dias_execucao" invisible="1" />
+                    </tree>
+                </field>
+            </field>            
+            <field name="vr_unitario" position="replace">
+                <field name="vr_unitario" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario, risco)" attrs="{'readonly': [('itens_componente_ids', '!=', False)]}" />
+            </field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="purchase_orcamento_item_tree">
+        <field name="name">purchase.orcamento.item.tree</field>
+        <field name="model">project.orcamento.item</field>
+        <field name="inherit_id" ref="construtora.purchase_orcamento_item_tree"/>
+        <field name="type">tree</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="colors">blue:qtd_componentes;red: percentual_planejado != 100.00</attribute>
+            </xpath>
+            <field name="parent_id" position="after">
+                <field name="qtd_componentes" invisible="1" />
+            </field>
+        </field>
+    </record>
+    
+</data>
+</openerp>

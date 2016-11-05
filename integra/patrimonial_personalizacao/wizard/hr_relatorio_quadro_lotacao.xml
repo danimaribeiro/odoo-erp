@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_relatorio_quadro_lotacao_form" >
+            <field name="name">hr.relatorio.quadro.lotacao.form</field>
+            <field name="model">hr.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Quadro de Lotação">
+                    <group colspan="4">
+                        <separator string="Empresas" colspan="4" />                                                                                            
+                        <field name="company_ids" required="1" nolabel="1" colspan="4" />                                                                                                                  
+                        <newline/>
+                        <field name="nome" invisible="1"/>                     
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_quadro_lotacao" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>                        
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_relatorio_quadro_lotacao_acao">
+            <field name="name">Quadro de Lotação</field>
+            <field name="res_model">hr.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>                       
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_relatorio_quadro_lotacao_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_relatorio_quadro_lotacao_form"/>
+            <field name="act_window_id" ref="hr_relatorio_quadro_lotacao_acao"/>
+        </record>
+
+        <menuitem action="hr_relatorio_quadro_lotacao_acao"
+                  id="menu_hr_relatorio_quadro_lotacao"
+                  name="Quadro de Lotação"
+                  parent="integra_rh.menu_hr_relatorio_contratual"
+                  sequence="40" />
+    </data>
+</openerp>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_receber_form">
+            <field name="name">finan.pagar.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Comunicação e histórico" position="before">
+                     <page string="Contabilização">
+                        <group string="Gera Partidas Receber">                            
+                            <button name="gera_contabilizacao" type="object" string="Gera partidas dobradas" context="{'tipo': 'R'}" />
+                            <field name="contabilizacao_entrada_ids" nolabel="1" colspan="4" readonly="1" domain="[('tipo','=', 'R')]">
+                                <tree>
+                                    <field name="tipo" />
+                                    <field name="data" />
+                                    <field name="conta_credito_id" />
+                                    <field name="codigo_reduzido_credito" />
+                                    <field name="conta_debito_id" />
+                                    <field name="codigo_reduzido_debito" />
+                                    <field name="valor" />
+                                    <field name="codigo_historico" />
+                                    <field name="historico" />
+                                </tree>
+                            </field>
+                        </group> 
+                        <newline />
+                        <group string="Gera Partidas Recebimento">                            
+                            <button name="gera_contabilizacao" type="object" string="Gera partidas dobradas" context="{'tipo': 'PR'}" />
+                            <field name="contabilizacao_pagamento_ids" nolabel="1" colspan="4" readonly="1"  domain="[('tipo','=', 'PR')]">
+                                <tree>
+                                    <field name="tipo" />
+                                    <field name="data" />
+                                    <field name="conta_credito_id" />
+                                    <field name="codigo_reduzido_credito" />
+                                    <field name="conta_debito_id" />
+                                    <field name="codigo_reduzido_debito" />
+                                    <field name="valor" />
+                                    <field name="codigo_historico" />
+                                    <field name="historico" />
+                                </tree>
+                            </field>
+                        </group> 
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

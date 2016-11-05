@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record forcecreate="True" model="ir.cron" id="seguranca_bi_demorada_atualiza_bi_cron">
+            <field name="name">Atualiza BI Seguranca OS</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field eval="True" name="active" />
+            <field eval="False" name="doall" />
+            <field eval="'sale.order'" name="model" />
+            <field eval="'bi_seguranca_os'" name="function" />
+            <field eval="'()'" name="args" />
+        </record>
+
+        <record forcecreate="True" model="ir.actions.server" id="seguranca_bi_demorada_atualiza_bi_server_action">
+            <field name="name">Atualiza BI Seguranca OS</field>
+            <field name="model_id" ref="model_sale_order"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.bi_seguranca_os(context=context)</field>
+        </record>
+
+    </data>
+</openerp>
+

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="ecd_plano_conta_tree">
+            <field name="name">ecd.plano.conta.tree</field>
+            <field name="model">ecd.plano.conta</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Plano de Contas">
+                    <field name="nome" />                     
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ecd_plano_conta_form">
+            <field name="name">ecd.plano.conta.form</field>
+            <field name="model">ecd.plano.conta</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Plano de Contas">
+                    <separator string="Parâmetros" colspan="4"/>
+                    <field name="nome" required="1" colspan="4"/>                    
+                    <field name="conta_ids" nolabel="1" readonly="1" colspan="4">
+                        <tree>
+                            <field name="codigo" />              
+                            <field name="codigo_completo" />              
+                            <field name="nome" />              
+                            <field name="sintetica" />              
+                        </tree>
+                    </field>                        
+                    <field name="company_ids" nolabel="1" readonly="1" colspan="4" >                                         
+                        <tree>
+                            <field name="cnpj_cpf" />              
+                            <field name="name" />              
+                            <field name="partner_id" />                                                                    
+                        </tree>
+                    </field>                        
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="ecd_plano_conta_acao">
+            <field name="name">Plano de Contas</field>
+            <field name="res_model">ecd.plano.conta</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="ecd_plano_conta_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            action="ecd_plano_conta_acao"
+            id="menu_ecd_plano_conta"
+            name="Plano de Contas"
+            parent="menu_sped_ecd_cadastro"
+            sequence="03"/>
+
+        <record model="ir.actions.act_window.view" id="ecd_plano_conta_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="ecd_plano_conta_acao"/>
+            <field name="view_id" ref="ecd_plano_conta_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="ecd_plano_conta_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="ecd_plano_conta_acao"/>
+            <field name="view_id" ref="ecd_plano_conta_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

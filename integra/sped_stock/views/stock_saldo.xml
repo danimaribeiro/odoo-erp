@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        
+        <record model="ir.ui.view" id="stock_saldo_search">
+            <field name="name">stock.saldo.search</field>
+            <field name="model">stock.saldo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Saldo de Estoque" >
+                    <field name="company_id"/>
+                    <field name="data"  widget="calendar"/>                                       
+                    <field name="location_id" />
+                    <field name="product_id" />                                        
+                    <newline />                                   
+                    <group expand="1" string="Agrupado por...">                                           
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />                    
+                        <filter string="Data" icon="terp-project" domain="[]" context="{'group_by': 'data'}" />
+                        <filter string="Local de Estoque" icon="terp-project" domain="[]" context="{'group_by': 'location_id'}" />                    
+                        <filter string="Produto" icon="terp-project" domain="[]" context="{'group_by': 'product_id'}" />                                                                       
+                    </group>
+                </search>                
+            </field>
+        </record>
+        
+        
+        <record model="ir.ui.view" id="stock_saldo_tree">
+            <field name="name">stock.saldo.tree</field>
+            <field name="model">stock.saldo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="data" />
+                    <field name="company_id" />        
+                    <field name="location_id" />
+                    <field name="product_id" />
+                    <field name="quantidade_entrada" />
+                    <field name="quantidade_saida" />
+                    <field name="quantidade" />
+                    <field name="vr_unitario_medio" />
+                    <field name="vr_total" />                                       
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="stock_saldo_form">
+            <field name="name">stock.saldo.form</field>
+            <field name="model">stock.saldo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Saldo de estoque">
+                    <field name="user_id" invisible="1"/>                                       
+                    <button name="gera_saldo_estoque_completo" string="Gerar saldo completo Estoque" groups="base.group_extended" type="object" icon="gtk-execute" attrs="{'invisible':[('user_id','!=', '1')]}"/>
+                    <button name="gera_saldo_estoque_completo" string="Gerar saldo completo Estoque" groups="base.group_extended" type="object" icon="gtk-execute"/>
+                </form>
+            </field>
+        </record>
+        
+        
+
+        <record model="ir.actions.act_window" id="stock_saldo_acao">
+            <field name="name">Saldo de Estoque</field>
+            <field name="res_model">stock.saldo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="stock_saldo_tree" />
+            <field name="search_view_id" ref="stock_saldo_search" />         
+        </record>
+
+        <menuitem action="stock_saldo_acao"
+            id="menu_stock_saldo" name="Saldos de Estoque" parent="stock.menu_stock_configuration" />
+
+        <record model="ir.actions.act_window.view" id="stock_saldo_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="stock_saldo_form"/>
+            <field name="act_window_id" ref="stock_saldo_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="stock_saldo_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="stock_saldo_tree"/>
+            <field name="act_window_id" ref="stock_saldo_acao"/>
+        </record>
+
+    </data>
+</openerp>

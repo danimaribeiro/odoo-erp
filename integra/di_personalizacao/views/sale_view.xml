@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="view_order_form">
+        <field name="name">sale.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_invoice_id" position="replace">
+                <field name="partner_invoice_id" invisible="1" />
+            </field>
+            <field name="partner_shipping_id" position="replace">
+                <field name="partner_shipping_id" invisible="1" />
+            </field>
+            <field name="client_order_ref" position="after">
+                <field name="stage_id" />
+            </field>
+            <field name="shipped" position="after">
+                <newline />
+                    <field name="mostrar_sub" />
+                <newline />
+                    <field name="mostrar_valores" />
+                <newline />
+                    <field name="mostrar_valores_opcionais" attrs="{'invisible': [('mostrar_valores', '=', True)]}" />
+                <newline />
+                    <field name="mostrar_unitario" />
+                <newline />
+                    <field name="representacao" />
+            </field>
+            <field name="amount_total" position="after">
+                <button icon="gtk-print" name="imprime_proposta" string="Imprimir Prosposta" type="object" />
+                <button icon="gtk-print" name="imprime_pedido_venda" string="Imprimir Pedido" type="object" />
+            </field>
+            <field name="payment_term" position="after">
+                <field name="prazo_entrega" />
+                <field name="garantia" />
+            </field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sale_order_tree_sale">
+        <field name="name">sale.order.tree.sale</field>
+        <field name="model">sale.order</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="replace">
+                <field name="name" invisible="1" />
+                <field name="codigo_di" string="Nº proposta" />
+            </field>
+            <field name="date_order" position="replace">
+                <field name="date_order" string="Data cadastro" />
+            </field>
+            <field name="user_id" position="replace">
+                <field name="user_id" string="Vendedor" />
+            </field>
+            <field name="partner_id" position="after">
+                <field name="partner_order_id" />
+                <field name="client_order_ref" string="Produto" />
+            </field>
+            <field name="amount_untaxed" position="replace">
+                <field name="amount_untaxed" sum="Total Tax Excluded" invisible="1" />
+                <field name="pricelist_id" string="Moeda" />
+            </field>
+            <field name="amount_total" position="after">
+                <field name="payment_term" />
+                <field name="stage_id" />
+                <field name="create_uid" />
+            </field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sale_order_form_sped_sale">
+        <field name="name">sale.order.form.sped.sale</field>
+        <field name="model">sale.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="sped_sale.sale_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="finan_formapagamento_id" position="replace" />
+        </field>
+    </record>
+
+</data>
+</openerp>

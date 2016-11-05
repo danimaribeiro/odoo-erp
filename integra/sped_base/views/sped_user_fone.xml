@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_sped_users_fone" model="ir.ui.view">
+            <field name="name">sped.users.fone</field>
+            <field name="model">res.users</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+            <field name="arch" type="xml">
+                <field name="user_email" position="replace">
+                    <field name="fone" string="Fone" on_change="onchange_fone_celular(fone, None)" />
+                    <field name="mobile" string="Celular" on_change="onchange_fone_celular(None, mobile)" />
+                    <field name="user_email" string="Email" widget="email" colspan="4" />
+                </field>
+            </field>
+        </record>
+
+        <record id="view_sped_users_fone_form" model="ir.ui.view">
+            <field name="name">sped.users.fone.form</field>
+            <field name="model">res.users</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <field name="active" position="after">
+                    <field name="porta" />
+                </field>
+                <field name="user_email" position="replace">
+                    <group colspan="8">
+                        <field name="fone" string="Fone" colspan="2" on_change="onchange_fone_celular(fone, None)" />
+                        <field name="mobile" string="Celular" colspan="2" on_change="onchange_fone_celular(None, mobile)" />
+                        <field name="user_email" string="Email" widget="email" colspan="4" />
+                    </group>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

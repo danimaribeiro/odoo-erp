@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_centrocusto_form">
+            <field name="name">finan.centrocusto.form</field>
+            <field name="model">finan.centrocusto</field>
+            <field name="inherit_id" ref="finan.finan_centrocusto_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="hr_department_id" readonly="1" colspan="4" />
+                    <button type="object" name="ajusta_departamentos" string="Ajusta departamentos" colspan="4" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

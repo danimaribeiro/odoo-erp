@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finan_notas_emitidas_analitico" language="groovy" pageWidth="802" pageHeight="230" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6fff61ce-1432-40fb-830b-18bbe5149856">
+	<property name="ireport.zoom" value="2.593742460100003"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="COMPANY_ID" class="java.lang.Integer"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="MODELO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CNPJ_CPF" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSAO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NATUREZA_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRODUCT_ID" class="java.lang.String"/>
+	<parameter name="SOH_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+       coalesce(sd.vr_nf, 0) as vr_nf,
+       coalesce(sd.vr_desconto, 0) as vr_desconto,
+       coalesce(sd.vr_iss, 0) - coalesce(sd.vr_iss_retido, 0) as vr_iss,
+       coalesce(sd.vr_iss_retido, 0) as vr_iss_retido,
+       case
+           when sd.emissao = '0' then coalesce(sd.vr_icms_proprio, 0)
+           when sd.emissao = '1' then (select coalesce(sum(coalesce(sdi.vr_icms_proprio, 0)), 0) from sped_documentoitem sdi where sdi.documento_id = sd.id and sdi.credita_icms_proprio = True)
+       end as vr_icms_proprio,
+       case
+           when sd.emissao = '0' then coalesce(sd.vr_icms_st, 0)
+           when sd.emissao = '1' then (select coalesce(sum(coalesce(sdi.vr_icms_st, 0)), 0) from sped_documentoitem sdi where sdi.documento_id = sd.id and sdi.informa_icms_st = True)
+       end as vr_icms_st,
+       coalesce(sd.vr_irrf, 0) as vr_irrf,
+       coalesce(sd.vr_previdencia, 0) as vr_inss,
+       case
+          when sd.modelo = 'SE' then coalesce(sd.vr_pis_retido, 0)
+          when sd.emissao = '0' then coalesce(sd.vr_pis_proprio, 0)
+          else (select coalesce(sum(coalesce(sdi.vr_pis_proprio, 0)), 0) from sped_documentoitem sdi where sdi.documento_id = sd.id and sdi.credita_pis_cofins = True)
+       end as vr_pis_retido,
+       case
+          when sd.modelo = 'SE' then coalesce(sd.vr_cofins_retido, 0)
+          when sd.emissao = '0' then coalesce(sd.vr_cofins_proprio, 0)
+          else (select coalesce(sum(coalesce(sdi.vr_cofins_proprio, 0)), 0) from sped_documentoitem sdi where sdi.documento_id = sd.id and sdi.credita_pis_cofins = True)
+       end as vr_cofins_retido,
+       coalesce(sd.vr_csll, 0) as vr_csll,
+       coalesce(sd.vr_fatura, 0) as vr_fatura,
+       coalesce(sd.vr_outras, 0) as vr_outras
+
+from sped_documento as sd
+join res_company c on c.id = sd.company_id
+left join sped_naturezaoperacao snp on snp.id = sd.naturezaoperacao_id
+
+where
+    sd.emissao = $P{EMISSAO}
+and sd.situacao in ('00','01')
+and sd.modelo like $P{MODELO}
+                and (
+                    (sd.emissao = '0' and sd.state = 'autorizada' and sd.modelo in ('55','SE'))
+                    or
+                    (sd.emissao = '1')
+                    or
+                    (sd.modelo not in ('55','SE'))
+                )
+and (($P{SOH_EMPRESA} = '0' and c.cnpj_cpf = $P{CNPJ_CPF}) or ($P{SOH_EMPRESA} != '0' and c.id = $P{COMPANY_ID}))
+and ( snp.id is null
+     or cast(snp.id as varchar) like $P{NATUREZA_ID}
+    )
+and (
+    (sd.emissao = '0' and to_char(sd.data_emissao_brasilia, 'YYYY-MM-DD') between $P{DATA_INICIAL} and $P{DATA_FINAL})
+    or
+    (sd.emissao = '1' and to_char(sd.data_entrada_saida_brasilia, 'YYYY-MM-DD') between $P{DATA_INICIAL} and $P{DATA_FINAL})
+)
+
+order by
+c.name,
+sd.serie,
+sd.numero]]>
+	</queryString>
+	<field name="vr_nf" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da NF]]></fieldDescription>
+	</field>
+	<field name="vr_desconto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do desconto]]></fieldDescription>
+	</field>
+	<field name="vr_iss" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ISS]]></fieldDescription>
+	</field>
+	<field name="vr_iss_retido" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ISS]]></fieldDescription>
+	</field>
+	<field name="vr_icms_proprio" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ICMS próprio]]></fieldDescription>
+	</field>
+	<field name="vr_icms_st" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ICMS ST]]></fieldDescription>
+	</field>
+	<field name="vr_irrf" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do IRRF]]></fieldDescription>
+	</field>
+	<field name="vr_inss" class="java.math.BigDecimal"/>
+	<field name="vr_pis_retido" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[PIS retido]]></fieldDescription>
+	</field>
+	<field name="vr_cofins_retido" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[COFINS retida]]></fieldDescription>
+	</field>
+	<field name="vr_csll" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da CSLL]]></fieldDescription>
+	</field>
+	<field name="vr_fatura" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da fatura]]></fieldDescription>
+	</field>
+	<field name="vr_outras" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Outras despesas acessórias]]></fieldDescription>
+	</field>
+	<variable name="vr_nf_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_nf}]]></variableExpression>
+	</variable>
+	<variable name="vr_desconto_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_desconto}]]></variableExpression>
+	</variable>
+	<variable name="vr_iss_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_iss}]]></variableExpression>
+	</variable>
+	<variable name="vr_iss_retido_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_iss_retido}]]></variableExpression>
+	</variable>
+	<variable name="vr_irrf_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_irrf}]]></variableExpression>
+	</variable>
+	<variable name="vr_inss_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_inss}]]></variableExpression>
+	</variable>
+	<variable name="vr_pis_proprio_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_pis_retido}]]></variableExpression>
+	</variable>
+	<variable name="vr_cofins_proprio_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_cofins_retido}]]></variableExpression>
+	</variable>
+	<variable name="vr_csll_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_csll}]]></variableExpression>
+	</variable>
+	<variable name="vr_fatura_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_fatura}]]></variableExpression>
+	</variable>
+	<variable name="vr_icms_proprio_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_icms_proprio}]]></variableExpression>
+	</variable>
+	<variable name="vr_icms_st_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_icms_st}]]></variableExpression>
+	</variable>
+	<variable name="vr_outras_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_outras}]]></variableExpression>
+	</variable>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<summary>
+		<band height="12">
+			<staticText>
+				<reportElement x="0" y="0" width="298" height="12" uuid="b2bfc837-deec-42d9-926e-1dc535a89187"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Geral:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="298" y="0" width="68" height="12" uuid="59fc8493-c0dd-4e6f-bc7b-33dfbe0094f9"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_nf_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="722" y="0" width="30" height="12" uuid="9f702f19-5100-4b6e-9002-59e9729f891c"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_outras_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="366" y="0" width="38" height="12" uuid="b03a82d6-bb8a-4074-9fbf-56eea9a8070f"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_iss_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="444" y="0" width="40" height="12" uuid="05730aea-82b5-4a32-883c-bce2e1799f7a"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_icms_proprio_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="522" y="0" width="40" height="12" uuid="46796fa0-af48-4c09-b83d-c6b2433a56b3"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_irrf_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="562" y="0" width="40" height="12" uuid="c89e7d13-7d13-4fc7-9e65-737f38477008"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_inss_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="602" y="0" width="40" height="12" uuid="510d7e82-dd4f-4dd6-9fb8-27e8db8ac785"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_pis_proprio_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="642" y="0" width="40" height="12" uuid="ffcd342d-1263-4730-b4a9-2054c2fdf07c"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_cofins_proprio_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="682" y="0" width="40" height="12" uuid="2bbbe8a9-ad14-40a1-9f1a-349a0745261b"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_csll_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="752" y="0" width="50" height="12" uuid="b7fa7ba5-8f8b-4d5f-9af2-32831108a5a9"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_fatura_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="484" y="0" width="38" height="12" uuid="8a6a8109-36b7-4f7e-9441-9f2c492fc47b"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_icms_st_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="404" y="0" width="40" height="12" uuid="c0cc430c-82fd-41cf-afc0-a038e3a480d1"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_iss_retido_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

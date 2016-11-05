@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="numero_serie_form">
+            <field name="name">product.numero.serie.form</field>
+            <field name="model">product.numero.serie</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="product_id" required="1" />
+                <field name="data_inicial_garantia" />
+                <field name="data_final_garantia" />           
+                <field name="numero_serie" required="1"/>
+                <field name="partner_id" />
+            </field>
+        </record>   
+
+    </data>
+</openerp>

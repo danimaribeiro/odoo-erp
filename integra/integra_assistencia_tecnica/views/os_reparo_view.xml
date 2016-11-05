@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="os_reparo_tree">
+            <field name="name">os.reparo.tree</field>
+            <field name="model">os.reparo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome" />                                       
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="os_reparo_form">
+            <field name="name">os.reparo.form</field>
+            <field name="model">os.reparo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Cadastro de Reparo">
+                    <field name="nome" />                                                                                           
+                </form>
+            </field>
+        </record>
+        
+         <record id="os_reparo_search" model="ir.ui.view">
+            <field name="name">os.reparo.search</field>
+            <field name="model">os.reparo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Cadastro de Reparo">
+                    <field name="nome" />                                       
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="os_reparo_acao">
+            <field name="name">Cadastro de Reparo</field>
+            <field name="res_model">os.reparo</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="os_reparo_tree" />            
+            <field name="search_view_id" ref="os_reparo_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>       
+        
+        <menuitem action="os_reparo_acao"
+            id="menu_os_reparo" name="Cadastro de Reparo" parent="menu_configuracao" />
+
+        <record model="ir.actions.act_window.view" id="os_reparo_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="os_reparo_form"/>
+            <field name="act_window_id" ref="os_reparo_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="os_reparo_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="os_reparo_tree"/>
+            <field name="act_window_id" ref="os_reparo_acao"/>
+        </record>
+
+    </data>
+</openerp>

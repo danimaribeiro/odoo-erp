@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+         <record model="ir.ui.view" id="finan_transacaotransferencia_form">
+            <field name="name">finan.trans.item.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_transacaotransferencia_form"/>
+            <field name="arch" type="xml">
+                 <field name="documento_id" position="before">
+                    <field name="partner_id" />                                                                  
+                    <newline />                        
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

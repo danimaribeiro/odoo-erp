@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="orcamento_comissao_locacao_form">
+            <field name="name">orcamento.comissao.locacao.form</field>
+            <field name="model">orcamento.comissao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <field name="tipo" invisible="1" />
+                    <field name="name" colspan="4" />
+                    <newline/>
+                    <separator string="Faixas e comissões" colspan="4" />
+                    <field name="comissao_item_ids" nolabel="1" colspan="4" context="{'order_by': 'meses_retorno_investimento'}">
+                        <tree editable="top">
+                            <field name="meses_retorno_investimento"/>
+                            <field name="comissao" />
+                            <field name="grupo_aprovacao_id" />
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="orcamento_comissao_locacao_tree">
+            <field name="name">orcamento.comissao.locacao.tree</field>
+            <field name="model">orcamento.comissao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="orcamento_comissao_locacao_acao">
+            <field name="name">Comissões locação</field>
+            <field name="domain">[('tipo', '=', 'L')]</field>
+            <field name="context">{'default_tipo': 'L'}</field>
+            <field name="res_model">orcamento.comissao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_orcamento_comissao_locacao"
+            name="Comissão locação"
+            parent="menu_orcamento_configuracao" sequence="50" action="orcamento_comissao_locacao_acao" />
+
+        <record model="ir.actions.act_window.view" id="orcamento_comissao_locacao_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="orcamento_comissao_locacao_form"/>
+            <field name="act_window_id" ref="orcamento_comissao_locacao_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="orcamento_comissao_locacao_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="orcamento_comissao_locacao_tree"/>
+            <field name="act_window_id" ref="orcamento_comissao_locacao_acao"/>
+        </record>
+
+   </data>
+</openerp>

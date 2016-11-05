@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="frota_relatorio_custo_imobilizado" >
+            <field name="name">frota.relatorio.custo.imobilizado</field>
+            <field name="model">frota.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório Custo Imobilizado">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="data_inicial" required="1" colspan="2"/>
+                        <field name="data_final" required="1" colspan="2"/>
+                        <newline/>
+                        <field name="tipo_id" required="0" colspan="4" />
+                        <newline/>
+                        <field name="veiculo_id" required="0" colspan="4" />
+                        <newline/>
+                        <field name="company_id" required="0" colspan="4" />
+                        <newline/>
+                        <separator string="Proprietário" colspan="4" />
+                        <field name="partner_id" required="0" colspan="4" nolabel="1" />
+                        <newline/>
+                        <field name="todos" required="0" colspan="4" attrs="{'invisible': [('partner_id', '!=', False)]}" />
+                        <newline/>
+                        <field name="sintetico" string="Incluir gráfico?" />
+                        <newline/>
+                        <separator string="Serviços" colspan="4" />
+                        <field name="incluir_abastecimento" />
+                        <field name="incluir_lavacao" />
+<!--                        <separator string="Serviços excluídos" colspan="4" />
+                        <field name="servico_excluido_ids" required="0" colspan="4" nolabel="1" />
+                        <newline/>-->
+                        <field name="nome" invisible="1" />
+                        <field name="nome_csv" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório por veículo" name="gera_relatorio_custo_imobilizado" type="object" colspan="4" />
+                        <button icon="gtk-execute" string="Gerar relatório por servico" name="gera_relatorio_custo_imobilizado_servico" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                        <newline/>
+                        <field name="arquivo_csv" nolabel="1" readonly="1" filename="nome_csv" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="frota_relatorio_custo_imobilizado_acao">
+            <field name="name">Custo Imobilizado</field>
+            <field name="res_model">frota.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="frota_relatorio_custo_imobilizado_form_acao">
+            <field eval="10" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="frota_relatorio_custo_imobilizado"/>
+            <field name="act_window_id" ref="frota_relatorio_custo_imobilizado_acao"/>
+        </record>
+
+        <menuitem action="frota_relatorio_custo_imobilizado_acao"
+                  id="menu_frota_relatorio_custo_imobilizado" name="Custo Imobilizado" parent="menu_frota_relatorio" sequence="2"  />
+
+    </data>
+</openerp>

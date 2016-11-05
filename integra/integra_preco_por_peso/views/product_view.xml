@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="product_product_form">
+            <field name="name">product.product.form</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="list_price" position="before">
+                    <field name="preco_por_parcela" on_change="onchange_preco_por_parcela_parcelas(preco_por_parcela, parcelas)" />
+                    <field name="parcelas" on_change="onchange_preco_por_parcela_parcelas(preco_por_parcela, parcelas)" />
+                </field>
+                <field name="weight_net" position="replace">
+                    <field name="weight_net" on_change="onchange_weight_net(weight_net, preco_venda_por_peso, preco_custo_por_peso)" />
+                    <field name="preco_venda_por_peso" on_change="onchange_preco_venda_por_peso(weight_net, preco_venda_por_peso)" />
+                    <field name="preco_custo_por_peso" on_change="onchange_preco_custo_por_peso(weight_net, preco_custo_por_peso)" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

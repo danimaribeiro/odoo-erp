@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="orcamento_cabecalho_agenda_instalacao" language="groovy" pageWidth="555" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryWithPageHeaderAndFooter="true" uuid="05a7678d-6397-4816-97ba-742668ea4f5f">
+	<property name="ireport.zoom" value="1.2396694214876072"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ORDEM_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[(2978)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+   coalesce(p.name, '') as empresa,
+   coalesce(eq.codigo, '') as equipe,
+   cm.date at time zone 'UTC' at time zone 'America/Sao_Paulo' as data_inicial,
+   cm.date_deadline at time zone 'UTC' at time zone 'America/Sao_Paulo' as data_final
+
+from
+    crm_meeting cm
+    left join instalacao_equipe eq on eq.id = cm.equipe_id
+    left join res_partner p on p.id = eq.partner_id
+
+where
+   cm.sale_order_id = $P{ORDEM_ID}
+
+order by
+    cm.date, cm.date_deadline]]>
+	</queryString>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="equipe" class="java.lang.String"/>
+	<field name="data_inicial" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[Data inicial]]></fieldDescription>
+	</field>
+	<field name="data_final" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[Data final]]></fieldDescription>
+	</field>
+	<columnHeader>
+		<band height="20">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="20" uuid="4de8df00-53f1-4885-b261-f3d7242fdddd"/>
+				<textFieldExpression><![CDATA["Equipe: " +  $F{equipe} + " - " + $F{empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="85" height="15" uuid="a7f1a2ed-c5b6-47c7-b96d-250edc991973"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_inicial}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="85" y="0" width="100" height="15" uuid="f5e7a2fd-b53f-479d-9fef-96d01df3d871"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_final}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="167" y="0" width="388" height="15" isRemoveLineWhenBlank="true" uuid="d80eea4e-b56f-4d6f-99ce-48d9709494f7"/>
+				<box topPadding="5">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

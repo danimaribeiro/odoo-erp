@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_receber_rateio_tree">
+            <field name="name">finan.receber.item.tree</field>
+            <field name="model">finan.lancamento.rateio</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="finan.finan_receber_rateio_tree"/>
+            <field name="arch" type="xml">
+                <field name="porcentagem" position="before">
+                    <field name="project_id" />
+                    <field name="project_orcamento_item_id" />
+                    <field name="imovel_id" />
+                </field>
+            </field>
+        </record>
+        
+<!--        <record model="ir.ui.view" id="finan_receber_form">
+            <field name="name">finan.receber.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_receber_form"/>
+            <field name="arch" type="xml">                
+                <field name="res_partner_bank_id" position="replace">
+                </field>
+                <field name="carteira_id" position="before">
+                    <field name="res_partner_bank_id" />                    
+                </field>
+            </field>
+        </record>-->
+
+    </data>
+</openerp>

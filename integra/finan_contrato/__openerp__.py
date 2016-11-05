@@ -1,0 +1,80 @@
+# -*- coding: utf-8 -*-
+
+
+#from __future__ import division, print_function, unicode_literals
+
+
+{
+    'name': 'Financeiro - Contratos',
+    'version': '1.0',
+    'category': 'Integra',
+    'description': u'Controle Financeiro - Contratos',
+    'author': 'Integra',
+    'maintainer': 'Integra',
+    'website': 'http://www.Integra.inf.br',
+    'depends': [
+        'base',
+        'finan',
+        'product',
+        'sped',
+        'hr',
+        'integra_libreoffice',
+    ],
+    'update_xml': [
+        'security/groups.xml',
+        'security/ir.model.access.csv',
+
+        'views/sped_documento_agua_recebida.xml',
+        'views/sped_documento_comunicacao_recebida.xml',
+        'views/sped_documento_cte_recebido.xml',
+        'views/sped_documento_energia_recebida.xml',
+        'views/sped_documento_gas_recebida.xml',
+        'views/sped_documento_nf_recebida.xml',
+        #'views/sped_documento_nfe_recebida_manual.xml',
+        'views/sped_documento_nfe_recebida.xml',
+        'views/sped_documento_nfse_emitida.xml',
+        'views/sped_documento_nfse_recebida.xml',
+        'views/sped_documento_recibo_locacao_emitido.xml',
+        'views/sped_documento_telecomunicacao_recebida.xml',
+
+        'views/finan_contrato_view.xml',
+        'views/finan_centrocusto_view.xml',
+        'views/finan_receber_view.xml',
+        'views/finan_pagar_view.xml',
+        'views/finan_contrato_receber_view.xml',
+        'views/finan_contrato_pagar_view.xml',
+        'views/finan_parcelamento_pagar_view.xml',
+        'views/finan_parcelamento_receber_view.xml',
+        'views/finan_conta_view.xml',
+        'views/finan_motivo_distrato_view.xml',
+        'views/finan_contrato_reajuste_view.xml',
+        'views/finan_grupo_economico_view.xml',
+        'views/finan_fat_eventual_contrato_view.xml',
+        'views/partner_view.xml',
+        'views/finan_contrato_receber_novo.xml',
+        'views/finan_contrato_alteracao_vencimento.xml',
+        'views/finan_contrato_alteracao_valor_aumento.xml',
+        'views/finan_contrato_alteracao_valor_reducao.xml',
+        'views/finan_contrato_alteracao_valor_mudanca.xml',
+        'views/finan_contrato_alteracao_bonificacao.xml',
+        'views/finan_contrato_alteracao_rescisao.xml',
+
+        'views/lo_modelo.xml',
+
+        'views/finan_contrato_receber_dashboard_view.xml',
+
+        'wizard/finan_parcelamento_receber_wizard.xml',
+        'wizard/finan_parcelamento_pagar_wizard.xml',
+        'wizard/finan_gera_nota.xml',
+        'wizard/finan_lote_contrato_wizard.xml',
+        'wizard/finan_contrato_acoes_demoradas.xml',
+        'wizard/finan_relatorio_analise_contratos.xml',
+        'wizard/finan_relatorio_contratos_fornecedores.xml',
+        #'wizard/finan_relatorio_analise_faturamento.xml',
+        #'wizard/finan_relatorio_contratos_baixados.xml',
+    ],
+    'init_xml': [],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+}

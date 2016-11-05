@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_aging_receber" >
+            <field name="name">finan.relatorio.aging.receber</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_relatorio_aging_receber"/>
+            <field name="arch" type="xml">
+                <button name="gera_relatorio_aging_receber" position="after" >
+                    <button icon="gtk-execute" string="Gerar relatório gráfico" name="gera_relatorio_aging_receber_grafico" type="object" colspan="2" />
+                </button>                
+            </field>
+        </record>
+
+    </data>
+</openerp>

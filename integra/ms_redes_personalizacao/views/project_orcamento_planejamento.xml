@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="project_orcamento_planejamento_form">
+        <field name="name">project.orcamento.planejamento.form</field>
+        <field name="model">project.orcamento.item</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="construtora.project_orcamento_planejamento_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <field name="planejamento_ids" position="after">
+                <field name="replicado_planejamento" invisible="1" />
+                <group colspan="4" col="4" attrs="{'invisible': [('replicado_planejamento', '!=', False)]}">
+                    <separator string="Replicar planejamento para todos os itens da etapa" colspan="4" />
+                    <button type="object" name="replica_planejamento_etapa" string="Replicar" colspan="2" />
+                </group>
+            </field>
+        </field>
+    </record>
+
+</data>
+</openerp>

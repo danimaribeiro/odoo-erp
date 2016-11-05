@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="purchase_solicitacao_cotacao_item_orcado_tree">
+            <field name="name">purchase.solicitacao.cotacao.item.orcado.tree</field>
+            <field name="model">purchase.solicitacao.cotacao.item.orcado</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="data_compra_solicitacao" />
+                    <field name="solicitacao_id" />
+                    <field name="project_id" />
+                    <field name="orcamento_id" />
+                    <field name="etapa_id" />
+                    <field name="codigo_completo" />
+                    <field name="product_id" />
+                    <field name="quantidade" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="purchase_solicitacao_cotacao_item_orcado_form">
+            <field name="name">purchase.solicitacao.cotacao.item.orcado.form</field>
+            <field name="model">purchase.solicitacao.cotacao.item.orcado</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Planejamento de execução">
+                    <group col="4" colspan="4">
+                        <field name="data_compra_solicitacao" readonly="1" />
+                        <field name="project_id" colspan="4" readonly="1" />
+                        <field name="orcamento_id" colspan="4" readonly="1" />
+                        <field name="etapa_id" colspan="4" readonly="1" />
+                        <field name="codigo_completo" colspan="2" readonly="1" />
+                        <field name="product_id" colspan="4" readonly="1" />
+                        <field name="quantidade" colspan="2" readonly="1" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="purchase_solicitacao_cotacao_item_orcado_search">
+            <field name="name">purchase.solicitacao.cotacao.item.orcado.search</field>
+            <field name="model">purchase.orcamento.item.planejamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Planejamentos">
+                    <field name="project_id" />
+                    <field name="orcamento_id" />
+                    <field name="etapa_id"  />
+                    <field name="product_id"  />
+                    <newline />
+                    
+<!--                    <field name="data_compra_solicitacao_from" string="De compra" filter_domain="[('data_compra_solicitacao','&gt;=',self)]" widget="calendar" />
+                    <field name="data_compra_solicitacao_to" string="A compra" filter_domain="[('data_compra_solicitacao','&lt;=',self)]" widget="calendar" />
+                    -->
+                    <newline />
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Projeto" icon="terp-project" domain="[]" context="{'group_by': 'project_id'}" />
+                        <filter string="Orçamento" icon="terp-project" domain="[]" context="{'group_by': 'orcamento_id'}" />
+                        <filter string="Etapa" icon="terp-project" domain="[]" context="{'group_by': 'etapa_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+<!--        <record model="ir.actions.act_window" id="purchase_solicitacao_cotacao_item_orcado_acao">
+            <field name="name">Planejamentos</field>
+            <field name="res_model">purchase.solicitacao.cotacao.item.orcado</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="purchase_solicitacao_cotacao_item_orcado_search" />
+        </record>-->
+
+<!--        <menuitem
+            action="purchase_solicitacao_cotacao_item_orcado_acao"
+            id="menu_purchase_solicitacao_cotacao_item_orcado"
+            name="Planejamentos"
+            parent="purchase.menu_procurement_management" />-->
+
+    </data>
+</openerp>

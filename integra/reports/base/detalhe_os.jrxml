@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="detalhe_os" language="groovy" pageWidth="595" pageHeight="700" columnWidth="539" leftMargin="28" rightMargin="28" topMargin="0" bottomMargin="0" uuid="dc1d3a11-f033-4243-bf1a-255ce7c8f1a1">
+	<property name="ireport.zoom" value="1.1"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ORDER_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+p.default_code,
+p.name_template,
+ol.product_uom_qty,
+ol.price_unit,
+ol.vr_total_margem_desconto
+
+from sale_order_line ol
+join product_product p on p.id = ol.product_id
+
+where ol.order_id = $P{ORDER_ID}]]>
+	</queryString>
+	<field name="default_code" class="java.lang.String">
+		<fieldDescription><![CDATA[Reference]]></fieldDescription>
+	</field>
+	<field name="name_template" class="java.lang.String">
+		<fieldDescription><![CDATA[Name]]></fieldDescription>
+	</field>
+	<field name="product_uom_qty" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Quantity (UoM)]]></fieldDescription>
+	</field>
+	<field name="price_unit" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Unit Price]]></fieldDescription>
+	</field>
+	<field name="vr_total_margem_desconto" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor + Margem - Desconto]]></fieldDescription>
+	</field>
+	<variable name="TOTAL" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_total_margem_desconto}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="483" y="0" width="56" height="14" uuid="ff996180-cf55-492b-a76a-359beda82f41"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{vr_total_margem_desconto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="371" y="0" width="56" height="14" uuid="c3e6edc5-a05f-4de1-9349-943cedd9ab5b"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{product_uom_qty}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="427" y="0" width="56" height="14" uuid="544115d5-1957-466f-87a7-f1d4ca1413c6"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{price_unit}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="59" height="14" uuid="ed0156f5-fd55-41f7-9471-ae3295de751d"/>
+				<textFieldExpression><![CDATA[$F{default_code}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="59" y="0" width="312" height="14" uuid="fa43647b-f383-4f2f-94c1-486960ce84c7"/>
+				<textFieldExpression><![CDATA[$F{name_template}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="17">
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="483" y="3" width="56" height="14" uuid="41a4e7a3-021a-4498-a091-5886d3e5220f"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_total_margem_desconto}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="371" y="3" width="112" height="14" uuid="78c9b0ba-51f5-40b5-b435-f9cff1747ac4"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor total = ]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

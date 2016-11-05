@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_documentoitem_entrada_manual_form">
+            <field name="name">sped.documentoitem.form</field>
+            <field name="model">sped.documentoitem</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped.sped_documentoitem_entrada_manual_form"/>
+            <field name="arch" type="xml">
+                <page string="Informações adicionais" position="before">
+                    <page string="Números de série">
+                        <field name="numero_serie_ids" nolabel="1" colspan="4" domain="[('product_id', '=', produto_id)]" context="{'default_product_id': produto_id}">
+                            <tree editable="top">
+                                <field name="numero_serie" />
+                            </tree>
+                        </field>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

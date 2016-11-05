@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+participante_full_all,Participante,model_sped_participante,group_sped_base,1,1,1,1
+estado_full_all,Estado,model_sped_estado,group_sped_base,1,1,1,1
+pais_full_all,País,model_sped_pais,group_sped_base,1,1,1,1
+municipio_full_all,Município,model_sped_municipio,group_sped_base,1,1,1,1
+cnae_full_all,CNAE,model_sped_cnae,group_sped_base,1,1,1,1

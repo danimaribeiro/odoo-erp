@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_remessa_tree">
+            <field name="name">finan.remessa.tree</field>
+            <field name="model">finan.remessa</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Remessas de cobrança">
+                    <field name="carteira_id" />
+                    <field name="numero_arquivo" />
+                    <field name="data" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_remessa_form">
+            <field name="name">finan.remessa.form</field>
+            <field name="model">finan.remessa</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Remessa de cobrança">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="carteira_id" colspan="4" />
+                        <newline />
+                        <field name="numero_arquivo" colspan="4"/>
+                        <newline />
+                        <field name="data" colspan="4" />
+                        <newline />
+                        <field name="comando" colspan="4" />
+                        <button icon="gtk-execute" string="Gerar remessa" name="gerar_remessa_anexo" type="object" attrs="{'invisible': [('carteira_id', '=', False)]}" />
+                    </group>
+                    <group col="4" colspan="4">
+                        <separator string="Boletos" colspan="4"/>
+                        <newline />
+                        <field name="lancamento_ids" nolabel="1" domain="[('tipo', '=', 'R'), ('carteira_id', '=', carteira_id), ('nosso_numero', '!=', False), ('situacao', '=', 'A vencer'), ('provisionado', '!=', True)]">
+                            <tree>
+                                <field name="data_vencimento" />
+                                <field name="nosso_numero" />
+                                <field name="partner_id" string="Cliente"/>
+                                <field name="valor_documento" sum="Valor do documento" />
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_remessa_search">
+            <field name="name">finan.remessa.search</field>
+            <field name="model">finan.remessa</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Remessas de cobrança">
+                    <field name="carteira_id" select="1" />
+                    <field name="numero_arquivo" />
+                </search>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="finan_remessa_acao">
+            <field name="name">Remessas de cobrança</field>
+            <field name="res_model">finan.remessa</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_remessa_tree" />
+        </record>
+
+        <menuitem action="finan_remessa_acao"
+            id="menu_finan_remessa" name="Remessas de cobrança" parent="menu_finan_tesouraria" />
+
+    </data>
+</openerp>

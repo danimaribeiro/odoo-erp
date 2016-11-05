@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finan_solicitacao_numerario" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="05a7678d-6397-4816-97ba-742668ea4f5f">
+	<property name="ireport.zoom" value="1.6500000000000261"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NUMERARIO_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+coalesce(bank.nome, '') as banco,
+fc.nome as conta,
+p.razao_social,
+coalesce(p.cnpj_cpf, '') as cnpj_cpf,
+case
+  when fnv.tipo = 'A' then 'Agenciador '
+  when fnv.tipo = 'C' then 'Corretor   '
+  when fnv.tipo = 'F' then 'Funcionário'
+  when fnv.tipo = 'E' then 'Empresa    '
+  else                     'Outros     '
+end as item_tipo,
+fnv.valor as item_valor,
+coalesce(forn.razao_social, forn.name) as forn_razao_social,
+coalesce(forn.cnpj_cpf, '') as forn_cnpj_cpf,
+d.nome as documento,
+prod.name_template as produto,
+case
+    when fn.valor is not null and fn.valor > 0 then cast(coalesce(fnv.valor, 0) / fn.valor * 100 as numeric(18, 2))
+    else 0
+end as porcentagem
+
+
+from finan_numerario fn
+join finan_numerario_valor fnv on fnv.numerario_id = fn.id
+join res_partner p on p.id = fnv.partner_id
+join finan_conta fc on fc.id = fnv.conta_id
+join product_product prod on prod.id = fnv.product_id
+join finan_documento d on d.id = fnv.documento_id
+left join res_partner forn on forn.id = fnv.fornecedor_id
+left join res_partner_bank bank on bank.id = fnv.res_partner_bank_id
+
+where
+fn.id = $P{NUMERARIO_ID}
+
+order by
+  fnv.id]]>
+	</queryString>
+	<field name="banco" class="java.lang.String"/>
+	<field name="conta" class="java.lang.String"/>
+	<field name="razao_social" class="java.lang.String"/>
+	<field name="cnpj_cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[Cnpj]]></fieldDescription>
+	</field>
+	<field name="item_tipo" class="java.lang.String"/>
+	<field name="item_valor" class="java.lang.Double"/>
+	<field name="forn_razao_social" class="java.lang.String"/>
+	<field name="forn_cnpj_cpf" class="java.lang.String"/>
+	<field name="documento" class="java.lang.String"/>
+	<field name="produto" class="java.lang.String"/>
+	<field name="porcentagem" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Porcentagem]]></fieldDescription>
+	</field>
+	<variable name="item_valor_1" class="java.lang.Double" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{item_valor}]]></variableExpression>
+	</variable>
+	<variable name="porcentagem_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{porcentagem}]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="12">
+			<staticText>
+				<reportElement x="0" y="0" width="40" height="12" uuid="88f40574-fe01-45b5-9f81-4cc7ce4af43c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="40" y="0" width="110" height="12" uuid="31d58839-b10e-4ba5-8abd-82ed52380147"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="150" y="0" width="110" height="12" uuid="bd0fa87d-88c1-45f8-9e7b-63574758e74e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Solicitação]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="0" width="110" height="12" uuid="29cf79f6-7ff7-4c5a-bf1e-5a71100813d1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Conta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="0" width="32" height="12" uuid="a3293a25-e106-407b-9aaa-772b532086b3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="403" y="0" width="32" height="12" uuid="3be21a84-1238-4e81-a4a3-dd94b599f275"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="435" y="0" width="70" height="12" uuid="cc2060c1-6ec1-4bc6-9a82-0bab1e7ddeae"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Adiantamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="505" y="0" width="50" height="12" uuid="97ca9ed1-8dd7-4439-910f-b75ad4e0e7ca"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Visto]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="40" height="12" uuid="2c428bb3-d86b-4d23-91fc-531864d1d7a8"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_tipo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="40" y="0" width="110" height="12" uuid="41ad9245-a5c8-4259-a406-e66819872907"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{razao_social}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="150" y="0" width="110" height="12" uuid="8bc7b74a-f4b0-4bfa-b38d-6ceca01330ac"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{produto}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="260" y="0" width="110" height="12" uuid="a431da7e-b800-4147-a6a2-44c6a0e8b094"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{conta}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="370" y="0" width="32" height="12" uuid="32d69d9d-fbab-420f-99f4-b5461e5fb40f"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_valor}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="403" y="0" width="32" height="12" uuid="fa05cc74-5a93-43f7-b443-515044b6e65e"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{porcentagem}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="435" y="0" width="70" height="12" uuid="d2e77645-fbec-447d-9d26-053e0cc4729a"/>
+				<box leftPadding="5"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{banco}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement x="505" y="0" width="50" height="12" uuid="5852cd38-d386-4080-aee6-4e9ba5910224"/>
+				<box bottomPadding="0">
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="12">
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="370" y="0" width="32" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="804e0b81-a192-45ca-a58a-b1386a29b5d3"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{item_valor_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="403" y="0" width="32" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="918bde50-ff29-4efa-8149-908ac80362f6"/>
+				<box topPadding="2">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{porcentagem_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

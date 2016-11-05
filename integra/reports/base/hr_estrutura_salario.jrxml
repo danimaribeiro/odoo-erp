@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hr_estrutura_salario" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="552" leftMargin="22" rightMargin="21" topMargin="28" bottomMargin="28" uuid="05a7678d-6397-4816-97ba-742668ea4f5f">
+	<property name="ireport.zoom" value="1.100000000000032"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.callouts" value="##Thu Feb 20 16:53:50 BRT 2014"/>
+	<property name="ireport.background.image.properties" value="false,true,0.25,0,0,0,0,0,0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REGISTRO_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+hps.name as nome_estrtura,
+case
+when hps.tipo = 'N' then
+'Normal'
+when hps.tipo = 'F' then
+'Férias'
+when hps.tipo = 'R' then
+'Rescisão'
+when hps.tipo = 'P' then
+'Parcial/retorno'
+when hps.tipo = 'D' then
+'Décimo terceiro'
+when hps.tipo = 'A' then
+'Aviso prévio'
+end as tipo,
+rp.name as empresa,
+hpp.name as pai,
+hf.name as estrututa_ferias,
+hfr.name as estrututa_retorno_ferias,
+hfad.name as estrututa_adiantamento_13,
+hfd.name as estrututa_13,
+hps.afastamento_imediato,
+hps.dispensa_empregador,
+hps.codigo_afastamento as codigo_afastamento_sefip,
+hps.codigo_afastamento_cef,
+case
+when hps.codigo_saque = '01' then
+'01 - Sem justa causa (incl. indireta)'
+when hps.codigo_saque = '02' then
+'02 - Por culpa recíproca ou força maior'
+when hps.codigo_saque = '03' then
+'03 - Extinção total da empresa'
+when hps.codigo_saque = '04' then
+'04 - Extinção do contrato por prazo determinado'
+when hps.codigo_saque = '23' then
+'23 - Por falecimento'
+when hps.codigo_saque = '  ' then
+'Código mov. H, J e M'
+else
+''
+end as codigo_saque,
+case
+when hps.codigo_desligamento_rais = '10' then
+'10 - Rescisão de contrato de trabalho por justa causa e iniciativa do empregador ou demissão de servidor'
+when hps.codigo_desligamento_rais = '11' then
+'11 - Rescisão de contrato de trabalho sem justa causa por iniciativa do empregador ou exoneração de oficio de servidor de cargo efetivo ou exoneração de cargo em comissão'
+when hps.codigo_desligamento_rais = '12' then
+'12 - Término do contrato de trabalho'
+when hps.codigo_desligamento_rais = '20' then
+'20 - Rescisão com justa causa por iniciativa do empregado (rescisão indireta)'
+when hps.codigo_desligamento_rais = '21' then
+'21 - Rescisão sem justa causa por iniciativa do empregado ou exoneração de cargo efetivo a pedido do servidor'
+when hps.codigo_desligamento_rais = '22' then
+'22 - Posse em outro cargo inacumulável (específico para servidor público)'
+when hps.codigo_desligamento_rais = '30' then
+'30 - Transferência de empregado entre estabelecimentos da mesma empresa ou para outra empresa, com ônus para a cedente'
+when hps.codigo_desligamento_rais = '31' then
+'31 - Transferência de empregado entre estabelecimentos da mesma empresa ou para outra empresa, sem ônus para a cedente'
+when hps.codigo_desligamento_rais = '32' then
+'32 - Readaptação (específico para servidor público)'
+when hps.codigo_desligamento_rais = '33' then
+'33 - Cessão'
+when hps.codigo_desligamento_rais = '34' then
+'34 - Redistribuição (específico para servidor público)'
+when hps.codigo_desligamento_rais = '40' then
+'40 - Mudança de regime trabalhista'
+when hps.codigo_desligamento_rais = '50' then
+'50 - Reforma de militar para a reserva remunerada'
+when hps.codigo_desligamento_rais = '60' then
+'60 - Falecimento'
+when hps.codigo_desligamento_rais = '62' then
+'62 - Falecimento decorrente de acidente do trabalho típico (que ocorre no exercício de atividades profissionais a serviço da empresa)'
+when hps.codigo_desligamento_rais = '63' then
+'63 - Falecimento decorrente de acidente do trabalho de trajeto (ocorrido no trajeto residência–trabalho–residência)'
+when hps.codigo_desligamento_rais = '64' then
+'64 - Falecimento decorrente de doença profissional'
+when hps.codigo_desligamento_rais = '70' then
+'70 - Aposentadoria por tempo de contribuição, com rescisão contratual'
+when hps.codigo_desligamento_rais = '71' then
+'71 - Aposentadoria por tempo de contribuição, sem rescisão contratual'
+when hps.codigo_desligamento_rais = '72' then
+'72 - Aposentadoria por idade, com rescisão contratual'
+when hps.codigo_desligamento_rais = '73' then
+'73 - Aposentadoria por invalidez, decorrente de acidente do trabalho'
+when hps.codigo_desligamento_rais = '74' then
+'74 - Aposentadoria por invalidez, decorrente de doença profissional'
+when hps.codigo_desligamento_rais = '75' then
+'75 - Aposentadoria compulsória'
+when hps.codigo_desligamento_rais = '76' then
+'76 - Aposentadoria por invalidez, exceto a decorrente de doença profissional ou acidente do trabalho'
+when hps.codigo_desligamento_rais = '78' then
+'78 - Aposentadoria por idade, sem rescisão contratual'
+when hps.codigo_desligamento_rais = '79' then
+'79 - Aposentadoria especial, com rescisão contratual'
+when hps.codigo_desligamento_rais = '80' then
+'80 - Aposentadoria especial, sem rescisão contratual'
+else ''
+end as codigo_rais,
+
+hps.ignora_rubrica_funcionario,
+hps.ignora_rubrica_funcionario_quantidade,
+hps.id,
+c.id as company__id
+
+
+
+from hr_payroll_structure hps
+left join hr_payroll_structure hpp on hpp.id = hps.parent_id
+left join res_company c on c.id = hps.company_id
+left join res_partner rp on rp.id = c.partner_id
+left join hr_payroll_structure hf on  hf.id = hps.estrutura_ferias_id
+left join hr_payroll_structure hfr on hfr.id = hps.estrutura_retorno_ferias_id
+left join hr_payroll_structure hfad on hfad.id = hps.estrutura_adiantamento_decimo_terceiro_id
+left join hr_payroll_structure hfd on hfd.id = hps.estrutura_decimo_terceiro_id
+left join lo_modelo_hr_structure mh on mh.hr_struct_id = hps.id
+left join lo_modelo lm on lm.id = mh.lo_modelo_id
+
+where
+hps.id = $P{REGISTRO_ID}]]>
+	</queryString>
+	<field name="nome_estrtura" class="java.lang.String"/>
+	<field name="tipo" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo]]></fieldDescription>
+	</field>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="pai" class="java.lang.String"/>
+	<field name="estrututa_ferias" class="java.lang.String"/>
+	<field name="estrututa_retorno_ferias" class="java.lang.String"/>
+	<field name="estrututa_adiantamento_13" class="java.lang.String"/>
+	<field name="estrututa_13" class="java.lang.String"/>
+	<field name="afastamento_imediato" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Afastamento imediato na rescisão (justa causa, término de contrato etc.)]]></fieldDescription>
+	</field>
+	<field name="dispensa_empregador" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Dispensa pelo empregador?]]></fieldDescription>
+	</field>
+	<field name="codigo_afastamento_sefip" class="java.lang.String"/>
+	<field name="codigo_afastamento_cef" class="java.lang.String"/>
+	<field name="codigo_saque" class="java.lang.String">
+		<fieldDescription><![CDATA[Código de saque]]></fieldDescription>
+	</field>
+	<field name="codigo_rais" class="java.lang.String"/>
+	<field name="ignora_rubrica_funcionario" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Ignora rubrica específica do funcionário?]]></fieldDescription>
+	</field>
+	<field name="ignora_rubrica_funcionario_quantidade" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Ignora rubrica específica do funcionário com quantidade e valor?]]></fieldDescription>
+	</field>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="company__id" class="java.lang.Integer"/>
+	<group name="ficha">
+		<groupHeader>
+			<band height="59">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="25" y="16" width="276" height="16" uuid="9715ea6d-9dc7-4f46-9ff9-199810cc66d2"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="32" width="46" height="16" uuid="7010dc46-2f05-4f89-b59e-b6adb1bc824f"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Empresa:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="32" y="0" width="269" height="16" uuid="9bc65d5f-f74c-466e-8f72-eed85b9ba22a"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nome_estrtura}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="16" width="25" height="16" uuid="929868e5-b7a9-4bc0-884f-59482f82b129"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Tipo:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="0" width="32" height="16" uuid="d4a4ac1a-770a-4884-a502-e8442718143e"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nome:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="301" y="0" width="50" height="16" uuid="97cd15a2-cc5a-40c3-b258-81b06a461b42"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta-pai:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="351" y="0" width="201" height="16" uuid="91e2e2d4-c230-4715-a5c7-82ad10bdb66f"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pai}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="46" y="32" width="258" height="16" uuid="cca234aa-b7fd-4513-995b-a6b01b028522"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="245" splitType="Stretch">
+				<staticText>
+					<reportElement x="0" y="0" width="552" height="17" uuid="6ddc5586-2a0f-4bff-88ac-f001d0f9bdb4"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Rescisão e outras Movimentações]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="17" width="301" height="16" uuid="26933637-1975-47c9-96ad-e0ae55d0b3a8"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Afastamento imediato na rescisão (justa causa, término de contrato etc.) :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="301" y="17" width="24" height="16" uuid="1f93b3fe-4ace-429f-b11b-61659e3e4119"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{afastamento_imediato} == true ?
+"Sim"
+:
+"Não"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="183" y="33" width="118" height="16" uuid="80d114b0-7016-4f43-ab80-51f8ecdc2f1b"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Dispensa pelo empregador? :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="301" y="33" width="24" height="16" uuid="0f0fde4c-2691-4335-bfa6-ef60bf7308ff"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{dispensa_empregador} == true ?
+"Sim"
+:
+"Não"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="49" width="301" height="16" uuid="a34e6d42-39db-4962-81d1-963047031207"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Código do afastamento ou movimentação no SEFIP :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="301" y="49" width="106" height="16" uuid="20738c57-dc10-4908-8779-c8c77b0ac58c"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo_afastamento_sefip}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="65" width="301" height="16" uuid="887be26a-f9ca-4a13-b26e-1e17a41cee39"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Código do afastamento ou movimentação na C.E.F :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="301" y="65" width="106" height="16" uuid="b082f6de-cc4a-400c-b8af-23d7c2786a3f"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo_afastamento_cef}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="81" width="301" height="16" uuid="8135ea92-d31c-4301-b771-9002f411ddd2"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Código de saque :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="301" y="81" width="106" height="16" uuid="b0e2d894-c524-4812-bcf2-09efd64cbfa7"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo_saque}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="97" width="301" height="16" uuid="2593bb66-e4ef-47a9-a4ba-9dc9984c940a"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Código desligamento RAIS :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="301" y="97" width="251" height="28" uuid="70fbbbc9-c0d7-4c4d-9064-841afec5960a"/>
+					<box topPadding="3" leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo_rais}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="125" width="552" height="17" uuid="620048f7-2018-4136-afc2-fc993389507c"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Tratamento de Rubricas Específicas dos Funcionários]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="301" y="142" width="24" height="16" uuid="d9f16f2d-6183-4ac2-b4d6-3f0d0d2e9b40"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ignora_rubrica_funcionario} == true ?
+"Sim"
+:
+"Não"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="142" width="301" height="16" uuid="f03b1a5f-99d7-478d-ae57-585717616763"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Ignora rubrica específica do funcionário? :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="301" y="158" width="24" height="16" uuid="eb514c76-621f-4a50-afb1-242c819b6147"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ignora_rubrica_funcionario_quantidade} == true ?
+"Sim"
+:
+"Não"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="158" width="301" height="16" uuid="96a3f558-5aa3-4284-a970-6e55fd986029"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Ignora rubrica específica do funcionário com quantidade e valor? :]]></text>
+				</staticText>
+				<subreport>
+					<reportElement x="0" y="177" width="552" height="68" isPrintWhenDetailOverflows="true" uuid="e6a64b26-1a1c-4d2a-8303-6124b426cf5d"/>
+					<subreportParameter name="RUBRICA_ID">
+						<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "hr_estrutura_salario_modelo.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="28">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="509" y="7" width="43" height="8" uuid="c9c1520e-3d75-4cf5-880d-adde9cbc2192"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="552" height="28" uuid="f299e171-0906-4f77-93a0-6938a4fa48ce"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Relatório Estrutura de Salário]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="486" y="7" width="23" height="8" uuid="4220ed68-afc4-4b40-af72-e268ce06da6b"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="486" y="13" width="23" height="8" uuid="6a58e725-577a-4ba4-a4b1-5073c45fb070"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora:]]></text>
+			</staticText>
+			<textField pattern="HH:mm:ss">
+				<reportElement x="509" y="13" width="43" height="8" uuid="3b3abe77-d062-45a8-a65d-76c42ea379ed"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="19" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="552" height="19" uuid="1b529025-763c-4ab9-bd8a-c96683418b48"/>
+				<subreportParameter name="RUBRICA_ID">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "hr_estrutura_salario_rubrica.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="16">
+			<textField>
+				<reportElement x="452" y="0" width="80" height="16" uuid="e658497f-e5ab-4e54-97ed-98de1338cea2"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="532" y="0" width="40" height="16" uuid="8062be45-cda6-4ac3-9f57-46c354de18d9"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="552" height="1" uuid="743b88ea-b3e5-40fe-b97a-ae0dac4f6daf"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

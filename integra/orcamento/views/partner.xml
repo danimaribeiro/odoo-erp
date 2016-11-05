@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="partner_form_uniteelcom">
+            <field name="name">partnef.form.uniteelcom</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <page string="History" position="after">
+                    <page string="Comissões específicas">
+                        <field name="comissao_venda_id" domain="[('tipo', '=', 'V')]" />
+                        <newline />
+                        <field name="comissao_locacao_id" domain="[('tipo', '=', 'L')]" />
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

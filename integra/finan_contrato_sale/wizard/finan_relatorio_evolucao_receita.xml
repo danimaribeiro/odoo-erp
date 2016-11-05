@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_evolucao_receita" >
+            <field name="name">finan.relatorio.evolucao..faturamento.form</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório Evolução da Receita">                              
+                    <separator string="Filtros do Relatório" colspan="4" />                   
+                    <newline/>
+                    <separator string="Unidades" colspan="4" />
+                    <field name="company_ids" required="1" nolabel="1" colspan="4" />
+                    <newline/>
+                    <field name="data_inicial" required="1" />
+                    <field name="data_final" required="1" />                        
+                    <newline/>
+                    <field name="grupo_economico_id" colspan="4" />
+                    <newline/>
+                    <field name="contratos_faturados" />
+                    <field name="formato" required="1" />
+                    <newline/>
+                    <field name="nome" invisible="1"/>
+                    <newline/>
+                    <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_evolucao_receita" type="object" colspan="4" context="{'uso_comercial': True}" />
+                    <newline/>
+                    <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>                                        
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_relatorio_evolucao_receita_acao">
+            <field name="name">Evolução da Receita</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_relatorio_evolucao_receita_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_relatorio_evolucao_receita"/>
+            <field name="act_window_id" ref="finan_relatorio_evolucao_receita_acao"/>
+        </record>
+
+        <menuitem
+            action="finan_relatorio_evolucao_receita_acao"
+            id="menu_finan_relatorio_evolucao_receita"
+            name="Evolução da Receita"
+            parent="finan.menu_finan_relatorios" 
+            sequence="20" />
+
+    </data>
+</openerp>

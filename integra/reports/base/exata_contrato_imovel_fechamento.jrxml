@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="exata_contrato_imovel_fechamento" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="84950242-1b09-4c1f-a396-4528ded4fadb">
+	<property name="ireport.zoom" value="1.996500000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#BFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#E6FFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="8770e971-9aa7-4ee1-95a3-858de5675e29"/>
+	<parameter name="REGISTRO_IDS" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+rp.name as empresa,
+a.name as nome_projeto,
+fc.id as contrato_id,
+data_por_extenso(fc.data_assinatura) as data_extenso,
+fc.data_assinatura,
+fc.numero,
+imovel.codigo,
+imovel.quadra,
+imovel.lote,
+imovel.descricao,
+case
+when imovel.tipo = 'C' then 'Casa'
+when imovel.tipo = 'A' then 'Apartamento'
+when imovel.tipo = 'T' then 'Terreno'
+when imovel.tipo = 'X' then 'Chácara/sítio'
+when imovel.tipo = 'F' then 'Fazenda/área de terras'
+when imovel.tipo = 'U' then 'Área de terras urbana'
+when imovel.tipo = 'G' then 'Galpão/pavilhão'
+when imovel.tipo = 'P' then 'Prédio'
+when imovel.tipo = 'S' then 'Sala comercial'
+when imovel.tipo = 'L' then 'Loja/ponto comercial'
+when imovel.tipo = 'O' then 'Outros' end as tipo_imovel,
+vendedor.name as vendedor,
+comprador.name as comprador,
+fc.pagamento_direto_proprietario,
+fcc.data_inicio,
+fcc.vezes,
+case
+when fcc.tipo_mes = '001' then 'A cada mês (mensal)'
+when fcc.tipo_mes = '002' then 'A cada 2 (dois) meses'
+when fcc.tipo_mes = '003' then 'A cada 3 (três) meses'
+when fcc.tipo_mes = '004' then 'A cada 4 (quatro) meses'
+when fcc.tipo_mes = '005' then 'A cada 5 (cinco) meses'
+when fcc.tipo_mes = '006' then 'A cada 6 (seis) meses'
+when fcc.tipo_mes = '007' then 'A cada 7 (sete) meses'
+when fcc.tipo_mes = '008' then 'A cada 8 (oito) meses'
+when fcc.tipo_mes = '009' then 'A cada 9 (nove) meses'
+when fcc.tipo_mes = '010' then 'A cada 10 (dez) meses'
+when fcc.tipo_mes = '011' then 'A cada 11 (onze) meses'
+when fcc.tipo_mes = '012' then 'A cada ano (anual)'
+when fcc.tipo_mes = '024' then 'A cada 2 (dois) anos'
+when fcc.tipo_mes = '036' then 'A cada 3 (três) anos'
+when fcc.tipo_mes = '048' then 'A cada 4 (quatro) anos'
+when fcc.tipo_mes = '060' then 'A cada 5 (cinco) anos' end as tipo_mes,
+fcc.valor_parcela,
+fcc.valor_principal,
+cc.nome as centro_custo
+from finan_contrato fc
+join const_imovel imovel on imovel.id = fc.imovel_id
+join project_project pj on pj.id = imovel.project_id
+join account_analytic_account a ON a.id = pj.analytic_account_id
+join res_partner vendedor on vendedor.id = imovel.proprietario_id
+join res_company c ON c.id = a.company_id
+join res_partner rp on rp.id = c.partner_id
+join res_partner comprador on comprador.id = fc.partner_id
+join finan_contrato_condicao fcc on fcc.contrato_id = fc.id
+left join finan_centrocusto cc on cc.id = fcc.centrocusto_id
+
+where
+fc.id in $P!{REGISTRO_IDS}
+
+order by
+ fc.id,fcc.tipo_mes]]>
+	</queryString>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="nome_projeto" class="java.lang.String"/>
+	<field name="contrato_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Contrato]]></fieldDescription>
+	</field>
+	<field name="data_extenso" class="java.lang.String"/>
+	<field name="data_assinatura" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de assinatura]]></fieldDescription>
+	</field>
+	<field name="numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Número]]></fieldDescription>
+	</field>
+	<field name="codigo" class="java.lang.String">
+		<fieldDescription><![CDATA[unknown]]></fieldDescription>
+	</field>
+	<field name="quadra" class="java.lang.String">
+		<fieldDescription><![CDATA[Quadra]]></fieldDescription>
+	</field>
+	<field name="lote" class="java.lang.String">
+		<fieldDescription><![CDATA[Lote]]></fieldDescription>
+	</field>
+	<field name="descricao" class="java.lang.String">
+		<fieldDescription><![CDATA[Patrimônio]]></fieldDescription>
+	</field>
+	<field name="tipo_imovel" class="java.lang.String"/>
+	<field name="vendedor" class="java.lang.String">
+		<fieldDescription><![CDATA[Vendedor]]></fieldDescription>
+	</field>
+	<field name="comprador" class="java.lang.String">
+		<fieldDescription><![CDATA[Comprador]]></fieldDescription>
+	</field>
+	<field name="pagamento_direto_proprietario" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[O pagamento será direto ao proprietário?]]></fieldDescription>
+	</field>
+	<field name="data_inicio" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de início]]></fieldDescription>
+	</field>
+	<field name="vezes" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Vezes]]></fieldDescription>
+	</field>
+	<field name="tipo_mes" class="java.lang.String">
+		<fieldDescription><![CDATA[Período]]></fieldDescription>
+	</field>
+	<field name="valor_parcela" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor parcela]]></fieldDescription>
+	</field>
+	<field name="valor_principal" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor principal]]></fieldDescription>
+	</field>
+	<field name="centro_custo" class="java.lang.String">
+		<fieldDescription><![CDATA[ Gerar Bloco O (Centro de Custo)?]]></fieldDescription>
+	</field>
+	<variable name="valor_parcela_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_parcela}]]></variableExpression>
+	</variable>
+	<variable name="valor_principal_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_principal}]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="168">
+			<staticText>
+				<reportElement x="0" y="62" width="68" height="16" uuid="ad5e05e5-90ca-4fdd-9734-a7bb9e4daddf"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Cód. Imóvel:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="117" width="68" height="16" uuid="07ba5b2e-a800-4127-b819-b86a8f7e6cdc"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Comprador:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="68" y="62" width="159" height="16" uuid="fd4c9cf0-cf54-4220-bc33-2e07c72d0aa3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="68" y="117" width="487" height="16" uuid="bfeaf946-c0b1-4a26-b15e-bb7c4e350fc7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comprador}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH:mm:ss" isBlankWhenNull="true">
+				<reportElement x="81" y="30" width="146" height="16" uuid="c6c5489e-a464-484d-9e4a-de7a4e5bea7a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="30" width="81" height="16" uuid="b16dbfab-db91-4353-8180-bc5180275496"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Data Relatório:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="152" width="154" height="16" uuid="8baade8a-f130-4b12-ba74-d12a320817ee"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Periodo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="302" y="152" width="82" height="16" uuid="f4fdab2f-d957-4057-bee7-4de18fd9353d"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="384" y="152" width="171" height="16" uuid="1bd12a16-b7d9-461e-ab8f-d47815d72bcd"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Centro Custo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="222" y="152" width="80" height="16" uuid="454afdb0-2dc3-481b-89b0-f5612c3b63d6"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor Parcela]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="154" y="152" width="68" height="16" uuid="a343eb8e-aff8-4e1b-8257-bff4fa3dbcbd"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data Início]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="78" width="68" height="16" uuid="2f46f4c2-6ffc-4314-95fd-e6f63d163859"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Nº Contrato:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="68" y="78" width="159" height="16" uuid="182c546c-afba-4580-a6d3-89142b974fe6"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="136" width="555" height="16" uuid="fa2abe77-27e8-4829-8579-8cce37b1238d"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONDIÇÃO DE PAGAMENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="30" uuid="12cc0c57-24d9-403b-837e-5168dd1d1256"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESUMO FECHAMENTO CONTRATO DE IMÓVEL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="46" width="42" height="16" uuid="4f2cdac6-640b-43f5-b7d4-fbcbb27ebb7a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Projeto:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="42" y="46" width="513" height="16" uuid="7bb9ffcd-b206-4e68-9a2b-071d2b360b02"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome_projeto}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="271" y="62" width="159" height="16" uuid="2b51c676-37bf-4f93-8c2b-e83059625be1"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quadra}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="227" y="78" width="44" height="16" uuid="ccd8e5f1-52fb-4eee-a191-0be655026af9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Lote:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="227" y="62" width="44" height="16" uuid="353e7e56-8a65-4c3c-9dbf-6bfec6d162fc"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Quadra:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="271" y="78" width="159" height="16" uuid="a57d5cef-6701-41f1-b937-0481e117e750"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lote}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="94" width="68" height="16" uuid="a0c2038a-7d8b-48bc-accc-4585681678b0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Descrição:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="68" y="94" width="487" height="16" uuid="317162e4-64bf-431f-b4e9-793b135cae6e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="154" height="16" uuid="4f923387-1e38-4d0b-9621-d2028370a76c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo_mes}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="302" y="0" width="82" height="16" uuid="30f0515a-36e1-459b-92c5-56d7882da4f6"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_principal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="384" y="0" width="171" height="16" uuid="3f972060-ea4f-48a9-b811-9efcdf49a9a8"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{centro_custo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="154" y="0" width="68" height="16" uuid="e36cba03-ef48-4dc7-986a-3c87ab525cef"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_inicio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="222" y="0" width="80" height="16" uuid="ee62e625-4fc1-461c-981a-3f6336d1a069"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_parcela}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="138" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" x="0" y="90" width="209" height="16" uuid="7c9cfb06-2833-487a-a222-2ababcb3499c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Empresa na qual a venda esta vinculada:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="209" y="90" width="346" height="16" uuid="4b44f996-923f-4509-b45a-72f25ffdea6c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="222" y="0" width="80" height="16" uuid="8634ab50-2142-4bc5-b815-da7fbd836196"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_parcela_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="3dfa7928-52d4-4ceb-9048-e975a4202eab"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="302" y="0" width="82" height="16" uuid="1d7b2886-03a4-4e11-9128-f5a00b02f156"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_principal_1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="209" y="106" width="346" height="16" uuid="df442c98-47f3-42f9-90e0-b07047fe8da0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="106" width="209" height="16" uuid="33728deb-d1b6-47c6-add5-8e56545bc146"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Empresa de vinculação das comissões:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="122" width="555" height="16" uuid="5aef6cd0-22c4-4025-ac83-40c3c43805cd">
+					<printWhenExpression><![CDATA[$F{pagamento_direto_proprietario} == true]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Empresa não ira administra parcelas venda e comissão."]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="43" width="555" height="35" uuid="e9da272f-8050-41b8-889b-87630afa12fd"/>
+				<subreportParameter name="CONTRATO_ID">
+					<subreportParameterExpression><![CDATA[$F{contrato_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "exata_contrato_imovel_comissao.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="61" y="21" width="494" height="16" uuid="ac01d45d-37a3-44f5-b174-53fb08764bc6"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vendedor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="21" width="61" height="16" uuid="569f3492-4be5-437c-ab1f-552706fb876c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vendedor:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

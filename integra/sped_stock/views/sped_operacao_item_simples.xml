@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_operacaoitem_simples_tree">
+            <field name="name">sped.operacaoitem.simples.tree</field>
+            <field name="model">sped.operacaoitem</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="sped.sped_operacaoitem_simples_tree"/>
+            <field name="arch" type="xml">
+                <field name="cst_icms_sn" position="after">
+                    <field name="stock_location_id" />
+                    <field name="stock_location_dest_id" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_operacaoitem_simples_form">
+            <field name="name">sped.operacaoitem.simples.form</field>
+            <field name="model">sped.operacaoitem</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped.sped_operacaoitem_simples_form"/>
+            <field name="arch" type="xml">
+                <field name="cst_icms_sn" position="after">
+                    <field name="stock_location_id" />
+                    <field name="stock_location_dest_id" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finan_analise_contratos_regulares" language="groovy" pageWidth="555" pageHeight="230" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6fff61ce-1432-40fb-830b-18bbe5149856">
+	<property name="ireport.zoom" value="1.6105100000000079"/>
+	<property name="ireport.x" value="195"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="COMPANY_ID" class="java.lang.Integer"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="IS_SINTETICO" class="java.lang.String"/>
+	<parameter name="SQL_CONTRATOS_REGULARES" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[$P!{SQL_CONTRATOS_REGULARES}]]>
+	</queryString>
+	<field name="numero_contrato" class="java.lang.String"/>
+	<field name="cliente" class="java.lang.String"/>
+	<field name="valor_contrato" class="java.lang.Double"/>
+	<variable name="valor_contrato_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_contrato}]]></variableExpression>
+	</variable>
+	<variable name="total_contrato_regulares" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_contrato}]]></variableExpression>
+	</variable>
+	<variable name="quantidade" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{numero_contrato}]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="40">
+			<printWhenExpression><![CDATA[$P{IS_SINTETICO} == "0"]]></printWhenExpression>
+			<staticText>
+				<reportElement x="485" y="21" width="70" height="19" uuid="6b6c0c87-6d53-4d03-858a-d2082ce184ea"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor Contrato]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="21" width="435" height="19" uuid="a20ec32c-274f-4eb5-9812-d23c487606e6"/>
+				<box leftPadding="5" rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="21" width="50" height="19" uuid="e7126845-adcc-46df-b6f5-5b3ec6ffe96e"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº Contrato]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="7" width="555" height="14" uuid="f592b1e5-bfe1-48af-bb37-21de79efcd28"/>
+				<box leftPadding="0" rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONTRATOS REGULARES:]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{IS_SINTETICO} == "0"]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="12" uuid="5012790d-bd25-4714-904e-efaf68ae516c"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero_contrato}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="50" y="0" width="435" height="12" uuid="c4b0f96e-b77d-419a-a907-99e8b040dd5e"/>
+				<box leftPadding="5" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="485" y="0" width="70" height="12" uuid="9f956c7f-758c-43ff-b633-0bef451bb653"/>
+				<box leftPadding="0" rightPadding="5">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_contrato}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="24">
+			<staticText>
+				<reportElement x="0" y="0" width="435" height="12" uuid="b2bfc837-deec-42d9-926e-1dc535a89187"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL CONTRATOS REGULARES:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="485" y="0" width="70" height="12" uuid="133c0197-69f6-4d18-88de-652e79112744"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_contrato_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="435" y="0" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="1ac903c8-840a-44d8-a073-7a36a8ddbf3c"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{quantidade}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="12" width="485" height="12" uuid="66a9346e-ee4b-47fb-b427-0463721d9d63"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TICKET MÉDIO CONTRATOS REGULARES:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="485" y="12" width="70" height="12" uuid="05b140d4-e233-45de-b3af-0cc65bbd9acb"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($V{quantidade} == 0?
+0
+:
+$V{valor_contrato_1} / $V{quantidade}
+)]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

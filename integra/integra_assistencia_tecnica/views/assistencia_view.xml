@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>        
+        
+        <menuitem  id="menu_principal_assitencia_tecnica" 
+            icon="terp-hr"
+            name="Assistência Técnica" sequence="08" />         
+                        
+        <menuitem id="menu_assitencia_tecnica" 
+            parent="menu_principal_assitencia_tecnica" 
+            name="Assistência Técnica"
+            sequence="1" />
+              
+        <menuitem id="menu_configuracao" 
+            parent="menu_principal_assitencia_tecnica" 
+            name="Configurações" 
+            sequence="10"
+            groups="group_assitencia_tecnica_manager" />     
+
+    </data>
+</openerp>

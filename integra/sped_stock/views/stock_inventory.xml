@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_stock_inventory_line_tree">
+            <field name="name">sped.stock.inventory.line.tree</field>
+            <field name="model">stock.inventory.line</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Products" editable="top">
+                    <field domain="[('usage','=','internal')]" name="location_id"/>
+                    <field context="{'location':location_id, 'uom':product_uom, 'to_date':parent.date}" name="product_id" on_change="on_change_product_id(location_id,product_id,product_uom,parent.date)"  domain="[('type','&lt;&gt;','service')]"/>
+                    <field name="product_qty" on_change="onchange_quantidade_unitario(product_qty, vr_unitario)" sum="Quantidade"/>
+                    <field name="vr_unitario" on_change="onchange_quantidade_unitario(product_qty, vr_unitario)" />
+                    <field name="vr_total" sum="Total" />
+                    <field name="product_uom"/>
+                    <field name="prod_lot_id" groups="base.group_extended"/>
+                    <button name="%(stock.action_view_stock_inventory_line_split)d"
+                        string="Split inventory lines" groups="base.group_extended"
+                        type="action" icon="terp-stock_effects-object-colorize" states="draft,confirm"/>
+                    <field name="state" invisible="True"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_stock_inventory_line_form">
+            <field name="name">sped.stock.inventory.line.form</field>
+            <field name="model">stock.inventory.line</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Products ">
+                    <field domain="[('usage','=','internal')]" name="location_id"/>
+                    <newline/>
+                    <field context="{'location':location_id, 'uom':product_uom, 'to_date':parent.date}" name="product_id" on_change="on_change_product_id(location_id,product_id,product_uom,parent.date)"  domain="[('type','&lt;&gt;','service')]"/>
+                    <field name="product_qty" on_change="onchange_quantidade_unitario(product_qty, vr_unitario)" />
+                    <field name="vr_unitario" on_change="onchange_quantidade_unitario(product_qty, vr_unitario)" />
+                    <field name="vr_total" />
+                    <field name="product_uom"/>
+                    <group colspan="2" col="4">
+                    <field name="prod_lot_id" groups="base.group_extended"/>
+                        <button name="%(stock.action_view_stock_inventory_line_split)d"
+                            string="Split inventory lines" groups="base.group_extended"
+                            type="action" icon="terp-stock_effects-object-colorize"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="stock_inventory_form" model="ir.ui.view">
+            <field name="name">stock.inventory.form</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field domain="[('usage','=','internal')]" name="location_id" colspan="4" />
+                    <button name="gera_inventario" string="Gerar impresso" type="object" />
+                </field>
+                <field name="inventory_line_id" position="replace">
+                    <field colspan="4" name="inventory_line_id" nolabel="1" context="{'default_location_id': location_id, 'tree_view_ref': 'sped_stock_inventory_line_tree', 'form_view_ref': 'sped_stock_inventory_line_form'}" mode="tree,form" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

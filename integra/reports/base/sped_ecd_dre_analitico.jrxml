@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sped_ecd_dre_analitico" language="groovy" pageWidth="530" pageHeight="10" columnWidth="530" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="ca185a63-a14c-432d-8393-e8bdaa0b0e19">
+	<property name="ireport.zoom" value="2.1435888100000016"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ITEM_ID" class="java.lang.String"/>
+	<parameter name="CNPJ" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+         f.codigo_completo as codigo_completo_contabil,
+         f.nome as conta_contabil,
+         sum(coalesce(l.valor_debito,0)) as vr_debito,
+         sum(coalesce(l.valor_credito,0)) as vr_credito,
+         sum(coalesce(l.valor, 0)) as valor
+
+         FROM ecd_estrutura_analise ea
+         join ecd_estrutura_analise_item l on l.analise_estrutura_id = ea.id
+         join finan_conta f on f.id = l.conta_contabil
+         join res_company c on c.id = ea.company_id
+         join res_partner rp on rp.id = c.partner_id
+
+         where
+           l.codigo_completo = $P{ITEM_ID}
+           and  ea.tipo_demonstrativo = 'DRE'
+           $P!{CNPJ}
+
+         group by
+
+           f.codigo_completo,
+           f.nome
+
+         ORDER BY
+           f.codigo_completo]]>
+	</queryString>
+	<field name="codigo_completo_contabil" class="java.lang.String"/>
+	<field name="conta_contabil" class="java.lang.String">
+		<fieldDescription><![CDATA[Conta Contábil]]></fieldDescription>
+	</field>
+	<field name="vr_debito" class="java.lang.Double"/>
+	<field name="vr_credito" class="java.lang.Double"/>
+	<field name="valor" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor]]></fieldDescription>
+	</field>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="###0;-###0" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="55" height="10" uuid="bc7ba480-46d7-4dd5-8b74-b0c9c1b79433"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_completo_contabil}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="470" y="0" width="60" height="10" uuid="6a70f017-19aa-42ab-a69b-629c38cf9231"/>
+				<box rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="55" y="0" width="415" height="10" uuid="17b63e13-b153-479d-8782-f34c7d0e0246"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{conta_contabil}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

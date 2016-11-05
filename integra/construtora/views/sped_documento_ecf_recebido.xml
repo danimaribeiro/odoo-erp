@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="finan_sped_ecf_recebido_form" model="ir.ui.view">
+            <field name="name">sped.ecf.recebido.form</field>
+            <field name="model">sped.documento</field>
+            <field name="inherit_id" ref="integra_ecf.finan_sped_ecf_recebido_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="duplicata_ids" position="after">
+                    <newline />
+                    <separator string="Itens do rateio" colspan="4" />
+                    <field name="rateio_ids" widget="many2one_list" nolabel="1" colspan="4" context="{'tree_view_ref': 'finan.finan_rateio_item_tree'}"/>
+                </field>
+                
+                <page string="Produtos/Serviços" position="before">
+                     <page string="Pedido de Compra">
+                        <field name="purchase_order_id" colspan="4" domain="[('state','=','approved'), ('partner_id','=', partner_id), ('date_order','&lt;=', data_emissao)]" on_change="onchange_purchase_order_id(purchase_order_id)" />
+                        <newline />
+                        <field name="purchase_order_ids" nolabel="1" widget="one2many_list" readonly="1" mode="form" colspan="4" invisible="[('purchase_order_id', '=', False)]" />
+                    </page>
+                </page>
+            </field>
+        </record>
+    </data>
+</openerp>

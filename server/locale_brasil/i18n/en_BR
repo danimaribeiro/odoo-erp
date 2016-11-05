@@ -1,0 +1,168 @@
+#
+# Charset: UTF-8
+#
+# Locale para o inglês no Brasil, legível por seres humanos
+#
+# Criado por Ari CALDEIRA, baseado no locale
+# original da glibc
+#
+# As diferenças em relação ao locale original são:
+#     1. A ordem alfabética, que foi aprimorada
+#     2. O formato de data e hora está um pouco mais descritivo
+#     3. Os números são agrupados com ponto de milhar e decimal corretos
+#
+
+#######################################
+LC_IDENTIFICATION
+#######################################
+
+title      "English locale for Brazil"
+address    ""
+contact    ""
+email      "ari@laumi.org"
+tel        ""
+fax        ""
+language   "English"
+territory  "Brazil"
+revision   "6.0"
+date       "2011-08-05"
+
+category  "en_BR:2000";LC_IDENTIFICATION
+category  "en_BR:2000";LC_CTYPE
+category  "en_BR:2000";LC_COLLATE
+category  "en_BR:2000";LC_TIME
+category  "en_BR:2000";LC_NUMERIC
+category  "en_BR:2000";LC_MONETARY
+category  "en_BR:2000";LC_MESSAGES
+category  "en_BR:2000";LC_PAPER
+category  "en_BR:2000";LC_NAME
+category  "en_BR:2000";LC_ADDRESS
+category  "en_BR:2000";LC_TELEPHONE
+
+END LC_IDENTIFICATION
+
+
+###############################
+LC_CTYPE
+###############################
+copy "pt_BR"
+END LC_CTYPE
+
+###############################
+LC_COLLATE
+###############################
+copy "pt_BR"
+END LC_COLLATE
+
+
+###############################
+LC_MESSAGES
+###############################
+
+yesexpr                 "^[1YySs].*"
+noexpr                  "^[0Nn].*"
+yesstr                  "yes"
+nostr                   "no"
+
+END LC_MESSAGES
+
+
+###############################
+LC_MONETARY
+###############################
+
+int_curr_symbol           "BRL "
+currency_symbol           "RS⃦<U00A0>"
+mon_decimal_point         "."
+mon_thousands_sep         ","
+mon_grouping              3;3
+positive_sign             ""
+negative_sign             "-"
+frac_digits               2
+p_cs_precedes             1
+n_cs_precedes             1
+p_sep_by_space            0
+n_sep_by_space            0
+int_p_sep_by_space        0
+int_n_sep_by_space        0
+p_sign_posn               1
+n_sign_posn               3
+int_frac_digits           2
+
+END LC_MONETARY
+
+
+###############################
+LC_NUMERIC
+###############################
+
+decimal_point           "."
+thousands_sep           ","
+grouping                3;3
+
+END LC_NUMERIC
+
+
+###############################
+LC_TIME
+###############################
+copy "en_GB"
+END LC_TIME
+
+
+###############################
+LC_PAPER
+###############################
+copy "pt_BR"
+END LC_PAPER
+
+
+###############################
+LC_TELEPHONE
+###############################
+copy "pt_BR"
+END LC_TELEPHONE
+
+
+###############################
+LC_MEASUREMENT
+###############################
+copy "pt_BR"
+END LC_MEASUREMENT
+
+
+###############################
+LC_NAME
+###############################
+copy "en_GB"
+END LC_NAME
+
+
+###############################
+LC_ADDRESS
+###############################
+
+postal_fmt   "\
+%f%N\
+%a%N\
+%d%N\
+%b%N\
+%s&t%h%t%e%t%r%N\
+%T%N\
+%c%N\
+%C%t%z%N"
+
+country_name "Brasil"
+country_ab2  "BR"
+country_ab3  "BRA"
+country_post "BR"
+country_num  076
+country_car  "BR"
+country_isbn 85
+
+lang_name    "English"
+lang_ab      "en"
+lang_term    "eng"
+lang_lib     "eng"
+
+END LC_ADDRESS

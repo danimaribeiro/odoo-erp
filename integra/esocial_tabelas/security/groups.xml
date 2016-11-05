@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record id="group_finan_manager" model="res.groups">
+            <field name="name">Integra / Gerente do Financeiro</field>
+        </record>
+
+        <record id="group_finan_staff" model="res.groups" context="{'noadmin':True}">
+            <field name="name">Integra / Funcionário do Financeiro</field>
+        </record>
+
+        <record id="group_finan_treasury_manager" model="res.groups">
+            <field name="name">Integra / Gerente da Tesouraria</field>
+        </record>
+
+        <record id="group_finan_treasury_staff" model="res.groups" context="{'noadmin':True}">
+            <field name="name">Integra / Funcionário da Tesouraria</field>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_ficha_financeira_funcionario_form" >
+            <field name="name">hr.ficha.financeira.funcionario.form</field>
+            <field name="model">hr.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Ficha Financeira por Funcionário">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <field name="contract_id" required="1" colspan="4"/>
+                        <field name="ano" required="1" />
+                        <field name="formato" required="1" />
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_ficha_financeira" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_ficha_financeira_funcionario_acao">
+            <field name="name">Ficha Financeira por Funcionário</field>
+            <field name="res_model">hr.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_ficha_financeira_funcionario_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_ficha_financeira_funcionario_form"/>
+            <field name="act_window_id" ref="hr_ficha_financeira_funcionario_acao"/>
+        </record>
+
+        <menuitem action="hr_ficha_financeira_funcionario_acao"
+                  id="menu_hr_ficha_financeira_funcionario"
+                  name="Ficha Financeira por Funcionário"
+                  parent="menu_hr_relatorio_anual"
+                  sequence="2" />
+
+    </data>
+</openerp>

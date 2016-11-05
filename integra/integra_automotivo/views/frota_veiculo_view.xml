@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="frota_veiculo_form" model="ir.ui.view">
+            <field name="name">frota.veiculo.form</field>
+            <field name="model">frota.veiculo</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="integra_frota.frota_veiculo_form"/>
+            <field name="arch" type="xml">
+                <field name="res_company_id" position="replace">
+                    <newline/>
+                      <field name="partner_id"/>
+                    <newline/>
+                </field>  
+                <field name="combustivel" position="replace"></field>           
+                <xpath expr="//group[@string='Veículo']" position="after">
+                <group col="6" colspan="4" string="Especificações">
+                    <field name="direcao" string="Direcção" />
+                    <field name="tipo_uso"/>
+                    <field name="freio" />
+                    <field name="cambio" />
+                    <field name="motor" />
+                    <field name="combustivel" />
+                    <field name="vidro_eletrico" />
+                    <field name="trava_eletrica" />
+                    <field name="air_bag" />
+                    <field name="ar_quente" />
+                    <field name="desembacador" />
+                </group>
+                </xpath>                
+            </field>
+        </record>
+        
+        <record model='ir.ui.view' id='frota_veiculo_tree'>
+            <field name="name">frota.veiculo.tree</field>
+            <field name="model">frota.veiculo</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="integra_frota.frota_veiculo_tree"/>
+            <field name="arch" type="xml">
+                    <field name="res_company_id" position="replace" >
+                        <field name="partner_id" />                    
+                    </field>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="frota_veiculo_search">
+            <field name="name">frota.veiculo.search</field>
+            <field name="model">frota.veiculo</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="integra_frota.frota_veiculo_search"/>
+            <field name="arch" type="xml">
+                <field name="res_company_id" position="replace" >
+                <field name="partner_id" />                  
+                </field>
+            </field>
+        </record>     
+    </data>
+</openerp>

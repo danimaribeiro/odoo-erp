@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finan_relatorio_conta_pagamento" language="groovy" printOrder="Horizontal" pageWidth="802" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="2.1961500000000402"/>
+	<property name="ireport.x" value="543"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="SQL_RELATORIO" class="java.lang.String"/>
+	<parameter name="UID" class="java.lang.Integer"/>
+	<parameter name="BANCO" class="java.lang.String"/>
+	<parameter name="PARTNER" class="java.lang.String"/>
+	<parameter name="TOTAIS" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TITULO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[$P!{SQL_RELATORIO}]]>
+	</queryString>
+	<field name="lancamento" class="java.lang.Integer"/>
+	<field name="numero_documento" class="java.lang.String">
+		<fieldDescription><![CDATA[Nº doc.]]></fieldDescription>
+	</field>
+	<field name="data_documento" class="java.sql.Date"/>
+	<field name="data_vencimento" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data vencimento]]></fieldDescription>
+	</field>
+	<field name="data_quitacao" class="java.sql.Date"/>
+	<field name="valor_documento" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor parcial do documento]]></fieldDescription>
+	</field>
+	<field name="valor_desconto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Desconto]]></fieldDescription>
+	</field>
+	<field name="valor_juros" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Juros]]></fieldDescription>
+	</field>
+	<field name="valor_multa" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Multa]]></fieldDescription>
+	</field>
+	<field name="valor" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor]]></fieldDescription>
+	</field>
+	<field name="cliente" class="java.lang.String">
+		<fieldDescription><![CDATA[Cliente]]></fieldDescription>
+	</field>
+	<field name="contato" class="java.lang.String"/>
+	<field name="unidade" class="java.lang.String">
+		<fieldDescription><![CDATA[Unidade]]></fieldDescription>
+	</field>
+	<field name="situacao" class="java.lang.String">
+		<fieldDescription><![CDATA[situação]]></fieldDescription>
+	</field>
+	<field name="conta_codigo" class="java.lang.String"/>
+	<field name="conta_nome" class="java.lang.String"/>
+	<field name="provisionado" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Provisionar lançamentos?]]></fieldDescription>
+	</field>
+	<variable name="valor_documento_1" class="java.math.BigDecimal" resetType="Group" resetGroup="fornecedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_documento}]]></variableExpression>
+	</variable>
+	<variable name="valor_desconto_1" class="java.math.BigDecimal" resetType="Group" resetGroup="fornecedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_desconto}]]></variableExpression>
+	</variable>
+	<variable name="valor_multa_1" class="java.math.BigDecimal" resetType="Group" resetGroup="fornecedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_multa}]]></variableExpression>
+	</variable>
+	<variable name="valor_juros_1" class="java.math.BigDecimal" resetType="Group" resetGroup="fornecedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_juros}]]></variableExpression>
+	</variable>
+	<variable name="valor_1" class="java.math.BigDecimal" resetType="Group" resetGroup="fornecedor" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor}]]></variableExpression>
+	</variable>
+	<variable name="valor_documento_2" class="java.math.BigDecimal" resetType="Group" resetGroup="situacao" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_documento}]]></variableExpression>
+	</variable>
+	<variable name="valor_desconto_2" class="java.math.BigDecimal" resetType="Group" resetGroup="situacao" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_desconto}]]></variableExpression>
+	</variable>
+	<variable name="valor_multa_2" class="java.math.BigDecimal" resetType="Group" resetGroup="situacao" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_multa}]]></variableExpression>
+	</variable>
+	<variable name="valor_juros_2" class="java.math.BigDecimal" resetType="Group" resetGroup="situacao" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_juros}]]></variableExpression>
+	</variable>
+	<variable name="valor_2" class="java.math.BigDecimal" resetType="Group" resetGroup="situacao" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor}]]></variableExpression>
+	</variable>
+	<variable name="valor_documento_3" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_documento}]]></variableExpression>
+	</variable>
+	<variable name="valor_desconto_3" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_desconto}]]></variableExpression>
+	</variable>
+	<variable name="valor_multa_3" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_multa}]]></variableExpression>
+	</variable>
+	<variable name="valor_juros_3" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_juros}]]></variableExpression>
+	</variable>
+	<variable name="valor_3" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor}]]></variableExpression>
+	</variable>
+	<variable name="valor_documento_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_documento}]]></variableExpression>
+	</variable>
+	<variable name="valor_desconto_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_desconto}]]></variableExpression>
+	</variable>
+	<variable name="valor_juros_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_juros}]]></variableExpression>
+	</variable>
+	<variable name="valor_multa_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_multa}]]></variableExpression>
+	</variable>
+	<variable name="valor_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor}]]></variableExpression>
+	</variable>
+	<group name="empresa">
+		<groupExpression><![CDATA[$F{unidade}]]></groupExpression>
+		<groupFooter>
+			<band height="16" splitType="Stretch">
+				<printWhenExpression><![CDATA[$P{TOTAIS} == false]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="572" height="16" uuid="bc514222-ac0a-4d4b-ab28-3ffc3956da15"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{unidade}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="572" y="0" width="55" height="16" uuid="94065f2e-0c28-4ebb-94b5-326fb5c5a8b8"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_documento_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="707" y="0" width="40" height="16" uuid="50db3967-7846-4b74-9375-5cf5c2a060b2"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_juros_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="667" y="0" width="40" height="16" uuid="91d6cc00-9cbd-4a53-adfb-7233b4ed295f"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_multa_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="627" y="0" width="40" height="16" uuid="32369a68-d9a3-4df2-a3a3-36f93c635873"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_desconto_3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="747" y="0" width="55" height="16" uuid="15202124-270a-426c-ac44-f766f6396a04"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_3}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="situacao">
+		<groupExpression><![CDATA[$F{situacao}]]></groupExpression>
+	</group>
+	<group name="fornecedor" keepTogether="true">
+		<groupExpression><![CDATA[$F{cliente}]]></groupExpression>
+	</group>
+	<pageHeader>
+		<band height="32">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="16" uuid="94e76ebf-3c06-4320-be6f-0d6d5186baad"/>
+				<box leftPadding="0" rightPadding="20">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TOTAIS POR EMPRESA"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="572" y="16" width="55" height="16" uuid="319e221b-1c80-40c0-b2d4-6a74a2ad4de9"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vlr. Original]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="707" y="16" width="40" height="16" uuid="ccc849f0-c0fb-48a7-8725-4c71dd0087d1"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Juros]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="627" y="16" width="40" height="16" uuid="e5fcb96f-d3ce-4e45-a930-b26681c1be65"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desc.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="747" y="16" width="55" height="16" uuid="341940e4-84cb-4d0b-be9d-0a8d3084dafa"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Parc./Total Pago]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="667" y="16" width="40" height="16" uuid="724a6575-a6bd-40ee-8467-c16a3e6c02b4"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Multa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="16" width="572" height="16" uuid="c532336d-e780-40c0-93d4-5ca5830c11bb"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empresa:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<summary>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="572" height="16" isRemoveLineWhenBlank="true" uuid="466d076f-4366-4cf5-975e-7074457a343b">
+					<printWhenExpression><![CDATA[$P{TOTAIS} == false]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Geral]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="572" y="0" width="55" height="16" isRemoveLineWhenBlank="true" uuid="dcce0df2-7f2c-4f20-ab84-be4523f9ba96">
+					<printWhenExpression><![CDATA[$P{TOTAIS} == false]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_documento_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="627" y="0" width="40" height="16" isRemoveLineWhenBlank="true" uuid="0dc4bc2a-9ed7-4758-8ff2-bfe132e52a1d">
+					<printWhenExpression><![CDATA[$P{TOTAIS} == false]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_desconto_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="667" y="0" width="40" height="16" isRemoveLineWhenBlank="true" uuid="7c0f58eb-ee36-4eb0-a6fb-23e291867b10">
+					<printWhenExpression><![CDATA[$P{TOTAIS} == false]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_multa_3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="707" y="0" width="40" height="16" isRemoveLineWhenBlank="true" uuid="a70d4d35-9e8a-4c0c-b3d1-b6deb137fb70">
+					<printWhenExpression><![CDATA[$P{TOTAIS} == false]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_juros_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="747" y="0" width="55" height="16" isRemoveLineWhenBlank="true" uuid="9d8cc788-f976-43d5-8793-e64e58987279">
+					<printWhenExpression><![CDATA[$P{TOTAIS} == false]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_4}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

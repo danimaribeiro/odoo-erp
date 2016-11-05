@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_payslip_form" model="ir.ui.view">
+            <field name="name">hr.payslip.form</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//separator[@string='Other Information']" position="before">
+                    <separator string="Liberar recibo no portal do funcionário" colspan="4" />
+                    <button string="Liberar recibo" icon="terp-camera_test" name="liberar_portal" states="done" type="object"/>
+                </xpath>
+            </field>
+        </record>
+        
+    </data>
+</openerp>

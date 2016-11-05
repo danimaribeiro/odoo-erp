@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_nfse_emitida_form">
+            <field name="name">sped.nfse.emitida.form</field>
+            <field name="model">sped.documento</field>
+            <field name="inherit_id" ref="sped_contabilidade.sped_nfse_emitida_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <button name="gera_contabilizacao" position="before" >
+                    <group col="6" colspan="4">
+                        <group col="2" colspan="2">
+                            <field name="lote_id" readonly="1" colspan="2"/>
+                        </group>
+                        <group col="4" colspan="4">                        
+                        </group>
+                    </group>
+                    <newline />                 
+                </button>  
+            </field>
+        </record>
+
+    </data>
+</openerp>

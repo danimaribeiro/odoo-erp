@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <menuitem
+            id="menu_operacional"
+            action="operacional_dashboard_acao"
+            name="Operacional" />
+
+        <menuitem
+            id="menu_ordem_servico"
+            name="Ordens de serviço"
+            parent="menu_operacional"
+            sequence="1" />
+
+        <menuitem
+            id="integra_frota.menu_frota"
+            parent="menu_operacional"
+            name="Frota"
+            sequence="2"
+            groups="integra_frota.group_frota_manager,integra_frota.group_frota_staff" />
+
+<!--        <menuitem
+            id="intega_rh_escala.menu_hr_escalas"
+            parent="menu_operacional"
+            sequence="3"
+            name="Escalas" />-->
+
+    </data>
+</openerp>

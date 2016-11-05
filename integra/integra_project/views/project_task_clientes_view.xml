@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="project_task_clientes_form">
+        <field name="name">project.task.clientes_form</field>
+        <field name="model">project.task</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Chamados">
+                <group col="6" colspan="4">
+                    <field name="codigo" readonly="1" />
+                    <field name="tipo" invisible="1" />
+                    <newline />
+                    <field name="name" colspan="6" string="Título" />
+                    <field name="project_id" colspan="6" widget="selection" required="1" />
+<!--                     <field name="unidade_id" colspan="6" required="1" widget="selection" /> -->
+                    <field name="solicitante" colspan="6" required="1" />
+                </group>
+                <newline />
+                <group colspan="4" col="4" groups="integra_project.group_project_integra,integra_project.group_project_cliente_libera">
+                    <separator string="Liberação para execução" colspan="4" />
+                    <field name="data_liberacao" readonly="1" />
+                    <field name="liberacao_uid" readonly="1" />
+                    <button type="object" string="Liberar" colspan="4" name="libera_chamado_clientes" />
+                </group>
+                <newline />
+                <notebook colspan="4">
+                    <page string="Informação">
+                        <separator string="Descrição" colspan="4" />
+                        <field name="description" nolabel="1" colspan="4" />
+                        <separator string="Solução dada" colspan="4" />
+                        <field name="solucao" nolabel="1" colspan="4" />
+                        <separator string="Atividades executadas" colspan="4" />
+                        <group col="6" colspan="4" attrs="{'invisible': [('state','in',['done','draft'])]}" >
+                            <group col="4" colspan="4">
+                                <button icon="gtk-stop" string="Parar" name="parar_cronometro" type="object" />
+                                <button icon="gtk-ok" string="Reiniciar" name="inicia_cronometro" type="object"  />
+                            </group>
+                            <group col="2" colspan="4">
+                            </group>
+                        </group>
+                        <field name="resumo_trabalho" colspan="4" />
+                        <field name="causa_integra" string="Tipo de solicitação" readonly="1" attrs="{'invisible': [('state','in',['done','draft'])]}"/>
+                        <field colspan="4" name="work_ids" nolabel="1">
+                            <tree string="Atividades da tarefa" editable="top" >
+                                <field name="name" />
+                                <field name="hours" widget="float_time" sum="Spent Hours" invisible="1" />
+                                <field name="horas_gastas" widget="float_time" sum="Horas consumidas" />
+                                <field name="horas_intervalo" widget="float_time" sum="Horas intervalo" invisible="1" />
+                                <field name="data_inicial" />
+                                <field name="data_final" />
+                                <field name="user_id" />
+                            </tree>
+                        </field>                        
+                        <newline />
+<!--                        <group colspan="4" col="4">
+                            <field name="impacta_status" />
+                        </group>-->
+                        <group col="11" colspan="4">
+                            <field name="state" widget="statusbar" statusbar_visible="draft,open,done" select="1"/>
+<!--                             <button name="do_cancel" states="draft,open,pending" string="Cancel" type="object" icon="gtk-cancel"/> -->
+<!--                             <button name="do_draft" states="open" string="Draft" type="object" icon="gtk-indent"/> -->
+<!--                             <button name="do_open" states="pending,draft" string="Start Task" type="object" icon="gtk-media-play"/> -->
+<!--                             <button name="do_pending" states="open" string="Pending" type="object" icon="gtk-media-pause"/> -->
+                            <button name="action_close" states="pending,open" string="Done" type="object" icon="terp-dialog-close"/>
+                        </group>
+
+                    </page>
+                    <page string="Mapeamento de processos">
+                        <separator string="Objetivos" colspan="4" />
+                        <field name="objetivo" nolabel="1" colspan="4" />
+                        <newline />
+                        <group colspan="2" col="4">
+                            <separator string="Processo atual" colspan="4" />
+                            <field name="processo_atual" nolabel="1" colspan="4" />
+                        </group>
+                        <group colspan="2" col="4">
+                            <separator string="Processo novo" colspan="4" />
+                            <field name="processo_novo" nolabel="1" colspan="4" />
+                        </group>
+                    </page>
+                </notebook>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="project_task_clientes_tree" >
+        <field name="name">project.task.clientes.tree</field>
+        <field name="model">project.task</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree colors="grey:state in ('cancelled','done');green:impacta_status == '2.2';red:impacta_status == '2.3';blue:state == 'open' or impacta_status == '2.1'" string="Chamados">
+                <field name="tipo" invisible="1" />
+                <field name="delegated_user_id" invisible="1" />
+                <field name="project_id" />
+<!--                 <field name="unidade_id" /> -->
+                <field name="date_deadline" invisible="1" />
+                <field name="descricao" />
+                <field name="name" invisible="1" />
+                <field name="solicitante" />
+                <field name="user_id" invisible="1" />
+                <field name="state"/>
+                <field name="impacta_status"/>
+                <field name="causa_integra" string="Tipo" invisible="1" />
+                <field name="create_date" string="Aberto em" />
+                <field name="create_uid" string="Aberto por" />
+                <field name="data_liberacao" string="Liberado em" />
+                <field name="liberacao_uid" string="Liberado por" />
+                <field name="write_date"/>
+                <field name="write_uid"/>
+<!--                 <field name="tempo_inicio_atendimento" widget="float_time" /> -->
+<!--                 <field name="tempo_gasto" sum="Tempo consumido" widget="float_time" /> -->
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="project_task_clientes_search" >
+        <field name="name">project.task.clientes.search</field>
+        <field name="model">project.task</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Chamados">
+                <group>
+                    <filter name="draft" string="Novos" domain="[('state','=','draft')]" icon="terp-check"/>
+                    <filter name="liberado" string="Liberados" domain="[('state','!=','done'), ('data_liberacao', '!=', False)]" icon="terp-camera_test"/>
+                    <filter name="open" string="Em andamento" domain="[('state','=','open')]" icon="terp-camera_test"/>
+<!--                     <filter string="Pendente" domain="[('state','=','pending')]" icon="terp-gtk-media-pause"/> -->
+                    <filter string="Concluído" domain="[('state','=','done')]" />
+<!--                     <separator orientation="vertical"/> -->
+<!--                     <separator orientation="vertical"/> -->
+<!--                     <filter name="chamado" string="Chamado" domain="[('tipo','=', 'C')]" icon="terp-call-start" /> -->
+
+                    <newline />
+                    <field name="descricao" />
+                    <field name="project_id" context="{'project_id':self}">
+                        <filter domain="[('project_id.user_id','=',uid)]" help="Meus projetos" icon="terp-personal"/>
+                    </field>
+                    <field name="impacta_status" />
+                    <newline />
+<!--                    <field name="user_id">
+                        <filter name="user_id_limit" domain="[('user_id','=',uid)]"  help="Minhas tarefas" icon="terp-personal" />
+                        <filter domain="[('user_id','=',False)]"  help="Tarefas livres" icon="terp-personal-" />
+                    </field>-->
+                    <field name="create_uid" string="Aberto por" />
+                    <field name="solicitante" />
+<!--                     <field name="causa_cliente" /> -->
+<!--                     <field name="causa_integra" string="Tipo" /> -->
+                </group>
+                <newline/>
+                <group expand="0" string="Agrupar por...">
+<!--                     <filter string="Tipo" name="group_tipo" icon="terp-stock_effects-object-colorize" domain="[]"  context="{'group_by':'causa_integra'}"/> -->
+<!--                     <separator orientation="vertical"/> -->
+                    <filter string="Projeto" name="group_project_id" icon="terp-folder-violet" domain="[]" context="{'group_by':'project_id'}"/>
+<!--                     <filter string="Cliente/unidade" name="group_unidade_id"  domain="[]" context="{'group_by':'unidade_id'}"/> -->
+<!--                    <separator orientation="vertical"/>
+                    <filter string="Estado" name="group_state" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>-->
+                    <filter string="Status" name="group_state" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'impacta_status'}"/>
+                    <separator orientation="vertical"/>
+                    <filter string="Data de início" icon="terp-go-month" domain="[]" context="{'group_by':'date_start'}"/>
+                    <filter string="Data de conclusão" icon="terp-go-month" domain="[]" context="{'group_by':'date_end'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="projeto_chamado_clientes_acao" >
+        <field name="name">Chamados</field>
+        <field name="res_model">project.task</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{"search_default_draft":1,"search_default_open":1,'search_default_project_id':project_id, 'search_default_chamado': True, 'default_tipo': 'C', 'search_default_liberado': True}</field>
+        <field name="search_view_id" ref="project_task_clientes_search"/>
+    </record>
+
+    <menuitem
+        action="projeto_chamado_clientes_acao"
+        id="menu_projeto_chamados"
+        name="Chamados"
+        web_icon="images/project.png"
+        web_icon_hover="images/project-hover.png"/>
+
+    <record model="ir.actions.act_window.view" id="projeto_chamado_clientes_form_acao">
+        <field eval="2" name="sequence"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="project_task_clientes_form"/>
+        <field name="act_window_id" ref="projeto_chamado_clientes_acao"/>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="projeto_chamado_clientes_tree_acao">
+        <field eval="1" name="sequence"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="project_task_clientes_tree"/>
+        <field name="act_window_id" ref="projeto_chamado_clientes_acao"/>
+    </record>
+
+    <!-- Opções do menu lateral -->
+    <record forcecreate="True" model="ir.actions.server" id="projeto_chamado_clientes_libera_acao">
+        <field name="name">Liberar</field>
+        <field name="model_id" ref="model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">action = obj.libera_chamado_patrimonial(context=context)</field>
+        <field name="groups">integra_project.group_project_cliente_libera</field>
+    </record>
+
+    <record model="ir.values" id="projeto_chamado_clientes_libera_valores" >
+        <field eval="'client_action_multi'" name="key2"/>
+        <field eval="'project.task'" name="model"/>
+        <field name="name">Valores Libera chamados</field>
+        <field eval="'ir.actions.server,%d'%projeto_chamado_clientes_libera_acao" name="value"/>
+        <field eval="True" name="object"/>
+    </record>
+
+    <record forcecreate="True" model="ir.actions.server" id="projeto_chamado_clientes_conclui_acao">
+        <field name="name">Concluir</field>
+        <field name="model_id" ref="model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">action = obj.do_close(context=context)</field>
+    </record>
+
+    <record model="ir.values" id="projeto_chamado_clientes_conclui_valores" >
+        <field eval="'client_action_multi'" name="key2"/>
+        <field eval="'project.task'" name="model"/>
+        <field name="name">Valores Conclui chamados</field>
+        <field eval="'ir.actions.server,%d'%projeto_chamado_clientes_conclui_acao" name="value"/>
+        <field eval="True" name="object"/>
+    </record>
+
+</data>
+</openerp>

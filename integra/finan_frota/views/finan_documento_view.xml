@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+<!--        <record model="ir.ui.view" id="finan_documento_tree">
+            <field name="name">finan.documento.tree</field>
+            <field name="model">finan.documento</field>
+            <field name="inherit_id" ref="finan.finan_documento_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="postergacao" position="after">
+                    <field name="modelo_partida_dobrada_receber_id" />
+                    <field name="modelo_partida_dobrada_pagar_id" />
+                </field>
+            </field>
+        </record>-->
+
+        <record model="ir.ui.view" id="finan_documento_form">
+            <field name="name">finan.documento.form</field>
+            <field name="model">finan.documento</field>
+            <field name="inherit_id" ref="finan.finan_documento_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="postergacao" position="after">
+                    <newline />
+                    <separator string="Integração com a frota" colspan="4" />
+                    <group colspan="4" col="6">
+                        <field name="eh_ipva" />
+                        <field name="eh_licenciamento" />
+                        <field name="eh_dpvat" />
+                    </group>
+                    <field name="partner_id" colspan="4" />
+                    <field name="conta_id" colspan="4" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

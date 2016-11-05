@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        
+       <record model="ir.ui.view" id="hr_importacao_ponto_tree">
+            <field name="name">hr.importacao.ponto.tree</field>
+            <field name="model">hr.importacao.ponto</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Importação Cartão Ponto">
+                    <field name="company_id" />                    
+                    <field name="data" />
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="hr_importacao_ponto_form">
+            <field name="name">hr.importacao.ponto.form</field>
+            <field name="model">hr.importacao.ponto</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Importação Cartão Ponto">
+                    <group colspan="4" col="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <newline />
+                        <field name="company_id" colspan="4" required="1" />
+                        <field name="mes" required="1" on_change="onchange_ano_mes(ano, mes)" colspan="2"/>
+                        <field name="ano" required="1" on_change="onchange_ano_mes(ano, mes)" colspan="2"/>
+                        <newline />
+                        <field name="data_inicial" invisible="1" colspan="2" />
+                        <field name="data_final" invisible="1" colspan="2" />
+                        <newline />
+                        <field name="arquivo_binario" colspan="2" />
+                        <field name="data" colspan="2" />
+                        <field name="importado" invisible="1" />
+                        <button icon="gtk-execute" string="Processar retorno" name="processar_retorno" type="object"  attrs="{'invisible':[('importado','!=' , False)]}" colspan="2"/>
+                        <button icon="gtk-apply" string="Confirmar Lançamentos" name="confirmar_lancamento" type="object" attrs="{'invisible':['|',('processado_item_ids','=', False), ('importado','!=', False)]}" colspan="2"/>
+                        <newline />
+                    </group>
+                    <notebook>
+                        <page string="Processados">                                                      
+                            <field name="processado_item_ids" colspan="4" nolabel="1" readonly="1">
+                                <tree>
+                                    <field name="contract_id"/>
+                                    <field name="rule_id"/>
+                                    <field name="horas"/>                                
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Rejeitados">                            
+                            <field name="rejeitado_item_ids" colspan="4" nolabel="1" readonly="1">
+                                <tree>
+                                    <field name="pis"/>                                                                
+                                    <field name="causa"/>                                                                
+                                    <field name="linha"/>                                                                
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Relatório de Conferência">                                                       
+                            <field name="nome_conferencia" invisible="1"/>
+                            <button icon="gtk-print" string="Gerar relatório" name="gera_relatorio_conferencia" type="object" colspan="4" />                            
+                            <newline/>
+                            <field name="arquivo_conferencia" nolabel="1" readonly="1" filename="nome_conferencia" colspan="4" />                        
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="hr_importacao_ponto_search">
+            <field name="name">hr.importacao.ponto.search</field>
+            <field name="model">hr.importacao.ponto</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Importação Cartão Ponto">
+                    <field name="company_id" />                    
+                    <field name="data" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_importacao_ponto_acao">
+            <field name="name">Importação Ponto</field>
+            <field name="res_model">hr.importacao.ponto</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="hr_importacao_ponto_tree" />
+        </record>
+
+        <menuitem action="hr_importacao_ponto_acao"
+            id="menu_hr_importacao_ponto" 
+            name="Importação Cartão Ponto" 
+            parent="hr_payroll.menu_hr_root_payroll" 
+            sequence="40"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="ordem_servico_tecnico_tree">
+            <field name="name">ordem.servico.tree</field>
+            <field name="model">ordem.servico</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Ordens de Serviço">
+                    <field name="numero" />                    
+                    <field name="data" />                    
+                    <field name="partner_id" />
+                    <field name="product_id" />                    
+                    <field name="marca" />                    
+                    <field name="tecnico_id" />                                                           
+                    <field name="etapa_id" />                                                           
+                    <field name="dias_uteis_ultima_etapa" />                                                           
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ordem_servico_tecnico_form">
+            <field name="name">ordem.servico.form</field>
+            <field name="model">ordem.servico</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Ordem de Serviço">
+                    <group col="6" colspan="4" string="Informações Gerais">                 
+                         <group col="2" colspan="4">
+                            <field name="company_id" invisible="1" />
+                            <field name="numero" readonly="1"/>                       
+                            <field name="partner_id" required="1"/>                       
+                            <field name="partner_address_id" domain="[('partner_id', '=', partner_id)]" />                       
+                            <field name="product_id" required="1"/>                       
+                            <field name="numero_serie_id" domain="[('product_id', '=', product_id)]" context="{'default_product_id': product_id}" />
+                            <separator string="Dados da garantia" colspan="4" />
+                            <field name="sped_documento_garantia_id" readonly="1" colspan="4" />
+                            <field name="data_inicial_garantia" readonly="1"/>                       
+                            <field name="data_final_garantia" readonly="1"/>                       
+                            
+                            <field name="documentoitem_id" domain="[('partner_id', '=', partner_id),('produto_id', '=', product_id),('os_id','=', False)]"/>                       
+                        </group>
+                         <group col="2" colspan="2">
+                            <field name="data" required="1" />                       
+                            <field name="tecnico_id" />                       
+<!--                             <field name="reparo_id" />                             -->
+                            <field name="vr_frete" />                                                                        
+                            <field name="vr_total" readonly="1"/>                                                                        
+                        </group>
+                    </group>
+                    <newline />
+                    <notebook>
+                        <page string="Andamento">
+                            <group colspan="4">
+                                <separator string="Laudo cliente" colspan="4"/>                        
+                                <field name="laudo_cliente" nolabel="1" colspan="4" />
+                                <separator string="Defeito Constatado" colspan="4"/>                        
+                                <field name="defeito_constatado" nolabel="1" colspan="4"/>                       
+                                <newline />
+                            </group>                           
+                            <field name="tipo_proxima_etapa" invisible="1"/>                    
+                            <group col="6" colspan="2">                        
+                                    <field name="etapa_seguinte_ids"  invisible="1"/>
+                                    <field name="etapa_id" readonly="1" widget="selection" />
+                                    <field name="proxima_etapa_id" domain="[('id', 'in', etapa_seguinte_ids)]" attrs="{'invisible': [('tipo_proxima_etapa','!=','T')]}" />
+                                    <button name="avanca_etapa" string="Avançar Etapa" icon="gtk-apply" type="object" attrs="{'invisible': [('tipo_proxima_etapa','!=','T')]}" />                                                        
+                                    <field name="codigo" readonly="1" invisible="1"/>
+                                    <field name="filtro_etapa" readonly="1" invisible="1"/>
+                            </group>                    
+                            <notebook colspan="4">
+                                <page string="Cronômetro">                            
+                                    <group col="4" colspan="4">
+                                        <button icon="gtk-ok" string="Iniciar" name="inicia_cronometro" type="object"  />                                
+                                        <button icon="gtk-stop" string="Parar" name="parar_cronometro" type="object" />                                
+                                    </group>
+                                    <field name="cronometro_ids" nolabel="1" colspan="4" readonly="1">
+                                        <tree editable="top">                                    
+                                            <field name="tecnico_id" />
+                                            <field name="hora_inicial" />
+                                            <field name="hora_final" />                                    
+<!--                                             <field name="atividade" /> -->
+                                        </tree>
+                                    </field>                        
+                                </page>
+                                <page string="Acessórios">                                
+                                <field name="acessorio_ids" nolabel="1" colspan="4">
+                                        <tree editable="top">
+                                            <field name="acessorio" />
+                                            <field name="quantidade" />
+                                        </tree>
+                                    </field>                        
+                                </page>
+                                <page string="Peças e serviços" >
+                                    <field name="produto_ids" nolabel="1" colspan="4">                            
+                                        <tree editable="top">
+                                            <field name="company_id" invisible="1" />
+                                            <field name="product_id" on_change="onchange_product_id(product_id, parent.partner_id, parent.company_id)" />
+                                            <field name="qtd" on_change="onchange_qtd(qtd, vr_unitario)" />
+                                            <field name="vr_unitario" invisible="1"/>
+                                            <field name="func_vr_unitario" />
+                                            <field name="vr_total" invisible="1" />
+                                            <field name="func_vr_total" />
+                                        </tree>
+                                    </field>
+                                </page>
+                                <page string="Histórico de Etapas" >
+                                    <field name="historico_ids" nolabel="1" colspan="4" readonly="1" >                            
+                                        <tree editable="bottom">
+                                            <field name="user_id" />
+                                            <field name="data" />
+                                            <field name="etapa_id"/>                                            
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>                                                         
+                        </page>
+                        <page string="Comunicação e histórico">
+                            <separator string="Emails trocados e anotações" colspan="4" />
+                            <field name="mail_message_ids" colspan="4" nolabel="1" mode="tree" readonly="1">
+                                <tree string="Histórico">
+                                    <field name="date" string="Data" />
+                                    <field name="display_text" string="Texto"/>
+                                    <field name="email_to" invisible="1"/>
+                                    <field name="email_from" invisible="1"/>
+                                    <button
+                                        string="Reply" attrs="{'invisible': [('email_from', '=', False)]}"
+                                        name="%(mail.action_email_compose_message_wizard)d"
+                                        context="{'mail.compose.message.mode':'reply', 'message_id':active_id}"
+                                        icon="terp-mail-replied" type="action" />
+                                </tree>
+                            </field>
+                            <button string="Incluir anotação"
+                                name="incluir_anotacao"
+                                type="object"
+                                icon="terp-document-new" />
+                            <button string="Enviar e-mail"
+                                name="%(mail.action_email_compose_message_wizard)d"
+                                icon="terp-mail-message-new" type="action"/>
+                            
+                            <newline/>
+                            <field name="partner_fone" invisible="1" />
+                            <field name="partner_celular" invisible="1" />
+                            <separator string="Ligações telefônicas" colspan="4" />
+                            <field name="crm_phonecall_ids" colspan="4" nolabel="1" mode="tree" context="{'default_partner_id': partner_id, 'default_phone': partner_fone, 'default_mobile': partner_celular}">
+                                <tree colors="gray:state in ('cancel','done');blue:state in ('pending',)" string="Phone Calls">
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="partner_contact"/>
+                                    <field name="partner_phone"/>
+                                    <field name="user_id"/>
+                                    <field name="categ_id" invisible="1"/>
+                                    <field name="create_date" invisible="1"/>
+                                    <field name="opportunity_id" invisible="1"/>
+                                    <button string="Meeting"
+                                        states="open,pending" icon="gtk-redo"
+                                        name="action_make_meeting" type="object" />
+                                    <field name="state"/>
+                                    <button name="case_cancel" string="Cancel" states="open,pending" type="object" icon="gtk-cancel"/>
+                                    <button name="case_open" string="Todo" states="pending" type="object" icon="gtk-go-forward"/>
+                                    <button name="case_close" string="Held" states="open,pending" type="object" icon="gtk-jump-to"/>
+                                    <button name="case_pending" string="Not Held" states="open" type="object" icon="gtk-media-pause"/>
+                                </tree>
+                                <form string="Phone Call">
+                                    <group colspan="6" col="7">
+                                        <field name="name" required="1"/>
+                                        <field name="partner_phone"/>
+                                        <field name="duration" widget="float_time"/>
+                                        <button string="Schedule a Meeting" name="action_make_meeting" icon="gtk-redo" type="object"/>
+
+                                        <field name="date"/>
+                                        <field name="user_id"/>
+                                        <field name="section_id" colspan="1" widget="selection" />
+                                        <button string="Schedule Other Call"
+                                        icon="terp-call-start"
+                                        name="%(crm.phonecall_to_phonecall_act)d"
+                                        type="action"  />
+                                    </group>
+
+                                    <group col="3" colspan="2">
+                                        <separator colspan="3" string="Contacts" />
+                                        <field name="partner_id"
+                                            on_change="onchange_partner_id(partner_id)" />
+                                        <button string="Create a Partner"
+                                            icon="terp-partner"
+                                            name="%(crm.action_crm_phonecall2partner)d"
+                                            type="action"
+                                            attrs="{'invisible':[('partner_id','!=',False)]}"
+                                            groups="base.group_partner_manager"/>
+                                        <newline/>
+                                        <field name="partner_address_id"
+                                            on_change="onchange_partner_address_id(partner_address_id)" />
+                                        <newline/>
+                                        <field name="partner_mobile" />
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <separator colspan="2" string="Categorization" />
+                                        <field name="categ_id" widget="selection"
+                                            domain="[('object_id.model', '=', 'crm.phonecall')]"/>
+                                        <field name="priority"/>
+                                        <field name="ordem_servico_id"/>
+                                    </group>
+                                    <separator string="Description" colspan="4" />
+                                    <field name="description" nolabel="1" colspan="4" />
+                                    <separator colspan="4" />
+                                    <group col="8" colspan="4">
+                                        <field name="state" widget="statusbar" statusbar_visible="open,done" statusbar_colors='{"pending":"red"}' select="1"/>
+                                        <button name="case_cancel" string="Cancel"
+                                            states="open,pending" type="object"
+                                            icon="gtk-cancel" />
+                                        <button name="case_open" string="Todo"
+                                            states="pending" type="object"
+                                            icon="gtk-go-forward" />
+                                        <button name="case_pending" string="Not Held"
+                                            states="open" type="object" icon="gtk-media-pause" />
+                                        <button name="case_close" string="Held"
+                                            states="open,pending" type="object"
+                                            icon="gtk-jump-to" />
+                                        <button name="case_reset" string="Reset to Todo"
+                                            states="cancel" type="object"
+                                            icon="gtk-convert" />
+                                    </group>
+                                </form>
+                            </field>
+                            <newline/>
+                            <button string="Agendar/Registrar Ligação"
+                                name="%(os_to_phonecall_act)d" icon="terp-call-start"
+                                type="action" />
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+         <record id="ordem_servico_tecnico_search" model="ir.ui.view">
+            <field name="name">ordem.servico.search</field>
+            <field name="model">ordem.servico</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Ordem de Serviço">
+                    <field name="numero" />
+                    <field name="etapa_id" widget="selection" />                    
+                    <field name="data" />
+                    <field name="partner_id" />
+                    <field name="product_id" />                    
+                    <field name="tecnico_id" />                                          
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="ordem_servico_tecnico_acao">
+            <field name="name">Ordem de Serviço Técnico</field>
+            <field name="res_model">ordem.servico</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="ordem_servico_tecnico_tree" />            
+            <field name="search_view_id" ref="ordem_servico_tecnico_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>       
+        
+        <menuitem action="ordem_servico_tecnico_acao"
+            id="menu_ordem_servico_tecnico" 
+            name="Ordem de Servico Técnico" 
+            parent="menu_assitencia_tecnica" 
+            sequence="2"        
+            />
+
+        <record model="ir.actions.act_window.view" id="ordem_servico_tecnico_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="ordem_servico_tecnico_form"/>
+            <field name="act_window_id" ref="ordem_servico_tecnico_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="ordem_servico_tecnico_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="ordem_servico_tecnico_tree"/>
+            <field name="act_window_id" ref="ordem_servico_tecnico_acao"/>
+        </record>
+
+    </data>
+</openerp>

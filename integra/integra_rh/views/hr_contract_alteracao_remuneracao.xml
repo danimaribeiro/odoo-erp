@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_contract_alteracao_remuneracao_tree">
+            <field name="name">hr.contract.alteracao.tree</field>
+            <field name="model">hr.contract_alteracao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Alteração de Remuneração">
+                    <field name="company_id" />
+                    <field name="contract_id" />
+                    <field name="job_id" />
+                    <field name="data_alteracao" />
+                    <field name="wage" string="Salário" />
+                    <field name="unidade_salario" />
+                    <field name="motivo_id" />
+                    <field name="obs" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="hr_contract_alteracao_remuneracao_form" >
+            <field name="name">hr.contract.alteracao.form</field>
+            <field name="model">hr.contract_alteracao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Alteração de Remuneração">
+                    <separator string="Alteração de remuneração" colspan="4"/>
+                    <newline />
+                    <field name="contract_id" required="1" on_change="onchange_contract_id(contract_id)" />
+                    <newline />
+                    <field name="tipo_alteracao" invisible="1" />
+                    <newline />
+                    <field name="data_alteracao" required="1" colspan="2" />
+                    <newline />
+                    <field name="wage" string="Salário" required="1" colspan="2"  />
+                    <newline />
+                    <field name="unidade_salario" required="1" colspan="2" />
+                    <newline />
+                    <field name="horas_mensalista" required="1" colspan="2" />
+                    <!--  <field name="salario_variavel"/>
+                          <field name="unidade_salario_variavel"/>-->
+                    <newline />
+                    <field name="struct_id" string="Estrutura" domain="[('tipo_alteracao', '=', 'N')]" required="1" colspan="4" />
+                    <newline />
+                    <field name="motivo_id" required="1" colspan="4" />
+                    <newline />
+                    <field name="obs" colspan="4" />
+                    <newline />
+                    <notebook colspan="4">
+                        <page string="Alterações de Remuneração">
+                            <field name="alteracao_ids" colspan="4" mode="tree" readonly="1" nolabel="1">
+                                <tree>
+                                    <field name="tipo_alteracao" invisible="1" />
+                                    <field name="data_alteracao" required="1" />
+                                    <field name="wage" string="Salário" required="1" />
+                                    <field name="unidade_salario" required="1" />
+                                    <field name="horas_mensalista" required="1" />
+<!--                                        <field name="salario_variavel"/>
+                                    <field name="unidade_salario_variavel"/>-->
+                                    <field name="struct_id" string="Estrutura" domain="[('tipo_alteracao', '=', 'N')]" required="1" />
+                                    <field name="motivo_id" />
+                                    <field name="obs" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_contract_alteracao_remuneracao_search">
+            <field name="name">hr.contract.alteracao.search</field>
+            <field name="model">hr.contract_alteracao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Alteração de Remuneração">
+                    <field name="company_id" />
+                    <field name="contract_id" />
+                    <field name="job_id" />
+                    <field name="data_alteracao" />
+                    <field name="wage" string="Salário" />
+                    <field name="unidade_salario" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_contract_alteracao_remuneracao_acao">
+            <field name="name">Alteração de Remuneração</field>
+            <field name="res_model">hr.contract_alteracao</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_contract_alteracao_remuneracao_tree"/>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo_alteracao', '=', 'R')]</field>
+            <field name="context">{'tipo_alteracao':'R','default_tipo_alteracao':'R' }</field>
+        </record>
+
+        <menuitem action="hr_contract_alteracao_remuneracao_acao" id="menu_hr_contract_alteracao_remuneracao" name="Remuneração" parent="menu_hr_alteracao_contratuais" sequence="01"/>
+
+        <record model="ir.actions.act_window.view" id="hr_contract_alteracao_remuneracao_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_contract_alteracao_remuneracao_acao"/>
+            <field name="view_id" ref="hr_contract_alteracao_remuneracao_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_contract_alteracao_remuneracao_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_contract_alteracao_remuneracao_acao"/>
+            <field name="view_id" ref="hr_contract_alteracao_remuneracao_tree"/>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rodape" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="78373472-3f92-4c44-b333-e9e55668d789">
+	<property name="ireport.zoom" value="1.610510000000001"/>
+	<property name="ireport.x" value="41"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="UID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     res_users."id" AS res_users_id,
+     res_users."name" AS res_users_name,
+     res_users."active" AS res_users_active,
+     res_users."login" AS res_users_login,
+     res_users."email" AS res_users_email,
+     res_users."user_email" AS res_users_user_email,
+     res_users."company_id" AS res_users_company_id
+FROM
+     "public"."res_users" res_users
+
+WHERE res_users."id" = $P{UID}]]>
+	</queryString>
+	<field name="res_users_id" class="java.lang.Integer"/>
+	<field name="res_users_name" class="java.lang.String"/>
+	<field name="res_users_active" class="java.lang.Boolean"/>
+	<field name="res_users_login" class="java.lang.String"/>
+	<field name="res_users_email" class="java.lang.String"/>
+	<field name="res_users_user_email" class="java.lang.String"/>
+	<field name="res_users_company_id" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageFooter>
+		<band height="41" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="3" width="555" height="1" uuid="982d6e0b-e80c-4843-af43-5533aab4229f"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="9" width="555" height="26" uuid="44f44063-ac1b-4bd7-82d7-3d271142be35"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Fone: (41) 3086-8400 Fax: 3086-8402  site: www.idaxa.org.br e-mail: atendimento@idaxa.org.br
+Endereço: Rua João Manoel, 243 - Conj. 05 – São Francisco – Curitiba-PR – CEP 80510-250]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

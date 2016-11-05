@@ -1,0 +1,21 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+tabela_01_full_all,Categorias de Trabalhadores,model_esocial_tabela_01,base.group_hr_user,1,1,1,1
+tabela_02_full_all,Grau de Exposição a Agentes Noscivos,model_esocial_tabela_02,base.group_hr_user,1,1,1,1
+tabela_03_full_all,Tabela 3Rubricas da Folha de Pagamento,model_esocial_tabela_03,base.group_hr_user,1,1,1,1
+tabela_04_full_all,Código e Alícotas de Fpas/Terceiros,model_esocial_tabela_04,base.group_hr_user,1,1,1,1
+tabela_05_full_all,Tipos de Inscrição,model_esocial_tabela_05,base.group_hr_user,1,1,1,1
+tabela_06_full_all,Clas. de Serv. Suj. a Retenção de Contrib. Previdenciária,model_esocial_tabela_06,base.group_hr_user,1,1,1,1
+tabela_07_full_all,Riscos Ocupacionais Específicos,model_esocial_tabela_07,base.group_hr_user,1,1,1,1
+tabela_08_full_all,Classificação Tributária,model_esocial_tabela_08,base.group_hr_user,1,1,1,1
+tabela_09_full_all,Tipo de Arquivo da e-Social,model_esocial_tabela_09,base.group_hr_user,1,1,1,1
+tabela_10_full_all,Tipos de Lotacao,model_esocial_tabela_10,base.group_hr_user,1,1,1,1
+tabela_11_full_all,Aliquotas de Outras Entidades e Fundos,model_esocial_tabela_11,base.group_hr_user,1,1,1,1
+tabela_12_full_all,Tipos de Contribuição,model_esocial_tabela_12,base.group_hr_user,1,1,1,1
+tabela_13_full_all,Parte do Corpo Atingida,model_esocial_tabela_13,base.group_hr_user,1,1,1,1
+tabela_14_full_all,Agente Causador do Acidente de Trabalho,model_esocial_tabela_14,base.group_hr_user,1,1,1,1
+tabela_15_full_all,Tabela 15Agente Causador / Sit. Ger. Doença Prof.,model_esocial_tabela_15,base.group_hr_user,1,1,1,1
+tabela_16_full_all,Situação Geradora do Acidente de Trabalho,model_esocial_tabela_16,base.group_hr_user,1,1,1,1
+tabela_17_full_all,Descrição da Natureza da Lesão,model_esocial_tabela_17,base.group_hr_user,1,1,1,1
+tabela_18_full_all,Motivos de Afastamento,model_esocial_tabela_18,base.group_hr_user,1,1,1,1
+tabela_19_full_all,Motivos de Desligamento,model_esocial_tabela_19,base.group_hr_user,1,1,1,1
+tabela_20_full_all,Tabela de Tipos de Logradouros,model_esocial_tabela_20,base.group_hr_user,1,1,1,1

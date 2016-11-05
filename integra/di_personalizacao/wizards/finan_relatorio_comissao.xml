@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_comissao_form" >
+            <field name="name">relatorio.finan.comissao.form</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório de Comissões de Venda">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />                
+                        <field name="partner_id" required="1" colspan="4" />
+                        <newline/>                        
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />
+                        <newline/>
+                        <field name="formato" required="1" />
+                        <newline/>                        
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_comissao" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_comissao_acao">
+            <field name="name">Relatório de Comissões de Venda</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_comissao_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_comissao_form"/>
+            <field name="act_window_id" ref="finan_comissao_acao"/>
+        </record>
+
+        <menuitem action="finan_comissao_acao" id="menu_finan_comissao"
+                  name="Comissões de Venda"
+                  parent="finan.menu_finan_relatorios" 
+                  sequence="15" />
+
+    </data>
+</openerp>

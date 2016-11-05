@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="stock_location_form">
+            <field name="name">stock.location.form</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="location_custo_id" />
+                    <field name="entrada_padrao" />
+                    <field name="saida_padrao" />
+                </field>
+                <field name="company_id" position="replace"/>
+                <xpath expr="//group[3]" position="before">
+                    <group colspan="4">
+                        <separator string="Empresa única com permissão de usar este local" colspan="4" />
+                        <field name="company_id" nolabel="1" colspan="4" />
+                        <newline />
+                        <separator string="Empresas com permissão de usar este local" colspan="4" />
+                        <field name="company_ids" colspan="4" nolabel="1" />
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="stock_location_tree">
+            <field name="name">stock.location.tree</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_tree2"/>
+            <field name="type">tree</field>
+            <field name="priority" eval="2"/>
+            <field name="arch" type="xml">
+                <field name="usage" position="after">
+                    <field name="company_id" />
+                    <field name="entrada_padrao" />
+                    <field name="saida_padrao" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

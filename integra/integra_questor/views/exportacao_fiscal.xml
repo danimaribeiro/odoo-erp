@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="questor_fiscal_search">
+            <field name="name">exportacao.fical.search</field>
+            <field name="model">questor.fiscal</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Exportação Fiscal">
+                    <field name="codigo" string="Lote" />
+                    <field name="company_id" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                    <field name="forca_unidade" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="questor_fiscal_tree">
+            <field name="name">questor.fiscal.tree</field>
+            <field name="model">questor.fiscal</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="codigo" string="Lote" />
+                    <field name="company_id" />
+                    <field name="emissao" />
+                    <field name="modelo_fiscal" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                    <field name="forca_unidade" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="questor_fiscal_form">
+            <field name="name">questor.fiscal.form</field>
+            <field name="model">questor.fiscal</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Exportação Fiscal">
+                    <separator string="Parâmetros" colspan="4"/>
+                    <field name="company_id" required="1" colspan="4" domain="[('cnpj_cpf', '!=', False)]" />
+                    <newline/>
+                    <field name="forca_unidade" />
+                    <field name="centro_custo" />
+                    <newline/>
+                    <field name="data_inicial" required="1" />
+                    <field name="data_final" required="1" />
+                    <newline/>
+                    <field name="emissao" required="1" colspan="1" />
+                    <field name="codigo_empresa_questor" required="1" colspan="1" />
+                    <newline/>
+                    <field name="modelo_fiscal" required="1" colspan="4" />
+                    <newline/>
+                    <field name="nome" invisible="1"/>
+                    <newline/>
+                    <button icon="gtk-execute" string="Gerar arquivo" name="gera_exportacao" type="object" colspan="4" />
+                    <newline/>
+                    <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    <newline/>
+                    <field name="arquivo_texto" colspan="4" readonly="1" invisible="1" />
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="questor_fiscal_acao">
+            <field name="name">Exportação Fiscal</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">questor.fiscal</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_questor_fiscal"
+            name="Exportação Fiscal"
+            parent="menu_sped_questor" sequence="11" action="questor_fiscal_acao" />
+    </data>
+</openerp>

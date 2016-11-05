@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_gera_nota_servico_wizard" >
+            <field name="name">finan.gera.nota.servico.wizard</field>
+            <field name="model">finan.gera_nota</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Gerar Notas de Serviço/Recibos de Locação dos Contratos">
+                    <group colspan="4">
+                        <separator string="Confirmar período" colspan="4" />
+                        <newline/>
+                        <field name="company_id" colspan="4" />
+                        <field name="data_inicial" />
+                        <field name="data_final" />
+                        <field name="partner_id" colspan="4" />
+                        <field name="contrato_id" colspan="4" domain="[('data_distrato', '=', False)]" />
+                        <field name="operacao_id" colspan="4" domain="[('modelo', '=', 'SE')]"/>
+                        <field name="grupo_economico_id" colspan="4" />
+                        <newline/>
+                        <group colspan="4" col="6">
+                            <button icon="gtk-execute" name="busca_lancamentos" context="{'data_inicial': data_inicial, 'data_final': data_final, 'company_id': company_id, 'partner_id': partner_id, 'contrato_id': contrato_id, 'operacao_id': operacao_id, 'grupo_economico_id': grupo_economico_id}" string="Buscar lançamentos" type="object" colspan="2"/>
+                            <field name="ignora_erros" />
+                            <button icon="gtk-execute" name="gera_notas_servico" context="{'data_inicial': data_inicial, 'data_final': data_final, 'company_id': company_id, 'partner_id': partner_id, 'contrato_id': contrato_id, 'operacao_id': operacao_id, 'lancamento_ids': lancamento_ids, 'ignora_erros': ignora_erros}" string="Gerar NFS-e" type="object" colspan="2"/>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Lançamentos a gerar">
+                                <separator string="Lançamentos" colspan="4"/>
+                                <field name="lancamento_ids" colspan="4" nolabel="1" readonly="1">
+                                    <tree editable="top">
+                                        <field name="company_id" />
+                                        <field name="contrato_id" />
+                                        <field name="partner_id" />
+                                        <field name="operacao_fiscal_servico_id" />
+                                        <field name="data_vencimento" />
+                                        <field name="valor_faturamento_eventual" sum="Valor" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Contratos sem vencimento no período">
+                                <separator string="Contratos" colspan="4"/>
+                                <field name="contrato_sem_vencimento_ids" colspan="4" nolabel="1" readonly="1">
+                                    <tree editable="top">
+                                        <field name="company_id" />
+                                        <field name="numero" />
+                                        <field name="partner_id" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_gera_nota_servico_wizard_acao">
+            <field name="name">Gerar notas dos contratos</field>
+            <field name="res_model">finan.gera_nota</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+<!--             <field name="form_view_id">finan_gera_nota_servico_wizard</field> -->
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_gera_nota_servico_wizard_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_gera_nota_servico_wizard"/>
+            <field name="act_window_id" ref="finan_gera_nota_servico_wizard_acao"/>
+        </record>
+
+        <menuitem action="finan_gera_nota_servico_wizard_acao"
+            id="menu_finan_gera_nota_servico_wizard"
+            sequence="100"
+            name="Gerar NFS-e dos contratos"
+            parent="sped.menu_sped_fiscal_documento_emitido" />
+
+    </data>
+</openerp>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+orcamento_categoria_full_all,Orçamento - Categoria,model_orcamento_categoria,base.group_sale_salesman,1,1,1,1
+product_autocalc_orcamento_categoria_full_all,Orçamento - Produto Autocalc,model_product_autocalc_orcamento_categoria,base.group_sale_salesman,1,1,1,1
+product_relacionado_orcamento_full_all,Orçamento - Produto relacionado,model_product_relacionado_orcamento,base.group_sale_salesman,1,1,1,1
+orcamento_locacao_full_all,Orçamento - Resumo/Locação,model_orcamento_orcamento_locacao,base.group_sale_salesman,1,1,1,1

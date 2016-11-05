@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record id="group_sped_base" model="res.groups">
+            <field name="name">Integra / SPED - Base</field>
+        </record>
+
+        <record id="base.group_fiscal" model="res.groups">
+            <field name="name">Integra / Fiscal</field>
+        </record>
+
+    </data>
+</openerp>

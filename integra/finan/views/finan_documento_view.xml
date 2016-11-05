@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_documento_tree">
+            <field name="name">finan.documento.tree</field>
+            <field name="model">finan.documento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome" />
+                    <field name="postergacao" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_documento_form">
+            <field name="name">finan.documento.form</field>
+            <field name="model">finan.documento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Tipos de documento">
+                    <field name="nome" />
+                    <newline />
+                    <field name="postergacao" />
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="finan_documento_search">
+            <field name="name">finan.documento.search</field>
+            <field name="model">finan.documento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Tipos de documento">
+                    <field name="nome" />                    
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_documento_acao">
+            <field name="name">Documentos</field>
+            <field name="res_model">finan.documento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="finan_documento_search" />
+            <field name="view_id" ref="finan_documento_tree" />
+        </record>
+
+        <menuitem action="finan_documento_acao"
+            id="menu_finan_documento" name="Tipos de documento" parent="menu_finan_config" />
+
+    </data>
+</openerp>

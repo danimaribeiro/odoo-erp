@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+       <record model="ir.ui.view" id="hr_rescisao_form">
+            <field name="name">hr.rescisao.form</field>
+            <field name="model">hr.payslip</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_rh.hr_rescisao_form"/>
+            <field name="arch" type="xml">
+                <page string="Fechamento" position="after">
+                <page string="GRRF" attrs="{'invisible': [('simulacao', '=', True)]}">
+                    <field name="responsavel_id" colspan="4" />
+                    <button icon="gtk-execute" string="Gerar arquivo" name="gera_grrf" type="object" colspan="4" />
+                    <newline/>
+                    <field name="nome_arquivo" colspan="4" />
+                    <newline/>
+                    <separator string="Arquivo Grrf" colspan="4" />
+                    <field name="arquivo" nolabel="1" filename="nome_arquivo" colspan="4"/>
+                    <newline/>
+                    <field name="arquivo_texto" nolabel="1" colspan="4"/>
+                </page>
+                <page string="Seguro Desemprego" attrs="{'invisible': [('simulacao', '=', True)]}">                   
+                    <button icon="gtk-execute" string="Gerar arquivo" name="gera_seguro_desemprego" type="object" colspan="4" />
+                    <newline/>
+                    <field name="nome_arquivo_seguro" colspan="4" />
+                    <newline/>
+                    <separator string="Arquivo Seguro Desemprego" colspan="4" />
+                    <field name="arquivo_seguro" nolabel="1" filename="nome_arquivo_seguro" colspan="4"/>
+                    <newline/>
+                    <field name="arquivo_texto_seguro" nolabel="1" colspan="4"/>
+                </page>
+                </page>
+            </field>
+        </record>
+    </data>
+</openerp>

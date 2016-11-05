@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record id="group_project_integra" model="res.groups">
+            <field name="name">Integra / Chamados - equipe Integra</field>
+        </record>
+
+        <record id="group_project_cliente" model="res.groups" context="{'noadmin':True}">
+            <field name="name">Integra / Chamados - Clientes</field>
+        </record>
+
+        <record id="group_project_cliente_libera" model="res.groups" context="{'noadmin':True}">
+            <field name="name">Integra / Liberar Chamados - Patrimonial</field>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="data_hora_leilao_tree" model="ir.ui.view">
+            <field name="name">data.hora.leilaio_tree</field>
+            <field name="model">data.hora.leilao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Hora Leilão">
+<!--                     <field name="data" /> -->
+<!--                     <field name="hora" widget="float_time"/> -->
+                    <field name="descricao" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="data_hora_leilao_form" model="ir.ui.view">
+            <field name="name">data.hora.leilao_form</field>
+            <field name="model">data.hora.leilao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Hora Leilão" >
+                    <separator string="Hora Leilão" colspan="4"/>
+<!--                     <newline />                  -->
+<!--                     <field name="data" required="1" colspan="2"/>                     -->
+<!--                     <field name="hora" widget="float_time" required="1"/> -->
+                    <newline />
+                    <field name="descricao" colspan="2" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="data_hora_leilao_action">
+            <field name="name">Horas Leilão</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">data.hora.leilao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="data_hora_leilao_tree"/>
+        </record>
+
+        <menuitem name="Data Hora Leilão" parent="base.menu_sales"  id="data_hora_leilao_menu" action="data_hora_leilao_action" />
+
+   </data>
+</openerp>

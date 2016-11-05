@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        
+        
+         <record id="view_partner_tree_di" model="ir.ui.view">
+            <field name="name">res.partner.tree.di</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="ref" position="replace">
+                    <field name="ref" groups="base.group_extended" string="Código"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="ref" position="replace">
+                    <field name="ref" groups="base.group_extended" string="Código"/>
+                </field>
+            </field>
+        </record>
+        
+    </data>
+</openerp>

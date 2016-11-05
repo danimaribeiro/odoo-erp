@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="project_task_form">
+        <field name="name">project.task.form</field>
+        <field name="model">project.task</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <field name="name" position="replace">
+                <field name="codigo" readonly="1" />
+                <field name="tipo" />
+                <newline />
+                <field name="name" colspan="6" string="Título" />
+            </field>
+            <field name="total_hours" position="replace" />
+            <field name="date_deadline" position="replace" />
+            <field name="date_start" position="before">
+                <field name="date_deadline" />
+            </field>
+            <field name="progress" position="replace" />
+<!--             <field name="parent_user_id" position="replace" /> -->
+
+            <field name="project_id" position="replace">
+                <field name="project_id" colspan="6" widget="selection" required="1" />
+                <field name="unidade_id" colspan="6" required="1" widget="selection" />
+                <field name="solicitante" colspan="6" required="1" />
+<!--                <separator string="Prioridade do usuário - não representa sob nenhuma hipótese compromisso de tempo de atendimento por parte da Integra" colspan="6" />
+                <field name="urgencia_subjetiva" required="1" />-->
+                <newline />
+            </field>
+
+            <field name="work_ids" position="replace" />
+            <field name="user_id" position="replace">
+                <field name="user_id" widget="selection" />
+<!--                 <field name="parent_user_id" widget="selection" /> -->
+            </field>
+            <field name="type_id" position="replace">
+                <field name="type_id" widget="selection" />
+            </field>
+            <field name="planned_hours" position="replace" />
+            <field name="remaining_hours" position="replace" />
+            <field name="description" position="replace">
+                <separator string="Descrição" colspan="4" />
+                <field name="description" nolabel="1" colspan="4" />
+                <separator string="Solução dada" colspan="4" />
+                <field name="solucao" nolabel="1" colspan="4" />
+                <separator string="Atividades executadas" colspan="4" />
+                <group col="6" colspan="4" attrs="{'invisible': [('state','in',['done','draft'])]}" >
+                    <group col="4" colspan="4">
+                        <button icon="gtk-stop" string="Parar" name="parar_cronometro" type="object" />
+                        <button icon="gtk-ok" string="Reiniciar" name="inicia_cronometro" type="object"  />
+                    </group>
+                    <group col="2" colspan="4">
+                    </group>
+                </group>
+                <field name="resumo_trabalho" colspan="4" />
+                <field colspan="4" name="work_ids" nolabel="1">
+                    <tree string="Atividades da tarefa" editable="top" >
+                        <field name="name" />
+                        <field name="hours" widget="float_time" sum="Spent Hours" invisible="1" />
+                        <field name="horas_gastas" widget="float_time" sum="Horas consumidas" />
+                        <field name="horas_intervalo" widget="float_time" sum="Horas intervalo" />
+                        <field name="data_inicial" />
+                        <field name="data_final" />
+                        <field name="user_id" />
+                    </tree>
+                </field>
+                <newline />
+                <group colspan="4" col="4">
+                    <separator string="Causas identificadas" colspan="4" />
+<!--                     <field name="causa_cliente" string="Causa segundo o cliente" /> -->
+                    <field name="causa_integra" string="Tipo de solicitação" />
+                    <field name="impacta_status" />
+                </group>
+            </field>
+
+            <page string="Delegations History" position="replace" />
+            <xpath expr="//button[@string='Delegate']" position="replace" />
+
+            <page string="Information" position="after">
+                <page string="Mapeamento de processos">
+                    <separator string="Objetivos" colspan="4" />
+                    <field name="objetivo" nolabel="1" colspan="4" />
+                    <newline />
+                    <group colspan="2" col="4">
+                        <separator string="Processo atual" colspan="4" />
+                        <field name="processo_atual" nolabel="1" colspan="4" />
+                    </group>
+                    <group colspan="2" col="4">
+                        <separator string="Processo novo" colspan="4" />
+                        <field name="processo_novo" nolabel="1" colspan="4" />
+                    </group>
+                </page>
+<!--                <page string="Pré-requisitos e derivações">
+                    <separator string="Dependências" colspan="4" />
+                    <field colspan="4" name="dependencia_ids" nolabel="1" attrs="{'readonly':[('state','in',['done'])]}" context="{'default_project_id': project_id, 'default_type_id': type_id}"/>
+                </page>-->
+<!--                <page string="Prioridade">
+                    <separator string="Parâmetros de prioridade e urgência" colspan="4" />
+                    <field name="impacta_legislacao" />
+                    <field name="impacta_financeiro" />
+                    <field name="impacta_abrangencia" />
+                    <field name="impacta_processo_decisorio" />
+                    <field name="impacta_processo_melhora" />
+                    <field name="impacta_processo_retrabalho" />
+                    <field name="impacta_status" />
+                    <newline />
+                    <field name="gravidade" />
+                    <newline />
+                    <field name="pontuacao" />
+                    <newline />
+                    <field name="urgencia" />
+                </page>-->
+            </page>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="project.view_task_tree2" >
+        <field name="name">project.task.tree</field>
+        <field name="model">project.task</field>
+        <field name="type">tree</field>
+<!--         <field name="inherit_id" ref="project.view_task_tree2"/> -->
+        <field name="arch" type="xml">
+            <tree colors="grey:state in ('cancelled','done');green:impacta_status == '2.2';red:impacta_status == '2.3';blue:state == 'open' or impacta_status == '2.1'" string="Chamados">
+<!--            <field name="project_id" position="replace" />
+            <field name="user_id" position="replace" />
+            <field name="delegated_user_id" position="replace" />
+            <xpath expr="//button[@name='next_type']" position="replace" />
+            <field name="name" position="replace">-->
+                <field name="tipo" invisible="1" />
+                <field name="delegated_user_id" invisible="1" />
+                <field name="project_id" />
+                <field name="unidade_id" />
+<!--                 <field name="pontuacao" string="Pontuação téc." invisible="1" /> -->
+<!--                 <field name="urgencia" string="Prioridade téc." /> -->
+<!--                 <field name="urgencia_subjetiva" string="Prioridade usu." /> -->
+                <field name="date_deadline" invisible="1" />
+                <field name="descricao" />
+                <field name="name" invisible="1" />
+                <field name="solicitante" />
+                <field name="user_id" invisible="context.get('user_invisible', False)"/>
+<!--            </field>
+            <field name="state" position="before">-->
+                <field name="state"/>
+                <field name="impacta_status"/>
+                <field name="causa_integra" string="Tipo" />
+                <field name="create_date" string="Aberto em" />
+                <field name="create_uid" string="Aberto por" />
+                <field name="write_date"/>
+                <field name="write_uid"/>
+<!--                 <field name="causa_cliente" /> -->
+<!--                 <field name="causa_integra" /> -->
+                <field name="tempo_inicio_atendimento" widget="float_time" />
+                <field name="tempo_gasto" sum="Tempo consumido" widget="float_time" />
+<!--                <field name="phase_parent_id" />
+                <field name="phase_id" />-->
+<!--                 <field name="parent_user_id" /> -->
+<!--             </field> -->
+            </tree>
+        </field>
+    </record>
+
+<!--    <record model="ir.ui.view" id="project_task_phase_tree" >
+        <field name="name">project.task.phase.tree</field>
+        <field name="model">project.task</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="project_long_term.view_phase_task_search_form_tree"/>
+        <field name="arch" type="xml">
+            <field name="phase_parent_id" position="replace" />
+            <field name="phase_id" position="replace" />
+        </field>
+    </record>-->
+
+    <record id="project.view_task_search_form" model="ir.ui.view">
+        <field name="name">project.task.search.form</field>
+        <field name="model">project.task</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Tasks">
+                <group>
+                    <filter name="draft" string="Novas" domain="[('state','=','draft')]" icon="terp-check"/>
+                    <filter name="open" string="Em andamento" domain="[('state','=','open')]" icon="terp-camera_test"/>
+<!--                     <filter string="Pendente" domain="[('state','=','pending')]" icon="terp-gtk-media-pause"/> -->
+                    <filter string="Concluído" domain="[('state','=','done')]" icon="terp-gtk-media-stop"/>
+                    <separator orientation="vertical"/>
+<!--                    <filter string="Prazos limite" context="{'deadline_visible': False}" domain="[('date_deadline','&lt;&gt;',False)]" icon="terp-gnome-cpu-frequency-applet+"/>-->
+                    <field name="impacta_status" />
+                    <separator orientation="vertical"/>
+                    <filter name="chamado" string="Chamado" domain="[('tipo','=', 'C')]" icon="terp-call-start" />
+                    <filter name="tarefa" string="Tarefa" domain="[('tipo','=', 'T')]" icon="stock_calendar" />
+
+                    <newline />
+                    <field name="descricao" />
+                    <field name="project_id" context="{'project_id':self}">
+                        <filter domain="[('project_id.user_id','=',uid)]" help="Meus projetos" icon="terp-personal"/>
+                    </field>
+                    <newline />
+                    <field name="user_id">
+                        <filter name="user_id_limit" domain="[('user_id','=',uid)]"  help="Minhas tarefas" icon="terp-personal" />
+                        <filter domain="[('user_id','=',False)]"  help="Tarefas livres" icon="terp-personal-" />
+                    </field>
+                    <field name="create_uid" string="Aberto por" />
+                    <field name="solicitante" />
+<!--                     <field name="causa_cliente" /> -->
+                    <field name="causa_integra" string="Tipo" />
+<!--                    <field name="parent_user_id">
+                        <filter name="parent_user_id_limit" domain="[('parent_user_id','=',uid)]"  help="Minhas delegações" icon="terp-personal" />
+                        <filter domain="[('parent_user_id','=',False)]"  help="Tarefas livres" icon="terp-personal-" />
+                    </field>-->
+                </group>
+                <newline/>
+                <group expand="1" string="Agrupar por...">
+<!--                     <filter string="Usuário" name="group_user_id" icon="terp-personal" domain="[]"  context="{'group_by':'user_id'}"/> -->
+                    <filter string="Tipo" name="group_tipo" icon="terp-stock_effects-object-colorize" domain="[]"  context="{'group_by':'causa_integra'}"/>
+<!--                    <separator orientation="vertical"/>
+                    <filter string="Prioridade téc." name="group_urgencia" icon="terp-personal" domain="[]"  context="{'group_by':'urgencia'}"/>
+                    <filter string="Prioridade usu." name="group_urgencia_subjetiva" icon="terp-personal" domain="[]"  context="{'group_by':'urgencia_subjetiva'}"/>-->
+                    <separator orientation="vertical"/>
+                    <filter string="Projeto" name="group_project_id" icon="terp-folder-violet" domain="[]" context="{'group_by':'project_id'}"/>
+                    <filter string="Cliente/unidade" name="group_unidade_id"  domain="[]" context="{'group_by':'unidade_id'}"/>
+                    <separator orientation="vertical"/>
+<!--                    <filter string="Estágio" name="group_stage_id" icon="terp-stage" domain="[]" context="{'group_by':'type_id'}"/>-->
+                    <filter string="Estado" name="group_state" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                    <filter string="Status" name="group_state" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'impacta_status'}"/>
+<!--                    <filter string="Causa cliente" name="grupo_causa_cliente" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'causa_cliente'}"/>
+                    <filter string="Causa Integra" name="grupo_causa_integra" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'causa_integra'}"/>-->
+                    <separator orientation="vertical"/>
+<!--                     <filter string="Prazo limite" icon="terp-gnome-cpu-frequency-applet+" domain="[]" context="{'group_by':'date_deadline'}"/> -->
+<!--                     <separator orientation="vertical"/> -->
+                    <filter string="Data de início" icon="terp-go-month" domain="[]" context="{'group_by':'date_start'}"/>
+                    <filter string="Data de conclusão" icon="terp-go-month" domain="[]" context="{'group_by':'date_end'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+<!--    <record id="project_long_term.view_phase_task_form2" model="ir.ui.view">
+        <field name="name">phase.task.form2</field>
+        <field name="model">project.task</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <field name="project_id" position="after">
+                <field name="phase_parent_id" invisible="1" />
+                <field name="phase_id" widget="selection" invisible="1" />
+            </field>
+        </field>
+    </record>-->
+
+<!--    <record id="project_long_term.view_phase_task_search_form" model="ir.ui.view">
+        <field name="name">phase.task.search.form</field>
+        <field name="model">project.task</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="project.view_task_search_form"/>
+        <field name="arch" type="xml">
+            <field name="name" position="replace">
+                <field name="descricao" />
+            </field>
+        </field>
+    </record>-->
+
+<!--    <record id="project_long_term.view_phase_task_search_form_group" model="ir.ui.view">
+        <field name="name">phase.task.search.form.group</field>
+        <field name="model">project.task</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="project.view_task_search_form"/>
+        <field name="arch" type="xml">
+        <filter name="group_project_id" position="after">
+            <filter string="Fase" name="group_phase_parent_id" icon="terp-folder-violet" domain="[]" context="{'group_by':'phase_parent_id'}" />
+            <filter string="Subfase" name="group_phase_id" icon="terp-folder-violet" domain="[]" context="{'group_by':'phase_id'}" />
+        </filter>
+        </field>
+    </record>-->
+
+<!--    <record id="project_long_term.view_phase_task_search_form_tree" model="ir.ui.view">
+        <field name="name">phase.task.search.form.tree</field>
+        <field name="model">project.task</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="project.view_task_tree2"/>
+        <field name="arch" type="xml">
+            <field name="project_id" position="after">
+                <field name="phase_parent_id" />
+                <field name="phase_id" string="Subfase" />
+            </field>
+        </field>
+    </record>-->
+
+<!--    <record id="project.action_view_task" model="ir.actions.act_window">
+        <field name="name">Tarefas</field>
+        <field name="res_model">project.task</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,calendar,gantt,graph,kanban</field>
+        <field eval="False" name="filter"/>
+        <field name="view_id" eval="False"/>
+        <field name="context">{"search_default_draft":1,"search_default_open":1,'search_default_project_id':project_id, 'search_default_tarefa': True, 'default_tipo': 'T'}</field>
+        <field name="search_view_id" ref="project.view_task_search_form"/>
+    </record>-->
+
+    <record id="projeto_tarefas_acao" model="ir.actions.act_window">
+        <field name="name">Tarefas Integra</field>
+        <field name="res_model">project.task</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,calendar,gantt,graph,kanban</field>
+        <field name="context">{"search_default_draft":1,"search_default_open":1,'search_default_project_id':project_id, 'search_default_tarefa': True, 'default_tipo': 'T'}</field>
+        <field name="search_view_id" ref="project.view_task_search_form"/>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="projeto_tarefas_form_acao">
+        <field eval="2" name="sequence"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="project_task_form"/>
+        <field name="act_window_id" ref="projeto_tarefas_acao"/>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="projeto_tarefas_tree_acao">
+        <field eval="1" name="sequence"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="project.view_task_tree2"/>
+        <field name="act_window_id" ref="projeto_tarefas_acao"/>
+    </record>
+
+    <record id="projeto_chamado_acao" model="ir.actions.act_window">
+        <field name="name">Chamados Integra</field>
+        <field name="res_model">project.task</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,calendar,gantt,graph,kanban</field>
+        <field name="context">{"search_default_draft":1,"search_default_open":1,'search_default_project_id':project_id, 'search_default_chamado': True, 'default_tipo': 'C'}</field>
+        <field name="search_view_id" ref="project.view_task_search_form"/>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="projeto_chamado_form_acao">
+        <field eval="2" name="sequence"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="project_task_form"/>
+        <field name="act_window_id" ref="projeto_chamado_acao"/>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="projeto_chamado_tree_acao">
+        <field eval="1" name="sequence"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="project.view_task_tree2"/>
+        <field name="act_window_id" ref="projeto_chamado_acao"/>
+    </record>
+
+    <menuitem
+        icon="terp-project" id="base.menu_main_pm"
+        name="Atendimento" sequence="10"
+        groups="project.group_project_manager"
+        web_icon="images/project.png"
+        web_icon_hover="images/project-hover.png"/>
+
+    <menuitem id="project.menu_project_management" name="Atendimento" parent="base.menu_main_pm" sequence="1"/>
+
+    <menuitem
+        action="projeto_chamado_acao"
+        id="menu_projeto_chamados_integra"
+        name="Chamados Integra"
+        web_icon="images/project.png"
+        web_icon_hover="images/project-hover.png"/>
+
+    <menuitem
+        action="projeto_tarefas_acao"
+        id="menu_projeto_tarefas_integra"
+        name="Tarefas Integra"
+        web_icon="images/project.png"
+        web_icon_hover="images/project-hover.png"/>
+
+</data>
+</openerp>

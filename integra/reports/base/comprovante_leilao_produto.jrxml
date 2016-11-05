@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="comprovante_leilao_produto" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="f359dfe7-8897-4186-bdd0-ae0b4fbed312">
+	<property name="ireport.zoom" value="2.593742460100004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+     orc.date_order  as data_pv,
+     orc.name as numero_pv,
+     orc.note AS orcamento_observacao,
+     prod.name_template AS orcamento_item_produto,
+     prod.default_code AS orcamento_item_produto_codigo,
+     prodcatg.name,
+     prod.parcelas as produto_parcelas,
+     prod.preco_por_parcela as produtos_valor_parcela,
+     unid.name AS orcamento_item_produto_unidade,
+     oi.product_uom_qty AS orcamento_item_quantidade,
+     oi.usa_unitario_minimo AS orcamento_item_usa_unitario_minimo,
+     oi.vr_unitario_minimo AS orcamento_item_vr_unitario_minimo,
+     oi.price_unit AS orcamento_item_vr_unitario_sugerido,
+     oi.vr_total AS orcamento_item_vr_total,
+     oi.margem AS orcamento_item_margem,
+     oi.desconto AS orcamento_item_desconto,
+     oi.vr_total_margem_desconto AS orcamento_item_vr_total_margem_desconto,
+     oi.vr_comissao AS orcamento_item_comissao,
+     prodcat.name as tipo_material,
+     prodcatcor.name as tipo_cor,
+     prodtemp.weight_net as produto_peso,
+     oi.name as descricao
+
+FROM
+     sale_order_line as oi
+     join sale_order as orc on orc.id = oi.order_id
+     join product_product as prod ON oi.product_id = prod.id
+     left join product_category as prodcat ON prod.tipo_metal_id = prodcat.id
+     left join product_category as prodcatcor ON prod.tipo_cor_id = prodcatcor.id
+     left join product_template as prodtemp ON prod.product_tmpl_id = prodtemp.id
+     left join product_category as prodcatg ON prodcatg.id = prodtemp.categ_id
+     join product_uom as unid ON prodtemp.uom_id = unid.id
+
+WHERE
+     orc.id = $P{ID}
+     and oi.aprovado = true
+
+ORDER BY
+     prod.name_template ASC]]>
+	</queryString>
+	<field name="data_pv" class="java.sql.Date"/>
+	<field name="numero_pv" class="java.lang.String"/>
+	<field name="orcamento_observacao" class="java.lang.String"/>
+	<field name="orcamento_item_produto" class="java.lang.String"/>
+	<field name="orcamento_item_produto_codigo" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="produto_parcelas" class="java.lang.Double"/>
+	<field name="produtos_valor_parcela" class="java.lang.Double"/>
+	<field name="orcamento_item_produto_unidade" class="java.lang.String"/>
+	<field name="orcamento_item_quantidade" class="java.math.BigDecimal"/>
+	<field name="orcamento_item_usa_unitario_minimo" class="java.lang.Boolean"/>
+	<field name="orcamento_item_vr_unitario_minimo" class="java.lang.Double"/>
+	<field name="orcamento_item_vr_unitario_sugerido" class="java.math.BigDecimal"/>
+	<field name="orcamento_item_vr_total" class="java.lang.Double"/>
+	<field name="orcamento_item_margem" class="java.lang.Double"/>
+	<field name="orcamento_item_desconto" class="java.lang.Double"/>
+	<field name="orcamento_item_vr_total_margem_desconto" class="java.lang.Double"/>
+	<field name="orcamento_item_comissao" class="java.math.BigDecimal"/>
+	<field name="tipo_material" class="java.lang.String"/>
+	<field name="tipo_cor" class="java.lang.String"/>
+	<field name="produto_peso" class="java.math.BigDecimal"/>
+	<field name="descricao" class="java.lang.String"/>
+	<columnHeader>
+		<band height="12">
+			<staticText>
+				<reportElement x="0" y="0" width="347" height="12" uuid="00fb05f5-427b-4fd6-aed2-5c0c31719872"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="347" y="0" width="103" height="12" uuid="b1460778-d2d9-477e-b568-45dd328b32c5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[Tipo de Material ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="0" width="39" height="12" uuid="6e1e814e-1726-4e82-9201-0306666976d4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[Peso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="489" y="0" width="66" height="12" uuid="5a754496-510d-4e14-a69e-dad719a3d6aa"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="347" height="16" uuid="a310d200-c0fb-4a9b-9e79-2fc47d0a78b8"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{orcamento_item_produto_codigo} + " "+ $F{descricao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="347" y="0" width="103" height="16" uuid="93603281-9dbd-45a3-833a-28c0c5d5c0b3"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo_material}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="489" y="0" width="66" height="16" uuid="c4166f8e-d8af-42dc-96e1-6ef7226e7059"/>
+				<box leftPadding="0" rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{orcamento_item_vr_total_margem_desconto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="450" y="0" width="39" height="16" uuid="1788b155-a247-4f2d-9846-028f2d3a5350"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{produto_peso}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

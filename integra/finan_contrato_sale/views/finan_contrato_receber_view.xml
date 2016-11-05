@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_receber_tree">
+            <field name="name">finan.contrato.receber.tree</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_receber_tree"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="sale_order_id" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_receber_form">
+            <field name="name">finan.contrato.receber.form</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_receber_form"/>
+            <field name="arch" type="xml">
+                <field name="vendedor_id" position="before">
+                    <field name="sale_order_id" colspan="4" />
+                </field>
+                <field name="endereco_prestacao_id" position="after">
+                    <separator string="Histórico de vendedores" colspan="4" />
+                    <field name="contrato_vendedor_ids" nolabel="1" colspan="4">
+                        <tree editable="top">
+                            <field name="data_inicial" />
+                            <field name="data_final" />
+                            <field name="vendedor_id" />
+                        </tree>
+                    </field>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

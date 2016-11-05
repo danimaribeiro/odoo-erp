@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="view_picking_patrimonial_form" model="ir.ui.view">
+            <field name="name">stock.picking.form.patrimonial</field>
+            <field name="model">stock.picking</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <field name="address_id" position="replace">
+                    <field name="partner_id" colspan="4" />
+                    <newline/>
+<!--                     <field name="finan_contrato_id" colspan="4" domain="[('partner_id', '=', partner_id)]" /> -->
+                    <newline/>
+                    <field name="address_id" on_change="onchange_partner_in(address_id)" context="{'contact_display':'partner'}" colspan="4" domain="[('partner_id', '=', partner_id)]"/>
+                    <newline/>
+                </field>
+                <xpath expr="//group[1]" position="before">
+                    <field name="operacao_id" colspan="4" on_change="onchange_operacao_id(operacao_id, company_id)" domain="[('tipo', '=', 'I')]" />
+                    <field name="location_id" colspan="4" readonly="0" invisible="0" required="1" />
+                    <field name="location_dest_id" colspan="4" readonly="0" invisible="0" required="1" />
+                </xpath>
+                <field name="company_id" position="after">
+                    <button string="Reabre ordem" icon="gtk-execute" name="forca_novo" type="object" colspan="2"/>
+                    <button string="Fecha ordem" icon="gtk-execute" name="forca_concluido" type="object" colspan="2"/>
+                    <field name="sale_id" string="Pedido de venda" colspan="4" />
+                    <group colspan="4" col="4" attrs="{'invisible': [('sale_id', '=', False)]}">
+                        <separator string="Forçar cancelamento do pedido de venda" colspan="4" />
+                        <button string="Confirmar cancelamento do pedido de venda" icon="gtk-execute" name="forca_cancelamento_pedido_venda" type="object" colspan="2"/>
+                    </group>
+                </field>
+                <field name="stock_journal_id" position="after">                                            
+                    <field name="formato" required="1" />                    
+                </field>
+                <field name="move_lines" position="before">                                            
+                    <field name="tipo" invisible="1" />
+<!--                <button string="Próximo romaneio" icon="gtk-execute" name="proximo_romaneio" type="object" colspan="2"/> -->
+                    <field name="romaneio" invisible="1" />
+                    <field name="picking_id" domain="[('type', '=', 'out'), '|', ('company_id', '=', company_id), ('company_id.parent_id', '=', company_id)]" on_change="onchange_picking_id(picking_id)" />
+                    <newline/>                                     
+                    <button string="Imprimir Romaneio" icon="gtk-print" name="imprime_romaneio" type="object" colspan="2" context="{'entrada': True}"/>
+                </field>
+                <field name="move_lines" position="replace">
+                    <field colspan="4" name="move_lines" nolabel="1" widget="one2many_list" context="{'address_in_id': address_id, 'default_romaneio': romaneio, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id}">
+                        <tree string="Stock Moves">
+                            <field name="orcamento_categoria_id"/>
+                            <field name="product_id"/>
+                            <field name="vr_custo_unitario"/>
+                            <field name="product_qty" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)"/>
+                            <field name="product_uom" string="UoM"/>
+                            <field name="location_id" required="1" />
+                            <field name="location_dest_id" required="1" />
+                            <field name="date_expected" string="Date Expected"/>
+                            <field name="state"/>
+                            <button name="action_cancel" states="assigned" string="Cancel" type="object" icon="gtk-cancel"/>
+                            <button name="action_confirm" states="draft" string="Confirm" type="object" icon="gtk-apply"/>
+                            <button name="force_assign" states="confirmed" string="Force Availability" type="object" icon="gtk-jump-to"/>
+                            <button name="cancel_assign" states="assigned" string="Cancel Availability" type="object" icon="gtk-find"/>
+                            <button name="%(stock.action_partial_move_server)d" string="Process" type="action" states="confirmed,assigned" icon="gtk-go-forward"/>
+                            <field name="romaneio" />
+                        </tree>
+                        <form string="Stock Moves">
+                            <group colspan="2" col="4">
+                                <separator colspan="4" string="Move Information"/>
+                                <field name="name" invisible="1" colspan="4"/>
+                                <field name="product_id" on_change="onchange_product_id(product_id,location_id,location_dest_id, parent.address_id)" colspan="4" />
+                                <field name="orcamento_categoria_id" colspan="4" required="1" />
+                                <field name="product_qty" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)" colspan="3"/>
+                                <field name="product_uom" string="Unit Of Measure" colspan="4"/>
+                            </group>
+
+                            <group colspan="2" col="2">
+                                <separator string="Locations" colspan="2" />
+                                <field name="location_id" domain="[('usage','&lt;&gt;','view')]" required="1" />
+                                <field name="location_dest_id" domain="[('usage','=','internal')]" required="1" />
+                            </group>
+
+                            <group colspan="2" col="2">
+                                <separator string="Dates" colspan="2" />
+                                <field name="create_date" invisible="1"/>
+                                <field name="date"/>
+                                <field name="date_expected" on_change="onchange_date(date,date_expected)"/>
+                            </group>
+
+                            <label string="" colspan="4"/>
+                            <field name="state"/>
+                            <group col="4" colspan="2">
+                                <button name="action_cancel" states="assigned" string="Cancel" type="object" icon="gtk-cancel"/>
+                                <button name="action_confirm" states="draft" string="Confirm" type="object" icon="gtk-apply"/>
+                                <button name="force_assign" states="confirmed" string="Force Availability" type="object" icon="gtk-jump-to"/>
+                                <button name="cancel_assign" states="assigned" string="Cancel Availability" type="object" icon="gtk-find"/>
+                            </group>
+                        </form>
+                    </field>
+
+                </field>
+            </field>
+        </record>
+
+        <record id="view_picking_patrimonial_tree" model="ir.ui.view">
+            <field name="name">stock.picking.tree.patrimonial</field>
+            <field name="model">stock.picking</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <tree string="Picking list" position="replace">
+                    <tree colors="green:trata_locacao_notas;darkcyan:saldo_obra_liberado or trata_locacao_notas;blue:state == 'draft';grey:state == 'cancel';red:state not in ('cancel', 'done')" string="Movimentação interna">
+                        <field name="name"/>
+                        <field name="partner_id"/>
+                        <field name="saldo_obra_liberado" string="Saldo da obra liberado?" invisible="1" />
+                        <field name="trata_locacao_notas" string="Geradas NF/movimentação baixa" invisible="1" />
+                        <field name="origin"/>
+                        <field name="date"/>
+                        <field name="min_date" invisible="1" />
+                        <field name="backorder_id" groups="base.group_extended" invisible="1" />
+                        <field name="invoice_state" invisible="1" />
+                        <field name="stock_journal_id" groups="base.group_extended" widget="selection" invisible="1" />
+                        <field name="state"/>
+                        <button name="action_process" states="assigned" groups="stock.group_stock_user" string="Process" type="object" icon="gtk-go-forward"/>
+                        <field name="operacao_id" />
+                    </tree>
+                </tree>
+            </field>
+        </record>
+
+        <record  model="ir.ui.view" id="view_picking_patrimonial_search">
+            <field name="name">stock.picking.search.patrimonial</field>
+            <field name="model">stock.picking</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+            <field name="arch" type="xml">
+                <search string="Internal Picking List" position="replace">
+                    <search string="Movimentações internas">
+                        <group>
+                            <filter icon="terp-check" name="available" string="Ready" domain="[('state','=','assigned')]" help="Assigned Delivery Orders"/>
+                            <filter icon="terp-camera_test" name="confirmed" string="Waiting" domain="[('state','=','confirmed')]" help="Confirmed Delivery Orders"/>
+                            <filter icon="terp-dialog-close" name="done" string="Done" domain="[('state','=','done')]" help="Delivery orders already processed"/>
+                            <separator orientation="vertical"/>
+                            <!--                             <filter icon="terp-accessories-archiver-minus" string="Back Orders" domain="[('backorder_id', '!=', False)]" help="Is a Back Order" groups="base.group_extended"/> -->
+                            <!--                             <separator orientation="vertical"/> -->
+                            <!--                             <filter icon="terp-dolar" name="to_invoice" string="To Invoice" domain="[('invoice_state','=','2binvoiced')]" help="Delivery orders to invoice"/> -->
+                            <separator orientation="vertical"/>
+                            <field name="name"/>
+                            <field name="origin"/>
+                            <!--                             <field name="stock_journal_id" groups="base.group_extended" widget="selection"/> -->
+                            <field name="company_id" />
+                            <newline />
+                            <field name="partner_id"/>
+                            <field name="operacao_id"/>
+                        </group>
+                        <newline/>
+                        <group expand="0" string="Group By...">
+                            <filter string="Operação" icon="terp-partner" domain="[]" context="{'group_by':'operacao_id'}"/>
+                            <filter string="Partner" icon="terp-partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                            <separator orientation="vertical"/>
+                            <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                            <separator orientation="vertical"/>
+                            <filter string="Order Date" icon="terp-go-month" domain="[]" context="{'group_by':'date'}"/>
+                            <!--                             <filter string="Expected Date" icon="terp-go-month" domain="[]" context="{'group_by':'min_date'}"/> -->
+                            <!--                             <separator orientation="vertical"/> -->
+                            <!--                             <filter string="Journal" icon="terp-folder-orange" domain="[]" context="{'group_by':'stock_journal_id'}" groups="base.group_extended"/> -->
+                        </group>
+                    </search>
+                </search>
+            </field>
+        </record>
+
+
+        <!--
+        <record model="ir.actions.act_window"
+            id="action_estoque_retorno" >
+            <field name="name">Retornos</field>
+            <field name="res_model">stock.picking</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="domain">[('type','=','internal'), ('tipo', '=', 'R')]</field>
+            <field name="context">{'default_type': 'internal', 'contact_display': 'partner_address', 'search_default_available': 1, 'default_tipo': 'R'}</field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+        </record>
+
+        <record model="ir.actions.act_window.view"
+            id="action_estoque_retorno_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_picking_patrimonial_form"/>
+            <field name="act_window_id" ref="action_estoque_retorno"/>
+        </record>
+
+        <record model="ir.actions.act_window.view"
+            id="action_estoque_retorno_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="stock.vpicktree"/>
+            <field name="act_window_id" ref="action_estoque_retorno"/>
+        </record>
+
+        <menuitem
+            action="action_estoque_retorno"
+            id="menu_action_estoque_retorno"
+            parent="stock.menu_stock_warehouse_mgmt"
+            sequence="2"
+            />
+        -->
+
+    </data>
+</openerp>

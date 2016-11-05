@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="project_orcamento_tree">
+            <field name="name">project.orcamento.tree</field>
+            <field name="model">project.orcamento</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="construtora.project_orcamento_tree"/>
+            <field name="arch" type="xml">
+                <field name="versao" position="after">
+                    <field name="partner_id" />
+                </field>
+                <field name="vr_produto" position="replace">
+                    <field name="vr_risco" />
+                </field>
+            </field>
+    </record>
+    
+    <record model="ir.ui.view" id="project_orcamento_search">
+            <field name="name">project.orcamento.search</field>
+            <field name="model">project.orcamento</field>
+            <field name="inherit_id" ref="construtora.project_orcamento_search"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">                
+                <field name="project_id" position="after">
+                    <field name="partner_id" />
+                </field>                    
+            </field>
+     </record>
+
+
+    <record model="ir.ui.view" id="project_orcamento_form">
+        <field name="name">project.orcamento.form</field>
+        <field name="model">project.orcamento</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="construtora.project_orcamento_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <field name="versao" position="after">
+                <field name="sale_order_id" colspan="2" readonly="1"/>
+                <newline />
+                <field name="partner_id" colspan="4" />
+            </field>
+            <field name="project_id" position="before">
+                <field name="crm_lead_id" readonly="1" colspan="4" />
+            </field>
+            <field name="vr_produto" position="after">
+                <button string="Imprimir Orçamento" type="object" icon="gtk-print" name="imprime_orcamento" colspan="2" />
+                <newline />
+            </field>
+            <field name="vr_produto" position="replace">
+                <field name="vr_risco" />
+            </field>
+            <button name="aprova_orcamento" position="after" >
+                <button string="Gerar Pedido de Venda" type="object" name="gerar_pedido_venda" attrs="{'invisible': ['|',('situacao', 'in', ('P', 'C')),('sale_order_id','!=', False )]}" />
+                <newline />
+                <separator string="Justificativa do Cancelamento" colspan="4" />             
+                <field name="just_cancelamento" nolabel='1' attrs="{'readonly': [('situacao', 'in', ('A','C'))]}" colspan="4"/>
+            </button>    
+            
+            <page string="Etapas do orçamento" position="replace" >
+                <page string="Etapas do orçamento">
+                    <field name="etapa_ids" colspan="4" nolabel="1" >
+                        <tree>
+                            <field name="parent_id" domain="[('orcamento_id', '=', parent.codigo)]" />
+                            <field name="etapa_id" />
+                            <field name="codigo" />
+                            <field name="codigo_completo" />
+                        </tree>
+                        <form>
+                            <group col="4" colspan="4">
+                                <field name="parent_id" domain="[('orcamento_id', '=', parent.codigo)]" />
+                                <field name="etapa_id" />
+                                <field name="codigo" />
+                                <field name="codigo_completo" />
+                            </group>
+                            <newline />
+                            <separator string="Planejamento" colspan="4" />
+                            <field name="planejamento_ids" colspan="4" nolabel="1"  >
+                                <tree editable="top">
+                                    <field name="data_inicial_execucao" required="1" />
+                                    <field name="data_final_execucao" required="1" />
+                                    <field name="percentual"  />
+                                </tree>
+                            </field>
+                        </form>
+                    </field>
+                </page>
+            </page>
+        </field>
+    </record>
+
+</data>
+</openerp>

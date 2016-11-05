@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="orcamento_sale_order_form_uniteelcom">
+            <field name="name">orcamento.sale_order_form.uniteelcom</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="orcamento.orcamento_sale_order_form"/>
+            <field name="arch" type="xml">
+                <page string="History" position="after">
+                    <page string="Assinaturas e aprovações">
+                        <button icon="gtk-execute" name="gera_assinatura" string="Assinar autorização" type="object" groups="base.group_sale_manager" />
+                        <button icon="gtk-execute" name="gera_aprovacao_cliente" string="Registrar aprovação do cliente" type="object" groups="base.group_sale_manager" />
+                        <separator string="Assinaturas e aprovações" colspan="4"/>
+                        <field name="assinatura_ids" mode="tree" readonly="1" colspan="4" nolabel="1">
+                            <tree>
+                                <field name="user_id"/>
+                                <field name="data"/>
+                                <field name="aprovacao_cliente"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Rateio de comissão">
+                        <separator string="Rateios de comissão" colspan="4"/>
+                        <field name="rateio_comissao_ids" mode="tree" colspan="4" nolabel="1">
+                            <tree editable="top">
+                                <field name="user_id"/>
+                                <field name="comissao" sum="Comissão" />
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Termos da proposta">
+                        <separator string="Referência" colspan="4"/>
+                        <field name="referencia" nolabel="1" colspan="4"/>
+                        <separator string="Texto inicial" colspan="4"/>
+                        <field name="texto_inicial" nolabel="1" colspan="4"/>
+                        <separator string="Considerações" colspan="4"/>
+                        <field name="consideracoes" nolabel="1" colspan="4"/>
+                        <separator string="Descrição do(s) serviço(s)" colspan="4"/>
+                        <field name="descricao_servico" nolabel="1" colspan="4"/>
+                        <separator string="Prazos" colspan="4"/>
+                        <field name="descricao_prazo" nolabel="1" colspan="4"/>
+                        <separator string="Condições comerciais" colspan="4"/>
+                        <field name="condicoes_comerciais" nolabel="1" colspan="4"/>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

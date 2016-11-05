@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_product_category_form" model="ir.ui.view">
+            <field name="name">Estoque de produtos por categoria</field>
+            <field name="model">wiz.stock.prod.cate</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+            <form string="Estoque de produtos por categoria">
+                <separator string="Estoque de produtos por categoria" colspan="4"/>
+                <newline/>
+                <separator colspan="4"/>
+                <button special="cancel"  string="Cancel" icon='gtk-cancel' colspan="2"/>
+                <button name="print_report" string="Print" type="object" icon="gtk-print" colspan="2"/>
+            </form>
+            </field>
+        </record>
+
+       <act_window
+           name="Estoque de produtos por categoria"
+        id="product_category_stock_product_id"
+        view_mode="form"
+        target="new"
+        key2="client_action_multi"
+        res_model="wiz.stock.prod.cate"
+        src_model="product.category"/>
+
+    </data>
+</openerp>

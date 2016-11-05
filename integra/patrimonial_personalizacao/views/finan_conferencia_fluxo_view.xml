@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_conferencia_fluxo_tree">
+            <field name="name">finan.conferencia.fluxo.tree</field>
+            <field name="model">finan.conferencia.fluxo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="grupo_id" string="Empresa" groups="finan.group_finan_manager,finan.group_finan_treasury_manager"/>
+                    <field name="company_id" string="Unidade de negócio" />
+                    <field name="partner_id" string="Cliente/Fornecedor" />
+                    <field name="conta_id" />
+                    <field name="documento_id" />
+                    <field name="numero_documento" />
+<!--                     <field name="data_documento" /> -->
+<!--                     <field name="data_vencimento" /> -->
+<!--                     <field name="ano_mes_vencimento" invisible="1"/> -->
+<!--                     <field name="ano_vencimento" invisible="1"/> -->
+<!--                     <field name="parcial" invisible="1"/> -->
+<!--                     <field name="motivo_baixa_id" invisible="1"/> -->
+<!--                     <field name="valor_documento" sum="Valor documento" /> -->
+<!--                     <field name="situacao" /> -->
+<!--                     <field name="formapagamento_id" /> -->
+                    <field name="data" />
+<!--                     <field name="sugestao_bank_id" string="Previsão de crédito na conta" /> -->
+                    <field name="res_partner_bank_id" />
+<!--                     <field name="valor" sum="Valor" /> -->
+                    <field name="valor_entrada" sum="Entrada" />
+                    <field name="valor_saida" sum="Saida" />
+                    <field name="diferenca" sum="Diferenca" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_conferencia_fluxo_search">
+            <field name="name">finan.conferencia.fluxo.search</field>
+            <field name="model">finan.conferencia.fluxo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Fluxo de entradas e saídas">
+                    <field name="company_id" />
+                    <field name="conta_id" />
+                    <field name="res_partner_bank_id"  />
+                    <field name="partner_id"  />
+                    <newline />
+<!--                    <field name="documento_id"  />
+                    <field name="numero_documento" />-->
+                    <field name="data_from" string="De data" filter_domain="[('data','&gt;=',self)]" widget="calendar" />
+                    <field name="data_to" string="A data" filter_domain="[('data','&lt;=',self)]" widget="calendar" />
+                    <newline />
+
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'grupo_id'}" groups="finan.group_finan_manager,finan.group_finan_treasury_manager"/>
+                        <filter string="Unidade de negócio" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Cliente" icon="terp-project" domain="[]" context="{'group_by': 'partner_id'}" />
+                        <filter string="Conta" icon="terp-project" domain="[]" context="{'group_by': 'conta_id'}" />
+
+                        <separator orientation="vertical" />
+                        <filter string="Data" icon="terp-project" domain="[]" context="{'group_by': 'data'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_conferencia_fluxo_acao">
+            <field name="name">Conferência de fluxo de caixa</field>
+            <field name="res_model">finan.conferencia.fluxo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+<!--             <field name="domain">[('tipo', '=', 'PR')]</field> -->
+<!--             <field name="context">{'tipo':'PR','default_tipo':'PR'}</field> -->
+            <field name="view_id" ref="finan_conferencia_fluxo_tree" />
+            <field name="search_view_id" ref="finan_conferencia_fluxo_search" />
+        </record>
+
+        <menuitem
+            action="finan_conferencia_fluxo_acao"
+            id="menu_finan_conferencia_fluxo"
+            name="Conferência de fluxo de caixa"
+            parent="finan.menu_finan_tesouraria" />
+
+<!--        <record model="ir.actions.act_window.view" id="finan_conferencia_fluxo_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_conferencia_fluxo_form"/>
+            <field name="act_window_id" ref="finan_conferencia_fluxo_acao"/>
+        </record>-->
+
+        <record model="ir.actions.act_window.view" id="finan_conferencia_fluxo_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_conferencia_fluxo_tree"/>
+            <field name="act_window_id" ref="finan_conferencia_fluxo_acao"/>
+        </record>
+
+    </data>
+</openerp>

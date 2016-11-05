@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="rh_avaliacao_tree">
+            <field name="name">rh.avaliacao.tree</field>
+            <field name="model">rh.avaliacao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Campanhas/avaliações">
+                    <field name="nome" />
+                    <field name="data_inicio" />
+                    <field name="data_termino" />
+                    <field name="company_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="rh_avaliacao_form">
+            <field name="name">rh.avaliacao.form</field>
+            <field name="model">rh.avaliacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Campanha/avaliação">
+                    <group colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="nome" colspan="4" required="1" />
+                        <newline />
+                        <field name="data_inicio" required="1" />
+                        <field name="data_termino" required="1" />
+                        <newline />
+                        <field name="company_id" required="1" />
+                        <newline />
+                        <separator string="Descrição" colspan="4" />
+                        <field name="descricao" nolabel="1" colspan="4" required="1" />
+                    </group>
+                    <group colspan="4">
+                        <separator string="Participantes" colspan="4" />
+                        <field name="avaliacao_participante_ids" colspan="4" nolabel="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="rh_avaliacao_search">
+            <field name="name">rh.avaliacao.search</field>
+            <field name="model">rh.avaliacao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Campanhas/avaliações">
+                    <field name="nome" />
+                    <field name="company_id" select="1" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="rh_avaliacao_acao">
+            <field name="name">Campanhas/avaliações</field>
+            <field name="res_model">rh.avaliacao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="rh_avaliacao_tree" />
+        </record>
+
+        <menuitem action="rh_avaliacao_acao"
+            id="menu_rh_avaliacao" name="Campanhas/avaliações" parent="menu_hr_avaliacao" />
+
+    </data>
+</openerp>

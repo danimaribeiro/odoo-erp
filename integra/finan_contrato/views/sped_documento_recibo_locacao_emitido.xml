@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_recibo_locacao_emitido_form">
+            <field name="name">sped.recibo.locacao.emitido.form</field>
+            <field name="model">sped.documento</field>
+            <field name="inherit_id" ref="sped_finan.sped_recibo_locacao_emitido_form"/>
+            <field name="priority">20</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="finan_lancamento_id" position="replace">
+                    <field name="finan_lancamento_id" domain="[('tipo', '=', 'R'), ('partner_id', '=', partner_id), ('contrato_id', '!=', False), ('situacao', 'in', ('Vencido', 'Vence hoje', 'A vencer')), ('data_vencimento', '&gt;=', data_emissao), ('sped_documento_id', '=', False)]" colspan="4" on_change="onchange_finan_lancamento_id(finan_lancamento_id, vr_nf)"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

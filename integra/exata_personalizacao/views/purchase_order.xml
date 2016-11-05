@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="purchase_order_tree" model="ir.ui.view">
+            <field name="name">purchase.order.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="type">tree</field>
+            <field name="priority">100</field>
+            <field name="inherit_id" ref="compras.purchase_order_tree"/>
+            <field name="arch" type="xml">
+                <tree string="Purchase Order" position="replace">
+                    <tree colors="grey:state=='cancel';blue:verifica_email==True;red:state in ('except_invoice','except_picking')" string="Purchase Order">
+                        <field name="verifica_email" invisible="1"/>
+                        <field name="name" string="Reference"/>
+                        <field name="date_order" />
+                        <field name="partner_id"/>
+                        <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                        <field name="minimum_planned_date" invisible="context.get('quotation_only', False)"/>
+                        <field name="origin"/>
+                        <field name="invoiced_rate" widget="progressbar" invisible="context.get('quotation_only', False)"/>
+                        <field name="shipped_rate" widget="progressbar" invisible="context.get('quotation_only', False)"/>
+                        <!--<field name="amount_untaxed" sum="Total Untaxed amount"/>-->
+                        <field name="amount_total" sum="Total amount"/>
+                        <field name="state"/>
+                        <field name="create_uid" string="Solicitado" />
+                        <field name="validator" string="Validado"/>
+                        <field name="aprovado_uid"/>
+                    </tree>
+                </tree>
+            </field>
+        </record>
+
+<!--        <record id="purchase_order_form_exata" model="ir.ui.view">
+            <field name="name">purchase.order.form.exata</field>
+            <field name="model">purchase.order</field>
+            <field name="type">form</field>
+            <field name="priority">100</field>
+            <field name="inherit_id" ref="compras.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='purchase_confirm']" position="replace">
+                    <group groups="348">
+                        <button name="purchase_confirm" states="draft" string="Aprovar pedido" icon="gtk-go-forward"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>-->
+
+        <record id="purchase.purchase_form_action" model="ir.actions.act_window">
+            <field name="name">Purchase Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_mode">tree,form,graph,calendar</field>
+            <field name="domain">[('eh_abastecimento', '=', False)]</field>
+            <field name="context">{'search_default_approved': 1,'search_default_create_uid':uid}</field>
+            <field name="search_view_id" ref="purchase.view_purchase_order_filter"/>
+            <field name="help">Use this menu to search within your purchase orders by references, supplier, products, etc. For each purchase order, you can track the products received, and control the supplier invoices.</field>
+        </record>
+
+        <record id="purchase.purchase_rfq" model="ir.actions.act_window">
+            <field name="name">Requests for Quotation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order</field>
+            <field name="domain">[('eh_abastecimento', '=', False)]</field>
+            <field name="context">{'search_default_draft': 1}</field>
+            <field name="view_mode">tree,form,graph,calendar</field>
+            <field name="search_view_id" ref="purchase.view_request_for_quotation_filter"/>
+            <field name="help">You can create a request for quotation when you want to buy products to a supplier but the purchase is not confirmed yet. Use also this menu to review requests for quotation created automatically based on your logistic rules (minimum stock, MTO, etc). You can convert the request for quotation into a purchase order once the order is confirmed. If you use the extended interface (from user's preferences), you can select the way to control your supplier invoices: based on the order, based on the receptions or manual encoding.</field>
+        </record>
+
+    </data>
+</openerp>

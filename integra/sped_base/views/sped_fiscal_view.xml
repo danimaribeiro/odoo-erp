@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_sped_fiscal"
+            name="Fiscal"
+            web_icon="images/sped_leao_grey.png"
+            web_icon_hover="images/sped_leao.png"
+            groups="base.group_fiscal" />
+
+        <menuitem id="menu_sped_fiscal_tabela"
+            name="Tabelas"
+            parent="menu_sped_fiscal"
+            sequence="99" />
+
+    </data>
+</openerp>

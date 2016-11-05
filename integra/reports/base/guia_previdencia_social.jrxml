@@ -1,0 +1,904 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="guia_previdencia_social" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="539" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28" uuid="df8d06c4-008a-44ae-94ea-15cfd72a6f65">
+	<property name="ireport.zoom" value="1.3310000000000068"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="288"/>
+	<parameter name="IDS_PLAIN" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+comp.name as empresa_nome,
+comp.endereco as empresa_endereco,
+comp.numero as empresa_numero,
+comp.complemento as empresa_complemento,
+comp.bairro as empresa_bairro,
+muncomp.nome as empresa_municipio,
+estcomp.uf as empresa_estado,
+comp.cep as empresa_cep,
+comp.fone as empresa_fone,
+comp.cnpj_cpf as empresa_cnpj,
+comp.ie as empresa_ie,
+d.vr_previdencia,
+formata_valor(d.vr_previdencia) as valor_previdencia_formatado,
+to_char(d.data_emissao, 'MM/yyyy') as competencia,
+cast(to_char(d.data_emissao, 'yyyy-mm-20') as date) + interval '1 month' as data_vencimento,
+case
+  when p.eh_orgao_publico then '2631'
+  else '2640'
+end as codigo_pagamento,
+d.numero,
+to_char(d.data_emissao, 'dd/mm/yyyy') as data_emissao,
+p.razao_social
+
+from
+sped_documento d
+join res_partner p on p.id = d.partner_id
+
+join res_company c on c.id = d.company_id
+join res_partner comp on comp.id = c.partner_id
+left join sped_municipio muncomp on muncomp.id = comp.municipio_id
+left join sped_estado estcomp on estcomp.id = muncomp.estado_id
+
+where
+d.id = cast($P{IDS_PLAIN} as integer)
+and d.vr_previdencia > 0]]>
+	</queryString>
+	<field name="empresa_nome" class="java.lang.String"/>
+	<field name="empresa_endereco" class="java.lang.String"/>
+	<field name="empresa_numero" class="java.lang.String"/>
+	<field name="empresa_complemento" class="java.lang.String"/>
+	<field name="empresa_bairro" class="java.lang.String"/>
+	<field name="empresa_municipio" class="java.lang.String"/>
+	<field name="empresa_estado" class="java.lang.String"/>
+	<field name="empresa_cep" class="java.lang.String"/>
+	<field name="empresa_fone" class="java.lang.String"/>
+	<field name="empresa_cnpj" class="java.lang.String"/>
+	<field name="empresa_ie" class="java.lang.String"/>
+	<field name="vr_previdencia" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da previdência social]]></fieldDescription>
+	</field>
+	<field name="valor_previdencia_formatado" class="java.lang.String"/>
+	<field name="competencia" class="java.lang.String"/>
+	<field name="data_vencimento" class="java.sql.Timestamp"/>
+	<field name="codigo_pagamento" class="java.lang.String"/>
+	<field name="numero" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Número]]></fieldDescription>
+	</field>
+	<field name="data_emissao" class="java.lang.String"/>
+	<field name="razao_social" class="java.lang.String">
+		<fieldDescription><![CDATA[Razão Social]]></fieldDescription>
+	</field>
+	<variable name="LOGO_PREVIDENCIA_BASE64" class="java.lang.String">
+		<variableExpression><![CDATA["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"]]></variableExpression>
+		<initialValueExpression><![CDATA["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"]]></initialValueExpression>
+	</variable>
+	<detail>
+		<band height="784">
+			<elementGroup>
+				<staticText>
+					<reportElement x="343" y="196" width="84" height="28" uuid="0c39d5e9-0688-4fb9-8852-efc0fcaaa072"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[10 - Multa e
+juros]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="343" y="28" width="84" height="28" uuid="d4fe036b-90f0-448a-a5bd-d9eac371c3cc"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[4 - Competência]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="427" y="28" width="112" height="28" uuid="bdabf926-f9a1-485d-ba9e-3c41a392b278"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{competencia}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="5" y="126" width="282" height="14" uuid="dd8c31ee-65ea-476c-b3ff-cc3ee2a96451"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_endereco} + ", " + $F{empresa_numero}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement x="0" y="0" width="343" height="168" uuid="0674d4ec-bace-43c4-8cb5-748659276c4d"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+				</frame>
+				<image>
+					<reportElement x="5" y="0" width="107" height="64" uuid="21f44c0d-eaa8-4bfe-8907-410b1b4ad94b"/>
+					<imageExpression><![CDATA[new java.io.StringBufferInputStream(new org.w3c.tools.codec.Base64Decoder($V{LOGO_PREVIDENCIA_BASE64}).processString())]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement x="343" y="0" width="84" height="28" uuid="4ad28b52-2ffc-4773-a110-fd8049854f33"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[3 - Código de
+pagamento]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="231" y="168" width="112" height="28" uuid="9f6302ea-ca9b-4eae-9a37-b637d58fcf7b"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{data_vencimento}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="343" y="224" width="84" height="28" uuid="21641705-7d45-48af-a819-7618494eaeae"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[11 - Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="343" y="56" width="84" height="28" uuid="61dbf131-cc23-456a-b57d-9763993bfafe"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[5 - Identificador]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="427" y="56" width="112" height="28" uuid="43cd64fe-7756-45b7-a024-87b41ea729a2"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_cnpj}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="5" y="112" width="282" height="14" isPrintWhenDetailOverflows="true" uuid="610b2545-f67e-4e70-9d1e-95d79dbf703b"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_nome}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="168" width="231" height="28" uuid="29683dd6-b508-42a9-b9d4-321d5f470ae7"/>
+					<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<text><![CDATA[2 - Vencimento (uso exclusivo do INSS)]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="5" y="140" width="282" height="14" uuid="63bc8beb-ab11-49b7-81c8-d717b2512acd"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_bairro}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="5" y="99" width="282" height="14" uuid="7d2b8064-5cef-4b9a-bb5c-3db01f0705e3"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CNPJ: " + $F{empresa_cnpj}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="64" width="343" height="20" uuid="7eb3b7d4-578e-4d44-bc3e-bf42f72498ac"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[GUIA DA PREVIDÊNCIA SOCIAL - GPS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="112" y="0" width="218" height="64" uuid="6656a882-ad97-4d0a-b584-ef86d297ebc9"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<text><![CDATA[Ministério de Previdência Social - MPS
+Instituto Nacional do Seguro Social - INSS
+Secretaria da Receita Previdenciária - SRP]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="427" y="84" width="112" height="28" uuid="44f193ba-a445-4881-bf35-f32d04df54ef"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{valor_previdencia_formatado}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="427" y="224" width="112" height="28" uuid="7efce90b-1a82-4863-a6c8-fcb89571e399"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="427" y="0" width="112" height="28" uuid="ed9c8d2c-08bc-4f66-bdcd-64a3d690bf0f"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo_pagamento}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="85" width="282" height="14" uuid="4a69b7a8-5c4b-49d2-886c-bf9b00a8b4b5"/>
+					<box topPadding="0" leftPadding="5" bottomPadding="0" rightPadding="0">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[1 - Nome ou razão social / endereço]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="427" y="168" width="112" height="28" uuid="0dab9fac-b42b-4f9b-a131-ac4cb9eabaed"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="343" y="140" width="84" height="28" uuid="01524339-2777-4fd6-a63e-c3f6e60e0616"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[8 -]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="427" y="196" width="112" height="28" uuid="fb9c20d3-16fe-4db3-bca4-4df4ae0d1b7b"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="0" y="252" width="539" height="28" uuid="e3aa1822-c3dc-4a16-86f2-fc8955fb7225"/>
+					<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Retenção referente à NF nº " + $F{numero} + " do dia " + $F{data_emissao} + ", " +$F{razao_social}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="0" y="280" width="539" height="98" uuid="f6d9e370-bf2d-41c7-99fe-cb2b87452ee5"/>
+					<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Autenticação bancária"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="427" y="112" width="112" height="28" uuid="b7158dc7-e819-462c-a08d-fb085ca83035"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="343" y="112" width="84" height="28" uuid="39bab9de-5eb8-490c-8141-cc1f2b78d2b0"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[7 -]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="343" y="84" width="84" height="28" uuid="03873ffa-62e0-44c1-8db3-a113ef24bd8c"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[6 - Valor do
+INSS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="196" width="343" height="56" uuid="8e4683d6-897e-49bd-88cc-f401158c3edd"/>
+					<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Justified" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[ATENÇÃO: É vedada a utilização de GPS para recolhimento de receita de valor inferior ao estipulado em resolução publicada pelo INSS. A receita que resultar valor inferior deverá ser adicionada à contribuição ou importância correspondente nos meses subsequentes, até que o total seja igual ou superior ao valor mínimo fixado. ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="5" y="154" width="282" height="14" uuid="218c338e-f2e8-47fa-95e3-075a75e3e714"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_municipio} + " - " + $F{empresa_estado} + " - " + $F{empresa_cep}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="343" y="168" width="84" height="28" uuid="0ab5e09f-472b-4b04-a559-72c1d12fee47"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[9 - Valor outras entidades]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="427" y="140" width="112" height="28" uuid="cc5ac557-7f38-42d6-8e99-9a535c1b028e"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<image>
+					<reportElement x="5" y="406" width="107" height="64" uuid="55034989-e34a-4eb5-9ead-ec655ec96691"/>
+					<imageExpression><![CDATA[new java.io.StringBufferInputStream(new org.w3c.tools.codec.Base64Decoder($V{LOGO_PREVIDENCIA_BASE64}).processString())]]></imageExpression>
+				</image>
+			</elementGroup>
+			<elementGroup>
+				<staticText>
+					<reportElement x="343" y="602" width="84" height="28" uuid="2f26e945-eb35-41a5-a59f-562cbb212e74"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[10 - Multa e
+juros]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="343" y="434" width="84" height="28" uuid="b46662be-a5f2-4117-a2e6-4ea3d4cdb4f1"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[4 - Competência]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="427" y="434" width="112" height="28" uuid="6dc90c43-7165-48dd-b8a8-20f8b1eb2fa7"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{competencia}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="5" y="532" width="282" height="14" uuid="76b0e266-af4a-4263-b4fd-6013c28bbe71"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_endereco} + ", " + $F{empresa_numero}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement x="0" y="406" width="343" height="168" uuid="462a4de6-5616-4f50-ae12-b247f5f3d7b8"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+				</frame>
+				<staticText>
+					<reportElement x="343" y="406" width="84" height="28" uuid="98a8d22a-ff29-4bb1-9dd5-3535cd070be3"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[3 - Código de
+pagamento]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="231" y="574" width="112" height="28" uuid="a694633c-b9cb-4708-8a2e-50910df6c1bb"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{data_vencimento}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="343" y="630" width="84" height="28" uuid="359d6e68-a632-48ac-8db3-d1871364acbe"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[11 - Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="343" y="462" width="84" height="28" uuid="cc61942f-5bdd-478f-8506-cba8c07b68b7"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[5 - Identificador]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="427" y="462" width="112" height="28" uuid="6d9d0a22-ac81-4383-ba62-968d4a610c3a"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_cnpj}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="5" y="518" width="282" height="14" isPrintWhenDetailOverflows="true" uuid="f7f84535-6440-4329-b60d-013ca7f0c243"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_nome}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="574" width="231" height="28" uuid="18f3d5e0-1b27-438d-909c-d401b34a6b8b"/>
+					<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<text><![CDATA[2 - Vencimento (uso exclusivo do INSS)]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="5" y="546" width="282" height="14" uuid="ff8bb676-5204-4af0-99b5-6142f27713c3"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_bairro}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="5" y="505" width="282" height="14" uuid="0bd359be-a080-4ba9-a6c3-1343785cdda7"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CNPJ: " + $F{empresa_cnpj}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="470" width="343" height="20" uuid="6683b101-49ad-4aa3-b6c9-eee534d0165e"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[GUIA DA PREVIDÊNCIA SOCIAL - GPS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="112" y="406" width="218" height="64" uuid="91a3ae00-9e9d-4813-8e9f-7c2902d3c8f8"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<text><![CDATA[Ministério de Previdência Social - MPS
+Instituto Nacional do Seguro Social - INSS
+Secretaria da Receita Previdenciária - SRP]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="427" y="490" width="112" height="28" uuid="5eb5bcec-5812-4409-8566-f617b1b4ebe7"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{valor_previdencia_formatado}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="427" y="630" width="112" height="28" uuid="7facfb43-84f3-449e-aaad-b684c920f12a"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="427" y="406" width="112" height="28" uuid="04a0aa42-20c4-40cb-b8e5-0b9daf9524fa"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo_pagamento}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="491" width="282" height="14" uuid="cf677624-e87c-4f46-8d81-a228dcf9492f"/>
+					<box topPadding="0" leftPadding="5" bottomPadding="0" rightPadding="0">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[1 - Nome ou razão social / endereço]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="427" y="574" width="112" height="28" uuid="f7723e9e-d2a1-4f4a-a38a-cc677a926b1b"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="343" y="546" width="84" height="28" uuid="b675094b-a0bb-4d04-a541-9771916859e4"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[8 -]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="427" y="602" width="112" height="28" uuid="9346209c-88c5-43c8-95fd-12d1caf0bc96"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="0" y="658" width="539" height="28" uuid="93f64b7e-a860-496b-a067-95db05b43908"/>
+					<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Retenção referente à NF nº " + $F{numero} + " do dia " + $F{data_emissao} + ", " +$F{razao_social}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="0" y="686" width="539" height="98" uuid="7a8c5015-36e0-4644-a4af-54e879642221"/>
+					<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Autenticação bancária"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="427" y="518" width="112" height="28" uuid="22ea04df-15e1-42fd-a25e-f69c5ef5256d"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="343" y="518" width="84" height="28" uuid="ac4c38bb-0730-423a-8a55-aaa0e9790c92"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[7 -]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="343" y="490" width="84" height="28" uuid="659ebf90-8412-4c82-844c-049cb31318b6"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[6 - Valor do
+INSS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="602" width="343" height="56" uuid="abe5eb26-deaa-4433-adf9-e3411bba09b7"/>
+					<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Justified" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[ATENÇÃO: É vedada a utilização de GPS para recolhimento de receita de valor inferior ao estipulado em resolução publicada pelo INSS. A receita que resultar valor inferior deverá ser adicionada à contribuição ou importância correspondente nos meses subsequentes, até que o total seja igual ou superior ao valor mínimo fixado. ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="5" y="560" width="282" height="14" uuid="ef0d62f1-a00a-4ebf-b859-656b4c376813"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_municipio} + " - " + $F{empresa_estado} + " - " + $F{empresa_cep}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="343" y="574" width="84" height="28" uuid="6748d137-bd72-480a-b187-2f3f558cc144"/>
+					<box leftPadding="5" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[9 - Valor outras entidades]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="427" y="546" width="112" height="28" uuid="0a799626-735a-4905-9df4-212864ca5a40"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+			</elementGroup>
+		</band>
+	</detail>
+</jasperReport>

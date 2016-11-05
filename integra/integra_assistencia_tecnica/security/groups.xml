@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record id="group_assitencia_tecnica_manager" model="res.groups">
+            <field name="name">Integra / Gerente Assistencia Técnica</field>
+        </record>
+
+        <record id="group_assitencia_tecnica_staff" model="res.groups" context="{'noadmin':True}">
+            <field name="name">Integra / Funcionário Assistencia Técnica</field>
+        </record>
+        
+    </data>
+</openerp>

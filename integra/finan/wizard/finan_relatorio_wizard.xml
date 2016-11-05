@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_movimentacao_financeira_wizard" >
+            <field name="name">finan.relatorio.movimentacao.financeira.wizard</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório de Movimentação Financeira">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="2" />
+                        <newline/>
+                        <field name="company_id" required="1"/>
+                        <newline/>
+                        <field name="data_inicial" />
+                        <newline/>
+                        <field name="data_final" />
+                        <newline/>
+                        <field name="res_partner_bank_id" />
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_movimentacao_financeira" type="object" context="{'company_id' : company_id, 'data_inicial': data_inicial, 'data_final': data_final, 'res_partner_bank_id': res_partner_bank_id}" colspan="2" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="2"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_relatorio_movimentacao_financeira_wizard_acao">
+            <field name="name">Movimentação Financeira</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_relatorio_movimentacao_financeira_wizard_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_relatorio_movimentacao_financeira_wizard"/>
+            <field name="act_window_id" ref="finan_relatorio_movimentacao_financeira_wizard_acao"/>
+        </record>
+
+        <menuitem action="finan_relatorio_movimentacao_financeira_wizard_acao"
+                  id="menu_finan_relatorio_movimentacao_financeira_wizard" name="Movimentação Financeira" parent="menu_finan_relatorios" sequence="2" />
+
+        <record model="ir.ui.view" id="finan_diario_cliente_analitico_wizard" >
+            <field name="name">finan.diario.cliente_analitico.wizard</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório Diário Razão Cliente - Analítico">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="2" />
+                        <newline/>
+                        <field name="company_id" required="1"/>
+                        <newline/>
+                        <field name="data_inicial" />
+                        <newline/>
+                        <field name="data_final" />
+                         <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_financeiro" type="object" context="{'company_id': company_id,'data_inicial': data_inicial, 'data_final': data_final, 'nome_relatorio': 'Diario_Analitico'}" colspan="2" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="2"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_diario_cliente_analitico_wizard_acao">
+            <field name="name">Resumo Diário Razão Cliente - Analitico</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_diario_cliente_analitico_wizard_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_diario_cliente_analitico_wizard"/>
+            <field name="act_window_id" ref="finan_diario_cliente_analitico_wizard_acao"/>
+        </record>
+
+        <menuitem action="finan_diario_cliente_analitico_wizard_acao"
+            id="menu_finan_diario_cliente_analitico_wizard" name="Diário Razão - Analitico" parent="menu_finan_relatorios" sequence="5" />
+
+        <record model="ir.ui.view" id="finan_diario_cliente_sintetico_wizard" >
+            <field name="name">finan.diario.cliente.sintetico.wizard</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório Razão Auxiliar Cliente - Sintético">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="2" />
+                        <newline/>
+                        <field name="company_id" required="1"/>
+                        <newline/>
+                        <field name="res_partner_bank_id" />
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <field name="data_inicial" />
+                        <newline/>
+                        <field name="data_final" />
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_financeiro" type="object" context="{'company_id' : company_id,'data_inicial': data_inicial, 'data_final': data_final,'res_partner_bank_id' : res_partner_bank_id, 'nome_relatorio': 'Diario_Sintetico'}" colspan="2" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="2"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_diario_cliente_sintetico_wizard_acao">
+            <field name="name">Relatório Razão Auxiliar Cliente - Sintético</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_diario_cliente_sintetico_wizard_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_diario_cliente_sintetico_wizard"/>
+            <field name="act_window_id" ref="finan_diario_cliente_sintetico_wizard_acao"/>
+        </record>
+
+        <menuitem action="finan_diario_cliente_sintetico_wizard_acao"
+            id="menu_finan_diario_cliente_sintetico_wizard" name="Diário Razão - Sintético" parent="menu_finan_relatorios" sequence="6" />
+
+        <record model="ir.ui.view" id="finan_relatorio_saldo_bancario_movimento_wizard" >
+            <field name="name">finan.relatorio.saldo.bancario.movimento.wizard</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório de Saldos Bancários por Movimento">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="2" />
+                        <newline/>
+                        <field name="company_id" required="1"/>
+                        <newline/>
+                        <field name="res_partner_bank_id" />
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <field name="data_inicial" />
+                        <newline/>
+                        <field name="data_final" />
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_saldo_bancario_movimento" type="object" context="{'data_inicial': data_inicial, 'data_final': data_final, 'res_partner_bank_id': res_partner_bank_id, 'company_id': company_id}" colspan="2" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="2"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_relatorio_saldo_bancario_movimento_wizard_acao">
+            <field name="name">Saldos Bancários por Movimento</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_relatorio_saldo_bancario_movimento_wizard_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_relatorio_saldo_bancario_movimento_wizard"/>
+            <field name="act_window_id" ref="finan_relatorio_saldo_bancario_movimento_wizard_acao"/>
+        </record>
+
+        <menuitem action="finan_relatorio_saldo_bancario_movimento_wizard_acao"
+            id="menu_finan_relatorio_saldo_bancario_movimento_wizard" name="Saldos Bancários Por Movimento" parent="menu_finan_relatorios" sequence="7" />
+
+        <record model="ir.ui.view" id="finan_relatorio_saldo_bancario_wizard" >
+            <field name="name">finan.relatorio.saldo.bancario.wizard</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório de Saldos Bancários">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="2" />
+                        <newline/>
+                        <field name="res_partner_bank_id" />
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <field name="data_inicial" />
+                        <newline/>
+                        <field name="data_final" />
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_saldo_bancario" type="object" context="{'data_inicial': data_inicial, 'data_final': data_final, 'res_partner_bank_id': res_partner_bank_id}" colspan="2" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="2"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_relatorio_saldo_bancario_wizard_acao">
+            <field name="name">Saldos Bancários</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view"                          id="finan_relatorio_saldo_bancario_wizard_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_relatorio_saldo_bancario_wizard"/>
+            <field name="act_window_id" ref="finan_relatorio_saldo_bancario_wizard_acao"/>
+        </record>
+
+        <menuitem action="finan_relatorio_saldo_bancario_wizard_acao"
+            id="menu_finan_relatorio_saldo_bancario_wizard" name="Saldos Bancários" parent="menu_finan_relatorios" sequence="8" />
+
+    </data>
+</openerp>

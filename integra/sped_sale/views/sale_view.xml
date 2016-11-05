@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="sale_order_form">
+        <field name="name">sale_order_form</field>
+        <field name="model">sale.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">16</field>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="operacao_id" invisible="1" readonly="1" />
+                <field name="operacao_pessoa_fisica_id" invisible="1" readonly="1" />
+                <field name="operacao_ativo_id" invisible="1" readonly="1" />
+                <field name="operacao_faturamento_antecipado_id" invisible="1" readonly="1" />
+            </field>
+
+            <button string="Print Order" position="replace">
+            </button>
+            <button string="Create Final Invoice" position="replace">
+            </button>
+            <button string="Advance Invoice" position="replace">
+            </button>
+
+            <button name="order_confirm" position="replace">
+                <button icon="gtk-apply" name="order_confirm" states="draft" string="Aprovar" />
+                <button icon="gtk-apply" name="encerrar_pedido" states="manual" string="Liberar faturamento" type="object"/>
+            </button>
+
+            <button string="Print Quotation" position="replace">
+                <button icon="gtk-print" name="imprime_pedido_venda" string="Imprimir Pedido" type="object" />
+            </button>
+            <field name="order_line" position="replace">
+<!--                 <field colspan="4" name="order_line" nolabel="1" widget="one2many_list" context="{'form_view_ref' : 'sped_sale.sale_order_line_form', 'tree_view_ref' : 'sped_sale.sale_order_line_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id}" /> -->
+                <field colspan="4" name="order_line" nolabel="1" widget="one2many_list" context="{'form_view_ref' : 'sped_sale.sale_order_line_produto_form', 'tree_view_ref' : 'sped_sale.sale_order_line_produto_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id}" />
+            </field>
+
+            <field name="payment_term" position="after">
+                <field name="operacao_fiscal_produto_id" domain="[('emissao', '=', '0'), ('modelo', 'in', ('55', '2D'))]"/>
+                <field name="operacao_fiscal_servico_id" domain="[('modelo', '=', 'SE'), ('emissao', '=', '0')]"/>
+            </field>
+
+            <field name="payment_term" position="before">
+                <field name="finan_formapagamento_id" />
+            </field>
+
+            <field name="payment_term" position="replace">
+                <field name="payment_term" domain="['|', ('valor_minimo', '=', False), ('valor_minimo', '&lt;=', amount_total)]" />
+            </field>
+
+            <field name="invoice_quantity" position="after">
+                <field name="modalidade_frete" />
+                <field name="transportadora_id" />
+            </field>
+
+            <field name="amount_total" position="before">
+                <field name="vr_desconto_rateio" />
+            </field>
+
+            <field name="amount_untaxed" position="replace">
+                <field name="amount_untaxed" invisible="1" />
+            </field>
+            <field name="amount_tax" position="replace">
+                <field name="amount_tax" invisible="1" />
+            </field>
+
+<!--            <field name="discount" position="replace">
+                <field name="discount" invisible="1" />
+            </field>-->
+
+<!--                <field name="orcamento_resumo_ids" position="after">
+                    <button name="gera_notas" string="Recalcula lucro e margem líquidos" icon="gtk-go-forward" type="object" context="{'temporario': True}"/>
+                    <newline/>
+                    <group colspan="2">
+                        <separator string="Impostos" colspan="2" />
+                        <newline/>
+                        <field name="vr_icms_proprio" colspan="2" />
+                        <newline/>
+                        <field name="vr_ipi" colspan="2" />
+                        <newline/>
+                        <field name="vr_iss" colspan="2" />
+                        <newline/>
+                        <field name="vr_pis_proprio" colspan="2" />
+                        <newline/>
+                        <field name="vr_cofins_proprio" colspan="2" />
+                        <newline/>
+                        <field name="vr_csll" colspan="2" />
+                        <newline/>
+                        <field name="vr_irrf" colspan="2" />
+                        <newline/>
+                        <field name="total_imposto" colspan="2" />
+                    </group>
+                    <group colspan="2">
+                        <separator string="Lucro líquido" colspan="2" />
+                        <newline/>
+                        <field name="vr_liquido" colspan="2" />
+                        <newline/>
+                        <field name="margem_liquida" colspan="2" />
+                    </group>
+            </field> -->
+                <page position="replace" string="History">
+                    <page string="History" groups="base.group_extended">
+<!--                         <button name="gera_notas" string="Gera notas fiscais" icon="gtk-go-forward" type="object"/> -->
+                        <separator colspan="4" string="Notas Fiscais"/>
+                        <field colspan="4" name="sped_documento_ids" nolabel="1"
+                                context="{'form_view_ref' : 'sped.sped_nfe_emitida_form', 'tree_view_ref' : 'sped.sped_nfe_emitida_tree'}"/>
+                        <separator colspan="4" string="Packings"/>
+                        <field colspan="4" name="picking_ids" nolabel="1"/>
+                        <group col="6" colspan="4">
+                            <group col="2" colspan="2">
+                            <separator colspan="2" string="Histórico de Alterações"/>
+                            <field colspan="2" name="create_uid" readonly="1" string="Criado por"/>
+                            <newline />
+                            <field colspan="2" name="write_uid" readonly="1"/>
+                            <newline />
+                            <field colspan="2" name="write_date" readonly="1"/>
+                            </group>
+                            <group col="4" colspan="4">
+                            </group>
+                        </group>
+                    </page>
+                </page>
+
+        </field>
+    </record>
+
+    <record id="sale_order_tree" model="ir.ui.view">
+        <field name="name">sale.order.tree</field>
+        <field name="model">sale.order</field>
+        <field name="type">tree</field>
+        <field name="priority">3</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree[1]" position="attributes">
+                <attribute name="colors">grey:state=='cancel';blue:state in ('waiting_date','manual');red:state in ('invoice_except','shipping_except');green:state=='done'</attribute>
+            </xpath>
+            <field name="date_order" position="after">
+                <field name="finan_formapagamento_id" />
+            </field>
+            <field name="invoiced_rate" position="replace" />
+        </field>
+    </record>
+
+    <record id="sale_order_search" model="ir.ui.view">
+        <field name="name">sale.order.search</field>
+        <field name="model">sale.order</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <filter string="Order Date" position="after">
+                <filter string="Forma pag." icon="terp-terp-dolar_ok!" domain="[]" context="{'group_by':'finan_formapagamento_id'}"/>
+            </filter>
+            <filter string="To Invoice" position="replace">
+            </filter>
+        </field>
+    </record>
+
+</data>
+</openerp>

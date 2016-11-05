@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resumo_movimentacao_cheques" language="groovy" pageWidth="786" pageHeight="200" orientation="Landscape" columnWidth="786" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="f94375aa-4d90-4890-a268-711ae837fbb1">
+	<property name="ireport.zoom" value="2.5892034107948296"/>
+	<property name="ireport.x" value="893"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="dataset1" uuid="73c422cc-7ea7-4fc0-bb8a-83deb60bc839"/>
+	<parameter name="DATA_QUITACAO_INICIAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2014-02-03]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_QUITACAO_FINAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2014-02-04]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RES_PARTNER_BANK_ID_SUB" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CREDITOS" class="java.lang.Double"/>
+	<parameter name="DEBITOS" class="java.lang.Double"/>
+	<parameter name="SALDO" class="java.lang.Double"/>
+	<queryString>
+		<![CDATA[select
+sum(coalesce(
+case
+    when situacao = 'DF' THEN ch.valor
+    else 0
+end, 0)) as valor_devolvido,
+
+sum(coalesce(
+case
+    when situacao != 'DF' THEN ch.valor
+    else 0
+end
+,0)) as valor_cheques
+
+from
+  finan_cheque ch
+  join res_partner_bank b on b.id = ch.res_partner_bank_id
+
+where
+  ch.situacao != 'DP'
+  $P!{RES_PARTNER_BANK_ID_SUB}]]>
+	</queryString>
+	<field name="valor_devolvido" class="java.lang.Double"/>
+	<field name="valor_cheques" class="java.lang.Double"/>
+	<variable name="valor_cheques_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_cheques}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="valor_devolvido_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_devolvido}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<summary>
+		<band height="84">
+			<staticText>
+				<reportElement x="588" y="14" width="138" height="14" uuid="dbbaedbe-8add-4784-b9a3-efd2eceb27fb"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cheques pré-datados]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;#,##0.00-">
+				<reportElement x="726" y="0" width="60" height="14" uuid="83bac336-49da-4f99-a673-6d62123d1684"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SALDO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="588" y="42" width="138" height="14" uuid="9ff65b8a-cd74-4eec-ace7-da31203d6166"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dinheiro]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="588" y="28" width="138" height="14" uuid="ccc05254-124c-48a4-ae53-8b38887f0b49"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[(-) Cheques devolvidos]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="726" y="14" width="60" height="14" uuid="5cc6c3fa-1ffd-49b7-b902-903884ed977c"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_cheques_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="588" y="70" width="138" height="14" uuid="90e80161-f533-4611-858a-47658e186601"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[(=) Disponibilidade de Caixa]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;#,##0.00-">
+				<reportElement x="726" y="70" width="60" height="14" uuid="3598d623-7b7d-4d8e-b090-872d00f494d7"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SALDO} - $F{valor_devolvido}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;#,##0.00-">
+				<reportElement x="726" y="28" width="60" height="14" uuid="cd062d2e-b010-4925-8db0-2ae863142ac0"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_devolvido_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;#,##0.00-">
+				<reportElement x="726" y="42" width="60" height="14" uuid="5e06da12-aea4-49bd-81df-9cd84cec8dd7"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{SALDO} - $F{valor_cheques} - $F{valor_devolvido}) < 0?
+0
+:
+($P{SALDO} - $F{valor_cheques} - $F{valor_devolvido})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="588" y="56" width="138" height="14" uuid="ea894fe6-88b3-4b22-8f5b-d8884010451d"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo atual]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;#,##0.00-">
+				<reportElement x="726" y="56" width="60" height="14" uuid="36e59994-590f-4142-8fd2-c2f033fcdebf"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SALDO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="588" y="0" width="138" height="14" uuid="7567559f-6ab2-486f-b7db-6f6109c946b9"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Totais]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

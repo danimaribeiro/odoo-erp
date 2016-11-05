@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_pagar_form">
+            <field name="name">finan.pagar.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_pagar_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Rateio por centros de custo" position="replace"/>
+                <page string="Dados básicos" position="replace">
+                    <page string="Dados básicos">
+                        <group colspan="2" col="2">
+                            <separator string="Dados do documento" colspan="2" />
+                            <field name="documento_id" required="1" />
+                            <field name="numero_documento" required="1" />
+                            <field name="data_documento" required="1" />
+                            <field name="valor_documento" required="1" />
+                            <field name="valor" invisible="1" />
+                            <field name="partner_id" required="1" string="Fornecedor" />
+                            <field name="data_vencimento" required="1" />
+                        </group>
+                        <group colspan="2" col="2">
+                            <separator string="Classificação" colspan="2" />
+                            <field name="conta_id" required="1" domain="[('tipo', '=', 'D'), ('sintetica', '=', False)]" on_change="onchange_conta_id(conta_id)" />
+                            <field name="exige_centro_custo" invisible="1" />
+                        </group>
+                        <group colspan="4">
+                            <separator string="Rateio por centros de custo" colspan="4" />
+                            <newline/>
+                            <field name="centrocusto_id" string="Centro de custo/Modelo de rateio" domain="['|', ('tipo', '=', 'R'), '&amp;', ('tipo', '=', 'C'), ('sintetico', '=', False)]"
+                                   on_change="onchange_centrocusto_id(centrocusto_id, valor_documento, valor, company_id)" attrs="{'required': [('exige_centro_custo', '=', True)]}"/>
+                            <newline/>
+                            <field name="rateio_ids" widget="many2one_list">
+                                <tree editable="top">
+                                    <field name="company_id" required="1" />
+                                    <field name="centrocusto_id" required="1" domain="[('tipo', '=', 'C'), ('sintetico', '=', False)]"/>
+                                    <field name="porcentagem" required="1" on_change="onchange_porcentagem(porcentagem, parent.valor_documento, parent.valor)"/>
+                                    <field name="valor_documento" />
+                                    <field name="valor" />
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </page>
+                <page string="Baixa" position="replace">
+                    <page string="Baixa" groups="finan.group_finan_master">
+                        <separator string="Confirmar data de baixa" colspan="2" />
+                        <separator string="Motivo da baixa" colspan="2" />
+                        <field name="data_baixa" string="Data da baixa"/>
+                        <field name="motivo_baixa_id" nolabel="1"/>
+                    </page>
+                </page>
+
+            </field>
+        </record>
+
+    </data>
+</openerp>

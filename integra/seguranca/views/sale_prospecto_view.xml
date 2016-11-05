@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_order_seguranca_prospecto_tree">
+            <field name="name">sale.order.seguranca.prospecto.tree</field>
+            <field name="model">sale.order</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Prospectos">
+                    <field name="name" string="Código" />
+                    <field name="partner_id" string="Contato" />
+                    <field name="pricelist_id" invisible="1" />
+                    <field name="user_id" />
+                    <field name="company_id" />
+                    <field name="date_order" />
+                    <field name="receita_esperada" sum="receita" />
+                    <field name="data_fechamento_esperada" />
+                    <field name="porcentagem_fechamento" widget="progressbar" avg="porcentagem_fechamento" />
+                    <field name="etapa_id" />
+                    <field name="tempo_etapa" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_order_seguranca_prospecto_form">
+            <field name="name">sale.order.seguranca.prospecto.form</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Prospecto">
+                    <group colspan="4" col="4">
+                        <field name="company_id" colspan="4" required="1" readonly="0" domain="[('cnpj_cpf', '!=', False)]"/>
+                        <field name="operacao_id" invisible="1" />
+                        <field name="state" invisible="1" />
+                        <field name="operacao_pessoa_fisica_id" invisible="1" />
+                        <field name="operacao_ativo_id" invisible="1" />
+                        <field name="operacao_faturamento_antecipado_id" invisible="1" />
+
+                        <field name="pricelist_id" colspan="4" invisible="1" required="0" string="Tipo do prospecto" domain="[('type', '=', 'sale'), ('tipo_os_id', '!=', False)]" on_change="onchange_pricelist_id(pricelist_id, vr_total_produtos)" />
+                        <field name="name" string="Código" invisible="1" />
+                        <field name="date_order" />
+                        <field name="user_id" string="Vendedor" colspan="4" required="1" />
+                        <field name="canal_id" colspan="4" required="1" />
+<!--                         <field name="categoria_id" colspan="4" required="1" /> -->
+                        <group colspan="4" col="4">
+                            <group col="2" colspan="2" string="Categorias">
+                                <field name="categoria_ids" nolabel="1" colspan="2" />
+                            </group>
+                            <group col="2" colspan="2" string="Etapa">
+                                <field name="etapa_seguinte_ids"  invisible="1"/>
+                                <field name="etapa_id" invisible="1" />
+                                <field name="etapa_id_readonly" />
+                                <field name="proxima_etapa_id" domain="[('id', 'in', etapa_seguinte_ids)]" />
+                                <button name="avanca_etapa" string="Avançar Etapa" icon="gtk-go-forward" type="object" colspan="2" />
+                                <field name="codigo" readonly="1" invisible="1"/>
+                                <field name="filtro_etapa" readonly="1" invisible="1"/>
+                            </group>
+                        </group>
+                        <field name="finan_contrato_id" colspan="4" invisible="1" readonly="1" />
+
+                        <!-- Campos Antigos -->
+                        <field name="shop_id" invisible="1" />
+                        <field name="incoterm" invisible="1" />
+                        <field name="picking_policy" invisible="1" />
+                        <field name="order_policy" invisible="1" />
+                        <field name="invoice_quantity" invisible="1" />
+                        <field name="create_date" invisible="1" />
+                        <field name="date_confirm" invisible="1" />
+                        <field name="fiscal_position" invisible="1" />
+                    </group>
+                    <group colspan="4" col="4">
+                        <group colspan="2" col="4" string="Resumo de Valores" attrs="{'invisible': True}">
+                            <group colspan="2" col="4">
+                                <separator string="Produtos" colspan="4" />
+                                <newline />
+                                <label string="Total sem desconto" colspan="3" />
+                                <field name="vr_total_produtos_sem_desconto" nolabel="1" />
+                                <newline />
+                                <label string="Desconto" />
+                                <field name="al_desconto_rateio" nolabel="1" digits="(18, 2)" on_change="onchange_al_desconto_rateio(al_desconto_rateio, None, vr_total_produtos_sem_desconto, 'P')"/>
+                                <label string="%%, R$" />
+                                <field name="vr_desconto_rateio" nolabel="1" on_change="onchange_al_desconto_rateio(None, vr_desconto_rateio, vr_total_produtos_sem_desconto, 'P')"/>
+                                <newline />
+                                <label string="Total com desconto" colspan="3" />
+                                <field name="vr_total_produtos" nolabel="1" />
+                            </group>
+                            <group colspan="2" col="4">
+                                <separator string="Serviços" colspan="4" />
+                                <newline />
+                                <label string="Total sem desconto" colspan="3" />
+                                <field name="vr_total_servicos_sem_desconto" nolabel="1" />
+                                <newline />
+                                <label string="Desconto" />
+                                <field name="al_desconto_rateio_servicos" nolabel="1" digits="(18, 2)" on_change="onchange_al_desconto_rateio(al_desconto_rateio_servicos, None, vr_total_servicos_sem_desconto, 'S')"/>
+                                <label string="%%, R$" />
+                                <field name="vr_desconto_rateio_servicos" nolabel="1" on_change="onchange_al_desconto_rateio(None, vr_desconto_rateio_servicos, vr_total_servicos_sem_desconto, 'S')"/>
+                                <newline />
+                                <label string="Total com desconto" colspan="3" />
+                                <field name="vr_total_servicos" nolabel="1" />
+                            </group>
+                            <field name="amount_total" string="Valor total" colspan="4" bold="True" />
+                            <button type="object" name="button_dummy" string="Recalcular" colspan="4" />
+                            <group colspan="4" col="2"  groups="base.group_sale_manager">
+                                <field name="desconto_autorizado" invisible="1" />
+                                <button type="object" name="autoriza_desconto" string="Autoriza desconto" colspan="2" />
+                            </group>
+                        </group>
+                        <group col="2" colspan="2">
+                            <field name="meses_retorno_locacao_original" invisible="1" />
+                            <field name="meses_retorno_locacao_excedido" invisible="1" />
+                            <group col="2" colspan="2" string="Resumo de Mensalidade" attrs="{'invisible': True}">
+                                <field name="meses_retorno_locacao" digits="(21, 0)" on_change="onchange_locacao(meses_retorno_locacao, None, amount_total, vr_total_mensalidades, meses_retorno_locacao_original)" />
+                                <field name="vr_mensal_locacao" on_change="onchange_locacao(None, vr_mensal_locacao, amount_total, vr_total_mensalidades, meses_retorno_locacao_original)" />
+                                <group col="2" colspan="4" name="avisa_validade"
+                                       attrs="{'invisible': [('meses_retorno_locacao_excedido', '=', False)] }">
+                                    <separator string="Aviso de meses de locação excedido" colspan="10" />
+                                    <label name="mensagem_restricao" string="Atenção!!! Orçamento fora do limite de meses permitido!" colspan="2" />
+                                </group>
+                                <field name="vr_total_mensalidades" string="Demais mensalidades" />
+                                <field name="vr_mensal_atual" string="Mensalidade atual" readonly="1" />
+                                <field name="vr_mensal_total" string="Total" />
+                            </group>
+                        </group>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Contato">
+                            <group colspan="4" col="4">
+<!--                                 <group colspan="2" col="4" string="Contato"> -->
+                                <group colspan="2" col="4">
+                                    <separator string="Contato" colspan="4" />
+                                    <field name="partner_id" string="Contato" colspan="4" required="1" on_change="onchange_partner_id_locacao(partner_id, company_id, meses_retorno_locacao_original)" />
+                                    <separator colspan="4" string="Telefones" />
+                                    <field name="partner_fone" colspan="2" on_change="onchange_fone_celular(partner_fone, None)"/>
+                                    <field name="partner_celular" colspan="2" on_change="onchange_fone_celular(None, partner_celular)"/>
+                                    <field name="partner_email" widget="email" colspan="4" />
+                                    <newline/>
+                                    <separator colspan="4" string="Endereço" />
+                                    <field name="partner_endereco" colspan="2" />
+                                    <field name="partner_numero" colspan="2" />
+                                    <field name="partner_complemento" colspan="2" />
+                                    <newline/>
+                                    <field name="partner_bairro" colspan="2" />
+                                    <newline/>
+                                    <field name="partner_municipio_id" colspan="2" />
+                                    <newline/>
+                                    <field name="partner_cep" colspan="1" on_change="onchange_cep(partner_cep)" />
+                                </group>
+<!--                                 <group colspan="2" col="2" string="Receita esperada"> -->
+                                <group colspan="2" col="2">
+                                    <separator string="Receita esperada" colspan="2" />
+                                    <field name="receita_esperada" />
+                                    <field name="data_fechamento_esperada" />
+                                    <field name="porcentagem_fechamento" />
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Produtos" attrs="{'invisible': True}">
+                            <field name="item_produto_ids" colspan="4" nolabel="1"
+                                   context="{'form_view_ref' : 'seguranca.sale_order_line_produto_form', 'tree_view_ref' : 'seguranca.sale_order_line_produto_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'P'}" />
+                        </page>
+                        <page string="Serviços" attrs="{'invisible': True}">
+                            <field name="item_servico_ids" colspan="4" nolabel="1"
+                                   context="{'form_view_ref' : 'seguranca.sale_order_line_servico_form', 'tree_view_ref' : 'seguranca.sale_order_line_servico_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'S'}" />
+                        </page>
+                        <page string="Mensalidades" attrs="{'invisible': True}">
+                            <field name="item_mensalidade_ids" colspan="4" nolabel="1"
+                                   context="{'form_view_ref' : 'seguranca.sale_order_line_mensalidade_form', 'tree_view_ref' : 'seguranca.sale_order_line_mensalidade_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'M'}" />
+                        </page>
+                        <page string="Fechamento" attrs="{'invisible': True}">
+                            <group colspan="2" col="2">
+                                <field name="finan_formapagamento_id" />
+                                <field name="payment_term" domain="['|', ('formapagamento_id', '=', False), ('formapagamento_id', '=', finan_formapagamento_id)]" on_change="onchange_payment_term(payment_term, amount_total)" />
+                                <field name="simulacao_parcelas_ids" nolabel="1" colspan="2">
+                                    <tree>
+                                        <field name="numero" />
+                                        <field name="data" />
+                                        <field name="valor" />
+                                    </tree>
+                                </field>
+                                <field name="dias_validade" colspan="2" on_change="onchange_dias_validade(dias_validade, date_order)" groups="base.group_sale_manager" />
+                                <field name="dt_validade"  readonly="1" colspan="2" />
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="operacao_fiscal_produto_id" domain="[('emissao', '=', '0'), ('modelo', 'in', ('55', '2D'))]"/>
+                                <field name="operacao_fiscal_servico_id" domain="[('modelo', '=', 'SE'), ('emissao', '=', '0')]"/>
+                                <field name="modalidade_frete" />
+                                <field name="transportadora_id" />
+                            </group>
+                            <field name="partner_order_id" colspan="4" required="1" domain="[('partner_id', '=', partner_id)]" />
+                            <field name="partner_invoice_id" colspan="4" required="1" domain="[('partner_id', '=', partner_id)]" />
+                            <field name="partner_shipping_id" colspan="4" required="1" domain="[('partner_id', '=', partner_id)]" />
+                        </page>
+                        <page string="Histórico CRM">
+                            <field name="etapa_historico_ids" readonly="1" colspan="4" nolabel="1">
+                                <tree>
+                                    <field name="etapa_id" />
+                                    <field name="data_ultima_etapa" />
+                                    <field name="data_proxima_etapa" />
+                                    <field name="tempo_etapa" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Comunicação e histórico">
+                            <separator string="Emails trocados e anotações" colspan="4" />
+                            <field name="mail_message_ids" colspan="4" nolabel="1" mode="tree" readonly="1">
+                                <tree string="Histórico">
+                                    <field name="date" string="Data" />
+                                    <field name="display_text" string="Texto"/>
+                                    <field name="email_to" invisible="1"/>
+                                    <field name="email_from" invisible="1"/>
+                                    <button
+                                        string="Reply" attrs="{'invisible': [('email_from', '=', False)]}"
+                                        name="%(mail.action_email_compose_message_wizard)d"
+                                        context="{'mail.compose.message.mode':'reply', 'message_id':active_id}"
+                                        icon="terp-mail-replied" type="action" />
+                                </tree>
+                            </field>
+                            <button string="Incluir anotação"
+                                    name="incluir_anotacao"
+                                    type="object"
+                                    icon="terp-document-new" />
+                            <button string="Enviar e-mail"
+                                    name="%(mail.action_email_compose_message_wizard)d"
+                                    icon="terp-mail-message-new" type="action"/>
+                            <newline/>
+                            <field name="partner_fone" invisible="1" />
+                            <field name="partner_celular" invisible="1" />
+                            <separator string="Ligações telefônicas" colspan="4" />
+                            <field name="crm_phonecall_ids" colspan="4" nolabel="1" mode="tree" context="{'default_partner_id': partner_id, 'default_phone': partner_fone, 'default_mobile': partner_celular}">
+                                <tree colors="gray:state in ('cancel','done');blue:state in ('pending',)" string="Phone Calls">
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="partner_contact"/>
+                                    <field name="partner_phone"/>
+                                    <field name="user_id"/>
+                                    <field name="categ_id" invisible="1"/>
+                                    <field name="create_date" invisible="1"/>
+                                    <field name="opportunity_id" invisible="1"/>
+                                    <button string="Meeting"
+                                            states="open,pending" icon="gtk-redo"
+                                            name="action_make_meeting" type="object" />
+                                    <field name="state"/>
+                                    <button name="case_cancel" string="Cancel" states="open,pending" type="object" icon="gtk-cancel"/>
+                                    <button name="case_open" string="Todo" states="pending" type="object" icon="gtk-go-forward"/>
+                                    <button name="case_close" string="Held" states="open,pending" type="object" icon="gtk-jump-to"/>
+                                    <button name="case_pending" string="Not Held" states="open" type="object" icon="gtk-media-pause"/>
+                                </tree>
+                                <form string="Phone Call">
+                                    <group colspan="6" col="7">
+                                        <field name="name" required="1"/>
+                                        <field name="partner_phone"/>
+                                        <field name="duration" widget="float_time"/>
+                                        <button string="Schedule a Meeting" name="action_make_meeting" icon="gtk-redo" type="object"/>
+
+                                        <field name="date"/>
+                                        <field name="user_id"/>
+                                        <field name="section_id" colspan="1" widget="selection" />
+                                        <button string="Schedule Other Call"
+                                                icon="terp-call-start"
+                                                name="%(crm.phonecall_to_phonecall_act)d"
+                                                type="action"  />
+                                    </group>
+
+                                    <group col="3" colspan="2">
+                                        <separator colspan="3" string="Contacts" />
+                                        <field name="partner_id"
+                                                on_change="onchange_partner_id(partner_id)" />
+                                        <button string="Create a Partner"
+                                                icon="terp-partner"
+                                                name="%(crm.action_crm_phonecall2partner)d"
+                                                type="action"
+                                                attrs="{'invisible':[('partner_id','!=',False)]}"
+                                                groups="base.group_partner_manager"/>
+                                        <newline/>
+                                        <field name="partner_address_id"
+                                                on_change="onchange_partner_address_id(partner_address_id)" />
+                                        <newline/>
+                                        <field name="partner_mobile" />
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <separator colspan="2" string="Categorization" />
+                                        <field name="categ_id" widget="selection"
+                                                domain="[('object_id.model', '=', 'crm.phonecall')]"/>
+                                        <field name="priority"/>
+                                        <field name="sale_order_id"/>
+                                    </group>
+                                    <separator string="Description" colspan="4" />
+                                    <field name="description" nolabel="1" colspan="4" />
+                                    <separator colspan="4" />
+                                    <group col="8" colspan="4">
+                                        <field name="state" widget="statusbar" statusbar_visible="open,done" statusbar_colors='{"pending":"red"}' select="1"/>
+                                        <button name="case_cancel" string="Cancel"
+                                                states="open,pending" type="object"
+                                                icon="gtk-cancel" />
+                                        <button name="case_open" string="Todo"
+                                                states="pending" type="object"
+                                                icon="gtk-go-forward" />
+                                        <button name="case_pending" string="Not Held"
+                                                states="open" type="object" icon="gtk-media-pause" />
+                                        <button name="case_close" string="Held"
+                                                states="open,pending" type="object"
+                                                icon="gtk-jump-to" />
+                                        <button name="case_reset" string="Reset to Todo"
+                                                states="cancel" type="object"
+                                                icon="gtk-convert" />
+                                    </group>
+                                </form>
+                            </field>
+                            <newline/>
+                            <button string="Agendar/Registrar Ligação"
+                                    name="%(integra_sale.saleorder2phonecall_act)d" icon="terp-call-start"
+                                    type="action"/>
+                        </page>
+                    </notebook>
+                    <separator string="Observações" colspan="4" />
+                    <field name="note" nolabel="1" />
+                </form>
+            </field>
+        </record>
+
+         <record id="sale_order_seguranca_prospecto_search" model="ir.ui.view">
+            <field name="name">sale.order.seguranca.prospecto.search</field>
+            <field name="model">sale.order</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Prospectos">
+                    <field name="name" string="Código" />
+                    <field name="partner_id" />
+                    <field name="user_id" />
+                    <field name="pricelist_id" invisible="1" />
+                    <newline />
+                    <field name="date_order_from" string="De data" filter_domain="[('date_order','&gt;=',self)]" widget="calendar" />
+                    <field name="date_order_to" string="a data" filter_domain="[('date_order','&lt;=',self)]" widget="calendar" />
+
+                    <newline />
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Cliente" icon="terp-project" domain="[]" context="{'group_by': 'partner_id'}" />
+                        <filter string="Vendedor" icon="terp-project" domain="[]" context="{'group_by': 'user_id'}" />
+                        <filter string="Etapa" icon="terp-project" domain="[]" context="{'group_by': 'etapa_id'}" />
+                        <filter string="Data de fechamento" icon="terp-calendar" domain="[]" context="{'group_by': 'data_fechamento_esperada'}" />
+<!--
+                        <separator orientation="vertical" />
+                        <filter string="Data de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'data_vencimento'}" />
+                        <filter string="Mês de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'ano_mes_vencimento'}" />
+                        <filter string="Ano de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'ano_vencimento'}" />-->
+                    </group>
+
+                </search>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="sale_order_seguranca_prospecto_kanban">
+            <field name="name">sale.order.seguranca.prospecto.kanban</field>
+            <field name="model">sale.order</field>
+            <field name="type">kanban</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="etapa_prospecto_id">
+<!--                    <field name="state"/>
+                    <field name="color"/>
+                    <field name="priority"/>-->
+                    <field name="receita_esperada" sum="Receita esperada"/>
+                    <field name="user_id"/>
+                    <field name="partner_email"/>
+                    <field name="partner_fone"/>
+                    <field name="partner_celular"/>
+                    <field name="partner_id"/>
+                    <field name="cor_kanban"/>
+                    <field name="data_fechamento_esperada"/>
+                    <field name="name"/>
+                    <templates>
+<!--                        <t t-name="lead_details">
+                            <ul class="oe_kanban_tooltip">
+                                <li t-if="record.phone.raw_value"><b>Phone:</b> <field name="phone"/></li>
+                                <li><b>Probability:</b> <field name="probability"/>%%</li>
+                                <li><b>Creation date:</b> <field name="create_date"/></li>
+                                <li t-if="record.date_deadline.raw_value"><b>Date Deadline:</b> <field name="date_deadline"/></li>
+                            </ul>
+                        </t>-->
+                        <t t-name="kanban-box">
+                            <t t-if="record.data_fechamento_esperada.raw_value and record.data_fechamento_esperada.raw_value lt (new Date())" t-set="border">oe_kanban_color_red</t>
+                            <div t-attf-class="#{kanban_color(record.cor_kanban.raw_value)} #{border || ''}">
+                                <div class="oe_kanban_box oe_kanban_color_border">
+                                    <table class="oe_kanban_table oe_kanban_box_header oe_kanban_color_bgdark oe_kanban_color_border oe_kanban_draghandle">
+                                        <tr>
+<!--                                            <td align="left" valign="middle" width="16">
+                                                <a t-if="record.priority.raw_value == 1" icon="star-on" type="object" name="set_normal_priority"/>
+                                                <a t-if="record.priority.raw_value != 1" icon="star-off" type="object" name="set_high_priority" style="opacity:0.6; filter:alpha(opacity=60);"/>
+                                            </td>-->
+<!--                                             <td align="left" valign="middle" class="oe_kanban_title" tooltip="lead_details"> -->
+                                            <td align="left" valign="middle" class="oe_kanban_title">
+                                                <t t-if="record.receita_esperada.raw_value">
+                                                    R$ <t t-esc="record.receita_esperada.value"/>
+                                                </t>
+                                            </td>
+<!--                                             <td align="right" valign="middle" class="oe_kanban_title" tooltip="lead_details"> -->
+                                            <td align="right" valign="middle" class="oe_kanban_title">
+                                                <t t-if="record.data_fechamento_esperada.raw_value">
+                                                    Fechamento em: <t t-esc="record.data_fechamento_esperada.value"/>
+                                                </t>
+                                            </td>
+<!--                                            <td valign="top" width="22">
+                                                <img t-att-src="kanban_gravatar(record.partner_email.value, 22)" class="oe_kanban_gravatar" t-att-title="record.user_id.value"/>
+                                            </td>-->
+                                        </tr>
+                                        <tr>
+                                            <td align="left" valign="middle" class="oe_kanban_title" tooltip="lead_details" colspan="2">
+                                                <field name="partner_id"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                   <div class="oe_kanban_box_content oe_kanban_color_bglight oe_kanban_box_show_onclick_trigger">
+                                        <div>
+                                            <t t-if="record.partner_fone.raw_value">
+                                                Fone: <field name="partner_fone" />
+                                            </t>
+                                        </div>
+                                        <div>
+                                            <t t-if="record.partner_celular.raw_value">
+                                                Celular: <field name="partner_celular" />
+                                            </t>
+                                        </div>
+                                        <div>
+                                            <t t-if="record.partner_email.raw_value">
+                                                Email: <field name="partner_email" />
+                                            </t>
+                                        </div>
+<!--
+
+                                            <b>
+                                                <a t-if="record.partner_email.raw_value" t-attf-href="mailto:#{record.partner_email.raw_value}">
+                                                    <field name="partner_address_name"/>
+                                                </a>
+                                                <field t-if="!record.partner_address_email.raw_value" name="partner_address_name"/>
+                                            </b>-->
+                                        <div>
+                                            Código: <field name="name"/>
+                                        </div>
+<!--                                        <div style="padding-left: 0.5em">
+                                            <i><field name="date_action"/><t t-if="record.date_action.raw_value"> : </t><field name="title_action"/></i>
+                                        </div>-->
+                                    </div>
+
+                                    <div class="oe_kanban_buttons_set oe_kanban_color_border oe_kanban_color_bglight oe_kanban_box_show_onclick">
+                                        <div class="oe_kanban_left">
+                                            <a string="Editar" icon="gtk-edit" type="edit"/>
+                                            <a string="Mudar cor" icon="color-picker" type="color" name="cor_kanban"/>
+                                            <a string="Novo email" name="%(mail.action_email_compose_message_wizard)d" icon="terp-mail-message-new" type="action"/>
+                                            <a string="Registrar ligação" name="%(integra_sale.saleorder2phonecall_act)d" icon="terp-call-start" type="action"/>
+<!--                                             <a string="Agendar reunião" name="action_makeMeeting" type="object" icon="stock_calendar"/> -->
+                                            <a string="Incluir anotação" icon="terp-document-new" type="object" name="incluir_anotacao" />
+                                        </div>
+<!--                                        <div class="oe_kanban_right">
+                                            <a name="case_mark_lost" string="Mark Lost" states="open,pending" type="object" icon="kanban-stop" />
+                                            <a name="case_pending" string="Pending" states="draft,open" type="object" icon="kanban-pause" />
+                                            <a name="case_open" string="Open" states="pending" type="object" icon="gtk-media-play" />
+                                            <a name="case_mark_won" string="Mark Won" states="open,pending" type="object" icon="kanban-apply" />
+                                        </div>-->
+                                        <br class="oe_kanban_clear"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_order_seguranca_prospecto_graph">
+            <field name="name">sale_order_seguranca_prospecto_graph</field>
+            <field name="model">sale.order</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="Prospectos por vendedor" type="bar" orientation="vertical">
+                    <field name="etapa_prospecto_id"/>
+                    <field name="receita_esperada" operator="+"/>
+                    <field name="user_id" group="True"/>
+                </graph>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="sale_order_seguranca_prospecto_acao">
+            <field name="name">Prospectos</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('etapa_id.tipo', '=', 'P')]</field>
+            <field name="context">{'default_etapa_id': 1, 'default_etapa_id_readonly': 1, 'default_proxima_etapa_id': 2}</field>
+            <field name="view_id" ref="sale_order_seguranca_prospecto_tree" />
+            <field name="search_view_id" ref="sale_order_seguranca_prospecto_search"/>
+            <field name="view_mode">tree,form,kanban,graph</field>
+        </record>
+
+        <menuitem
+            action="sale_order_seguranca_prospecto_acao"
+            id="menu_sale_order_seguranca_prospecto"
+            name="Prospectos"
+            parent="base.menu_sales"
+            sequence="1" />
+
+        <record model="ir.actions.act_window.view" id="sale_order_seguranca_prospecto_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_order_seguranca_prospecto_form"/>
+            <field name="act_window_id" ref="sale_order_seguranca_prospecto_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sale_order_seguranca_prospecto_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sale_order_seguranca_prospecto_tree"/>
+            <field name="act_window_id" ref="sale_order_seguranca_prospecto_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sale_order_seguranca_prospecto_kanban_acao">
+            <field eval="3" name="sequence"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="sale_order_seguranca_prospecto_kanban"/>
+            <field name="act_window_id" ref="sale_order_seguranca_prospecto_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sale_order_seguranca_prospecto_graph_acao">
+            <field eval="4" name="sequence"/>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="sale_order_seguranca_prospecto_graph"/>
+            <field name="act_window_id" ref="sale_order_seguranca_prospecto_acao"/>
+        </record>
+
+    </data>
+</openerp>

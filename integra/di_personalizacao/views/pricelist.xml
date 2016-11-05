@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="product_pricelist_view" model="ir.ui.view">
+            <field name="name">product.pricelist.form</field>
+            <field name="model">product.pricelist</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_pricelist_view"/>
+            <field name="arch" type="xml">
+                <field name="type" position="after">
+                    <field name="fob" colspan="2"/>
+                </field>
+                <field name="company_id" position="after">
+                    <field name="fornecedor_id" colspan="2"/>
+                </field>
+                <field name="version_id" position="after">
+                    <notebook colspan="4">
+                        <page string="Proposta">
+                            <group colspan="4">
+                                <separator string="Campos da Proposta" colspan="4"/>
+                                <field name="proposta_sigla" colspan="2"/>
+                                <field name="proposta_sufixo" colspan="2"/>
+                                <field name="referencia_proposta" colspan="4"/>
+                                <field name="titulo_acessorios_opc" colspan="4"/>
+                                <field name="titulo_condicao_venda" colspan="4"/>
+                                <field name="validade_proposta" colspan="2"/>
+                                <field name="proposta_frete" colspan="2"/>
+                                <field name="print_princial" colspan="2"/>
+                                <field name="abertura_proposta" colspan="4"/>
+                                <field name="condicoes_proposta" colspan="4"/>
+                                <field name="proposta_rodape" colspan="4"/>
+                                <field name="proposta_empresa_rodape" colspan="4"/>
+                            </group>
+                        </page>
+                        <page string="Modelo de Impressão">                              
+                            <field name="modelo" colspan="2" />                                                                                          
+                            <field name="imagem_pedido" widget="image" colspan="2"/>                                              
+                        </page>
+                        <page string="Imagem Cabeçalho">
+                            <field name="imagem_cabecalho" nolabel="1" widget="image" colspan="4"/>
+                        </page>
+                        <page string="Imagem Ilustrativa">
+                            <field name="foto_ilustrativa" nolabel="1" widget="image" colspan="4"/>
+                        </page>
+                        <page string="Imagem Rodapé">
+                            <field name="imagem_rodape" nolabel="1" widget="image" colspan="4"/>
+                        </page>
+                    </notebook>
+                </field>
+            </field>
+        </record>
+
+        <record id="product_pricelist_item_tree_view" model="ir.ui.view">
+            <field name="name">product.pricelist.item.tree</field>
+            <field name="model">product.pricelist.item</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="product.product_pricelist_item_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="base" position="after">
+                    <field name="price_surcharge"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

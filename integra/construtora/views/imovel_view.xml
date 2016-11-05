@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!--        <menuitem id="menu_construtora"
+            name="Construtora"
+            />-->
+<!--           web_icon="images/finance_grey.png"
+            web_icon_hover="images/finance.png" />-->
+
+        <menuitem id="menu_imoveis"
+            name="Imóveis"
+            parent="base.menu_base_partner"
+            sequence="1"/>
+<!--             groups="group_finan_manager,group_finan_staff" -->
+
+        <menuitem id="menu_imoveis_config"
+            name="Imóveis"
+            parent="base.menu_base_config"
+            sequence="20"/>
+
+    </data>
+</openerp>

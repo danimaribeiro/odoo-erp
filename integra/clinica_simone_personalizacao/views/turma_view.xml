@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="cadastro_turma_search">
+            <field name="name">cadastro.turma.search</field>
+            <field name="model">turma</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Cadastro de Turma">                                  
+                    <field name="company_id" />                    
+                    <field name="nome" />                    
+                    <field name="professor_id" />                    
+                    <field name="dia_semana" />
+                    <field name="hora_final" />                    
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="cadastro_turma_tree">
+            <field name="name">cadastro.turma.tree</field>
+            <field name="model">turma</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                 <tree>                                                                         
+                    <field name="nome" />                    
+                    <field name="professor_id" />                    
+                    <field name="dia_semana" />
+                    <field name="hora_final" />                                                            
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="cadastro_turma_form">
+            <field name="name">cadastro.turma.form</field>
+            <field name="model">turma</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Cadastro de Turma">
+                    <separator string="Parâmetros" colspan="4"/>                    
+                    <field name="company_id" required="1" colspan="4" domain="[('cnpj_cpf', '!=', False)]" />
+                    <field name="nome" colspan="4" required="1"/>
+                    <field name="dia_semana" colspan="2" required="1"/>
+                    <field name="professor_id" colspan="2" required="1"/>
+                    <newline/>                                            
+                    <field name="hora_inicial" required="1" widget='float_time'/>
+                    <field name="hora_final" required="1" widget='float_time'/>
+                    <newline/>                                        
+                    <field name="produtos_ids" nolabel="1" colspan="4" >
+                        <tree>
+                            <field name="default_code"/>
+                            <field name="name"/>
+                            <field name="list_price"/>                                                           
+                        </tree>                                                                     
+                    </field>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="cadastro_turma_acao">
+            <field name="name">Cadastro de Turma</field>            
+            <field name="res_model">turma</field>            
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="cadastro_turma_tree" />
+        </record>
+
+        <menuitem id="ecd_menu_turma"
+            action="cadastro_turma_acao" 
+            name="Turmas"
+            parent="menu_finan_academia"
+            sequence="01" />
+                   
+    </data>
+</openerp>

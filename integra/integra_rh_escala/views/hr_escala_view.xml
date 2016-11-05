@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view"  id="hr_escala_form">
+            <field name="name">hr.escala.form</field>
+            <field name="model">hr.escala</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Escala de trabalho">
+                    <separator string="Informações básicas" colspan="6" />
+                    <field name="mes" required="1" on_change="onchange_ano_mes(ano, mes)" colspan="2"/>
+                    <field name="ano" required="1" on_change="onchange_ano_mes(ano, mes)" colspan="2"/>
+                    <newline />
+                    <field name="data_inicial" invisible="1" colspan="2" />
+                    <field name="data_final" invisible="1" colspan="2" />
+                    <newline/>
+                    <field name="contract_id" colspan="4" />
+                    <field name="primeiro_dia_trabalho" />
+                    <button string="Preencher" type="object" name="monta_escala" />
+
+                    <newline />
+                    <separator string="Programação" colspan="4" />
+                    <field name="item_ids" nolabel="1" colspan="4">
+                        <tree colors="blue:situacao == 'D';black:situacao == 'T';red:situacao == 'F';orange:situacao == 'A'" editable="bottom">
+                            <field name="data" />
+                            <field name="jornada_id" />
+                            <field name="lotacao_id" />
+                            <field name="situacao" />
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_escala_tree">
+            <field name="name">hr.escala.tree</field>
+            <field name="model">hr.escala</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Escala de trabalho">
+                    <field name="contract_id" />
+                    <field name="mes" />
+                    <field name="ano" />
+                </tree>
+            </field>
+        </record>
+
+<!--        <record id="view_escala_filter" model="ir.ui.view">
+            <field name="name">Job</field>
+            <field name="model">hr.escala</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Jobs">
+                    <filter icon="terp-camera_test"
+                            domain="[('state','=','open')]"
+                            string="In Position"
+                            help="In Position"/>
+                    <filter icon="terp-personal+"  domain="[('state','=','recruit')]" string="In Recruitment"
+                        help="In Recruitment"/>
+                    <separator orientation="vertical"/>
+                    <field name="name"/>
+                    <field name="department_id" widget="selection">
+                      <filter icon="terp-personal+" domain="[('department_id', '=', context.get('department_id', False))]" help="My Departments Jobs"/>
+                    </field>
+                    <newline />
+                    <group expand="0" string="Group By...">
+                    <filter string="Department" icon="terp-personal+" domain="[]" context="{'group_by':'department_id'}"/>
+                    <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                    <filter string="Company" icon="terp-go-home" domain="[]" context="{'group_by':'company_id'}"  groups="base.group_multi_company"/>
+                    </group>
+                </search>
+             </field>
+         </record>-->
+
+        <record model="ir.actions.act_window" id="hr_escala_acao">
+            <field name="name">Escalas por Mês</field>
+            <field name="res_model">hr.escala</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="hr_escala_tree" />
+        </record>
+
+        <menuitem action="hr_escala_acao"
+            id="menu_escala"
+            name="Escalas por Mês"
+            parent="menu_hr_escala_controle" />
+
+    </data>
+</openerp>
+

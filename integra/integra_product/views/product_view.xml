@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="product_search_form_view_inherit">
+            <field name="name">product.search.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_search_form_view"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <field name="name" position="replace">
+                    <field name="name" string="Nome"
+                        filter_domain="['|', ('name','ilike',self), ('default_code','ilike',self)]" />
+                    <field name="variants" string="Marca"
+                        filter_domain="[('variants','ilike',self)]" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_normal_form_view_inherit">
+            <field name="name">product.normal.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="type">form</field>
+            <field eval="17" name="priority"/>
+            <field name="arch" type="xml">
+                <field name="type" position="replace">
+                    <field name="type" on_change="on_change_type(type)" />
+                </field>
+                <field name="default_code" position="replace">
+                    <field name="default_code" string="Código"/>
+                </field>
+                <field name="ean13" position="replace">
+                    <field name="ean13" string="Código de Barras"/>
+                    <field name="currency_id" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,14 @@
+syntax:glob
+build
+dist
+.idea/*
+.coverage
+nosetests.xml
+coverage.xml
+htmlcov/*
+*.egg-info
+.tox/*
+**/*.pyc
+**/*.pyo
+**/*.swp
+

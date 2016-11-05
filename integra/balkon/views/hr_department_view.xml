@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_department_form" >
+            <field name="name">hr.department.form</field>
+            <field name="model">hr.department</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="NAL">
+                    <field name="name" colspan="4" string="Nome do NAL" />
+                    <field name="parent_id" colspan="4" string="NAL superior" />
+<!--                        <field name="manager_id" select="1"/>
+                        <field name="company_id" select="1" widget="selection" groups="base.group_multi_company"/>-->
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_department_tree">
+            <field name="name">hr.department.tree</field>
+            <field name="model">hr.department</field>
+            <field name="type">tree</field>
+            <field name="field_parent">child_ids</field>
+            <field name="arch" type="xml">
+                <tree string="NAL">
+                    <field name="complete_name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_department_search" >
+            <field name="name">NAL</field>
+            <field name="model">hr.department</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="NALs">
+                    <field name="name" string="Nome do NAL" />
+                </search>
+             </field>
+         </record>
+
+        <record model="ir.actions.act_window" id="hr_department_acao" >
+            <field name="name">NAL</field>
+            <field name="res_model">hr.department</field>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="hr_department_search"/>
+        </record>
+
+       <menuitem
+           id="menu_hr_department"
+           action="hr_department_acao"
+           parent="base.menu_base_config"
+           sequence="6" />
+
+    </data>
+</openerp>

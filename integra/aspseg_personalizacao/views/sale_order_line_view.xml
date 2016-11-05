@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_order_line_tree" >
+            <field name="name">sale_order_line_tree</field>
+            <field name="model">sale.order.line</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="sped_sale.sale_order_line_tree"/>
+            <field name="arch" type="xml">
+                <field name="product_uom_qty" position="before">
+                    <field name="virtual_available" readonly="1"/>
+<!--                     <field name="qtd_ambulante" readonly="1"/> -->
+<!--                     <field name="qtd_comprada" readonly="1"/> -->
+                </field>
+                <field name="price_unit" position="replace">
+                    <field name="price_unit" groups="base.group_sale_manager"/>
+                </field>
+                <field name="price_subtotal" position="replace">
+                    <field name="price_subtotal" sum="Total" groups="base.group_sale_manager"/>
+                </field>
+                <field name="vr_total_venda_impostos" position="after">
+                    <field name="vr_icms_st" readonly="1" sum="ICMS ST" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_order_line_form">
+            <field name="name">sale_order_line_form</field>
+            <field name="model">sale.order.line</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped_sale.sale_order_line_form"/>
+            <field name="arch" type="xml">
+                <field name="product_uom_qty" position="before">
+                    <newline />
+                    <group colspan="2" col="4">
+                        <field name="virtual_available" readonly="1"/>
+                        <field name="qtd_ambulante" readonly="1"/>
+                    </group>
+                    <newline />
+                </field>
+                <field name="state" position="replace" />
+                <field name="discount" position="after">
+                    <newline />
+                    <group colspan="4" col="4">
+                        <field name="state"  readonly="0" colspan="2"/>
+                        <field name="motivo_cancelamento_id" colspan="2" />
+                    </group>
+                    <newline />
+                </field>
+                <field name="price_unit" position="replace">
+                    <field name="price_unit" invisible="1" />
+                    <group colspan="2" col="4">
+                        <field name="vr_unitario_venda_impostos" />
+                        <field name="valor_divergente" />
+                    </group>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_sale_order_line_tree" >
+        <field name="name">sped_sale_order_line_tree</field>
+        <field name="model">sale.order.line</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="sped_sale.sale_order_line_tree"/>
+        <field name="arch" type="xml">
+            <field name="vr_unitario_venda_impostos" position="after">
+                <field name="vr_desconto" />
+            </field>
+            <field name="falha_configuracao" position="before">
+                <field name="state" colspan="2"/>
+                <field name="motivo_cancelamento_id" colspan="2" />
+            </field>
+        </field>
+    </record>
+
+   </data>
+</openerp>

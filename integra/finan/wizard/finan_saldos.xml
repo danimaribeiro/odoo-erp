@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_saldo_bancario_hoje_tree" >
+            <field name="name">finan.saldo.bancario.hoje.tree</field>
+            <field name="model">finan.saldo_bancario_hoje</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Saldos bancários no momento">
+                    <field name="company_id" readonly="1" />
+                    <field name="tipo" readonly="1" />
+                    <field name="res_partner_bank_id" readonly="1" invisible="1" />
+                    <field name="nome" readonly="1" />
+                    <field name="agencia" readonly="1" />
+                    <field name="conta" readonly="1" />
+                    <field name="saldo_anterior" readonly="1" sum="Saldo anterior" />
+                    <field name="credito" readonly="1" sum="Crédito" />
+                    <field name="debito" readonly="1" sum="Débito" />
+                    <field name="saldo" readonly="1" sum="Saldo" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_saldo_bancario_hoje_search">
+            <field name="name">finan.saldo.bancario.hoje.search</field>
+            <field name="model">finan.saldo_bancario_hoje</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Contas financeiras">
+                    <filter name="com_saldo" string="Com saldo" icon="terp-check" domain="[('saldo','!=',0)]" />
+                    <field name="tipo" />
+                    <field name="company_id" />
+                    <newline />
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Tipo" icon="terp-project" domain="[]" context="{'group_by': 'tipo'}" />
+                        <filter string="Conta" icon="terp-project" domain="[]" context="{'group_by': 'res_partner_bank_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_saldo_bancario_hoje_acao">
+            <field name="name">Posição de saldos bancários</field>
+            <field name="res_model">finan.saldo_bancario_hoje</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_com_saldo':True}</field>
+            <field name="view_id" ref="finan_saldo_bancario_hoje_tree" />
+            <field name="search_view_id" ref="finan_saldo_bancario_hoje_search" />
+        </record>
+
+        <menuitem action="finan_saldo_bancario_hoje_acao"
+            id="menu_finan_saldo_bancario_hoje" name="Posição de saldos bancários" parent="menu_finan_tesouraria" />
+
+        <act_window id="action_saldo_bancario_hoje" name="Saldo bancário hoje" res_model="finan.saldo_bancario_hoje" src_model="finan.lancamento" view_mode="search" target="new" view_type="tree" />
+
+    </data>
+</openerp>

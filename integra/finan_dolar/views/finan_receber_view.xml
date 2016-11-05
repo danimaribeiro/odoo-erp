@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_receber_form">
+            <field name="name">finan.receber.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_receber_form"/>
+            <field name="arch" type="xml">
+                <field name="valor_documento" position="before">
+                    <field name="currency_id" on_change="onchange_valor_documento_moeda(currency_id, valor_documento_moeda, data_documento)" />
+                    <field name="valor_documento_moeda" on_change="onchange_valor_documento_moeda(currency_id, valor_documento_moeda, data_documento)" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_tree">
+            <field name="name">finan.receber.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="valor_documento" position="before">
+                    <field name="currency_id" />
+                    <field name="valor_documento_moeda" sum="Valor moeda" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_search">
+            <field name="name">finan.receber.search</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_search"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@string='Motivo da baixa']" position="after">
+                    <filter string="Moeda" icon="terp-project" domain="[]" context="{'group_by': 'moeda_id'}" />
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

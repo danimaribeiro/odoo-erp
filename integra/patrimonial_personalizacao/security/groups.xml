@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <record id="group_finan_liberacao_credito" model="res.groups">
+            <field name="name">Patrimonial / Liberação de Crédito</field>
+        </record>
+
+        <record id="group_finan_bloqueia_contas" model="res.groups">
+            <field name="name">Patrimonial / Contas financeiras bloqueadas por departamento</field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="hr_salary_rule_valor_tree">
+            <field name="name">hr.salary.rule.valor.tree</field>
+            <field name="model">hr.salary.rule</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml"> 
+                <tree string="Valores dos Beneficios">                    
+                    <field name="name" />
+                    <field name="codigo"/>
+                    <field name="tipo_beneficio"/>
+                    <field name="tipo_beneficio_periodo"/>                
+                    <field name="category_id"/>
+                </tree>               
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_salary_rule_valor_form">
+            <field name="name">hr.salary.rule.valor.form</field>
+            <field name="model">hr.salary.rule</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                 <form string="Valores dos Beneficios" >
+                    <group col="8" colspan="4" >
+                        <group col="2" colspan="4" > 
+                            <field name="name" readonly="1"/>                    
+                            <field name="tipo_beneficio" readonly="1" />
+                            <field name="tipo_beneficio_periodo" readonly="1" />
+                        </group>
+                        <group col="6" colspan="4" >
+                        </group>
+                    </group>                
+                    <separator string="Valores" colspan="4"/> 
+                    <field name="rule_valor_ids" colspan="4" mode="tree" nolabel="1">
+                        <tree editable="top">
+                            <field name="valor" required="1" />
+                            <field name="data_inicial"  required="1"/>
+                            <field name="data_inicial"  />                                                                                                   
+                        </tree>
+                    </field>                                                                                      
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_salary_rule_valor_search">
+            <field name="name">hr.salary.rule.valor.search</field>
+            <field name="model">hr.salary.rule</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Valores dos Beneficios">                    
+                   <filter name="tipo_beneficio" string="Vale Transporte" icon="terp-go-month" domain="[('tipo_beneficio','=','VT')]" />
+                   <filter name="tipo_beneficio" string="Vale Alementação" icon="terp-go-month" domain="[('tipo_beneficio','=','VA')]" />
+                   <filter name="tipo_beneficio" string="Vale Refeição" icon="terp-go-month" domain="[('tipo_beneficio','=','VR')]" />
+                   <filter name="tipo_beneficio_periodo" string="Mensal" icon="terp-go-month" domain="[('tipo_beneficio','=','D')]"/> 
+                   <filter name="tipo_beneficio_periodo" string="Diário" icon="terp-go-month" domain="[('tipo_beneficio','=','M')]"/> 
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_salary_rule_valor_acao">
+            <field name="name">Valores dos Benefícios</field>
+            <field name="res_model">hr.salary.rule</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_salary_rule_valor_tree"/>
+            <field name="view_mode">tree,form</field>   
+            <field name="domain">[('tipo_beneficio','in',('VT','VA','VR'))]</field>         
+            <field name="context">{'search_default_mes': str(mes_passado.month), 'search_default_ano': str(mes_passado.year)}</field>
+        </record>
+
+        <menuitem action="hr_salary_rule_valor_acao" id="menu_hr_salary_rule_valor" name="Valores dos Beneficios" parent="integra_rh.menu_hr_beneficio" sequence="09"/>
+
+        <record model="ir.actions.act_window.view" id="hr_salary_rule_valor_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_salary_rule_valor_acao"/>
+            <field name="view_id" ref="hr_salary_rule_valor_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_salary_rule_valor_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_salary_rule_valor_acao"/>
+            <field name="view_id" ref="hr_salary_rule_valor_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

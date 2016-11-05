@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_contract_alteracao_form" >
+            <field name="name">hr.contract.alteracao.form</field>
+            <field name="model">hr.contract</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_contract_view_form_integra"/>
+            <field name="priority">200</field>
+            <field name="arch" type="xml">
+                <page string="Controle de férias" position="after">
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

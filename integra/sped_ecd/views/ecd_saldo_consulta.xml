@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="ecd_saldo_consulta_search">
+            <field name="name">ecd.saldo.consulta.search</field>
+            <field name="model">ecd.saldo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Partidas" >
+                    <field name="company_id" domain="[('cnpj_cpf', '!=', False)]"  widget="selection"/>                    
+                    <field name="data_from" string="Data de" filter_domain="[('data','&gt;=',self)]" widget="calendar" />
+                    <field name="data_to" string="Data até" filter_domain="[('data','&lt;=',self)]" widget="calendar" />                                      
+                    <field name="conta_id" />                                        
+                    <field name="vr_debito"  />
+                    <field name="vr_credito"  />                    
+                    <newline />                                   
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="CNPJ" icon="terp-project" domain="[]" context="{'group_by': 'cnpj_cpf'}" />                    
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />                                                               
+                        <filter string="Data" icon="terp-project" domain="[]" context="{'group_by': 'data'}" />
+                        <filter string="Conta Contábil" icon="terp-project" domain="[]" context="{'group_by': 'conta_id'}" />                                                                        
+                    </group>
+                </search>                
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ecd_saldo_consulta_tree">
+            <field name="name">ecd.saldo.consulta.tree</field>
+            <field name="model">ecd.saldo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Partidas">
+                    <field name="cnpj_cpf" />
+                    <field name="company_id" />
+                    <field name="data" />
+                    <field name="conta_id"  />                    
+                    <field name="saldo_anterior" />
+                    <field name="vr_debito" />
+                    <field name="vr_credito" />
+                    <field name="saldo" />
+                    <field name="nao_excluir" invisible="1"/>                 
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="ecd_saldo_consulta_acao">
+            <field name="name">Saldo de Contas</field>
+            <field name="res_model">ecd.saldo</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{'nao_excluir': True, 'default_nao_excluir': True, 'conta_simples': True}</field>
+            <field name="search_view_id" ref="ecd_saldo_consulta_search" />
+        </record>
+
+        <record model="ir.actions.act_window.view" id="ecd_saldo_consulta_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="ecd_saldo_consulta_tree"/>
+            <field name="act_window_id" ref="ecd_saldo_consulta_acao"/>
+        </record>
+
+        <menuitem id="menu_saldo_consulta"
+            action="ecd_saldo_consulta_acao" 
+            name="Consulta de Saldo"
+            parent="menu_sped_ecd_config"
+            sequence="3" />
+
+    </data>
+</openerp>

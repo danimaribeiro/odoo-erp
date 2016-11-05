@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="econo_conta_tree">
+            <field name="name">econo.conta.tree</field>
+            <field name="model">econo.conta</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:sintetica;green:resumida">
+                    <field name="codigo_completo" />
+                    <field name="nome" />
+                    <field name="copia_padrao_id" />
+                    <field name="parent_id" invisible="1" />
+                    <field name="sintetica" invisible="1" />
+                    <field name="resumida" invisible="1" />
+                    <field name="campo" invisible="1" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="econo_conta_form">
+            <field name="name">econo.conta.form</field>
+            <field name="model">econo.conta</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Conta Financeira">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="sintetica" />
+                        <newline />
+                        <field name="parent_id" colspan="4" domain="[('sintetica', '=', True)]" on_change="onchange_parent_id(parent_id)" />
+                        <newline />
+                        <field name="codigo_completo" colspan="4" />
+                        <newline />
+                        <field name="nome"  colspan="4"/>
+                        <newline />
+                        <field name="opcoes_caixa" colspan="4" />
+                        <field name="resumida" />
+                        <field name="campo" />
+                        <newline />
+                        <group colspan="4" attrs="{'invisible': [('resumida', '=', True)]}">
+                            <separator string="Filtros de análise" colspan="4" />
+                            <field name="company_ids" colspan="4" />
+                            <field name="conta_ids" colspan="4" domain="[('sintetica', '=', False)]" />
+                            <field name="copia_padrao_id" colspan="4" on_change="onchange_copia_padrao_id(copia_padrao_id, centrocusto_ids, contract_ids, contract_exclui_ids)" domain="[('sintetica', '=', False)]" />
+                            <field name="centrocusto_ids" colspan="4" domain="[('tipo', '=', 'C'), ('sintetico', '=', False)]" />
+                            <field name="contract_ids" colspan="4" />
+                            <field name="contract_exclui_ids" colspan="4" />
+                        </group>
+                        <group colspan="4" attrs="{'invisible': [('resumida', '=', False)]}">
+                            <separator string="Resumo de contas" colspan="4" />
+                            <field name="resumida_soma" colspan="4" />
+                            <field name="resumida_subtrai" colspan="4" />
+                        </group>
+                    </group>
+                    <group col="4" colspan="4">
+                        <separator string="Contas filhas" colspan="4"/>
+                        <field name="contas_filhas_ids" readonly="1" colspan="4" nolabel="1"/>
+                    </group>
+                    <button name="apropria_conta" string="Apropria rateios desta conta" type="object" />
+                    <button name="apropria_todas" string="Apropria rateios de todas as contas" type="object" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="econo_conta_search">
+            <field name="name">econo.conta.search</field>
+            <field name="model">econo.conta</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Contas econômicas">
+                    <filter string="Sintética" domain="[('sintetica', '=', True)]" />
+                    <filter string="Analítica" domain="[('sintetica', '=', False)]" />
+                    <separator orientation="vertical" />
+                    <field name="codigo_completo" select="1" />
+                    <field name="nome_completo" select="1" />
+                    <field name="copia_padrao_id" select="1" />
+                    <newline />
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Conta" icon="terp-project" domain="[]" context="{'group_by': 'parent_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="econo_conta_acao">
+            <field name="name">Contas econômicas</field>
+            <field name="res_model">econo.conta</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="econo_conta_tree" />
+        </record>
+
+        <menuitem action="econo_conta_acao"
+            id="menu_econo_conta" name="Contas econômicas" parent="menu_finan_analise_economica" />
+
+    </data>
+</openerp>

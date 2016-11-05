@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fluxo_caixa_sintetico_lancamento" language="groovy" pageWidth="826" pageHeight="230" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="826" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6fff61ce-1432-40fb-830b-18bbe5149856">
+	<property name="ireport.zoom" value="1.1000000000000034"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="TIPO" class="java.lang.String"/>
+	<parameter name="COMPANY_ID" class="java.lang.Integer"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="SQL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[$P!{SQL}]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="codigo" class="java.lang.String">
+		<fieldDescription><![CDATA[Código no grupo]]></fieldDescription>
+	</field>
+	<field name="descricao" class="java.lang.String">
+		<fieldDescription><![CDATA[Descrição]]></fieldDescription>
+	</field>
+	<field name="titulo_01" class="java.lang.String"/>
+	<field name="titulo_02" class="java.lang.String"/>
+	<field name="titulo_03" class="java.lang.String"/>
+	<field name="titulo_04" class="java.lang.String"/>
+	<field name="titulo_05" class="java.lang.String"/>
+	<field name="titulo_06" class="java.lang.String"/>
+	<field name="titulo_07" class="java.lang.String"/>
+	<field name="titulo_08" class="java.lang.String"/>
+	<field name="titulo_09" class="java.lang.String"/>
+	<field name="titulo_10" class="java.lang.String"/>
+	<field name="titulo_11" class="java.lang.String"/>
+	<field name="titulo_12" class="java.lang.String"/>
+	<field name="quitado_anterior" class="java.math.BigDecimal"/>
+	<field name="quitado_01" class="java.math.BigDecimal"/>
+	<field name="quitado_02" class="java.math.BigDecimal"/>
+	<field name="quitado_03" class="java.math.BigDecimal"/>
+	<field name="quitado_04" class="java.math.BigDecimal"/>
+	<field name="quitado_05" class="java.math.BigDecimal"/>
+	<field name="quitado_06" class="java.math.BigDecimal"/>
+	<field name="quitado_07" class="java.math.BigDecimal"/>
+	<field name="quitado_08" class="java.math.BigDecimal"/>
+	<field name="quitado_09" class="java.math.BigDecimal"/>
+	<field name="quitado_10" class="java.math.BigDecimal"/>
+	<field name="quitado_11" class="java.math.BigDecimal"/>
+	<field name="quitado_12" class="java.math.BigDecimal"/>
+	<field name="quitado_total" class="java.math.BigDecimal"/>
+	<field name="percentual_quitado" class="java.math.BigDecimal"/>
+	<field name="vencido_anterior" class="java.math.BigDecimal"/>
+	<field name="vencido_01" class="java.math.BigDecimal"/>
+	<field name="vencido_02" class="java.math.BigDecimal"/>
+	<field name="vencido_03" class="java.math.BigDecimal"/>
+	<field name="vencido_04" class="java.math.BigDecimal"/>
+	<field name="vencido_05" class="java.math.BigDecimal"/>
+	<field name="vencido_06" class="java.math.BigDecimal"/>
+	<field name="vencido_07" class="java.math.BigDecimal"/>
+	<field name="vencido_08" class="java.math.BigDecimal"/>
+	<field name="vencido_09" class="java.math.BigDecimal"/>
+	<field name="vencido_10" class="java.math.BigDecimal"/>
+	<field name="vencido_11" class="java.math.BigDecimal"/>
+	<field name="vencido_12" class="java.math.BigDecimal"/>
+	<field name="vencido_total" class="java.math.BigDecimal"/>
+	<field name="percentual_vencido" class="java.math.BigDecimal"/>
+	<columnHeader>
+		<band height="12">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="252" y="0" width="40" height="12" uuid="3b6c41ed-bd78-44a1-a53f-c1bbaac419cb"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo_01}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="292" y="0" width="40" height="12" uuid="55df0331-ff9f-40f3-b4dc-99f5a29ef149"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo_02}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="332" y="0" width="40" height="12" uuid="69f13ff1-d279-4ac8-8cfb-e675620e040d"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo_03}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="372" y="0" width="40" height="12" uuid="79b3d8c1-5a27-48df-859d-b1b1bf2801b3"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo_04}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="412" y="0" width="40" height="12" uuid="35a43590-576f-409e-a83b-27609af85594"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo_05}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="452" y="0" width="40" height="12" uuid="fb9a1796-0f0b-4591-a479-9320212f4599"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo_06}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="492" y="0" width="40" height="12" uuid="bee1dcee-6a3d-48f9-b072-d263065243b9"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo_07}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="532" y="0" width="40" height="12" uuid="3b309c96-3cde-47e2-88d3-366f308d5ba5"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo_08}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="572" y="0" width="40" height="12" uuid="8fa78d64-9e6f-4906-823f-367ee5d28697"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo_09}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="612" y="0" width="40" height="12" uuid="08c4b64e-2473-4bc9-81a1-fdd0c299b064"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo_10}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="652" y="0" width="40" height="12" uuid="5ec59fdf-cac5-4515-94db-028ae58a87e6"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo_11}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="692" y="0" width="40" height="12" uuid="4544d9e1-2f84-4f1f-9b25-4cdea2eb6a4d"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo_12}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="779" y="0" width="47" height="12" uuid="bed015e0-6cfe-4600-82de-4e52f54780ee"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Percentual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="732" y="0" width="47" height="12" uuid="303e95c0-77d2-42e0-82a4-5aca31844338"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Periodo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="51" height="12" uuid="9c4adfd3-f42c-4235-b848-69c74ee89ac4"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="51" y="0" width="201" height="12" uuid="cecd0e35-3dc9-4cb8-8e34-68819ef474c9"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Conta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="201" y="0" width="51" height="12" uuid="e883e7c0-6221-4c13-90ea-9445840506cd"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo inicial]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="0" width="826" height="12" forecolor="#000000" backcolor="#EBEBE6" uuid="c13f8ea8-14d3-4b0c-ad20-41e62ba0b16f">
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="51" y="0" width="201" height="12" uuid="b7ebded6-685c-42f8-8467-cd7a6e231bbe"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="51" height="12" uuid="a5982b58-b0d1-4972-9d3f-899c21774bcd"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="201" y="0" width="51" height="12" uuid="c81996fb-755d-4f26-9382-4dfa9fa88bc8">
+					<printWhenExpression><![CDATA[$F{id} == 4000000]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="252" y="0" width="40" height="12" uuid="2b8ee74f-1872-4f80-b301-e0c92752b854"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{quitado_01}
+: $P{TIPO} == "V"?
+$F{vencido_01}
+:
+$F{quitado_01} + $F{vencido_01} - $F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="292" y="0" width="40" height="12" uuid="1726123d-173d-4444-a1e8-bc823a34e9e2"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{quitado_02}
+: $P{TIPO} == "V"?
+$F{vencido_02}
+:
+$F{quitado_02} + $F{vencido_02} - $F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="332" y="0" width="40" height="12" uuid="d0722925-f9e5-4fe4-9ea2-c94005582a62"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{quitado_03}
+: $P{TIPO} == "V"?
+$F{vencido_03}
+:
+$F{quitado_03} + $F{vencido_03} - $F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="372" y="0" width="40" height="12" uuid="4ee21325-cd39-478e-b4fd-f7a350bcaf98"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{quitado_04}
+: $P{TIPO} == "V"?
+$F{vencido_04}
+:
+$F{quitado_04} + $F{vencido_04} - $F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="412" y="0" width="40" height="12" uuid="17241085-e1b4-4ab1-ac98-3352d26e7c04"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{quitado_05}
+: $P{TIPO} == "V"?
+$F{vencido_05}
+:
+$F{quitado_05} + $F{vencido_05} - $F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="452" y="0" width="40" height="12" uuid="70b966f1-c661-4d5b-a257-96e41c38feed"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{quitado_06}
+: $P{TIPO} == "V"?
+$F{vencido_06}
+:
+$F{quitado_06} + $F{vencido_06} - $F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="492" y="0" width="40" height="12" uuid="3ab4b5bb-74bf-4bf6-9f1a-9792b4f637bc"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{quitado_07}
+: $P{TIPO} == "V"?
+$F{vencido_07}
+:
+$F{quitado_07} + $F{vencido_07} - $F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="532" y="0" width="40" height="12" uuid="56db49a2-9dd7-455e-b131-b9031c29a634"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{quitado_08}
+: $P{TIPO} == "V"?
+$F{vencido_08}
+:
+$F{quitado_08} + $F{vencido_08} - $F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="572" y="0" width="40" height="12" uuid="a64732ec-9029-4683-8f80-48fdedf31c59"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{quitado_09}
+: $P{TIPO} == "V"?
+$F{vencido_09}
+:
+$F{quitado_09} + $F{vencido_09} - $F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="612" y="0" width="40" height="12" uuid="5debec39-5f78-4ce1-8640-accc31179c62"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{quitado_10}
+: $P{TIPO} == "V"?
+$F{vencido_10}
+:
+$F{quitado_10} + $F{vencido_10} - $F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="652" y="0" width="40" height="12" uuid="c50d62fb-3a49-4bff-83cf-c67c153fe63f"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{quitado_11}
+: $P{TIPO} == "V"?
+$F{vencido_11}
+:
+$F{quitado_11} + $F{vencido_11} - $F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="692" y="0" width="40" height="12" uuid="3641901d-225a-4701-9992-ff3367baf192"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{quitado_12}
+: $P{TIPO} == "V"?
+$F{vencido_12}
+:
+$F{quitado_12} + $F{vencido_12} - $F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="732" y="0" width="47" height="12" uuid="347b552a-c70d-4ee3-a0a6-abaf31e01201"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{quitado_total}
+: $P{TIPO} == "V"?
+$F{vencido_total}
+:
+$F{quitado_total} + $F{vencido_total} - $F{quitado_anterior}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="779" y="0" width="47" height="12" uuid="d5a53159-1c44-4046-8e77-9fa8df3056f8"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "Q"?
+$F{percentual_quitado}
+: $P{TIPO} == "V"?
+$F{percentual_vencido}
+:
+$F{percentual_quitado}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

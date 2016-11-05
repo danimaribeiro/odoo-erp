@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_receber_contrato_form">
+            <field name="name">finan.receber.contrato.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="conta_id" position="replace">
+                    <field name="conta_id" required="1" domain="[('tipo', '=', 'R'), ('sintetica', '=', False)]" on_change="onchange_conta_id(conta_id, company_id, centrocusto_id, valor_documento, valor, partner_id, data_vencimento, data_documento)" attrs="{'readonly': [('sped_documento_id', '!=', False)]}" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_contas_pagar" >
+            <field name="name">finan.relatorio.contas.pagar</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_relatorio_contas_pagar"/>
+            <field name="arch" type="xml">
+                <button name="gera_relatorio_contas_pagar_rateio" position="after">
+                    <button icon="gtk-execute" string="Gerar relatório versão 2" name="gera_relatorio_contas_versao2" type="object" colspan="4" />
+                </button>
+            </field>
+        </record>
+
+    </data>
+</openerp>

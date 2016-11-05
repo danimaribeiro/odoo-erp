@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="importa_finan_tree_filter">
+            <field name="name">importa_finan_tree_filter</field>
+            <field name="model">importa.finan</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Financeiro MULT">
+                    <filter name="importado" string="Importado" domain="[('lancamento_id', '!=', False)]" />
+                    <filter name="nao_importado" string="Não importado" domain="[('lancamento_id', '=', False)]" />
+                    <field name="tipo" />
+                    <field name="cnpj_empresa" />
+                    <field name="company_id" />
+                    <field name="cnpj_partner" />
+                    <field name="partner_id" />
+                    <field name="numero_documento" />
+                    <field name="nosso_numero" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="importa_finan_tree_view">
+            <field name="name">cnae.tree</field>
+            <field name="model">importa.finan</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree editable="top">
+                    <field name="cnpj_empresa" readonly="1" />
+                    <button name="replica_company" string="Replica" type="object" icon="gtk-go-forward"/>
+                    <field name="company_id" />
+                    <field name="cnpj_partner" readonly="1" />
+                    <button name="replica_parceiro" string="Replica" type="object" icon="gtk-go-forward"/>
+                    <field name="partner_id" />
+                    <field name="tipo" readonly="1" />
+                    <field name="documento_id" readonly="1" />
+                    <field name="conta_antiga" readonly="1" />
+                    <button name="replica_conta" string="Replica" type="object" icon="gtk-go-forward"/>
+                    <field name="conta_id" />
+                    <field name="data_vencimento" readonly="1" />
+                    <field name="numero_documento" readonly="1" />
+                    <field name="data_documento" readonly="1" />
+                    <field name="valor_documento" readonly="1" sum="valor documento" />
+                    <field name="carteira_id" readonly="1" />
+                    <field name="nosso_numero" readonly="1" />
+                    <field name="valor_juros" readonly="1" sum="valor documento" />
+                    <field name="valor_multa" readonly="1" sum="valor documento" />
+                    <field name="valor_desconto" readonly="1" sum="valor documento" />
+                    <field name="valor_saldo" readonly="1" sum="valor documento" />
+                    <field name="data_quitacao" readonly="1" />
+                    <field name="valor" readonly="1" sum="valor documento" />
+                    <field name="data" readonly="1" />
+                    <button name="gera_financeiro" string="Gerar" type="object" icon="gtk-go-forward"/>
+                    <field name="lancamento_id" readonly="1" />
+                </tree>
+            </field>
+        </record>
+
+<!--        <record model="ir.ui.view" id="importa_finan_form_view">
+            <field name="name">cnae.form</field>
+            <field name="model">importa.finan</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Form CNAE">
+                    <field name="codigo" />
+                    <newline/>
+                    <field name="descricao" colspan="4" />
+                </form>
+            </field>
+        </record>-->
+
+        <record model="ir.actions.act_window" id="importa_finan_acao">
+            <field name="name">Financeiro MULT</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">importa.finan</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_importa_finan"
+            name="Financeiro MULT"
+            parent="finan.menu_finan_config" sequence="32" action="importa_finan_acao" />
+
+
+        <record forcecreate="True" model="ir.actions.server" id="importa_finan_server_action">
+            <field name="name">Importar</field>
+            <field name="model_id" ref="model_importa_finan"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.gera_financeiro(context=context)</field>
+        </record>
+
+        <record model="ir.values" id="importa_finan_values" >
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'importa.finan'" name="model"/>
+            <field name="name">Valores importa finan</field>
+            <field eval="'ir.actions.server,%d'%importa_finan_server_action" name="value"/>
+            <field eval="True" name="object"/>
+        </record>
+
+    </data>
+</openerp>

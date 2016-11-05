@@ -1,0 +1,26 @@
+# -*- encoding: utf-8 -*-
+
+from osv import osv, fields
+import base64
+from pybrasil.valor.decimal import Decimal as D
+from copy import copy
+
+
+TIPO_SEPARACAO = [
+    ('out', u'Envio de mercadorias'),
+    ('in', u'Recebimento de mercadorias'),
+    ('internal', u'Movimentação interna'),
+    ('transf', u'Transferência'),
+]
+
+
+class stock_picking(osv.Model):
+    _name = 'stock.picking'
+    _inherit = 'stock.picking'
+
+    _columns = {
+        'type': fields.selection(TIPO_SEPARACAO, u'Tipo', required=True, select=True),
+    }
+
+
+stock_picking()

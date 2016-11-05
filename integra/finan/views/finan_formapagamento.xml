@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_formapagamento_tree">
+            <field name="name">finan.formapagamento.tree</field>
+            <field name="model">finan.formapagamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome" />
+<!--                     <field name="conciliado" /> -->
+                    <field name="exige_numero" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_formapagamento_form">
+            <field name="name">finan.formapagamento.form</field>
+            <field name="model">finan.formapagamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Forma de pagamento">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="nome" colspan="4" />
+<!--                        <newline />
+                        <field name="conciliado" />-->
+                        <newline />
+                        <field name="exige_numero" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_formapagamento_search">
+            <field name="name">finan.formapagamento.search</field>
+            <field name="model">finan.formapagamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Formas de pagamento">
+                    <filter string="Conciliado" domain="[('sintetica', '=', True)]" />
+                    <separator orientation="vertical" />
+                    <field name="nome" select="1" />
+                    <newline />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_formapagamento_acao">
+            <field name="name">Formas de pagamento</field>
+            <field name="res_model">finan.formapagamento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_formapagamento_tree" />
+        </record>
+
+        <menuitem action="finan_formapagamento_acao"
+            id="menu_finan_formapagamento" name="Formas de pagamento" parent="menu_finan_config" />
+
+    </data>
+</openerp>

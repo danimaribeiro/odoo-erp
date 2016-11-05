@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+    	<!-- Pedido/Orçamento to Phonecall view -->
+
+        <record model="ir.ui.view" id="os_to_phonecall_view">
+            <field name="name">crm.os_to_phonecall.form</field>
+            <field name="model">crm.ordem_servico2phonecall</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Agendar/Registrar Ligação">
+                 	<separator string="Agendar/Registrar uma ligação telefônica" colspan="4"/>
+                    <field name="action" string="Ação" />
+                    <separator string="Detalhes da ligação" colspan="4"/>
+                    <field name="name" string="Resumo da ligação" />
+                    <field name="date" string="Data planejada" attrs="{'invisible': [('action','=','log')]}"/>
+                    <newline/>
+                    <field name="partner_id" readonly="True" string="Cliente/Fornecedor" />
+                    <field name="phone" string="Telefone" />
+                    <field name="user_id" string="Responsável" attrs="{'invisible': [('action','=','log')]}"/>
+                    <separator string="Observações" colspan="4"/>
+                    <field name="note" colspan="4" nolabel="1"/>
+                    <separator string="" colspan="4"/>
+                    <group colspan="4" col="3">
+                        <button name="action_cancel" string="Cancelar" icon="gtk-cancel" special="cancel" />
+                       	<button name="action_schedule" type="object" string="Registrar ligação" icon="gtk-ok" attrs="{'invisible' : [('action', '!=', 'log')]}" />
+                        <button name="action_schedule" type="object" string="Agendar ligação" icon="gtk-ok" attrs="{'invisible' : [('action', '!=', 'schedule')]}" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+		<!-- Lançamento to Phonecall action -->
+
+ 		<record model="ir.actions.act_window" id="os_to_phonecall_act">
+            <field name="name">Schedule/Log Call</field>
+            <field name="res_model">crm.ordem_servico2phonecall</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="os_to_phonecall_view"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>

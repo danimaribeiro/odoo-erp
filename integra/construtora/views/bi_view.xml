@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="bi_dashboard_form">
+            <field name="name">bi.dashboard.form</field>
+            <field name="model">board.board</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Painel de Propostas">
+                    <board style="2-1">
+                        <column/>
+                        <column/>
+                    </board>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="bi_dashboard_acao" >
+            <field name="name">Painel de Propostas</field>
+            <field name="res_model">board.board</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="usage">menu</field>
+            <field name="view_id" ref="bi_dashboard_form"/>
+        </record>
+
+        <menuitem id="menu_bi"
+                  name="B.I."
+                  action="bi_dashboard_acao"
+                  web_icon="images/finance_grey.png"
+                  web_icon_hover="images/finance.png" />
+
+    </data>
+</openerp>

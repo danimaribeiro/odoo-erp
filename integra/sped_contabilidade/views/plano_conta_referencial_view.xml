@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="plano_conta_referencial_tree">
+            <field name="name">plano.conta.referencial.tree</field>
+            <field name="model">plano.conta.referencial</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="codigo" />
+                    <field name="nome" />                    
+                    <field name="data_inicial" />
+                    <field name="data_final"  />
+                    <field name="tipo" />
+                    <field name="codigo_pai" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="plano_conta_referencial_form">
+            <field name="name">plano.conta.referencial.form</field>
+            <field name="model">plano.conta.referencial</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Plano de Contas Referencial">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <newline />
+                        <field name="codigo" />
+                        <field name="nome" />
+                        <newline />
+                        <field name="data_inicial" />
+                        <field name="data_final"  />
+                        <newline />
+                        <field name="codigo_pai" colspan="4" />                        
+                        <field name="tipo" />
+                    </group>                    
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="plano_conta_referencial_search">
+            <field name="name">plano.conta.referencial.search</field>
+            <field name="model">plano.conta.referencial</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Plano de Contas Referencial">                
+                    <field name="codigo" />
+                    <field name="nome" />                    
+                    <field name="data_inicial" />
+                    <field name="data_final"  />
+                    <field name="tipo" />                    
+                </search>
+            </field>
+        </record>
+
+        
+        <record model="ir.actions.act_window" id="plano_conta_referencial_acao">
+            <field name="name">Plano de Contas Referencial</field>
+            <field name="res_model">plano.conta.referencial</field>           
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="plano_conta_referencial_tree" />
+            <field name="search_view_id" ref="plano_conta_referencial_search" />            
+        </record>
+
+        <menuitem action="plano_conta_referencial_acao"
+            id="menu_plano_conta_referencial" name="Plano Contas Referencial" parent="finan.menu_finan_config" sequence="20" />
+
+    </data>
+</openerp>

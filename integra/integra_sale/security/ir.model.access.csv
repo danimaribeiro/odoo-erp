@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+orcamento_grupo_aprovacao_full_all,Orçamento - Grupo de aprovação,model_orcamento_grupo_aprovacao,base.group_sale_manager,1,1,1,1
+orcamento_grupo_aprovacao_usuario_full_all,Orçamento - Grupo de aprovação - Usuários,model_orcamento_grupo_aprovacao_usuario,base.group_sale_manager,1,1,1,1
+orcamento_grupo_aprovacao_full_all,Orçamento - Grupo de aprovação,model_orcamento_grupo_aprovacao,base.group_sale_salesman,1,0,0,0
+orcamento_grupo_aprovacao_usuario_full_all,Orçamento - Grupo de aprovação - Usuários,model_orcamento_grupo_aprovacao_usuario,base.group_sale_salesman,1,0,0,0

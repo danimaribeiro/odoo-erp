@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_contract_vale_refeicao_tree">
+            <field name="name">hr.contract.vale.refeicao.tree</field>
+            <field name="model">hr.contract.vale.refeicao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">                
+                <tree string="Vale Refeição/Alimentação">                      
+                    <field name="contract_id" />
+                    <field name="rule_id" />
+                    <field name="quantidade" />                                                                  
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="hr_contract_vale_refeicao_form" >
+            <field name="name">hr.contract.vale.refeicao.form</field>
+            <field name="model">hr.contract.vale.refeicao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Vale Refeição/Alimentação">
+                    <group col="8" colspan="4" >
+                        <group col="2" colspan="4" >
+                            <separator string="Vale Refeição/Alimentação" colspan="2"/>
+                            <field name="contract_id" required="1" colspan="2"/>                            
+                            <field name="rule_id" required="1" domain="[('tipo_beneficio','in',('VA','VR'))]" />                                                                                       
+                            <field name="quantidade" required="1" />                                                            
+                            <field name="data_inicial" required="1"  />                    
+                            <field name="data_final"  />                         
+                        </group>
+                        <group col="6" colspan="4" >
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_contract_vale_refeicao_search">
+            <field name="name">hr.contract.vale.refeicao.search</field>
+            <field name="model">hr.contract.vale.refeicao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Vale Refeição/Alimentação">
+                    <field name="contract_id" />
+                    <field name="rule_id" />                        
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_contract_vale_refeicao_acao">
+            <field name="name">Vale Refeição/Alimentação</field>
+            <field name="res_model">hr.contract.vale.refeicao</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_contract_vale_refeicao_tree"/>
+            <field name="view_mode">tree,form</field>            
+        </record>
+
+        <menuitem action="hr_contract_vale_refeicao_acao" 
+            id="menu_hr_contract_vale_refeicao" 
+            name="Vale Refeição/Alimentação" 
+            parent="integra_rh.menu_hr_beneficio"
+            sequence="02"/>
+
+        <record model="ir.actions.act_window.view" id="hr_contract_vale_refeicao_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_contract_vale_refeicao_acao"/>
+            <field name="view_id" ref="hr_contract_vale_refeicao_form"/>
+        </record>
+
+         <record model="ir.actions.act_window.view" id="hr_contract_vale_refeicao_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_contract_vale_refeicao_acao"/>
+            <field name="view_id" ref="hr_contract_vale_refeicao_tree"/>
+        </record>
+    </data>
+</openerp>

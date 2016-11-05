@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="res_partner_corretor_form" >
+            <field name="name">res.partner.corretor.form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Corretor">
+                    <group colspan="4" col="4">
+                        <field name="eh_corretor" invisible="1" />
+                        <field name="name" required="1" colspan="4" />
+                        <newline />
+                        <field name="cnpj_cpf" on_change="onchange_cnpj_cpf(cnpj_cpf)" />
+                        <field name="tipo_pessoa" invisible="1" />
+                        <field name="tipo_corretor" />
+                        <field name="razao_social" colspan="4" />
+                        <field name="fantasia" colspan="4" attrs="{'invisible': [('tipo_pessoa', '=', 'F')]}" />
+                        <separator string="Contato" colspan="4" />
+                        <field name="fone" widget="phone" colspan="2" on_change="onchange_fone_celular(fone, None)"/>
+                        <field name="celular" widget="phone" colspan="2" on_change="onchange_fone_celular(fone, None)" />
+                        <field name="fone_comercial" widget="phone" colspan="2" attrs="{'invisible': [('tipo_pessoa', '!=', 'F')]}" />
+                        <field name="email" colspan="4" widget="email" />
+<!--                         <field name="site" colspan="4" /> -->
+                        <separator string="Endereço" colspan="4" />
+                        <field name="cep_id" on_change="onchange_cep_id(cep_id)" options="{'quick_create': False}" domain="[('municipio_id', '=', municipio_id)]" string="Pesquisa de ruas" colspan="4" />
+                        <field name="endereco" colspan="4" />
+                        <newline />
+                        <field name="numero" />
+                        <field name="complemento" />
+                        <newline />
+                        <field name="bairro" colspan="4" />
+                        <newline />
+                        <field name="municipio_id" options="{'quick_create': False}" colspan="4" />
+                        <newline />
+                        <field name="cep" on_change="onchange_cep(cep)" />
+                    </group>
+
+                    <notebook colspan="4">
+                        <page string="Inscrições e registros">
+                            <group col="4" colspan="4">
+                                <field name="contribuinte" colspan="4" />
+                                <newline/>
+                                <field name="ie" attrs="{'invisible': [('contribuinte', '!=', '1')]}" />
+                                <newline/>
+                                <field name="im" attrs="{'invisible': [('tipo_pessoa', '=', 'F')]}" />
+                                <newline/>
+                                <field name="suframa" attrs="{'invisible': [('tipo_pessoa', '=', 'F')]}" />
+                                <newline/>
+                                <field name="cei" attrs="{'invisible': [('tipo_pessoa', '=', 'F')]}" />
+                                <newline/>
+                                <field name="rntrc" attrs="{'invisible': [('tipo_pessoa', '=', 'F')]}" />
+                                <newline/>
+                                <field name="cnae_id" colspan="4" options="{'quick_create': False}" attrs="{'invisible': [('tipo_pessoa', '=', 'F')]}" />
+                                <field name="rg_numero" attrs="{'invisible': [('tipo_pessoa', '!=', 'F')]}" />
+                                <newline/>
+                                <field name="rg_orgao_emissor" attrs="{'invisible': [('tipo_pessoa', '!=', 'F')]}" />
+                                <field name="rg_data_expedicao" attrs="{'invisible': [('tipo_pessoa', '!=', 'F')]}" />
+                                <field name="sexo" colspan="2" />
+                                <field name="estado_civil" colspan="2" />
+                                <newline/>
+                                <field name="profissao" colspan="4" attrs="{'invisible': [('tipo_pessoa', '!=', 'F')]}" />
+                                <field name="pais_nacionalidade_id" colspan="4" options="{'quick_create': False}" attrs="{'invisible': [('tipo_pessoa', '!=', 'F')]}" />
+                                <newline/>
+                                <field name="data_nascimento" attrs="{'invisible': [('tipo_pessoa', '!=', 'F')]}" />
+                                <newline/>
+                                <field name="crc" />
+                                <field name="crc_uf" options="{'quick_create': False}" />
+                                <newline/>
+                                <field name="creci_numero" />
+                                <field name="creci_data_expedicao" />
+                                <newline/>
+                                <field name="cnai_numero" />
+                                <field name="cnai_data_expedicao" />
+                            </group>
+                            <group string="Dados Cônjuge" colspan="2" col="4" attrs="{'invisible': [('estado_civil', '!=', '2')]}">
+                                <field name="conjuge_nome" />
+                                <field name="conjuge_rg_numero" />
+                                <field name="conjuge_rg_orgao_emissor" />
+                                <field name="conjuge_rg_data_expedicao" />
+                                <field name="conjuge_cpf" on_change="onchange_cpf(conjuge_cpf)"/>
+                                <field name="conjuge_pais_nacionalidade_id" />
+                                <field name="conjuge_profissao" />
+                            </group>
+                        </page>
+                        <page string="Contatos e endereços">
+                            <field name="address" string="Contatos e endereços" nolabel="1"  mode="tree,form" context="{'default_endereco': endereco, 'default_numero': numero, 'default_complemento': complemento, 'default_bairro': bairro, 'default_municipio_id': municipio_id, 'default_cep': cep}">
+                                <form string="Contatos do corretor">
+                                    <group colspan="4" col="4">
+                                        <field name="name" />
+                                        <field name="function" string="Cargo/função" />
+                                        <newline/>
+                                        <separator string="Contato" colspan="4"/>
+                                        <field name="phone"/>
+                                        <field name="mobile"/>
+                                        <field name="email" widget="email" colspan="4" />
+                                        <separator string="Endereço" colspan="4"/>
+                                        <field name="type" string="Tipo" colspan="2"/>
+                                        <newline/>
+                                        <field name="endereco" colspan="4"/>
+                                        <newline/>
+                                        <field name="numero" colspan="2"/>
+                                        <field name="complemento" colspan="2"/>
+                                        <newline/>
+                                        <field name="bairro" colspan="4"/>
+                                        <newline/>
+                                        <field name="municipio_id"/>
+                                        <newline />
+                                        <field name="cep" on_change="onchange_cep(cep)" />
+                                        <separator string="Documentos" colspan="4" />
+                                        <field name="cpf" on_change="onchange_cpf(cpf)" />
+                                        <field name="rg_numero" />
+                                    </group>
+                                </form>
+                                <tree string="Contatos do corretor" editable="top">
+                                    <field name="name"/>
+                                    <field name="function" string="Cargo/função" />
+                                    <field name="phone"/>
+                                    <field name="mobile"/>
+                                    <field name="email"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Anotações internas">
+                            <field name="comment" />
+                        </page>
+                        <page string="Comercial">
+                            <group colspan="4" col="4">
+                                <field name="corretor_usuario_id" colspan="4" />
+                                <field name="parent_id" colspan="4" string="Responsável pela parceria" options="{'no_create': True}" domain="[('parent_id', '=', False)]" />
+                                <field name="company_id" options="{'no_create': True, 'no_open': True}" colspan="4" domain="[('parent_id', '=', False)]" />
+                                <field name="ref" string="Código" colspan="2"/>
+                                <field name="active" invisible="1" />
+                                <field name="customer" invisible="1" />
+                                <field name="supplier" invisible="1" />
+                            </group>
+                        </page>
+                        <page string="Faturamento">
+                            <field colspan="4" name="regime_tributario"/>
+                            <field colspan="4" name="operacao_fiscal_produto_id"/>
+                            <field colspan="4" name="operacao_fiscal_servico_id"/>
+                            <field colspan="4" name="transportadora_id"/>
+                        </page>
+                        <page string="Histórico">
+                            <field name="emails" colspan="4" nolabel="1" readonly="1" />
+                            <field name="meeting_ids" colspan="4" nolabel="1" />
+                            <field name="phonecall_ids" colspan="4" nolabel="1" />
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="res_partner_corretor_tree">
+            <field name="name">res.partner.corretor.tree</field>
+            <field name="model">res.partner</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Corretores">
+                    <field name="name" />
+                    <field name="cnpj_cpf" />
+                    <field name="razao_social" />
+                    <field name="fantasia" />
+                    <field name="fone" />
+                    <field name="celular" />
+                    <field name="email" />
+                    <field name="municipio_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="res_partner_corretor_search">
+            <field name="name">res.partner.corretor.search</field>
+            <field name="model">res.partner</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Corretores">
+                    <field name="name" />
+                    <field name="cnpj_cpf" />
+                    <field name="razao_social" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="res_partner_corretor_action">
+            <field name="name">Corretores</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('eh_corretor', '=', True)]</field>
+            <field name="context">{'default_eh_corretor': True, 'default_customer': False, 'default_supplier': False}</field>
+            <field name="view_id" ref="res_partner_corretor_tree" />
+            <field name="search_view_id" ref="res_partner_corretor_search" />
+        </record>
+
+        <record model="ir.actions.act_window.view" id="res_partner_corretor_tree_action">
+            <field name="view_mode">tree</field>
+            <field eval="1" name="sequence"/>
+            <field name="view_id" ref="res_partner_corretor_tree"/>
+            <field name="act_window_id" ref="res_partner_corretor_action"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="res_partner_corretor_form_action">
+            <field name="view_mode">form</field>
+            <field eval="2" name="sequence"/>
+            <field name="view_id" ref="res_partner_corretor_form"/>
+            <field name="act_window_id" ref="res_partner_corretor_action"/>
+        </record>
+
+        <menuitem
+            action="res_partner_corretor_action"
+            id="menu_partner_corretor"
+            parent="base.menu_address_book"
+            sequence="3"/>
+
+    </data>
+</openerp>

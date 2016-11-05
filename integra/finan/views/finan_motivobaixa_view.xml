@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_motivobaixa_tree">
+            <field name="name">finan.motivobaixa.tree</field>
+            <field name="model">finan.motivobaixa</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_motivobaixa_form">
+            <field name="name">finan.motivobaixa.form</field>
+            <field name="model">finan.motivobaixa</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Motivo para baixa">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="nome" colspan="4" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_motivobaixa_search">
+            <field name="name">finan.motivobaixa.search</field>
+            <field name="model">finan.motivobaixa</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Motivos para baixa">
+                    <field name="nome" select="1" />
+                    <newline />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_motivobaixa_acao">
+            <field name="name">Motivos para baixa</field>
+            <field name="res_model">finan.motivobaixa</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_motivobaixa_tree" />
+        </record>
+
+        <menuitem action="finan_motivobaixa_acao"
+            id="menu_finan_motivobaixa" name="Motivos para baixa" parent="menu_finan_config" />
+
+    </data>
+</openerp>

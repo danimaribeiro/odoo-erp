@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_hr_avaliacao"
+            name="Campanha/avaliação"
+            groups="base.group_hr_user,base.group_hr_manager"
+            parent="hr.menu_hr_root"
+            sequence="1"/>
+
+    </data>
+</openerp>

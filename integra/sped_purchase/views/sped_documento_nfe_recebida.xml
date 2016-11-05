@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="sped_nfe_recebida_form" model="ir.ui.view">
+            <field name="name">sped.nfe.recebida.form</field>
+            <field name="model">sped.documento</field>
+            <field name="inherit_id" ref="sped.sped_nfe_recebida_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Produtos/Serviços" position="before">
+                     <page string="Pedido de Compra">
+                        <field name="purchase_order_id" colspan="4" domain="[('state','=','approved'), ('partner_id','=', partner_id), ('date_order','&lt;=', data_emissao), ('company_id', '=', company_id)]" on_change="onchange_purchase_order_id(purchase_order_id)" />
+                        <newline />
+                        <field name="purchase_order_ids" nolabel="1" widget="one2many_list" readonly="1" mode="form" colspan="4" invisible="[('purchase_order_id', '=', False)]" />
+                        <field name="purchase_order_provisao_excluida" readonly="1" />
+                        <field name="itens_originais_a_processar" invisible="1" />
+                        <button name="trata_itens_pedido_compra" string="Tratar itens do pedido de compra automaticamente" type="object" colspan="4" attrs="{'invisible': ['|',('purchase_order_id', '=', False),('itens_originais_a_processar', '&gt;', 0)]}" />
+                    </page>
+                </page>
+            </field>
+        </record>
+    </data>
+</openerp>

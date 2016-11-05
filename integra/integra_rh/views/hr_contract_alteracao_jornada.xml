@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_contract_alteracao_jornada_tree">
+            <field name="name">hr.contract.alteracao.tree</field>
+            <field name="model">hr.contract_alteracao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Alteração de Jornada">
+                    <field name="company_id" />
+                    <field name="contract_id" />
+                    <field name="job_id" />
+                    <field name="data_alteracao"  />
+                    <field name="jornada_tipo" />
+                    <field name="jornada_escala" />
+                    <field name="jornada_escala_id" />
+                    <field name="motivo_id" />
+                    <field name="obs" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="hr_contract_alteracao_jornada_form" >
+            <field name="name">hr.contract.alteracao.form</field>
+            <field name="model">hr.contract_alteracao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Alteração de Jornada">
+                    <separator string="Alteração de Jornada" colspan="4"/>
+                    <field name="tipo_alteracao" invisible="1" />
+                    <field name="contract_id" required="1" on_change="onchange_contract_id(contract_id)" />
+                    <newline />
+                    <field name="data_alteracao" required="1" />
+                    <newline />
+                    <field name="jornada_tipo" required="1" />
+                    <newline />
+                    <field name="jornada_segunda_a_sexta_id" />
+<!--                                    <field name="jornada_segunda_id" />
+                                        <field name="jornada_terca_id" />
+                                        <field name="jornada_quarta_id" />
+                                        <field name="jornada_quinta_id" />
+                                        <field name="jornada_sexta_id" />-->
+                    <field name="jornada_sabado_id" />
+<!--                                    <field name="jornada_domingo_id" />
+                                        <field name="jornada_turno" />
+                                        <field name="jornada_turno_id" />-->
+                    <newline />
+                    <field name="jornada_escala" />
+                    <field name="jornada_escala_id" />
+                    <newline />
+                    <field name="motivo_id" required="1" colspan="4" />
+                    <newline />
+                    <field name="obs" colspan="4" />
+                    <newline />
+                    <notebook colspan="4">
+                        <page string="Alterações de Jornada">
+                            <field name="alteracao_ids" colspan="4" mode="tree" readonly="1" nolabel="1">
+                                <tree>
+                                  <field name="tipo_alteracao" invisible="1" />
+                                        <field name="data_alteracao" required="1" />
+                                        <field name="jornada_tipo" required="1" />
+                                        <field name="jornada_segunda_a_sexta_id" />
+    <!--                                        <field name="jornada_segunda_id" />
+                                        <field name="jornada_terca_id" />
+                                        <field name="jornada_quarta_id" />
+                                        <field name="jornada_quinta_id" />
+                                        <field name="jornada_sexta_id" />-->
+                                        <field name="jornada_sabado_id" />
+    <!--                                        <field name="jornada_domingo_id" />
+                                        <field name="jornada_turno" />
+                                        <field name="jornada_turno_id" />-->
+                                        <field name="jornada_escala" />
+                                        <field name="jornada_escala_id" />
+                                        <field name="motivo_id" />
+                                        <field name="obs" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_contract_alteracao_jornada_search">
+            <field name="name">hr.contract.alteracao.search</field>
+            <field name="model">hr.contract_alteracao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Alteração de Jornada">
+                    <field name="company_id" />
+                    <field name="contract_id" />
+                    <field name="job_id" />
+                    <field name="data_alteracao"  />
+                    <field name="jornada_tipo"  />
+                    <field name="jornada_escala" />
+                    <field name="jornada_escala_id" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_contract_alteracao_jornada_acao">
+            <field name="name">Alteração de Jornada</field>
+            <field name="res_model">hr.contract_alteracao</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_contract_alteracao_jornada_tree"/>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo_alteracao', '=', 'J')]</field>
+            <field name="context">{'tipo_alteracao':'J','default_tipo_alteracao':'J' }</field>
+        </record>
+
+        <menuitem action="hr_contract_alteracao_jornada_acao" id="menu_hr_contract_alteracao_jornada" name="Jornada" parent="menu_hr_alteracao_contratuais" sequence="02"/>
+
+        <record model="ir.actions.act_window.view" id="hr_contract_alteracao_jornada_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_contract_alteracao_jornada_acao"/>
+            <field name="view_id" ref="hr_contract_alteracao_jornada_form"/>
+        </record>
+
+         <record model="ir.actions.act_window.view" id="hr_contract_alteracao_jornada_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_contract_alteracao_jornada_acao"/>
+            <field name="view_id" ref="hr_contract_alteracao_jornada_tree"/>
+        </record>
+    </data>
+</openerp>

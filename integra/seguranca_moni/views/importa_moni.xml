@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="importa_moni_tree">
+            <field name="name">importa.moni.tree</field>
+            <field name="model">importa.moni</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Integração MONI">
+                    <field name="importado" invisible="1" />
+                    <field name="codigo_cliente" />
+                    <field name="codigo_moni" />
+                    <field name="fantasia" />
+                    <field name="razao_social" />
+                    <field name="cnpj_cpf" />
+                    <field name="cancelado" />
+                    <field name="cancelado_em" />
+                    <field name="suspenso" />
+                    <field name="suspenso_em" />
+                    <field name="ultimo_open_close" />
+                    <field name="ultima_ocorrencia" />
+                    <field name="ultimo_teste_automatico" />
+                    <field name="ultimo_disparo" />
+                    <field name="total_os" sum="total_os" />
+                    <field name="total_ocorrencia" sum="total_ocorrencia" />
+                    <field name="total_deslocamento" sum="total_deslocamento" />
+                    <field name="partner_id" />
+                    <field name="contrato_id" />
+                    <field name="inadimplente" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="importa_moni_form">
+            <field name="name">importa.moni.form</field>
+            <field name="model">importa.moni</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Integração MONI">
+                    <group col="4" colspan="4">
+                        <newline />
+                        <field name="cancelado" invisible="1" />
+                        <field name="suspenso" invisible="1" />
+                        <group colspan="4" col="4" attrs="{'invisible': [('cancelado', '=', False)]}">
+                            <separator string="Cancelado" colspan="4" />
+                            <field name="cancelado_em" />
+                            <field name="cancelado_por" />
+                        </group>
+                        <group colspan="4" col="4" attrs="{'invisible': [('suspenso', '=', False)]}">
+                            <separator string="Suspenso" colspan="4" />
+                            <field name="suspenso_em" />
+                            <field name="suspenso_por" />
+                        </group>
+                        <button type="object" name="importa_arquivo" string="Importar dados" />
+                        <newline />
+                        <field name="codigo_cliente" readonly="1" />
+                        <field name="codigo_moni" readonly="1" />
+                        <newline />
+                        <field name="fantasia" colspan="4" readonly="1" />
+                        <field name="razao_social" colspan="4" readonly="1" />
+                        <field name="cnpj_cpf" readonly="1" />
+                        <newline />
+                        <field name="endereco" colspan="2" readonly="1" />
+                        <field name="numero" colspan="2" readonly="1" />
+                        <newline />
+                        <field name="bairro" readonly="1" />
+                        <newline />
+                        <field name="cidade" readonly="1" />
+                        <field name="estado" readonly="1" />
+                        <newline />
+                        <field name="cep" readonly="1" />
+                        <newline />
+                        <field name="contato" readonly="1" />
+                        <newline />
+                        <field name="ultimo_open_close" readonly="1" />
+                        <field name="ultima_ocorrencia" readonly="1" />
+                        <field name="ultimo_teste_automatico" readonly="1" />
+                        <field name="ultimo_disparo" readonly="1" />
+                        <field name="partner_id" colspan="4" context="{'default_name': razao_social, 'default_razao_social': razao_social, 'default_fantasia': fantasia, 'default_cnpj_cpf': cnpj_cpf, 'default_endereco': endereco, 'default_numero': numero, 'default_bairro': bairro, 'default_municipio_id.nome': cidade, 'default_cep': cep}" />
+                        <field name="contrato_id" colspan="4" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="importa_moni_search" model="ir.ui.view">
+            <field name="name">importa.moni.search</field>
+            <field name="model">importa.moni</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Integração MONI">
+                    <filter name="importado" string="Importado" domain="[('importado', '!=', False)]" />
+                    <filter name="nao_importado" string="Não importado" domain="[('importado', '=', False)]" />
+                    <separator orientation="vertical" />
+                    <filter name="inadimplente" string="Inadimplente" domain="[('inadimplente', '!=', False)]" />
+                    <filter name="adimplente" string="Adimplente" domain="[('inadimplente', '=', False)]" />
+
+                    <separator orientation="vertical" />
+                    <filter name="ativo" string="Ativo" domain="[('cancelado', '=', False), ('suspenso', '=', False)]" />
+                    <filter name="cancelado" string="Cancelado" domain="[('cancelado', '!=', False)]" />
+                    <filter name="suspenso" string="Suspenso" domain="[('suspenso', '!=', False)]" />
+                    <separator orientation="vertical" />
+                    <newline />
+                    <field name="codigo_moni" />
+                    <field name="codigo_cliente" />
+                    <field name="fantasia" />
+                    <field name="razao_social" />
+                    <field name="cnpj_cpf" />
+                    <newline />
+                    <field name="partner_id" />
+                    <field name="contrato_id" domain="[('partner_id', '=', partner_id)]" />
+
+                    <newline />
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Importado" icon="terp-project" domain="[]" context="{'group_by': 'importado'}" />
+                        <filter string="Inadimplente" icon="terp-project" domain="[]" context="{'group_by': 'inadimplente'}" />
+                        <filter string="Cancelado" icon="terp-project" domain="[]" context="{'group_by': 'cancelado'}" />
+                        <filter string="Suspenso" icon="terp-project" domain="[]" context="{'group_by': 'suspenso'}" />
+                        <filter string="Cliente" icon="terp-project" domain="[]" context="{'group_by': 'partner_id'}" />
+<!--                        <filter string="Técnico" icon="terp-project" domain="[]" context="{'group_by': 'tecnico_id'}" />
+                        <filter string="Tipo do orçamento" icon="terp-project" domain="[]" context="{'group_by': 'pricelist_id'}" />
+                        <filter string="Etapa" icon="terp-project" domain="[]" context="{'group_by': 'etapa_id'}" />-->
+                        <!--
+                        <separator orientation="vertical" />
+                        <filter string="Data de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'data_vencimento'}" />
+                        <filter string="Mês de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'ano_mes_vencimento'}" />
+                        <filter string="Ano de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'ano_vencimento'}" />-->
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="importa_moni_acao">
+            <field name="name">Integração MONI</field>
+            <field name="res_model">importa.moni</field>
+            <field name="view_type">form</field>
+<!--            <field name="domain">[('defeito', '=', 'O')]</field>
+            <field name="context">{'default_defeito': 'O'}</field>-->
+            <field name="view_id" ref="importa_moni_tree" />
+            <field name="search_view_id" ref="importa_moni_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            action="importa_moni_acao"
+            id="menu_importa_moni"
+            name="Integração MONI"
+            parent="seguranca.menu_operacional" sequence="20" />
+
+        <record model="ir.actions.act_window.view" id="importa_moni_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="importa_moni_form"/>
+            <field name="act_window_id" ref="importa_moni_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="importa_moni_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="importa_moni_tree"/>
+            <field name="act_window_id" ref="importa_moni_acao"/>
+        </record>
+
+    </data>
+</openerp>

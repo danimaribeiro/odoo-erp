@@ -1,0 +1,22 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+lancamento_full_all,Lançamento,model_finan_lancamento,group_finan_staff,1,1,1,1
+lancamento_rateio_full_all,Rateio de lançamento,model_finan_lancamento_rateio,group_finan_staff,1,1,1,1
+conta_full_all,Conta financeira,model_finan_conta,group_finan_staff,1,1,1,1
+centrocusto_full_all,Centro de Custo,model_finan_centrocusto,group_finan_staff,1,1,1,1
+rateio_full_all,Rateio,model_finan_rateio,group_finan_staff,1,1,1,1
+carteira_full_all,Carteira de cobrança,model_finan_carteira,group_finan_staff,1,1,1,1
+formapagamento_full_all,Forma de pagamento,model_finan_formapagamento,group_finan_staff,1,1,1,1
+motivobaixa_full_all,Motivo para baixa,model_finan_motivobaixa,group_finan_staff,1,1,1,1
+documento_full_all,Documento,model_finan_documento,group_finan_staff,1,1,1,1
+saldo_full_all,Saldos,model_finan_saldo,group_finan_staff,1,1,1,1
+saldo_assinatura_full_all,Saldos - Assinaturas,model_finan_saldo_assinatura,group_finan_staff,1,1,1,1
+extrato_full_all,Extratos,model_finan_extrato,group_finan_staff,1,1,1,1
+liquidacao_full_all,Liquidação,model_finan_liquidacao,group_finan_treasury_staff,1,1,1,1
+conta_bancaria_full_all,Contas bancárias,model_res_partner_bank,group_finan_staff,1,1,1,1
+banco_full_all,Bancos,base.model_res_bank,group_finan_staff,1,1,1,1
+notas_full_all,Notas do financeiro,model_finan_nota,group_finan_staff,1,1,1,1
+boletos_full_all,Boletos,model_finan_boletos,group_finan_treasury_staff,1,1,1,1
+remessa_full_all,Remessas de cobranca,model_finan_remessa,group_finan_treasury_staff,1,1,1,1
+retorno_full_all,Retornos de cobranca,model_finan_retorno,group_finan_treasury_staff,1,1,1,1
+retorno_item_full_all,Itens de Retornos de cobranca,model_finan_retorno_item,group_finan_treasury_staff,1,1,1,1
+relatorio_full_all,Relatórios Financeiros,model_finan_relatorio,group_finan_staff,1,1,1,1

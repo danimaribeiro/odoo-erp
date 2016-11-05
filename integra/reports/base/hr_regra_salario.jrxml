@@ -1,0 +1,1050 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hr_regra_salario" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="552" leftMargin="22" rightMargin="21" topMargin="28" bottomMargin="28" uuid="05a7678d-6397-4816-97ba-742668ea4f5f">
+	<property name="ireport.zoom" value="1.210000000000045"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.callouts" value="##Thu Feb 20 16:53:50 BRT 2014"/>
+	<property name="ireport.background.image.properties" value="false,true,0.25,0,0,0,0,0,0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REGISTRO_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+rp.name as empresa,
+sr.name as nome_rubrica,
+sr.codigo,
+sr.code,
+sr.sequence,
+sr.active,
+sr.manual as lancamento_manual,
+sr.manual_horas,
+sr.afastamento,
+sr.codigo_afastamento,
+case
+when sr.tipo_media = 'valor' then
+'Valor'
+when sr.tipo_media = 'quantidade' then
+'Quantidade'
+when sr.tipo_media = 'calculada' then
+'Calcula proporcional'
+when sr.tipo_media = 'afastamento' then
+'Dias de afastamento'
+end
+as tipo_media,
+sr.ignora_media_13,
+src.name as categoria,
+psa.name as estrutura_afastamento,
+sra.name as holerite_anterior,
+srd.name as saldo_devedor,
+rr.descricao,
+sr.condition_python as condicao_python,
+sr.amount_python_compute,
+case
+when sr.finan_agrupamento = 'F' then
+'Funcionário'
+when sr.finan_agrupamento = 'E' then
+'Empresa/unidade'
+when sr.finan_agrupamento = 'C' then
+'CNPJ da empresa/unidade'
+when sr.finan_agrupamento = 'S' then
+'Sindicato'
+end as finan_agrupamento,
+cfd.nome as finan_despesa,
+cfdf.nome as finan_despesa_feria,
+cfdr.nome as finan_despesa_rescisao,
+cfdd.nome as finan_despesa_13,
+cfc.nome as finan_custo,
+cfcf.nome as finan_custo_feria,
+cfcr.nome as finan_custo_rescisao,
+cfcd.nome as finan_custo_13,
+cov.name as convenio,
+smod.nome as modelo_despesa,
+smodf.nome as modelo_despesa_feria,
+smodr.nome as modelo_despesa_rescisao,
+smodd.nome as modelo_despesa_13,
+
+smoc.nome as modelo_custo,
+smocf.nome as modelo_custo_feria,
+smocr.nome as modelo_custo_rescisao,
+smocd.nome as modelo_custo_13
+
+from hr_salary_rule sr
+join hr_salary_rule_category src on src.id = sr.category_id
+left join res_company c on c.id = sr.company_id
+left join res_partner rp on rp.id = c.partner_id
+left join hr_payroll_structure psa on psa.id = sr.estrutura_afastamento_id
+left join hr_salary_rule sra on sra.id = sr.regra_holerite_anterior_id
+left join hr_salary_rule srd on srd.id = sr.regra_saldo_devedor_id
+left join hr_rubrica_rescisao rr on rr.id = sr.rubrica_rescisao_id
+left join res_partner cov on cov.id = sr.partner_id
+
+left join finan_conta cfd on cfd.id = sr.finan_conta_despesa_id
+left join finan_conta cfdf on cfdf.id = sr.finan_conta_despesa_ferias_id
+left join finan_conta cfdr on cfdr.id = sr.finan_conta_despesa_rescisao_id
+left join finan_conta cfdd on cfdd.id = sr.finan_conta_despesa_13_id
+
+left join finan_conta cfc on cfc.id = sr.finan_conta_custo_id
+left join finan_conta cfcf on cfcf.id = sr.finan_conta_custo_ferias_id
+left join finan_conta cfcr on cfcr.id = sr.finan_conta_custo_rescisao_id
+left join finan_conta cfcd on cfcd.id = sr.finan_conta_custo_13_id
+
+left join sped_modelo_partida_dobrada smod on smod.id = sr.modelo_folha_despesa_id
+left join sped_modelo_partida_dobrada smodf on smodf.id = sr.modelo_folha_despesa_ferias_id
+left join sped_modelo_partida_dobrada smodr on smodr.id = sr.modelo_folha_despesa_rescisao_id
+left join sped_modelo_partida_dobrada smodd on smodd.id = sr.modelo_folha_despesa_13_id
+
+left join sped_modelo_partida_dobrada smoc on smoc.id = sr.modelo_folha_custo_id
+left join sped_modelo_partida_dobrada smocf on smocf.id = sr.modelo_folha_custo_ferias_id
+left join sped_modelo_partida_dobrada smocr on smocr.id = sr.modelo_folha_custo_rescisao_id
+left join sped_modelo_partida_dobrada smocd on smocd.id = sr.modelo_folha_custo_13_id
+
+where
+sr.id = $P{REGISTRO_ID}]]>
+	</queryString>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="nome_rubrica" class="java.lang.String"/>
+	<field name="codigo" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Código]]></fieldDescription>
+	</field>
+	<field name="code" class="java.lang.String">
+		<fieldDescription><![CDATA[Code]]></fieldDescription>
+	</field>
+	<field name="sequence" class="java.lang.Double">
+		<fieldDescription><![CDATA[Sequence]]></fieldDescription>
+	</field>
+	<field name="active" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Active]]></fieldDescription>
+	</field>
+	<field name="lancamento_manual" class="java.lang.Boolean"/>
+	<field name="manual_horas" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Valor manual lançado em horas?]]></fieldDescription>
+	</field>
+	<field name="afastamento" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Afastamento?]]></fieldDescription>
+	</field>
+	<field name="codigo_afastamento" class="java.lang.String">
+		<fieldDescription><![CDATA[Código de afastamento]]></fieldDescription>
+	</field>
+	<field name="tipo_media" class="java.lang.String">
+		<fieldDescription><![CDATA[Média para férias/rescisão]]></fieldDescription>
+	</field>
+	<field name="ignora_media_13" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Ignora média no 13º?]]></fieldDescription>
+	</field>
+	<field name="categoria" class="java.lang.String"/>
+	<field name="estrutura_afastamento" class="java.lang.String"/>
+	<field name="holerite_anterior" class="java.lang.String"/>
+	<field name="saldo_devedor" class="java.lang.String"/>
+	<field name="descricao" class="java.lang.String"/>
+	<field name="condicao_python" class="java.lang.String"/>
+	<field name="amount_python_compute" class="java.lang.String">
+		<fieldDescription><![CDATA[Python Code]]></fieldDescription>
+	</field>
+	<field name="finan_agrupamento" class="java.lang.String">
+		<fieldDescription><![CDATA[Agrupamento]]></fieldDescription>
+	</field>
+	<field name="finan_despesa" class="java.lang.String"/>
+	<field name="finan_despesa_feria" class="java.lang.String"/>
+	<field name="finan_despesa_rescisao" class="java.lang.String"/>
+	<field name="finan_despesa_13" class="java.lang.String"/>
+	<field name="finan_custo" class="java.lang.String"/>
+	<field name="finan_custo_feria" class="java.lang.String"/>
+	<field name="finan_custo_rescisao" class="java.lang.String"/>
+	<field name="finan_custo_13" class="java.lang.String"/>
+	<field name="convenio" class="java.lang.String"/>
+	<field name="modelo_despesa" class="java.lang.String"/>
+	<field name="modelo_despesa_feria" class="java.lang.String"/>
+	<field name="modelo_despesa_rescisao" class="java.lang.String"/>
+	<field name="modelo_despesa_13" class="java.lang.String"/>
+	<field name="modelo_custo" class="java.lang.String"/>
+	<field name="modelo_custo_feria" class="java.lang.String"/>
+	<field name="modelo_custo_rescisao" class="java.lang.String"/>
+	<field name="modelo_custo_13" class="java.lang.String"/>
+	<group name="ficha">
+		<groupHeader>
+			<band height="128">
+				<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="47" y="16" width="229" height="16" uuid="9715ea6d-9dc7-4f46-9ff9-199810cc66d2"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{sequence}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="32" y="0" width="244" height="16" uuid="9bc65d5f-f74c-466e-8f72-eed85b9ba22a"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nome_rubrica}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="16" width="47" height="16" uuid="929868e5-b7a9-4bc0-884f-59482f82b129"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sequencia:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="0" width="32" height="16" uuid="d4a4ac1a-770a-4884-a502-e8442718143e"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nome:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="276" y="32" width="43" height="16" uuid="97cd15a2-cc5a-40c3-b258-81b06a461b42"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Código:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="319" y="32" width="233" height="16" uuid="91e2e2d4-c230-4715-a5c7-82ad10bdb66f"/>
+					<box leftPadding="0">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{code}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="319" y="0" width="233" height="16" uuid="c49bd016-2b6a-4a83-9e24-5612f0c4fcb3"/>
+					<box leftPadding="0">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{categoria}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="276" y="0" width="43" height="16" uuid="0d73f6fd-f074-4e66-bd33-f42393051486"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Categoria:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="28" y="32" width="248" height="16" uuid="5bb2006c-ae63-4a8b-8fa4-a4e6ba0c96ee"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{active} == true ?
+"Sim"
+:
+"Não"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="276" y="16" width="43" height="16" uuid="2de6a78b-1e68-4e26-9dc5-0fd23ca637b7"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Empresa:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="319" y="16" width="233" height="16" uuid="1fc6e1be-883d-4425-9e61-53e24a7968f4"/>
+					<box leftPadding="0">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="32" width="28" height="16" uuid="81a02135-72b6-4fd5-b156-afcefff72df1"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Ativo:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="276" y="64" width="59" height="16" uuid="b58a330d-fa57-4b50-a328-a7f67f0abb49"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Afastamento:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="335" y="64" width="217" height="16" uuid="bffd1b52-ad21-4386-aeed-bcbf49fb0ef7"/>
+					<box leftPadding="0">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{afastamento} == true ?
+"Sim"
+:
+"Não"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="276" y="48" width="85" height="16" uuid="70db6d13-91f9-4bba-8c8d-4edcb4e47991"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Lançamento Manual:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="361" y="48" width="191" height="16" uuid="d72ad615-d9e8-4be8-af3d-b5c6430dadc3"/>
+					<box leftPadding="0">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{lancamento_manual} == true ?
+"Sim"
+:
+"Não"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="48" width="84" height="16" uuid="b16019be-e00f-4479-9cb7-3a5eee237394"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Código afastamento:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="84" y="48" width="192" height="16" uuid="962dbb2c-262c-46b9-8747-16cd73d79910"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo_afastamento}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="371" y="80" width="181" height="16" uuid="9e224540-1ec7-4c6c-a58a-a8270fc4ff4b"/>
+					<box leftPadding="0">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{estrutura_afastamento}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="276" y="80" width="95" height="16" uuid="068cfc75-266c-4c04-99c0-9df16dbf6e1d"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Estrutura Afastamento:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="92" y="64" width="184" height="16" uuid="b1055644-dcb9-40df-9449-81e668d5181d"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tipo_media}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="64" width="92" height="16" uuid="5fad8a8e-f9e8-4b29-b539-1b3bbd8599a2"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Média para férias/13º:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="80" width="92" height="16" uuid="b46cf9db-b40a-415b-90ae-78df161508f1"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Ignora média no 13º:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="92" y="80" width="184" height="16" uuid="81172e48-d023-47b3-a530-733333573270"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ignora_media_13} == true?
+"Sim"
+:
+"Não"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="407" y="96" width="145" height="16" uuid="64cfd534-f863-4f18-9eb9-8b64e6a21264"/>
+					<box leftPadding="0">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{holerite_anterior}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="276" y="96" width="131" height="16" uuid="e0e614f3-fb79-4223-b6d5-6152a59a8155"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Transforma do holerite anterior:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="156" y="96" width="145" height="16" uuid="ea4eef0d-ddbd-4a39-bedb-de44afa80083"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{saldo_devedor}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="96" width="156" height="16" uuid="cbd69800-7b3d-4313-b247-13f79bfc0afb"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Rubrica para ajuste de saldo devedor:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="96" y="112" width="180" height="16" uuid="daaa3606-3073-4f7e-936d-8b59988a90ad"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="112" width="95" height="16" uuid="234f1772-8e6f-43d8-937e-e4e66b0fd6f1"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Rubrica para Rescisão: ]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="525" splitType="Stretch">
+				<staticText>
+					<reportElement x="0" y="0" width="552" height="30" uuid="6ddc5586-2a0f-4bff-88ac-f001d0f9bdb4"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Condições]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="30" width="552" height="25" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="5a71828a-56bb-4f72-93ba-186e00f50210"/>
+					<box topPadding="5" leftPadding="0" bottomPadding="3">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{condicao_python}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="55" width="552" height="30" uuid="a819b3e5-bd03-496e-ac7f-f0cd0c599ee2"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Calcular]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="85" width="552" height="25" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="3a3b6d8c-6fa3-4ef8-ac4b-2c414223559e"/>
+					<box topPadding="5" leftPadding="0" bottomPadding="4">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{amount_python_compute}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="110" width="552" height="30" uuid="9e360695-3fb4-4ec7-9483-c1dd40424f8e"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Financeiro]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="173" width="350" height="16" uuid="f9b1fbf2-59c2-4efd-86c8-1ff555798eb9"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{finan_despesa}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="173" width="202" height="16" uuid="a1e945d7-2d40-426d-a541-ff695996a9dc"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (cálculo normal/padrão):]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="189" width="350" height="16" uuid="0a8d0aea-e3f2-4094-a1b2-ea10984c150c"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{finan_despesa_feria}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="189" width="202" height="16" uuid="235cd437-280d-4b4b-8ac4-d186c6570fc6"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (quando em cálculo de férias):]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="205" width="202" height="16" uuid="440a76ff-17d5-4f0e-b39d-c7ced13a0f9e"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (quando em cálculo de rescisão):]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="205" width="350" height="16" uuid="02425622-6607-4e63-a9a0-404040ace0d0"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{finan_despesa_rescisao}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="140" width="202" height="16" uuid="355441ad-c8f4-4145-9ea5-53f68b1d8c45"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Agrupamento:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="140" width="493" height="16" uuid="353f992b-62f2-4209-8cd6-63409ab5b35b"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{finan_agrupamento}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="221" width="202" height="16" uuid="b932b77a-5ce3-4c4c-aae1-72c4f3b2ed6d"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (quando em 13º):
+]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="221" width="350" height="16" uuid="2473a073-566d-4a80-b5a7-d9fe3dea5d83"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{finan_despesa_13}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="156" width="552" height="17" uuid="6981377c-ba22-4e30-b021-187221fc0869"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Contas de despesa:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="237" width="552" height="17" uuid="93e57fd8-0e11-4be1-ba0c-d6181ed0debf"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Contas de custo:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="334" width="552" height="30" uuid="d9ce8cc6-3e2e-44da-ac9a-7b3da9a1d2ad"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Contabilidade]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="286" width="202" height="16" uuid="35c26882-ddba-4e04-9f4a-ab3d1244d00c"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (quando em cálculo de rescisão):]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="270" width="202" height="16" uuid="d08c4deb-d0e7-4354-ad9e-e809ae9b6a94"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (quando em cálculo de férias):]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="286" width="350" height="16" uuid="83135a32-bbdc-49a2-9448-e69d8492776d"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{finan_custo_rescisao}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="302" width="202" height="16" uuid="5f1d7c26-2952-4b85-b98e-c233095b79f9"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (quando em 13º):
+]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="270" width="350" height="16" uuid="2d05626c-cd05-4584-b262-b1f90ba81974"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{finan_custo_feria}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="254" width="350" height="16" uuid="1d27ca6e-de29-4d97-920b-87e947714835"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{finan_custo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="302" width="350" height="16" uuid="8a081e84-4740-4d2d-ab0f-7f2b594e1b7b"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{finan_custo_13}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="254" width="202" height="16" uuid="60cee2db-7c1c-49c5-8926-f03a47e44ded"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (cálculo normal/padrão) :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="381" width="350" height="16" uuid="0771dd9a-8dcd-4bca-9765-4ad8540d3eb5"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{modelo_despesa}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="381" width="202" height="16" uuid="bcc68ecd-f7ca-498c-a085-d0f4a5d4c189"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (cálculo normal/padrão) :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="318" width="202" height="16" uuid="87bded5a-a4a8-4fe6-87b4-84a1d2945926"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Convênio/beneficiário:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="318" width="493" height="16" uuid="86a0324d-f242-4053-a5f7-25aba3f1c4ce"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{convenio}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="477" width="202" height="16" uuid="6553c3fa-f9f2-4d29-a909-f99bc2e5fe93"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (quando em cálculo de férias):]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="493" width="202" height="16" uuid="1f9bfd06-7728-443c-aaea-65749b087c4d"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (quando em cálculo de rescisão):]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="509" width="202" height="16" uuid="5419292b-d342-4e27-a88b-2ac4cc9987e1"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (quando em 13º):
+]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="476" width="350" height="16" uuid="35cdde0b-c3ad-412c-a221-fa58035d82f1"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{modelo_custo_feria}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="508" width="350" height="16" uuid="90627c8b-3377-4d42-aec1-8d7f317a3256"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{modelo_custo_13}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="492" width="350" height="16" uuid="4326e7da-7981-463e-9bfd-fcfbcbe37027"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{modelo_custo_rescisao}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="413" width="202" height="15" uuid="332e63c5-0aa4-4cfc-90db-dc753325f076"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (quando em cálculo de rescisão):]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="429" width="202" height="15" uuid="9e61fbcc-c2c6-48be-91f3-d9a0c2c0d2a7"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (quando em 13º):
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="461" width="202" height="15" uuid="cacea49e-e53f-448e-9f22-037ff6bd66bf"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (quando em cálculo de férias):]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="364" width="552" height="17" uuid="ea096b1a-8dd1-4773-b255-35dc9775fcb2"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Contas de despesa:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="413" width="350" height="16" uuid="0b84b23f-031e-4821-a8d9-523899465eea"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{modelo_despesa_rescisao}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="397" width="350" height="16" uuid="48adcc6f-d994-42e9-9832-ee22ebec193e"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{modelo_despesa_feria}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="429" width="350" height="16" uuid="66c612c9-ea13-40a0-a66c-8444b48edf43"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{modelo_despesa_13}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="444" width="552" height="17" uuid="9dd31376-3fb4-4da4-ab76-691741c4f9dc"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Contas de custo:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="397" width="202" height="16" uuid="b7b6a011-b477-42df-b379-18871603d280"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Conta financeira (cálculo normal/padrão) :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="202" y="461" width="350" height="16" uuid="599a5871-ab4f-48bb-832d-8fcc3992af58"/>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{modelo_custo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="28">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="509" y="8" width="43" height="8" uuid="c9c1520e-3d75-4cf5-880d-adde9cbc2192"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="552" height="28" uuid="f299e171-0906-4f77-93a0-6938a4fa48ce"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Relatório Regras de Salário]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="486" y="8" width="23" height="8" uuid="4220ed68-afc4-4b40-af72-e268ce06da6b"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="486" y="14" width="23" height="8" uuid="6a58e725-577a-4ba4-a4b1-5073c45fb070"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora:]]></text>
+			</staticText>
+			<textField pattern="HH:mm:ss">
+				<reportElement x="509" y="14" width="43" height="8" uuid="3b3abe77-d062-45a8-a65d-76c42ea379ed"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<pageFooter>
+		<band height="16">
+			<textField>
+				<reportElement x="452" y="0" width="80" height="16" uuid="e658497f-e5ab-4e54-97ed-98de1338cea2"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="532" y="0" width="40" height="16" uuid="8062be45-cda6-4ac3-9f57-46c354de18d9"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="552" height="1" uuid="743b88ea-b3e5-40fe-b97a-ae0dac4f6daf"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

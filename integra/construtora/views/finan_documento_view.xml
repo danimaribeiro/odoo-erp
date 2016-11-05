@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_documento_tree">
+            <field name="name">finan.documento.tree</field>
+            <field name="model">finan.documento</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="finan.finan_documento_tree"/>
+            <field name="arch" type="xml">
+                <field name="postergacao" position="after">
+                    <field name="provisionado" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_documento_form">
+            <field name="name">finan.documento.form</field>
+            <field name="model">finan.documento</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_documento_form"/>
+            <field name="arch" type="xml">
+                <field name="postergacao" position="after">
+                    <newline />
+                    <field name="provisionado" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

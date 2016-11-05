@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="frota_modelo_tree">
+            <field name="name">frota.modelo.tree</field>
+            <field name="model">frota.modelo</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="integra_frota.frota_modelo_tree" />
+            <field name="arch" type="xml">
+                <field name="modelo" position="after">
+                    <field name="ano" />
+                    <field name="combustivel" />
+                    <field name="detalhes" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="frota_modelo_form">
+            <field name="name">frota.modelo.form</field>
+            <field name="model">frota.modelo</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_frota.frota_modelo_form" />
+            <field name="arch" type="xml">
+                <field name="modelo" position="after">
+                        <field name="ano" />
+                        <newline />
+                        <field name="combustivel" />
+                        <newline />
+                        <field name="detalhes" />
+                </field>
+                <field name="tipo_id" position="after">
+                    <newline />
+                    <group colspan="4">
+                        <separator string="Produtos e serviços" colspan="4"/>
+                        <field name="product_ids" nolabel="1" />
+                    </group>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

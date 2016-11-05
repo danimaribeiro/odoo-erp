@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="stock_operacao_form">
+            <field name="name">stock.operacao.form</field>
+            <field name="model">stock.operacao</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="patrimonial_personalizacao.stock_operacao_form"/>
+            <field name="arch" type="xml">
+                <field name="location_dest_id" position="after">
+                    <field name="sped_operacao_id" colspan="4" domain="[('modelo', '=', '55'), ('emissao', '=', '0')]" />
+                    <field name="remetente_id" colspan="4" />
+                </field>
+                <page string="Locais para custo médio" position="after">
+                    <page string="Famílias tributárias" attrs="{'invisible': [('tipo', '!=', 'T')]}">
+                        <field name="familiatributaria_ids" nolabel="1" colspan="4" />
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finan_notas_emitidas_sintetico_cfop" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a4b7c114-1987-496d-8cfa-d5010114a926">
+	<queryString language="SQL">
+		<![CDATA[select
+       c.name,
+       sum(sd.vr_nf) as vr_nf,
+       sum(sd.vr_desconto) as vr_desconto,
+       sum(sd.vr_iss - sd.vr_iss_retido) as vr_iss,
+       sum(sd.vr_iss_retido) as vr_iss_retido,
+       sum(sd.vr_irrf) as vr_irrf,
+       sum(sd.vr_previdencia) as vr_inss,
+       sum(coalesce(case
+          when sd.modelo = 'SE' then sd.vr_pis_retido
+          else sd.vr_pis_proprio
+       end, 0)) as vr_pis_proprio,
+       sum(coalesce(case
+          when sd.modelo = 'SE' then sd.vr_cofins_retido
+          else sd.vr_cofins_proprio
+       end, 0)) as vr_cofins_proprio,
+       sum(sd.vr_csll) as vr_csll,
+       sum(sd.vr_fatura) as vr_fatura,
+       sm.nome || '-' || sm.estado as cidade_fato
+
+from sped_documento as sd
+join res_company c on c.id = sd.company_id
+join res_partner rp on rp.id = sd.partner_id
+left join sped_municipio sm on sm.id = sd.municipio_fato_gerador_id
+left join sped_naturezaoperacao snp on snp.id = sd.naturezaoperacao_id
+
+
+
+group by
+c.name,
+cidade_fato
+
+order by
+c.name,
+cidade_fato]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

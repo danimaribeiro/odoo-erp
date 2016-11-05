@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_plano_contas" >
+            <field name="name">finan.relatorio.plano.contas</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Plano de Contas">
+                    <group colspan="4">
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_plano_contas" type="object" colspan="5" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_relatorio_plano_contas_acao">
+            <field name="name">Plano de Contas</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_relatorio_plano_contas_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_relatorio_plano_contas"/>
+            <field name="act_window_id" ref="finan_relatorio_plano_contas_acao"/>
+        </record>
+
+        <menuitem action="finan_relatorio_plano_contas_acao"
+                  id="menu_finan_relatorio_plano_contas" 
+                  name="Plano de Contas" 
+                  parent="menu_finan_relatorios" 
+                  sequence="9" />
+
+    </data>
+</openerp>

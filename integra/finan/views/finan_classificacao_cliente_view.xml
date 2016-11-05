@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_classificacao_cliente_tree">
+            <field name="name">finan.classificacao.cliente.tree</field>
+            <field name="model">finan.classificacao.cliente</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree >
+                    <field name="nome" />
+                    <field name="dias_atraso" />
+                    <field name="peso" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_classificacao_cliente_form">
+            <field name="name">finan.classificacao.cliente.form</field>
+            <field name="model">finan.classificacao.cliente</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Classificação dos Clientes">
+                    <group col="4" colspan="4">
+                        <field name="nome" colspan="4" />
+                        <field name="dias_atraso" />
+                        <field name="peso" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_classificacao_cliente_search">
+            <field name="name">finan.classificacao.cliente.search</field>
+            <field name="model">finan.classificacao.cliente</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Contas financeiras">
+                    <field name="nome" />
+                    <field name="dias_atraso" />
+                    <field name="peso" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_classificacao_cliente_acao">
+            <field name="name">Classificação dos clientes</field>
+            <field name="res_model">finan.classificacao.cliente</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_classificacao_cliente_tree" />
+        </record>
+
+        <menuitem
+            action="finan_classificacao_cliente_acao"
+            id="menu_finan_classificacao_cliente"
+            name="Classificação dos clientes"
+            parent="menu_finan_config" />
+
+    </data>
+</openerp>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="caixa_pagamento_relatorio_tree">
+            <field name="name">caixa.pagamento_relatorio.tree</field>
+            <field name="model">caixa.pagamento_relatorio</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id" invisible="1" />
+                    <field name="data_abertura" invisible="1" />
+                    <field name="ano_abertura" invisible="1" />
+                    <field name="mes_abertura" invisible="1" />
+                    <field name="dia_abertura" invisible="1" />
+<!--                     <field name="data_fechamento" /> -->
+                    <field name="caixa_id" invisible="1" />
+                    <field name="formapagamento_id" invisible="1" />
+                    <field name="valor" sum="Valor" string="Valor" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="caixa_pagamento_relatorio_search">
+            <field name="name">caixa.pagamento_relatorio.search</field>
+            <field name="model">caixa.pagamento_relatorio</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Pagamentos">
+                    <field name="company_id" />
+<!--                     <field name="data_abertura" /> -->
+                    <field name="caixa_id" />
+                    <field name="formapagamento_id" />
+<!--                     <field name="data_fechamento" /> -->
+                    <newline />
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Empresa" name="company_id" icon="terp-partner" context="{'group_by': 'company_id'}"/>
+                        <filter string="Ano" name="ano_abertura" icon="terp-calendar" context="{'group_by': 'ano_abertura'}"/>
+                        <filter string="Mês" name="mes_abertura" icon="terp-calendar" context="{'group_by': 'mes_abertura'}"/>
+                        <filter string="Dia" name="dia_abertura" icon="terp-calendar" context="{'group_by': 'dia_abertura'}"/>
+                        <filter string="Caixa" name="caixa_id" icon="terp-accessories-archiver" context="{'group_by': 'caixa_id','set_visible':True}"/>
+                        <filter string="Forma pagamento" name="formapagamento_id" icon="terp-stock_symbol-selection" context="{'group_by': 'formapagamento_id','residual_invisible':True}"/>
+                    </group>
+
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="caixa_pagamento_relatorio_acao">
+            <field name="name">Lançamentos</field>
+            <field name="res_model">caixa.pagamento_relatorio</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="caixa_pagamento_relatorio_tree" />
+            <field name="search_view_id" ref="caixa_pagamento_relatorio_search"/>
+            <field name="context">{'group_by': ['mes_abertura', 'dia_abertura', 'caixa_id', 'formapagamento_id'], 'group_by_no_leaf': 1}</field>
+        </record>
+
+        <menuitem action="caixa_pagamento_relatorio_acao"
+            id="menu_caixa_pagamento_relatorio" name="Pagamentos" parent="menu_caixa" />
+
+    </data>
+</openerp>

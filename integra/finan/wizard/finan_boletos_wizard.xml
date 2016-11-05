@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_boletos_form" >
+            <field name="name">finan.boletos.form</field>
+            <field name="model">finan.boletos</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Gerar boletos de lançamentos">
+                    <group colspan="4">
+                        <separator string="Confirmar carteira" colspan="4" />
+                        <field name="carteira_id" />
+                        <newline />
+                        <field name="data" />
+                        <field name="com_endereco" />
+                        <field name="atualiza_valor" />
+                        <field name="taxa_boleto" />
+                        <field name="enviar_email" />
+                        <field name="carne" />
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <button icon="gtk-execute" string="Gerar boletos" name="gerar_boletos" type="object" context="{'carteira_id': carteira_id, 'data': data, 'com_endereco': com_endereco, 'atualiza_valor': atualiza_valor,'taxa_boleto': taxa_boleto, 'enviar_email': enviar_email, 'carne': carne}" colspan="2" />
+                        <button icon="gtk-cancel" special="cancel" string="Fechar" colspan="2" />
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_boletos_wizard" multi="True" key2="client_action_multi" name="Boletos de lançamentos" res_model="finan.boletos" src_model="finan.lancamento" view_mode="form" target="new" view_type="form" />
+
+    </data>
+</openerp>

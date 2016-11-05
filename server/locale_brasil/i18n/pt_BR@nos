@@ -1,0 +1,278 @@
+#
+# Charset: UTF-8
+#
+# Locale para u brasileru, lejívew pur seris umanus
+#
+# Kriadu pur Aristides CALDEIRA, bazeadu nu locale
+# orijinaw da glibc
+#
+# As diferensas in relasawn au locale orijinaw sawn:
+#     1. A òrden awfabétika, ki foy aprimorada
+#     2. Us nomis dus dias da semana i dus mezis, ki estawn in
+#        minúskulas
+#     3. U formatu di data i òra está un powku máys deskritivu
+#     4. Us númerus sawn agrupadus kun pontu di milyar i desimaw kohètus
+#
+
+#######################################
+LC_IDENTIFICATION
+#######################################
+
+title        "Brazilian locale for Brazil"
+source       ""
+address      ""
+contact      ""
+email        "ari@laumi.org"
+tel          ""
+fax          ""
+language     "Brazilian"
+territory    "Brazil"
+audience     ""
+application  "Usign alternate spelling Nova Ortografia Sinplifikada"
+abbreviation ""
+revision     "6.0"
+date         "2011-08-05"
+
+category  "pt_BR@nos:2000";LC_IDENTIFICATION
+category  "pt_BR@nos:2000";LC_CTYPE
+category  "pt_BR@nos:2000";LC_COLLATE
+category  "pt_BR@nos:2000";LC_TIME
+category  "pt_BR@nos:2000";LC_NUMERIC
+category  "pt_BR@nos:2000";LC_MONETARY
+category  "pt_BR@nos:2000";LC_MESSAGES
+category  "pt_BR@nos:2000";LC_PAPER
+category  "pt_BR@nos:2000";LC_NAME
+category  "pt_BR@nos:2000";LC_ADDRESS
+category  "pt_BR@nos:2000";LC_TELEPHONE
+
+END LC_IDENTIFICATION
+
+
+###############################
+LC_CTYPE
+###############################
+copy "pt_BR"
+END LC_CTYPE
+
+
+###############################
+LC_COLLATE
+###############################
+copy "pt_BR"
+
+collating-symbol <Y~-KONSOANTI>
+collating-element <Y~-konsoanti> from "<U0059><U0303>"  # Ỹ
+collating-element <y~-konsoanti> from "<U0079><U0303>"  # ỹ
+collating-element <N~-konsoanti> from "<U004E><U0303>"  # Ñ
+collating-element <n~-konsoanti> from "<U006E><U0303>"  # ñ
+
+collating-symbol <NN-KONSOANTI>
+collating-element <NN-konsoanti> from "<U004E><U0059>"  # NN
+collating-element <Nn-konsoanti> from "<U004E><U006E>"  # Nn
+collating-element <nN-konsoanti> from "<U006E><U004E>"  # nN
+collating-element <nn-konsoanti> from "<U006E><U006E>"  # nn
+
+collating-symbol <LY-KONSOANTI>
+collating-element <LY-konsoanti> from "<U004C><U0059>"  # LY
+collating-element <Ly-konsoanti> from "<U004C><U0079>"  # Ly
+collating-element <lY-konsoanti> from "<U006C><U0059>"  # lY
+collating-element <ly-konsoanti> from "<U006C><U0079>"  # ly
+
+reorder-after <n>
+<Y~-KONSOANTI>
+<NN-KONSOANTI>
+
+reorder-after <l>
+<LY-KONSOANTI>
+
+##
+## Nòva òrden awfabétika esperimentaw
+##
+#reorder-after <9>
+#<i>
+#<e>
+#<a>
+#<o>
+#<u>
+#<y>
+#<w>
+#<k>
+#<g>
+#<h>
+#<p>
+#<b>
+#<f>
+#<v>
+#<t>
+#<d>
+#<s>
+#<z>
+#<x>
+#<j>
+#<m>
+#<n>
+#<Y~-KONSOANTI>
+#<r>
+#<l>
+#<LY-KONSOANTI>
+#<c>
+#<q>
+#<zh>
+#<th>
+
+reorder-after <LY-KONSOANTI>
+<LY-konsoanti> <LY-KONSOANTI>;<CAP>;<BAS>;IGNORE  # LY
+<Ly-konsoanti> <LY-KONSOANTI>;<CAP>;<BAS>;IGNORE  # Ly
+<lY-konsoanti> <LY-KONSOANTI>;<MIN>;<BAS>;IGNORE  # lY
+<ly-konsoanti> <LY-KONSOANTI>;<MIN>;<BAS>;IGNORE  # ly
+
+reorder-after <Y~-KONSOANTI>
+<U1EF8> <Y~-KONSOANTI>;<CAP>;<BAS>;IGNORE  # Ỹ
+<Y~-konsoanti> <Y~-KONSOANTI>;<CAP>;<BAS>;IGNORE  # Ỹ
+<U00D1> <Y~-KONSOANTI>;<CAP>;<BAS>;IGNORE  # Ñ
+<N~-konsoanti> <Y~-KONSOANTI>;<CAP>;<BAS>;IGNORE  # Ñ
+<U1EF9> <Y~-KONSOANTI>;<MIN>;<BAS>;IGNORE # ỹ
+<y~-konsoanti> <Y~-KONSOANTI>;<MIN>;<BAS>;IGNORE  # ỹ
+<U00F1> <Y~-KONSOANTI>;<MIN>;<BAS>;IGNORE # ñ
+<n~-konsoanti> <Y~-KONSOANTI>;<MIN>;<BAS>;IGNORE  # ñ
+
+reorder-after <NN-KONSOANTI>
+<NN-konsoanti> <NN-KONSOANTI>;<CAP>;<BAS>;IGNORE  # NN
+<Nn-konsoanti> <NN-KONSOANTI>;<CAP>;<BAS>;IGNORE  # Nn
+<nN-konsoanti> <NN-KONSOANTI>;<MIN>;<BAS>;IGNORE  # nN
+<nn-konsoanti> <NN-KONSOANTI>;<MIN>;<BAS>;IGNORE  # nn
+
+reorder-end
+
+END LC_COLLATE
+
+
+###############################
+LC_MESSAGES
+###############################
+
+yesexpr                 "^[1SsYy].*"
+noexpr                  "^[0Nn].*"
+yesstr                  "sim"
+nostr                   "nawn"
+
+END LC_MESSAGES
+
+
+###############################
+LC_MONETARY
+###############################
+copy "pt_BR"
+END LC_MONETARY
+
+
+###############################
+LC_NUMERIC
+###############################
+copy "pt_BR"
+END LC_NUMERIC
+
+
+###############################
+LC_PAPER
+###############################
+copy "pt_BR"
+END LC_PAPER
+
+
+###############################
+LC_TELEPHONE
+###############################
+copy "pt_BR"
+END LC_TELEPHONE
+
+
+###############################
+LC_MEASUREMENT
+###############################
+copy "pt_BR"
+END LC_MEASUREMENT
+
+
+###############################
+LC_NAME
+###############################
+copy "pt_BR"
+END LC_NAME
+
+
+###############################
+LC_TIME
+###############################
+
+#          "dom";"seg";"ter";"kwa";"kin";"ses";"sáb"
+abday      "dom";"seg";"ter";"kwa";"kin";"ses";"s<U00E1>b"
+
+#          "domingu";"segunda-fera";"tersa-fera";"kwarta-fera";"kinta-fera";"sesta-fera";"sábadu"
+day        "domingu";"segunda-fera";"tersa-fera";"kwarta-fera";"kinta-fera";"sesta-fera";"s<U00E1>badu"
+
+#          "jan";"fev";"mar";"abr";"may";"juỹ";"jul";"ago";"set";"owt";"nov";"dez"
+abmon      "jan";"fev";"mar";"abr";"may";"ju<U1EF9>";"jul";"ago";"set";"otu";"nov";"dez"
+
+#          "janeru";"fevereru";"marsu";"abriw";"mayu";"juỹu"; \
+#          "julyu";"agostu";"setenbru";"owtubru";"novenbru";"dezenbru"
+mon        "janeru";"fevereru";"marsu";"abriw";"mayu";"ju<U1EF9>u"; \
+           "julyu";"agostu";"setenbru";"otubru";"novenbru";"dezenbru"
+
+#          "kin, 04/08/2011, 14:11:36 BRT"
+d_t_fmt    "%a, %d/%m/%Y, %H:%M:%S %Z"
+
+#          "04/08/2011"
+d_fmt      "%d/%m/%Y"
+
+#          "14:12:36"
+t_fmt      "%H:%M:%S"
+
+am_pm      "am";"pm"
+
+#          "02:12:36 pm"
+t_fmt_ampm "%I:%M:%S %p"
+
+#           "kin, 04/08/2011, 14:11:36 BRT"
+date_fmt    "%a, %d/%m/%Y, %H:%M:%S %Z"
+
+# A semana tey~ 7 dias, komu di kostumi, i komèsa na segunda-fera (ISO 8601)
+week    7;19971130;4
+
+# U primeru dia da semana è a segunda-fera
+first_weekday 2
+
+# U primero dia di trabalyu da semana è a segunda-fera
+first_workday 2
+
+END LC_TIME
+
+
+###############################
+LC_ADDRESS
+###############################
+
+postal_fmt   "\
+%f%N\
+%a%N\
+%d%N\
+%b%N\
+%s&t%h%t%e%t%r%N\
+%T%N\
+%c%N\
+%C%t%z%N"
+
+country_name "Braziw"
+country_ab2  "BR"
+country_ab3  "BRA"
+country_post "BR"
+country_num  076
+country_car  "BR"
+country_isbn 85
+
+lang_name    "brazileru"
+lang_ab      "pt"
+lang_term    "por"
+lang_lib     "por"
+
+END LC_ADDRESS

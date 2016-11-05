@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="stock_picking_out_form" model="ir.ui.view">
+            <field name="name">stock.picking.out.form</field>
+            <field name="model">stock.picking</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sale.stock_picking_out_inherit_sale"/>
+            <field name="arch" type="xml">
+                <field name="sale_id" position="replace">
+                    <newline />
+                    <field name="sale_id" />
+                    <newline />
+                    <button icon="gtk-print" name="gerar_nota" string="Gerar NF-e" type="object" />
+                    <newline/>
+                </field>
+            </field>
+        </record>
+
+        <record id="stock_picking_out_tree" model="ir.ui.view">
+            <field name="name">stock.picking.out.tree</field>
+            <field name="model">stock.picking</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="stock.view_picking_out_tree"/>
+            <field name="arch" type="xml">
+                <field name="min_date" position="replace">
+                    <field name="min_date" invisible="1" />
+                </field>
+                <field name="invoice_state" position="replace">
+                    <field name="invoice_state" invisible="1" />
+                </field>
+                <field name="stock_journal_id" position="replace">
+                    <field name="stock_journal_id" invisible="1" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

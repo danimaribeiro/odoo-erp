@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_remessa_form">
+            <field name="name">finan.remessa.form</field>
+            <field name="model">finan.remessa</field>
+            <field name="type">form</field>
+            <field name="priority">64</field>
+            <field name="inherit_id" ref="finan.finan_remessa_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@string='Gerar remessa']" position="replace">
+                    <button icon="gtk-execute" string="Gerar remessa" name="gerar_remessa_anexo" type="object" attrs="{'invisible': [('carteira_id', '=', False)]}" context="{'boleto_valor_saldo': True}" />
+                </xpath>
+                <field name="lancamento_ids" position="replace">
+                    <field name="lancamento_ids" nolabel="1" domain="[('tipo', '=', 'R'), ('carteira_id', '=', carteira_id), ('situacao', '=', 'A vencer'), ('provisionado', '!=', True)]" context="{'form_view_ref' : 'finan.finan_receber_form', 'tree_view_ref' : 'finan.finan_receber_tree', 'search_view_ref': 'finan.finan_receber_search'}">
+                        <tree>
+                            <field name="data_vencimento" />
+                            <field name="nosso_numero" />
+                            <field name="partner_id" string="Cliente"/>
+                            <field name="valor_saldo" sum="Valor do saldo" />
+                        </tree>
+                    </field>
+                </field>
+
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="purchase.purchase_order_line_form" model="ir.ui.view">
+            <field name="name">purchase.order.line.form</field>
+            <field name="model">purchase.order.line</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Order Line">
+                    <notebook colspan="4">
+                        <page string="Order Line">
+                            <field name="product_id" colspan="4" on_change="onchange_product_id(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id, parent.date_order,parent.fiscal_position,date_planned,name,price_unit,notes,context)" required="1" context="{'force_product_uom': True}"/>
+                            <group col="7" colspan="4">
+                                <field name="product_qty" on_change="onchange_product_id(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id,parent.date_order,parent.fiscal_position,date_planned,name,price_unit,notes,context, al_ipi, 0, al_st, 0, al_desconto, vr_desconto)"/>
+                                <field name="product_uom" on_change="onchange_product_uom(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id, parent.date_order,parent.fiscal_position,date_planned,name,price_unit,notes,context)" invisible="1"/>
+                                <field name="price_unit" on_change="onchange_product_id(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id,parent.date_order,parent.fiscal_position,date_planned,name,price_unit,notes,context, al_ipi, 0, al_st, 0, al_desconto, vr_desconto)" />
+                                <newline/>
+                                <field name="al_desconto" on_change="onchange_product_id(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id,parent.date_order,parent.fiscal_position,date_planned,name,price_unit,notes,context, al_ipi, 0, al_st, 0, al_desconto, 0)" />
+                                <field name="vr_desconto" on_change="onchange_product_id(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id,parent.date_order,parent.fiscal_position,date_planned,name,price_unit,notes,context, al_ipi, 0, al_st, 0, 0, vr_desconto)" />
+                                <field name="price_subtotal" string="Valor item" />
+                                <newline/>
+                                <field name="al_ipi" on_change="onchange_product_id(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id,parent.date_order,parent.fiscal_position,date_planned,name,price_unit,notes,context,al_ipi,0,al_st,0,al_desconto, vr_desconto)" />
+                                <field name="bc_ipi" />
+                                <field name="vr_ipi" on_change="onchange_product_id(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id,parent.date_order,parent.fiscal_position,date_planned,name,price_unit,notes,context,0,vr_ipi,al_st,0, al_desconto, vr_desconto)" />
+                                <newline/>
+                                <field name="al_st" on_change="onchange_product_id(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id,parent.date_order,parent.fiscal_position,date_planned,name,price_unit,notes,context,al_ipi,0,al_st,0, al_desconto, vr_desconto)" />
+                                <field name="bc_st" />
+                                <field name="vr_st" on_change="onchange_product_id(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id,parent.date_order,parent.fiscal_position,date_planned,name,price_unit,notes,context,al_ipi,0,0,vr_st, al_desconto, vr_desconto)" />
+                            </group>
+                            <field colspan="4" name="name" string="Descrição livre" />
+                            <field name="date_planned" widget="date" colspan="2"/>
+                            <newline/>
+                            <field name="company_id" groups="base.group_multi_company" widget="selection" invisible="1" />
+
+                            <field name="account_analytic_id" colspan="4" groups="analytic.group_analytic_accounting" domain="[('type','&lt;&gt;','view'), ('company_id', '=', company_id), ('parent_id', '!=', False)]" />
+<!--                            <group colspan="4" col="4" groups="base.group_extended">
+                                <separator colspan="4" string="Taxes"/>
+                                <field colspan="4" nolabel="1" name="taxes_id"
+                                    domain="[('parent_id','=',False),('type_tax_use','!=','sale')]"/>
+                            </group>-->
+                        </page>
+<!--                        <page string="Invoicing" groups="base.group_extended">
+                            <separator colspan="4" string="Manual Invoices"/>
+                            <field name="invoiced"/>
+                            <newline/>
+                            <field colspan="4" name="invoice_lines" nolabel="1" widget="many2many"/>
+                        </page>-->
+                        <page string="Notes">
+                            <field colspan="4" name="notes" nolabel="1"/>
+                        </page>
+                        <page string="History" groups="base.group_extended">
+                               <separator colspan="4" string="Stock Moves"/>
+                               <field colspan="4" name="move_ids" nolabel="1" widget="many2many"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="purchase.purchase_order_line_tree" model="ir.ui.view">
+            <field name="name">purchase.order.line.tree</field>
+            <field name="model">purchase.order.line</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Order Lines">
+<!--                    <field name="order_id"/>
+                    <field name="name"/>
+                    <field name="partner_id" string="Supplier" />
+                    <field name="product_id"/>
+                    <field name="price_unit"/>
+                    <field name="product_qty"/>
+                    <field name="product_uom"/>
+                    <field name="price_subtotal"/>
+                    <field name="date_planned"  widget="date" width="135"/>
+                    <field name="state" invisible="1"/>
+                    <field name="invoiced" invisible="1"/>-->
+<!--                             <field name="date_planned"/> -->
+                    <field name="name"/>
+                    <field name="product_qty" sum="Quantidade" />
+                    <field name="price_unit"/>
+                    <field name="bc_ipi" sum="IPI" invisible="1" />
+                    <field name="al_ipi" />
+                    <field name="vr_ipi" sum="IPI" />
+                    <field name="bc_st" sum="ST" invisible="1" />
+                    <field name="al_st" />
+                    <field name="vr_st" sum="ST" />
+                    <field name="price_subtotal" sum="Total" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="purchase.purchase_order_line_form2" model="ir.ui.view">
+            <field name="name">purchase.order.line.form2</field>
+            <field name="model">purchase.order.line</field>
+            <field name="type">form</field>
+            <field name="priority" eval="20"/>
+            <field name="arch" type="xml">
+                <form string="Purchase Order Line">
+                    <notebook colspan="4">
+                        <page string="Order Line">
+                               <separator colspan="4" string="General Information"/>
+                             <field name="order_id"/>
+                            <field name="product_id" readonly="1" />
+                            <field name="product_qty" readonly="1" />
+                            <field name="product_uom" readonly="1"/>
+                            <field colspan="4" name="name"/>
+                            <field name="date_planned" widget="date"  readonly="1"/>
+                            <field name="price_unit"/>
+                            <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                            <field name="account_analytic_id" colspan="4" groups="analytic.group_analytic_accounting" domain="[('type','&lt;&gt;','view'), ('company_id', '=', company_id), ('parent_id', '!=', False)]"/>
+<!--                            <group colspan="4" col="4" groups="base.group_extended">
+                                <separator colspan="4" string="Taxes"/>
+                                <field colspan="4" nolabel="1" name="taxes_id"
+                                    domain="[('parent_id','=',False),('type_tax_use','!=','sale')]"/>
+                            </group>-->
+                        </page>
+<!--                        <page string="Invoicing" groups="base.group_extended">
+                            <separator colspan="4" string="Manual Invoices"/>
+                            <field name="invoiced"/>
+                            <newline/>
+                            <field colspan="4" name="invoice_lines" nolabel="1" widget="many2many"/>
+                        </page>-->
+                         <page string="Notes">
+                            <field colspan="4" name="notes" nolabel="1"/>
+                        </page>
+                        <page string="History" groups="base.group_extended">
+                               <separator colspan="4" string="Stock Moves"/>
+                               <field colspan="4" name="move_ids" nolabel="1" widget="many2many"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

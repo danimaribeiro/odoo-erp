@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+familiatributaria_full_all,Família Tributária,model_sped_familiatributaria,group_sped_produto,1,1,1,1
+familiatributariaitem_full_all,Família Tributária - item,model_sped_familiatributariaitem,group_sped_produto,1,1,1,1
+familiatributariaitemservico_full_all,Família Tributária - item serviço,model_sped_familiatributariaitemservico,group_sped_produto,1,1,1,1
+familiatributariaestado_full_all,Família Tributária - estado,model_sped_familiatributariaestado,group_sped_produto,1,1,1,1
+ncm_full_all,NCM,model_sped_ncm,group_sped_produto,1,1,1,1
+ncm_mva_full_all,NCM - MVA,model_sped_ncm_mva,group_sped_produto,1,1,1,1
+ncm_familiatributaria_full_all,NCM - Familia Tributaria,model_sped_ncm_familiatributaria,group_sped_produto,1,1,1,1
+servico_full_all,Serviço,model_sped_servico,group_sped_produto,1,1,1,1
+aliquotaiss_full_all,Alíquota ISS,model_sped_aliquotaiss,group_sped_produto,1,1,1,1
+aliquotaipi_full_all,Alíquota IPI,model_sped_aliquotaipi,group_sped_produto,1,1,1,1
+aliquotaicmssn_full_all,Alíquota ICMS SN,model_sped_aliquotaicmssn,group_sped_produto,1,1,1,1
+aliquotaicmsproprio_full_all,Alíquota ICMS próprio,model_sped_aliquotaicmsproprio,group_sped_produto,1,1,1,1
+aliquotaicmsst_full_all,Alíquota ICMS ST,model_sped_aliquotaicmsst,group_sped_produto,1,1,1,1
+aliquotapiscofins_full_all,Alíquota PIS-COFINS,model_sped_aliquotapiscofins,group_sped_produto,1,1,1,1

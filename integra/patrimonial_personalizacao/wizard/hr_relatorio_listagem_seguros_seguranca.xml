@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_relatorio_listagem_seguros_seguranca_form" >
+            <field name="name">hr.relatorio.listagem.seguros.seguranca.form</field>
+            <field name="model">hr.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Listagem de Seguros para Segurança">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="company_id" required="1" colspan="4"/>
+                        <newline/>                                             
+                        <field name="data" required="1"/>                                                                    
+                        <field name="nome" invisible="1"/>
+                        <field name="nome_csv" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_listagem_seguros_seguranca" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                        <newline/>                        
+                        <field name="arquivo_csv" nolabel="1" readonly="1" filename="nome_csv" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_relatorio_listagem_seguros_seguranca_acao">
+            <field name="name">Listagem de Seguros para Segurança</field>
+            <field name="res_model">hr.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_relatorio_listagem_seguros_seguranca_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_relatorio_listagem_seguros_seguranca_form"/>
+            <field name="act_window_id" ref="hr_relatorio_listagem_seguros_seguranca_acao"/>
+        </record>
+
+        <menuitem action="hr_relatorio_listagem_seguros_seguranca_acao"
+                  id="menu_hr_relatorio_listagem_seguros_seguranca"
+                  name="Listagem de Seguros para Segurança"
+                  parent="integra_rh.menu_hr_relatorio_contratual"
+                  sequence="30" />
+
+    </data>
+</openerp>

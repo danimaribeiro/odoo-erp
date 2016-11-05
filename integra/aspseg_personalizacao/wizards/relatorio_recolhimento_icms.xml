@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="recolhimento_icms" >
+            <field name="name">sped.relatorio.recolhimento.icms</field>
+            <field name="model">sped.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório de recolhimento de ICMS">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4"/>
+                        <newline/>
+                        <field name="company_id" required="1" domain="[('cnpj_cpf', '!=', False)]" colspan="4"/>                        
+                        <newline/>
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />
+                        <newline/>
+                        <field name="product_id" />
+                        <field name="cfop_id" />
+                        <newline/>
+                        <field name="ncm_id"  />
+                        <field name="formato" required="1"/>                                              
+                        <newline/>                                               
+                        <field name="nome" invisible="1"/>                       
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_recolhimento_icms" type="object" context="{}" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>                                           
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="recolhimento_icms_acao">
+            <field name="name">Recolhimento ICMS</field>
+            <field name="res_model">sped.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="recolhimento_icms_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="recolhimento_icms"/>
+            <field name="act_window_id" ref="recolhimento_icms_acao"/>
+        </record>
+
+        <menuitem action="recolhimento_icms_acao"
+                  id="menu_recolhimento_icms" name="Recolhimento ICMS" parent="sped.menu_sped_fiscal_relatorio" sequence="22" />
+
+    </data>
+</openerp>

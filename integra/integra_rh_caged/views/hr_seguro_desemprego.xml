@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_seguro_desemprego_tree" >
+            <field name="name">hr.seguro.desemprego.tree</field>
+            <field name="model">hr.seguro.desemprego</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Seguro Desemprego">
+                    <field name="data" />
+                    <field name="company_id"/>
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                    <field name="nome_arquivo" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_seguro_desemprego_form" >
+            <field name="name">hr.seguro.desemprego.form</field>
+            <field name="model">hr.seguro.desemprego</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Seguro Desemprego">
+                    <group colspan="2">
+                        <field name="company_id" required="1" domain="[('cnpj_cpf', 'like', '/0001-')]" colspan="4" />                                                                                                                                           
+                        <newline/>
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />
+                        <newline/>
+                        <field name="data" readonly="1"/>                     
+                        <field name="nome_arquivo" colspan="4" />
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar arquivo" name="gera_arquivo" type="object" context="{'company_id' : company_id, 'data_inicial': data_inicial, 'data_final': data_final, 'data': data}" colspan="4" />
+                        <newline/>
+                        <separator string="Arquivo Seguro Desemprego" colspan="4" />
+                        <field name="arquivo" nolabel="1" filename="nome_arquivo" colspan="4"/>
+                        <newline/>
+                        <field name="arquivo_texto" nolabel="1" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_seguro_desemprego_acao">
+            <field name="name">Seguro Desemprego</field>
+            <field name="res_model">hr.seguro.desemprego</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_seguro_desemprego_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_seguro_desemprego_form"/>
+            <field name="act_window_id" ref="hr_seguro_desemprego_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_seguro_desemprego_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="hr_seguro_desemprego_tree"/>
+            <field name="act_window_id" ref="hr_seguro_desemprego_acao"/>
+        </record>
+
+        <menuitem action="hr_seguro_desemprego_acao"
+                  id="menu_hr_seguro_desemprego"
+                  name="Seguro Desemprego"
+                  parent="integra_rh.menu_hr_arquivo"
+                  sequence="2" />
+
+    </data>
+</openerp>

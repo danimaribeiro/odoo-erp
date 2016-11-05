@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_rescisao_tree">
+            <field name="name">finan.contrato.alteracao.rescisao.tree</field>
+            <field name="model">finan.contrato.alteracao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+<!--                 <tree colors="red:aprovado == False and ((not retirada_equipamento_cliente) or (aprovado_area == False));green:aprovado == False and ((not retirada_equipamento_cliente) or (aprovado_area == True));magenta:aprovado == True and retirada_equipamento_cliente and aprovado_area == False"> -->
+                <tree colors="red:aprovado == False and aprovado_area == False;green:aprovado == False and aprovado_area == True;magenta:aprovado == True and aprovado_area == False">
+                    <field name="aprovado" invisible="1"/>
+                    <field name="aprovado_area" invisible="1"/>
+                    <field name="conferido_area" invisible="1"/>
+                    <field name="retirada_equipamento_cliente" invisible="1"/>
+                    <field name="tipo" invisible="1"/>
+                    <field name="company_id" />
+                    <field name="contrato_id" />
+                    <field name="motivo_distrato_id" />
+                    <field name="solicitante_id" />
+                    <field name="data_solicitacao" />
+                    <field name="data_prevista_retirada" />
+                    <field name="aprovador_id" string="Aprovado fin." />
+                    <field name="data_aprovacao" string="Aprovação fin." />
+                    <field name="aprovador_area_id" string="Aprovado sup." />
+                    <field name="data_aprovacao_area" string="Aprovação sup." />
+                    <field name="conferidor_area_id" string="Conferido sup." />
+                    <field name="data_conferencia_area" string="Conferência sup." />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_rescisao_form">
+            <field name="name">finan.contrato.alteracao.rescisao.form</field>
+            <field name="model">finan.contrato.alteracao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Rescisões de contratos">
+                    <field name="tipo" invisible="1" />
+                    <field name="aprovado" invisible="1" />
+                    <field name="aprovado_area" invisible="1" />
+                    <field name="conferido_area" invisible="1" />
+                    <separator string="Contrato e alteração" colspan="4" />
+                    <field name="contrato_id" colspan="4" required="1" on_change="onchange_contrato_id(contrato_id, tipo)" domain="[('natureza', '=', 'R'), ('data_distrato', '=', False)]" attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    <field name="company_id" colspan="4" readonly="1" />
+                    <separator string="Motivo para o distrato" colspan="4" />
+<!--                     <field name="retirada_equipamento_cliente" attrs="{'readonly': [('aprovado','!=',False)]}" /> -->
+                    <field name="motivo_distrato_id" nolabel="1" colspan="4" required="1" attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    <separator string="Data e cobranças" colspan="4" />
+                    <field name="data_comunicacao" on_change="onchange_data_comunicacao(data_comunicacao)" required="1" attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    <field name="bonifica_mes_comunicacao" groups="finan_contrato.group_finan_contrato_gestao,finan_contrato.group_finan_contract_manager" attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    <field name="data_proximo_vencimento_nao_faturado" attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    <field name="efetivar_retirada" colspan="2"/>                 
+                    <field name="data_prevista_retirada" on_change="onchange_data_comunicacao(data_comunicacao)" required="1" attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    <label string="(Esse campo é apenas informativo, tendo o objetivo de facilitar o trabalho do TÉCNICO e  SUPRIMENTOS)" colspan="2" />
+                    <field name="data_distrato" required="1" attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    <label string="(A responsabilidade de conferência é do SUPRIMENTOS e TÉCNICO)" />
+                    <newline />
+                    <field name="bonifica_prorata_distrato" groups="finan_contrato.group_finan_contrato_gestao,finan_contrato.group_finan_contract_manager" attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    <group colspan="4" col="4" groups="finan_contrato.group_finan_contrato_gestao,finan_contrato.group_finan_contract_manager">
+                        <separator string="Motivo para as bonificações (se houver)" colspan="4" />
+                        <field name="motivo_baixa_id" nolabel="1" colspan="4" attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    </group>
+                    <separator string="Justificativa" colspan="4" />
+                    <field name="obs" nolabel="1" colspan="4" required="1" attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    <newline />
+                    <separator string="Solicitante" colspan="4" />
+                    <field name="solicitante_id" colspan="4" readonly="1" />
+                    <field name="data_solicitacao" readonly="1" />
+<!--                     <group colspan="4" col="4" attrs="{'invisible': [('retirada_equipamento_cliente', '!=', True)]}"> -->
+                    <group colspan="4" col="4">
+                        <separator string="Aprovador - Suprimentos" colspan="4" />
+                        <field name="aprovador_area_id" colspan="4" readonly="1" />
+                        <field name="data_aprovacao_area" readonly="1" />
+                        <button name="aprovar_area" colspan="4" type="object" string="Aprovar" groups="finan_contrato.group_finan_contrato_suprimentos" attrs="{'invisible': [('aprovado_area', '!=', False)]}" />
+                    </group>
+                    <group colspan="4" col="4">
+                        <separator string="Conferência - Suprimentos" colspan="4" />
+                        <field name="conferidor_area_id" colspan="4" readonly="1" />
+                        <field name="data_conferencia_area" readonly="1" />
+                        <button name="conferir_area" colspan="4" type="object" string="Conferido" groups="finan_contrato.group_finan_contrato_suprimentos_conferencia" attrs="{'invisible': [('conferido_area', '!=', False)]}" />
+                    </group>
+                    <group colspan="4" col="4">
+                        <separator string="Aprovador" colspan="4" />
+                        <field name="aprovador_id" colspan="4" readonly="1" />
+                        <field name="data_aprovacao" readonly="1" />
+                        <button name="aprovar" colspan="4" type="object" string="Aprovar" groups="finan_contrato.group_finan_contract_manager" attrs="{'invisible': [('aprovado', '!=', False)]}" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_rescisao_search">
+            <field name="name">finan.contrato.alteracao.rescisao.search</field>
+            <field name="model">finan.contrato.alteracao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Rescisões de contratos">
+                    <filter name="aprovado_fin" string="Aprovado fin." icon="terp-go-month" domain="[('aprovado', '!=', False)]" />
+                    <filter name="pendente_fin" string="Pendente fin." icon="terp-go-month" domain="[('aprovado', '=', False)]" />
+<!--                    <filter name="aprovado_sup" string="Aprovado sup." icon="terp-go-month" domain="['|', ('retirada_equipamento_cliente', '=', False), ('aprovado_area', '!=', False)]" />
+                    <filter name="pendente_sup" string="Pendente aprov. sup." icon="terp-go-month" domain="[('retirada_equipamento_cliente', '!=', False), ('aprovado_area', '=', False)]" />-->
+                    <filter name="aprovado_sup" string="Aprovado sup." icon="terp-go-month" domain="[('aprovado_area', '!=', False)]" />
+                    <filter name="pendente_sup" string="Pendente aprov. sup." icon="terp-go-month" domain="[('aprovado_area', '=', False)]" />
+                    <filter name="conferido_sup" string="Conferido sup." icon="terp-go-month" domain="[('conferido_area', '!=', False)]" />
+                    <filter name="pendente_sup" string="Pendente conf. sup." icon="terp-go-month" domain="[('aprovado_area', '=', False)]" />
+                    <separator orientation="vertical" />
+                    <field name="contrato_id" />
+                    <field name="company_id" />
+                    <field name="data_solicitacao" />
+                    <field name="data_prevista_retirada" />
+                    <newline/>
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Unidade de negócio" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Data de solicitação" icon="terp-project" domain="[]" context="{'group_by': 'data_solicitacao'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_contrato_alteracao_rescisao_acao">
+            <field name="name">Rescisões de contratos</field>
+            <field name="res_model">finan.contrato.alteracao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_contrato_alteracao_rescisao_tree" />
+            <field name="domain">[('tipo', '=', 'R')]</field>
+            <field name="context">{'tipo': 'R', 'default_tipo': 'R', 'search_default_pendente_fin': True, 'search_default_pendente_sup': True}</field>
+            <field name="search_view_id" ref="finan_contrato_alteracao_rescisao_search" />
+        </record>
+
+        <menuitem action="finan_contrato_alteracao_rescisao_acao"
+                  id="menu_finan_contrato_alteracao_rescisao"
+                  name="Rescisões de contratos"
+                  parent="menu_finan_contratos_manutencao" />
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_alteracao_rescisao_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_contrato_alteracao_rescisao_form"/>
+            <field name="act_window_id" ref="finan_contrato_alteracao_rescisao_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_alteracao_rescisao_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_contrato_alteracao_rescisao_tree"/>
+            <field name="act_window_id" ref="finan_contrato_alteracao_rescisao_acao"/>
+        </record>
+
+    </data>
+</openerp>

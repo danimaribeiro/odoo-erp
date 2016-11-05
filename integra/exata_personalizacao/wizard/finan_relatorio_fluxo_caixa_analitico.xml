@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_fluxo_caixa_analitico" >
+            <field name="name">finan.relatorio.fluxo.caixa.analitico</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_relatorio_fluxo_caixa_analitico"/>
+            <field name="arch" type="xml">
+                <field name="ativo" position="replace">                    
+                </field>    
+                <button name="gera_relatorio_fluxo_caixa_analitico" position="replace">
+                    <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_fluxo_caixa_analitico_exata" type="object" context="{'company_id' : company_id, 'data_inicial': data_inicial, 'data_final': data_final, 'periodo': periodo, 'opcoes_caixa': opcoes_caixa, 'nao_provisionado': nao_provisionado, 'provisionado': provisionado }" colspan="4" />
+                </button> 
+                <field name="formato" position="before">
+                    <field name="res_partner_bank_id" />               
+                </field>
+            </field>
+        </record>
+        
+    </data>
+</openerp>

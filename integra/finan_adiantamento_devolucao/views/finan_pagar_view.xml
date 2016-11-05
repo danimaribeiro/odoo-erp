@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_pagar_form">
+            <field name="name">finan.pagar.item.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_pagar_form"/>
+            <field name="arch" type="xml">
+                <separator string="Pagamentos efetuados" position="before">
+                    <separator string="Adiantamento e Devoluções" colspan="4" />
+                    <field name="saldo_adiantamento" />
+                    <field name="saldo_devolucao" />
+                    <group colspan="4" attrs="{'invisible': [('saldo_adiantamento', '=', False)]}">
+                        <separator string="Abatimentos de adiantamentos" colspan="4" />
+                        <field name="pagamento_adiantamento_ids" nolabel="1" colspan="4" context="{'default_tipo': 'PP', 'default_valor_documento': saldo_adiantamento, 'tree_view_ref': 'finan.finan_pagamento_adiantamento_tree', 'default_data_quitacao': time.strftime(b'%%Y-%%m-%%d'), 'default_data_juros': time.strftime(b'%%Y-%%m-%%d'), 'default_data_multa': time.strftime(b'%%Y-%%m-%%d'), 'default_data_desconto': time.strftime(b'%%Y-%%m-%%d'), 'default_company_id': company_id, 'default_cnpj_cpf': cnpj_cpf, 'default_raiz_cnpj': raiz_cnpj, 'company_id': company_id, 'cnpj_cpf': cnpj_cpf, 'raiz_cnpj': raiz_cnpj}" domain="[('tipo', '=', 'PP')]" mode="tree" />
+                    </group>
+                </separator>
+            </field>
+        </record>
+    </data>
+</openerp>

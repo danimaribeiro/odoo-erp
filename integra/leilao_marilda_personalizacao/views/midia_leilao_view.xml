@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="midia_leilao_tree" model="ir.ui.view">
+            <field name="name">midia.leilaio_tree</field>
+            <field name="model">midia.leilao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Midia">
+                    <field name="midia"/>               
+                </tree>
+            </field>
+        </record>
+
+        <record id="midia_leilao_form" model="ir.ui.view">
+            <field name="name">midia.leilão_form</field>
+            <field name="model">midia.leilao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Midia" >                                                 
+                    <field name="midia" required="1" colspan="2"/>                                   
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="midia_leilao_action">
+            <field name="name">Midia</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">midia.leilao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="midia_leilao_tree"/>
+        </record>
+
+        <menuitem name="Midia" parent="base.menu_sales"  id="midia_leilao_menu" action="midia_leilao_action" />
+
+   </data>
+</openerp>

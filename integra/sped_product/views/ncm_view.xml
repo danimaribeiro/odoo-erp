@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_ncm_tree_filter">
+            <field name="name">ncm.search</field>
+            <field name="model">sped.ncm</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="NCM">
+                    <field name="codigo"/>
+                    <field name="descricao"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_ncm_tree_view">
+            <field name="name">ncm.tree</field>
+            <field name="model">sped.ncm</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="codigo"/>
+                    <field name="ex"/>
+                    <field name="descricao"/>
+                    <field name="al_ipi_id"/>
+                    <field name="al_pis_cofins_id"/>
+                    <field name="al_ibpt_nacional"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_ncm_form_view">
+            <field name="name">ncm.form</field>
+            <field name="model">sped.ncm</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Form NCM">
+                    <field name="codigo" />
+                    <field name="ex" />
+                    <newline/>
+                    <field name="descricao" colspan="4" />
+                    <newline/>
+                    <field name="al_ipi_id"/>
+                    <newline/>
+                    <field name="al_pis_cofins_id"/>
+                    <newline/>
+                    <field name="al_ibpt_nacional"/>
+                    <button name="atualiza_ibpt" string="Atualiza IBPT" type="object" />
+                    <newline/>
+                    <field name="al_ibpt_internacional"/>
+                    <newline/>
+<!--                     <field name="familiatributaria_id" colspan="4" /> -->
+                    <separator string="Famílias tributárias" colspan="4" />
+                    <field name="familiatributaria_ids" nolabel="1" colspan="4">
+                        <tree editable="top">
+                            <field name="descricao" />
+                        </tree>
+                    </field>
+                    <newline/>
+                    <separator string="Margens de valor agregado" colspan="4" />
+                    <field name="mva_ids" nolabel="1" colspan="4">
+                        <tree editable="top">
+                            <field name="estado_id" />
+                            <field name="data_inicio" />
+                            <field name="mva_normal" />
+                            <field name="mva_simples" />
+                        </tree>
+                    </field>
+                    <separator string="Códigos CEST" colspan="4" />
+                    <field name="cest_ids" nolabel="1" colspan="4">
+                        <tree editable="top">
+                            <field name="nome" />
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_ncm_acao">
+            <field name="name">NCM - Nomenclatura Comum do Mercosul</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">sped.ncm</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_ncm"
+            name="NCM - Nomenclatura Comum do Mercosul"
+            parent="sped_base.menu_sped_fiscal_tabela" sequence="10" action="sped_ncm_acao" />
+    </data>
+</openerp>

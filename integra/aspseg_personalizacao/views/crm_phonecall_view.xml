@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+          <record id="crm_case_phone_form_view" model="ir.ui.view">
+            <field name="name">crm.phonecall.form</field>
+            <field name="model">crm.phonecall</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="crm.crm_case_phone_form_view"/>
+            <field name="arch" type="xml">
+                <field name="opportunity_id" position="after">
+                     <newline />
+                     <field name="sale_order_id" required="True" />                
+                </field>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

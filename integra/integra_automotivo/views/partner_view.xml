@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="partner_form" model="ir.ui.view">
+            <field name="name">partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="sped_base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <page string="General" position="after">
+                    <page string="Veículos">
+                        <separator string="Veículos" colspan="4" />
+                        <field name="veiculo_ids" nolabel="1" mode="tree,form">
+                            <tree>
+                                <field name="placa" />
+                                <field name="modelo_id" />
+                            </tree>
+                            <form>
+                                <group col="6" colspan="4" string="Veículo">
+                                    <field name="modelo_id" string="Marca/Modelo" />
+                                    <field name="placa" string="Placa" />
+                                    <field name="sped_estado_id" />
+                                </group>
+                                <newline/>
+                                <group col="6" colspan="4" string="Especificações">
+                                    <field name="direcao" string="Direção" />
+                                    <field name="tipo_uso"/>
+                                    <field name="freio" />
+                                    <field name="cambio" />
+                                    <field name="motor" />
+                                    <field name="combustivel" />
+                                </group>
+                                <newline/>
+                                <group col="6" colspan="4" string="Propriedades gerais">
+                                    <field name="ano" />
+                                    <field name="cor" string="Cor" />
+                                    <newline/>
+                                    <field name="data_aquisicao"/>
+                                    <field name="valor" />
+                                    <newline/>
+                                    <field name="renavam" />
+                                    <field name="chassis" />
+                                    <newline/>
+                                    <field name="vencimento_ipva" />
+                                    <field name="vencimento_licenciamento" />
+                                    <newline/>
+                                    <field name="res_partner_id" />
+                                    <field name="vencimento_seguro" />
+                                </group>
+                            </form>
+                        </field>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

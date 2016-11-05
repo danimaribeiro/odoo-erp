@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="econo_analise_unificada_tree">
+            <field name="name">econo.analise.unificada.tree</field>
+            <field name="model">econo.analise.unificada</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="descricao" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="econo_analise_unificada_form">
+            <field name="name">econo.analise.unificada.form</field>
+            <field name="model">econo.analise.unificada</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Análise unificada">
+                    <group col="4" colspan="4">
+                        <field name="descricao" colspan="4" required="1" />
+<!--                         <field name="company_id" colspan="4" required="1" /> -->
+                        <newline />
+                        <separator string="Análises mensais a serem unificadas" colspan="4" />
+                        <field name="analise_ids" colspan="4" nolabel="1">
+                            <tree>
+                                <field name="descricao" />
+                            </tree>
+                        </field>
+                        <newline />
+                        <field name="nome" invisible="1"/>
+                        <field name="data" readonly="1" />
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar arquivo" name="gera_analise" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                        <newline/>
+                        <field name="arquivo_texto" colspan="4" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="econo_analise_unificada_search">
+            <field name="name">econo.analise.unificada.search</field>
+            <field name="model">econo.analise.unificada</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Análises unificadas">
+                    <field name="descricao" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="econo_analise_unificada_acao">
+            <field name="name">Análises unificadas</field>
+            <field name="res_model">econo.analise.unificada</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="econo_analise_unificada_tree" />
+        </record>
+
+        <menuitem action="econo_analise_unificada_acao"
+            id="menu_econo_analise_unificada" name="Análises unificadas"
+            parent="menu_finan_analise_economica" />
+
+    </data>
+</openerp>

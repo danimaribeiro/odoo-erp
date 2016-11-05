@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="imovel_area_tree">
+            <field name="name">imovel.area.tree</field>
+            <field name="model">const.imovel</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="tipo" invisible="1" />
+                    <field name="codigo" />
+                    <field name="descricao" />
+                    <field name="situacao" />
+                    <field name="project_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="imovel_area_form">
+            <field name="name">imovel.area.form</field>
+            <field name="model">const.imovel</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Imóveis">
+                    <field name="tipo" invisible="1" />
+                    <group col="4" colspan="4">
+                        <group colspan="4" col="6">
+                            <field name="project_id" colspan="6" />
+                            <field name="company_id" readonly="1" colspan="6" />
+                            <field name="codigo" colspan="2" />
+                            <field name="situacao" colspan="2" required="1" />
+                            <field name="propriedade" colspan="2" required="1" />
+                            <newline />
+                            <field name="create_date" readonly="1" />
+                            <label string="" />
+                            <field name="finan_motivo_distrato_id" colspan="2" attrs="{'required': [('situacao', '=', 'C')], 'invisible': [('situacao', '!=', 'C')]}" />
+                            <field name="data_renovacao" colspan="2" attrs="{'required': [('situacao', '=', 'D'), ('propriedade', 'in', ('T', 'L'))], 'invisible': ['!', '&amp;', ('situacao', '=', 'D'), ('propriedade', 'in', ('T', 'L'))]}" />
+                        </group>
+                        <separator string="Descrição p/anúncio" colspan="4" />
+                        <field name="descricao" nolabel="1" colspan="4" />
+                    </group>
+                    <group col="6" colspan="4">
+                        <separator string="Endereço completo" colspan="6" />
+                        <field name="cep_id" on_change="onchange_cep_id(cep_id)" options="{'quick_create': False}" domain="[('municipio_id', '=', municipio_id)]" string="Pesquisa de ruas" colspan="6" />
+                        <field name="endereco" colspan="4" />
+                        <field name="numero" />
+                        <field name="esquina" colspan="4" />
+                        <newline />
+                        <field name="complemento" colspan="2" />
+                        <field name="bairro" colspan="4" />
+                        <field name="municipio_id" colspan="4" />
+                        <field name="cep" on_change="onchange_cep(cep)" />
+                        <field name="quadra" colspan="3" />
+                        <field name="lote" colspan="3" />
+                        <field name="ponto_referencia" colspan="6" />
+                    </group>
+                    <notebook>
+                        <page string="Cadastro">
+                            <notebook>
+                                <page string="Características">
+                                <group col="6" colspan="4">
+                                    <separator string="Áreas" colspan="6" />
+                                    <field name="area_util" />
+                                    <field name="area_terreno" />
+                                    <field name="area_total" />
+                                    <field name="area_construida_averbada" />
+                                    <field name="area_construida_nao_averbada" />
+                                    <field name="area_construida_total" />
+                                    <field name="largura" />
+                                    <field name="comprimento" />
+                                    <field name="dimensoes" />
+                                    <field name="topografia" />
+                                    <field name="hectare" />
+                                    <field name="cercamento" />
+                                    <field name="restricao" />
+                                </group>
+                                <group col="6" colspan="4">
+                                    <separator string="Características do local" colspan="6" />
+                                    <field name="pavimentacao" />
+                                    <field name="face_sol" />
+                                    <field name="posicao_rua" />
+                                    <field name="poco_artesiano" />
+                                    <field name="gas_natural" />
+                                    <field name="tubulacao_subterranea" />
+                                    <field name="imovel_concluido" />
+                                    <field name="construcao" colspan="4" />
+                                    <field name="imovel_ocupado" />
+                                    <field name="imovel_ocupado_obs" colspan="4" />
+                                    <field name="imovel_arrendado" />
+                                    <field name="imovel_arrendado_obs" colspan="4" />
+                                    <field name="cor_predominante" colspan="6" />
+                                </group>
+                                <group col="6" colspan="4">
+                                    <separator string="Usos do local" colspan="6" />
+                                    <field name="zoneamento_item_id" domain="[('municipio_id', '=', municipio_id)]" colspan="6" />
+                                    <field name="vr_potencial_construtivo" readonly="1" />
+                                    <field name="vr_base" readonly="1" />
+                                    <field name="vr_torre" readonly="1" />
+                                    <field name="vr_altura_maxima" readonly="1" />
+                                    <field name="numero_pavimento" readonly="1" />
+                                    <field name="tamanho_pavimento_altura_max" readonly="1" />
+                                    <field name="numero_pavimento_max" readonly="1" />
+                                    <group col="12" colspan="6">
+                                        <field name="uso_residencial" />
+                                        <field name="uso_comercial" />
+                                        <field name="uso_lazer" />
+                                        <field name="uso_agricultura" />
+                                        <field name="uso_reflorestamento" />
+                                        <field name="uso_pecuaria" />
+                                        <field name="vegetacao" />
+                                        <field name="acude" />
+                                        <field name="maquina_equipamento" />
+                                        <field name="animais" />
+                                    </group>
+                                    <group colspan="6" col="6">
+                                        <field name="uso_obs" colspan="6" />
+                                    </group>
+                                </group>
+        <!--                        <group col="8" colspan="4">
+                                    <separator string="Apartamento" colspan="8" />
+                                    <field name="apartamento" />
+                                    <field name="pavimento" />
+                                    <field name="ultimo_andar" />
+                                    <field name="cobertura" />
+                                    <field name="elevador" />
+                                    <field name="ligacao_agua_individual" />
+                                    <field name="ligacao_energia_individual" />
+                                    <field name="ligacao_gas_individual" />
+                                </group>-->
+        <!--                        <group col="6" colspan="4" string="Benfeitorias">
+                                    <separator string="Segurança" colspan="6" />
+                                    <field name="condominio_fechado" />
+                                    <field name="monitorado_alarme" />
+                                    <field name="monitorado_camera" />
+                                    <field name="portaria" />
+                                    <field name="portaria_vigilante" />
+                                    <field name="vigilancia" />
+                                    <field name="muro_altura" />
+                                    <field name="grade" />
+                                    <field name="cerca_eletrica" />
+
+                                    <separator string="Tecnologia" colspan="6" />
+                                    <field name="operadora_banda_larga" colspan="6" />
+
+                                    <separator string="Salão de festa" colspan="6" />
+                                    <group colspan="6" col="8">
+                                        <field name="salao_festa" />
+                                        <field name="salao_festa_churrasqueira" />
+                                        <field name="salao_festa_banheiro" />
+                                        <field name="salao_festa_cozinha" />
+                                    </group>
+                                    <field name="salao_festa_mobiliado" colspan="6" />
+
+                                    <separator string="Saúde e bem-estar" colspan="6" />
+                                    <field name="academia" />
+                                    <field name="academia_ar_livre" />
+                                    <field name="espaco_beleza" />
+                                    <field name="sauna" />
+                                    <field name="piscina" />
+                                    <field name="piscina_aquecida" />
+                                    <field name="trilha_caminhada" />
+                                    <field name="quadra_poliesportiva" />
+                                    <field name="quadra_tenis" />
+                                    <field name="ginasio" />
+                                    <field name="campo_futebol_salao" />
+                                    <field name="campo_futebol" />
+
+                                    <separator string="Família e filhos" colspan="6" />
+                                    <field name="playground" />
+                                    <field name="brinquedoteca" />
+                                    <field name="cinema" />
+                                    <field name="lago" />
+                                    <field name="quiosque" />
+
+                                    <separator string="Outros" colspan="6" />
+                                    <field name="heliponto" />
+                                    <field name="baia_cavalo" />
+                                    <field name="horta" />
+                                    <field name="pomar" />
+                                    <field name="pomar_obs" colspan="4" />
+                                </group>-->
+        <!--                        <group col="8" colspan="4" string="Cômodos">
+                                    <separator string="Suítes" colspan="8" />
+                                    <field name="suite" />
+                                    <field name="suite_closet" />
+                                    <field name="suite_sacada" />
+                                    <field name="suite_hidro" />
+                                    <separator string="Quartos" colspan="8" />
+                                    <field name="quarto" />
+                                    <field name="quarto_closet" />
+                                    <field name="quarto_sacada" />
+                                    <newline />
+                                    <field name="banheiro" />
+                                    <field name="banheiro_hidro" />
+                                    <separator string="Banheiros" colspan="8" />
+                                    <field name="lavabo" />
+                                    <field name="banheiro_social" />
+                                    <field name="banheiro_servico" />
+                                    <separator string="Salas" colspan="8" />
+                                    <field name="sala_estar" />
+                                    <field name="sala_jantar" />
+                                    <field name="sala_tv" />
+                                    <field name="escritorio" />
+                                    <separator string="Serviço" colspan="8" />
+                                    <field name="cozinha" />
+                                    <field name="lavanderia" />
+                                    <field name="area_servico" />
+                                    <field name="empregada" />
+                                    <separator string="Lazer" colspan="8" />
+                                    <field name="churrasqueira" />
+                                    <field name="churrasqueira_local" />
+                                    <field name="espaco_gourmet" />
+                                    <field name="terraco" />
+                                    <separator string="Garagem" colspan="8" />
+                                    <field name="garagem" />
+                                    <field name="garagem_tipo" />
+                                    <separator string="Infraestrutura" colspan="8" />
+                                    <field name="calefacao" />
+                                    <field name="aquecimento_piso" />
+                                    <field name="pontos_climatizacao" />
+                                    <field name="aquecimento_agua" />
+                                    <field name="laje" />
+                                    <field name="mobilia_obs" colspan="8" />
+                                    <field name="maquina_obs" colspan="8" />
+                                    <separator string="Outros" colspan="8" />
+                                    <field name="pe_direito" />
+                                    <field name="mezanino" />
+                                    <field name="vestiario" />
+                                    <field name="refeitorio" />
+                                    <field name="estacionamento" />
+                                    <field name="piso_resistencia" />
+                                    <field name="andares" />
+                                    <field name="areas" />
+                                    <field name="salas" />
+                                    <field name="areas_obs" />
+                                </group>
+                                <separator string="Condomínio" colspan="4" />
+                                <field name="valor_condominio" />
+                                <field name="chamada_capital" />
+                                <field name="condicao_predio" colspan="4" />
+                                <field name="administradora_condominio" colspan="4" />
+                                <field name="administradora_condominio_fone" colspan="4" />
+                                <field name="sindico_condominio" colspan="4" />
+                                <field name="sindico_condominio_fone" colspan="4" />-->
+                            </page>
+                            <page string="Pessoas, valores e condições comerciais">
+                                <field name="matricula_imbobiliaria" colspan="4" />
+                                <separator string="Pessoas" colspan="4" />
+                                <field name="proprietario_id" colspan="4" />
+<!--                                 <field name="captador_id" colspan="4" /> -->
+                                <field name="res_partner_bank_id" colspan="4" />
+                                <separator string="Agenciadores" colspan="4" />
+                                <field name="agenciador_ids" colspan="4" nolabel="1">
+                                    <tree>
+                                        <field name="name" />
+                                    </tree>
+                                </field>
+                                <separator string="Valores" colspan="4" />
+<!--                                 <field name="venda" /> -->
+                                <field name="valor_venda" />
+<!--                                 <field name="locacao" /> -->
+<!--                                 <field name="valor_locacao" /> -->
+                                <field name="valor_cub" />
+                                <field name="valor_metro_quadrado" />
+                                <!--                                 <newline /> -->
+<!--                                 <field name="comissao" /> -->
+<!--                                 <field name="quitado" /> -->
+                                <newline />
+                                <separator string="Condições de pagamento" colspan="4" />
+                                <field name="condicao_pagamento" nolabel="1" colspan="4" />
+                                <field name="condicao_ids" nolabel="1" colspan="4">
+                                    <tree>
+    <!--                                     <field name="ordem" /> -->
+                                        <field name="tipo_mes"/>
+                                        <field name="valor_parcela" />
+                                        <field name="vezes" />
+                                        <field name="valor_principal" sum="Valor" string="Valor total" />
+    <!--                                     <field name="valor_entrada" sum="Valor" /> -->
+    <!--                                     <field name="data_inicio" string="Data 1ª parcela" /> -->
+                                        <field name="currency_id"/>
+                                        <field name="obs"/>
+                                    </tree>
+                                    <form>
+    <!--                                    <field name="ordem" required="1" />
+                                        <newline />-->
+                                        <field name="tipo_mes" required="1" />
+                                        <field name="valor_parcela" required="1" on_change="onchange_valor_parcela(valor_parcela, vezes)" />
+                                        <field name="vezes" required="1" on_change="onchange_valor_parcela(valor_parcela, vezes)" />
+                                        <field name="valor_principal" required="1" string="Valor total"/>
+                                        <newline />
+                                        <!--<field name="valor_entrada" />-->
+                                        <field name="entrada" />
+    <!--                                     <field name="data_inicio" required="1" string="Data 1ª parcela" /> -->
+                                        <field name="currency_id" />
+                                        <field name="obs" colspan="4" />
+                                        <separator string="Cobrança e juros" colspan="4" />
+                                        <field name="carteira_id" colspan="4" invisible="1" />
+                                        <field name="taxa_juros" />
+                                        <field name="tipo_taxa" />
+                                        <field name="taxa_iof" />
+                                        <field name="taxa_administracao" />
+    <!--                                     <field name="taxa_abertura_credito" /> -->
+                                        <newline />
+    <!--                                     <button name="gera_parcelas" string="Gerar parcelas" type="object" colspan="2" /> -->
+    <!--                                    <separator string="Parcelas" colspan="4" />
+                                        <field name="parcela_ids" nolabel="1" colspan="4">
+                                            <tree editable="top">
+                                                <field name="parcela" />
+                                                <field name="data_vencimento" />
+                                                <field name="valor" sum="valor" />
+                                                <field name="juros" sum="juros" />
+                                                <field name="amortizacao" />
+                                                <field name="divida_amortizada" />
+                                                <field name="saldo_devedor" />
+                                            </tree>
+                                        </field>
+                                        <separator string="Cheques" colspan="4" />
+                                        <field name="cheque_ids" nolabel="1" colspan="4" />-->
+                                    </form>
+                                </field>
+                                <separator string="Exclusividade" colspan="4" />
+                                <field name="exclusividade" />
+                                <newline />
+                                <field name="exclusividade_parcial" />
+                                <field name="exclusividade_outras" attrs="{'invisible': [('exclusividade_parcial', '=', False)]}" />
+                                <newline />
+                                <field name="exclusividade_nenhuma" />
+                                <newline />
+                                <field name="exclusividade_anunciar" />
+
+                                <separator string="Propaganda" colspan="4" />
+                                <field name="colocar_placa" />
+                                <field name="placa_tipo" />
+                                <field name="placa_colocador" />
+                                <field name="placa_data_colocacao" />
+                                <field name="anunciar_site" />
+                                <newline />
+                                <field name="anunciar_jornal" />
+                                <field name="anunciar_jornal_obs" />
+                                <field name="anunciar_outros" />
+                            </page>
+                            <page string="Confrontações">
+                                <group string="Pontos Cardeais" col="4" colspan="4">
+                                    <group col="2" colspan="2">
+                                        <separator string="Norte" />
+                                        <newline />
+                                        <field name="confrontacao_norte" nolabel="1" />
+                                        <newline />
+                                        <separator string="Sul"/>
+                                        <newline />
+                                        <field name="confrontacao_sul" nolabel="1" />
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <newline />
+                                        <separator string="Leste" />
+                                        <newline />
+                                        <field name="confrontacao_leste" nolabel="1"/>
+                                        <newline />
+                                        <separator string="Oeste" />
+                                        <newline />
+                                        <field name="confrontacao_oeste" nolabel="1" />
+                                    </group>
+                                </group>
+                                <group string="Pontos Colaterais" col="4" colspan="4">
+                                    <group col="2" colspan="2">
+                                        <separator string="Nordeste" />
+                                        <newline />
+                                        <field name="confrontacao_nordeste" nolabel="1" />
+                                        <newline />
+                                        <separator string="Sudeste"/>
+                                        <newline />
+                                        <field name="confrontacao_sudeste" nolabel="1" />
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <newline />
+                                        <separator string="Noroeste" />
+                                        <newline />
+                                        <field name="confrontacao_noroeste" nolabel="1"/>
+                                        <newline />
+                                        <separator string="Sudoeste" />
+                                        <newline />
+                                        <field name="confrontacao_sudoeste" nolabel="1" />
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Observações e orientações sobre visitas">
+                                <separator string="Observações" colspan="4" />
+                                <field name="obs" nolabel="1" colspan="4" />
+                                <separator string="Observações sobre visita ao local" colspan="4" />
+                                <field name="visita_obs" nolabel="1" colspan="4" />
+                            </page>
+                            <page string="Fotos do local">
+                                <group colspan="4" col="6">
+                                    <group colspan="2" col="2">
+                                        <field name="foto_1" nolabel="1" widget="image" colspan="2"/>
+                                        <field name="legenda_foto_1" nolabel="1" colspan="2"/>
+                                    </group>
+                                    <group colspan="2" col="2">
+                                        <field name="foto_2" nolabel="1" widget="image" colspan="2"/>
+                                        <field name="legenda_foto_2" nolabel="1" colspan="2"/>
+                                    </group>
+                                    <group colspan="2" col="2">
+                                        <field name="foto_3" nolabel="1" widget="image" colspan="2"/>
+                                        <field name="legenda_foto_3" nolabel="1" colspan="2"/>
+                                    </group>
+                                    <group colspan="2" col="2">
+                                        <field name="foto_4" nolabel="1" widget="image" colspan="2"/>
+                                        <field name="legenda_foto_4" nolabel="1" colspan="2"/>
+                                    </group>
+                                    <group colspan="2" col="2">
+                                        <field name="foto_5" nolabel="1" widget="image" colspan="2"/>
+                                        <field name="legenda_foto_5" nolabel="1" colspan="2"/>
+                                    </group>
+                                    <group colspan="2" col="2">
+                                        <field name="foto_6" nolabel="1" widget="image" colspan="2"/>
+                                        <field name="legenda_foto_6" nolabel="1" colspan="2"/>
+                                    </group>
+                                    <group colspan="2" col="2">
+                                        <field name="foto_7" nolabel="1" widget="image" colspan="2"/>
+                                        <field name="legenda_foto_7" nolabel="1" colspan="2"/>
+                                    </group>
+                                    <group colspan="2" col="2">
+                                        <field name="foto_8" nolabel="1" widget="image" colspan="2"/>
+                                        <field name="legenda_foto_8" nolabel="1" colspan="2"/>
+                                    </group>
+                                    <group colspan="2" col="2">
+                                        <field name="foto_9" nolabel="1" widget="image" colspan="2"/>
+                                        <field name="legenda_foto_9" nolabel="1" colspan="2"/>
+                                    </group>
+                                    <group colspan="2" col="2">
+                                        <field name="foto_10" nolabel="1" widget="image" colspan="2"/>
+                                        <field name="legenda_foto_10" nolabel="1" colspan="2"/>
+                                    </group>
+                                    <group colspan="2" col="2">
+                                        <field name="foto_11" nolabel="1" widget="image" colspan="2"/>
+                                        <field name="legenda_foto_11" nolabel="1" colspan="2"/>
+                                    </group>
+                                    <group colspan="2" col="2">
+                                        <field name="foto_12" nolabel="1" widget="image" colspan="2"/>
+                                        <field name="legenda_foto_12" nolabel="1" colspan="2"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Contabilidade">
+                                <field name="situacao_contabil" />
+                            </page>
+                            </notebook>
+                        </page>
+                        <page string="Prospecção">
+                            <separator string="Prospecções" colspan="4" />
+                            <field name="crm_leads_ids" nolabel='1' colspan="4"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="imovel_area_search">
+            <field name="name">imovel.area.search</field>
+            <field name="model">const.imovel</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Área de terras/area">
+<!--                     <field name="tipo" select="1" /> -->
+                    <field name="situacao" select="1" />
+                    <field name="codigo" />
+                    <field name="descricao" />
+                    <field name="valor_venda" />
+                    <field name="proprietario_id" />
+                    <newline />
+                    <field name="endereco" />
+                    <field name="bairro" />
+                    <field name="municipio_id" />
+                    <field name="ponto_referencia" />
+                    <newline />
+                    <field name="quarto" />
+                    <field name="garagem" />
+                    <newline />
+                    <field name="project_id" />
+
+                    <newline />
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Projeto/empreendimento" icon="terp-project" domain="[]" context="{'group_by': 'project_id'}" />
+                    </group>
+
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="imovel_area_acao">
+            <field name="name">Área de terras rural</field>
+            <field name="res_model">const.imovel</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="imovel_area_tree" />
+            <field name="search_view_id" ref="imovel_area_search" />
+            <field name="domain">[('tipo', '=', 'U')]</field>
+            <field name="context">{'tipo':'U','default_tipo':'U','search_default_situacao':'D'}</field>
+        </record>
+
+        <menuitem
+            action="imovel_area_acao"
+            id="menu_imovel_area"
+            name="Área de terras urbana"
+            sequence="4"
+            parent="menu_imoveis" />
+
+        <record model="ir.actions.act_window.view" id="imovel_area_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="imovel_area_form"/>
+            <field name="act_window_id" ref="imovel_area_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="imovel_area_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="imovel_area_tree"/>
+            <field name="act_window_id" ref="imovel_area_acao"/>
+        </record>
+
+    </data>
+</openerp>

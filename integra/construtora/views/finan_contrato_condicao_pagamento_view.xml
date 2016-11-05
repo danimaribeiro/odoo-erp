@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_condicao_tree">
+            <field name="name">finan.contrato.condicao.tree</field>
+            <field name="model">finan.contrato.condicao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Condição de pagamento">
+                    <field name="tipo_mes"/>
+                    <field name="valor_parcela" />
+                    <field name="vezes" />
+                    <field name="valor_principal" sum="Valor" string="Valor total" />
+                    <field name="data_inicio" string="Data 1ª parcela" />
+                    <field name="currency_id"/>
+                    <field name="obs"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_condicao_form">
+            <field name="name">finan.contrato.condicao.form</field>
+            <field name="model">finan.contrato.condicao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Condição de pagamento">
+                    <field name="entrada" />
+                    <newline />
+                    <field name="tipo_mes" required="1" />
+                    <newline />
+                    <field name="valor_parcela" required="1" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" />
+                    <field name="vezes" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" attrs="{'invisible': [('entrada', '!=', False)], 'required': True}" />
+                    <newline />
+                    <field name="valor_principal" string="Valor total" attrs="{'invisible': [('entrada', '!=', False)], 'required': True}" />
+                    <newline />
+                    <!--<field name="valor_entrada" />-->
+                    <field name="data_inicio" required="1" string="Data 1ª parcela" />
+                    <field name="currency_id" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" />
+                    <newline />
+                    <field name="data_base" />
+                    <field name="tipo_mes_correcao" />
+                    <field name="obs" colspan="4" />
+                    <separator string="Cobrança e juros" colspan="4" />
+                    <field name="carteira_id" colspan="4" invisible="1" />
+                    <field name="taxa_juros" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" />
+                    <field name="tipo_taxa" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" />
+                    <field name="taxa_juros_sacoc" attrs="{'invisible': [('tipo_taxa', '!=', '3')]}" />
+                    <newline />
+                    <field name="taxa_iof" />
+                    <field name="taxa_administracao" />
+                    <field name="taxa_seguro" />
+
+                    <field name="valor_original" attrs="{'invisible': [('tipo_taxa', '!=', '3')], 'required': [('tipo_taxa', '=', '3')]}" />
+
+<!--                                     <field name="taxa_abertura_credito" /> -->
+                    <newline />
+<!--                                     <button name="gera_parcelas" string="Gerar parcelas" type="object" colspan="2" /> -->
+                    <separator string="Integração financeira" colspan="4" />
+                    <field name="conta_id" colspan="4"  required="1" domain="[('sintetica', '=', False)]" />
+                    <newline />
+                    <field name="documento_id" colspan="2"  required="1" />
+                    <newline />
+                    <field name="centrocusto_id" colspan="4" domain="[('sintetico', '=', False)]" />
+                    <newline />
+                    <field name="res_partner_bank_id" colspan="4" string="Conta bancária" />
+                    <field name="carteira_id" colspan="4" />
+                    <newline />
+                    <field name="formapagamento_id" colspan="4" required="1" />
+                    <newline />
+                    <field name="res_partner_address_id" colspan="4" domain="[('type', '=', 'delivery')]" context="{'contrato': True}" />
+                    <field name="ajusta_quantidade_parcelas" />
+                    <separator string="Parcelas" colspan="4" />
+                    <field name="parcela_ids" nolabel="1" colspan="4"/>
+                    <separator string="Cheques" colspan="4" />
+                    <field name="cheque_ids" nolabel="1" colspan="4" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_condicao_parcela_tree">
+            <field name="name">finan.contrato.condicao.parcela.tree</field>
+            <field name="model">finan.contrato.condicao.parcela</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Parcela de pagamento">
+                    <field name="condicao_tipo_taxa" invisible="1" />
+                    <field name="parcela" />
+                    <field name="data_vencimento" />
+                    <field name="valor_original" sum="original" />
+                    <field name="valor_capital" sum="capital" />
+                    <field name="condicao_taxa_juros" />
+                    <field name="juros" sum="juros" />
+                    <field name="valor_capital_juros" sum="capital_juros" />
+                    <field name="indice" sum="indice" />
+                    <field name="correcao" sum="correcao" />
+                    <field name="valor_capital_juros_correcao" sum="capital_juros_correcao" />
+                    <field name="condicao_taxa_seguro" />
+                    <field name="valor_seguro" sum="seguro" />
+                    <field name="valor_administracao" sum="adm" />
+                    <field name="valor" sum="valor" />
+                    <field name="amortizacao" invisible="[('condicao_tipo_taxa', '!=', '2')]" />
+                    <field name="divida_amortizada" invisible="[('condicao_tipo_taxa', '!=', '2')]" />
+                    <field name="saldo_devedor" />
+                    <field name="entrada" />
+                    <field name="obs" />
+                    <field name="currency_id" string="Índice" />
+                    <field name="data_base" />
+                    <field name="tipo_mes_correcao" />
+                    <field name="res_partner_bank_id" string="Conta bancária" />
+                    <field name="carteira_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_condicao_parcela_form">
+            <field name="name">finan.contrato.condicao.parcela.form</field>
+            <field name="model">finan.contrato.condicao.parcela</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Parcela de pagamento">
+                    <field name="parcela" required="1" />
+                    <newline />
+                    <field name="data_vencimento" required="1" />
+                    <newline />
+                    <field name="valor" required="1" />
+                    <newline />
+                    <field name="juros" />
+                    <field name="amortizacao" />
+                    <field name="divida_amortizada" />
+                    <field name="saldo_devedor" />
+                    <field name="entrada" />
+                    <field name="obs" colspan="4" />
+                    <field name="currency_id" string="Índice" />
+                    <field name="data_base" />
+                    <field name="tipo_mes_correcao" />
+                    <separator string="Integração financeira" colspan="4" />
+                    <field name="conta_id" colspan="4"  required="1" domain="[('sintetica', '=', False)]" />
+                    <newline />
+                    <field name="documento_id" colspan="2"  required="1" />
+                    <newline />
+                    <field name="centrocusto_id" colspan="4" domain="[('sintetico', '=', False)]" />
+                    <newline />
+                    <field name="res_partner_bank_id" colspan="4" string="Conta bancária" />
+                    <field name="carteira_id" colspan="4" />
+                    <newline />
+                    <field name="formapagamento_id" colspan="4" required="1" />
+                    <newline />
+                    <field name="res_partner_address_id" colspan="4" domain="[('type', '=', 'delivery')]" context="{'contrato': True}" />
+                    <button type="object" string="Atualizar" name="atualiza_valor" />
+                    <separator string="Atualização" colspan="4" />
+                    <field name="atualizacao_ids" colspan="4" nolabel="1" readonly="1">
+                        <tree>
+                            <field name="condicao_id" invisible="1" />
+                            <field name="condicao_tipo_taxa" invisible="1" />
+                            <field name="parcela" invisible="1" />
+                            <field name="valor_capital" />
+                            <field name="valor_original" string="Valor anterior" />
+                            <field name="data_vencimento" />
+                            <field name="atraso" />
+                            <field name="porcentagem_multa" invisible="1" />
+                            <field name="valor_multa_carteira" />
+                            <field name="porcentagem_juros" invisible="1" />
+                            <field name="valor_juros_carteira" />
+                            <field name="valor_juros_sacoc" />
+                            <field name="indice" />
+                            <field name="correcao" />
+                            <field name="valor_seguro" />
+                            <field name="valor" />
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

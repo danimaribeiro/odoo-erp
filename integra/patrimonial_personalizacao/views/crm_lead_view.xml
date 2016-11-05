@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        
+        <record model="ir.ui.view" id="patrimonial_crm_lead_form">
+        <field name="name">CRM - Leads Form</field>
+        <field name="model">crm.lead</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="orcamento.crm_lead_form"/>
+        <field name="arch" type="xml">
+          <data>                       
+             <field name="receita_venda" position="replace">
+                    <field name="receita_venda" string="Receitas de vendas"/>
+                    <field name="receita_servico" string="Receita mensal serviço" on_change="onchange_receita(receita_servico, receita_locacao)"/>
+             </field> 
+             <field name="receita_locacao" position="replace">
+                    <field name="receita_locacao" string="Receita mensal locação" on_change="onchange_receita(receita_servico, receita_locacao)"/>
+             </field>            
+          </data>
+        </field>
+    </record>        
+    </data>
+</openerp>

@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hr_fihca_registro_ferias" language="groovy" pageWidth="511" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="511" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6fff61ce-1432-40fb-830b-18bbe5149856">
+	<property name="ireport.zoom" value="1.6105100000000079"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="CONTRACT_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+hcf.data_inicial_periodo_aquisitivo,
+hcf.data_final_periodo_aquisitivo,
+hcf.data_inicial_periodo_concessivo,
+hcf.data_final_periodo_concessivo,
+hcf.data_inicial_periodo_gozo,
+hcf.data_final_periodo_gozo,
+hcf.data_final_periodo_concessivo,
+hcf.saldo_dias as dias_ferias,
+case
+when hcf.proporcional = True then
+'Proporcional'
+when hcf.vencida = True then
+'Vencida'
+when hcf.pagamento_dobro = True then
+'Pagamento em dobro'
+else
+'Gozadas'
+end as tipo_ferias,
+hcf.faltas,
+hcf.afastamentos
+
+from hr_contract_ferias hcf
+
+where hcf.contract_id = $P{CONTRACT_ID}]]>
+	</queryString>
+	<field name="data_inicial_periodo_aquisitivo" class="java.sql.Date">
+		<fieldDescription><![CDATA[Início período aquisitivo]]></fieldDescription>
+	</field>
+	<field name="data_final_periodo_aquisitivo" class="java.sql.Date">
+		<fieldDescription><![CDATA[Fim período aquisitivo]]></fieldDescription>
+	</field>
+	<field name="data_inicial_periodo_concessivo" class="java.sql.Date">
+		<fieldDescription><![CDATA[Início período concessivo]]></fieldDescription>
+	</field>
+	<field name="data_final_periodo_concessivo" class="java.sql.Date">
+		<fieldDescription><![CDATA[Fim período concessivo]]></fieldDescription>
+	</field>
+	<field name="data_inicial_periodo_gozo" class="java.sql.Date">
+		<fieldDescription><![CDATA[Início período gozo]]></fieldDescription>
+	</field>
+	<field name="data_final_periodo_gozo" class="java.sql.Date">
+		<fieldDescription><![CDATA[Fim período gozo]]></fieldDescription>
+	</field>
+	<field name="dias_ferias" class="java.lang.Double"/>
+	<field name="tipo_ferias" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo de férias]]></fieldDescription>
+	</field>
+	<field name="faltas" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Faltas]]></fieldDescription>
+	</field>
+	<field name="afastamentos" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Afastamentos]]></fieldDescription>
+	</field>
+	<variable name="cont" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<columnHeader>
+		<band height="39">
+			<staticText>
+				<reportElement x="0" y="25" width="59" height="14" uuid="a20ec32c-274f-4eb5-9812-d23c487606e6"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Per. Aq Inicial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="59" y="25" width="55" height="14" uuid="8850786d-60fa-4357-9afa-98d1fe557fe7"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Final]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="114" y="25" width="55" height="14" uuid="e2a097a6-a491-4eab-8334-f451bd8bc8c8"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Per. Gozo Inicial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="511" height="20" uuid="59b85108-cbca-4ce4-8414-d94e285b8853"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FÉRIAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="169" y="25" width="55" height="14" uuid="19cd53e3-584e-493b-86e7-9d2bd04ec115"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Final ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="224" y="25" width="30" height="14" uuid="3c419266-9d87-4de1-888b-714ed16633a2"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[D.ferias]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="286" y="25" width="59" height="14" uuid="ea793f3f-9ef7-4f71-a867-994f6b68f2c0"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Tipo de Ferias]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="345" y="25" width="26" height="14" uuid="cfcd3b31-68f3-4ea9-9544-b5d2a19a6466"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Faltas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="371" y="25" width="35" height="14" uuid="27125885-60c9-49d2-8132-4cb540e5fb9e"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Afastam.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="441" y="25" width="35" height="14" uuid="6f881b71-89f7-4a5a-b1cb-9b869c29c32b"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lic. Mat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="406" y="25" width="35" height="14" uuid="a4b5716b-971a-46a2-a66c-5c7b9073057b"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lic.Rem]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="476" y="25" width="35" height="14" uuid="4101901d-5057-481c-9b53-bf1440989a3f"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Serv.Mil]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="254" y="25" width="32" height="14" uuid="588f52e7-3040-4f64-a585-d30e7c267864"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[D.abono]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="59" height="14" uuid="c4b0f96e-b77d-419a-a907-99e8b040dd5e"/>
+				<box leftPadding="5" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_inicial_periodo_aquisitivo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="59" y="0" width="55" height="14" uuid="1d563051-65fd-4fba-b056-5226aa0bf8cb"/>
+				<box leftPadding="2" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_final_periodo_aquisitivo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="286" y="0" width="59" height="14" uuid="c1d806b1-5f09-468e-a768-d5b14e001a00"/>
+				<box leftPadding="0" rightPadding="5">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo_ferias}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="114" y="0" width="55" height="14" uuid="b76fb449-461b-431b-87e3-6a9c438c0045"/>
+				<box leftPadding="2" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_inicial_periodo_gozo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="169" y="0" width="55" height="14" uuid="10b4613f-e62f-4e27-8201-5cc2ca832d6e"/>
+				<box leftPadding="2" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_final_periodo_gozo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="224" y="0" width="30" height="14" uuid="fdb7fcb6-b30d-4488-a2c5-686b723e5316"/>
+				<box leftPadding="2" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dias_ferias}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="254" y="0" width="32" height="14" uuid="ee181bca-9fb4-4c60-b70c-76952d53f79f"/>
+				<box leftPadding="2" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="345" y="0" width="26" height="14" uuid="71fea9a1-ea2b-464b-a86c-5d6c0c0c8a35"/>
+				<box leftPadding="2" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{faltas}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="371" y="0" width="35" height="14" uuid="b1c9b330-834f-4083-af41-c253b8220930"/>
+				<box leftPadding="2" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{afastamentos}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="406" y="0" width="35" height="14" uuid="03e7efcd-98fb-4e4f-a687-57ac144e7c97"/>
+				<box leftPadding="2" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="441" y="0" width="35" height="14" uuid="91eb20ed-768b-41cf-9744-11862879ec48"/>
+				<box leftPadding="2" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="476" y="0" width="35" height="14" uuid="6337ad08-2476-4860-beae-d2a1f8c82f85"/>
+				<box leftPadding="2" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="12"/>
+	</summary>
+</jasperReport>

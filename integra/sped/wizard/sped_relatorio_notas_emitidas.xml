@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_relatorio_notas_emitidas" >
+            <field name="name">sped.relatorio.notas.emitidas</field>
+            <field name="model">sped.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório de Notas Emitidas">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="2" />
+                        <newline/>
+                        <field name="company_id" required="1" domain="[('cnpj_cpf', '!=', False)]" colspan="4"/>
+                        <field name="soh_empresa" colspan="2" string="Ignorar CNPJ e trazer somente esta empresa/unidade?"/>
+                        <newline/>
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />
+                        <newline/>
+                        <field name="modelo" colspan="4" />
+                        <newline/>
+                        <field name="tipo" required="1" />
+                        <field name="formato" required="1"/>
+                        <newline/>
+                        <field name="emissao" required="1" colspan="1" />
+                        <field name="naturezaoperacao_id" colspan="1" />
+                        <field name="nome" invisible="1"/>
+                        <!--<field name="nome_csv" invisible="1"/>-->
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_notas_emitidas" type="object" context="{'company_id' : company_id, 'data_inicial': data_inicial, 'data_final': data_final }" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                        <newline/>
+                        <!--<field name="arquivo_csv" nolabel="1" readonly="1" filename="nome_csv" colspan="2"/> -->
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_relatorio_notas_emitidas_acao">
+            <field name="name">Notas Emitidas</field>
+            <field name="res_model">sped.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_relatorio_notas_emitidas_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_relatorio_notas_emitidas"/>
+            <field name="act_window_id" ref="sped_relatorio_notas_emitidas_acao"/>
+        </record>
+
+        <menuitem action="sped_relatorio_notas_emitidas_acao"
+                  id="menu_finan_relatorio_notas_emitidas" name="Notas Emitidas" parent="menu_sped_fiscal_relatorio" sequence="2" />
+
+    </data>
+</openerp>

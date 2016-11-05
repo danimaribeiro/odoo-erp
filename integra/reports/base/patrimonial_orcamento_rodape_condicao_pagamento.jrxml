@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="patrimonial_orcamento_rodape_condicao_pagamento" language="groovy" pageWidth="555" pageHeight="802" orientation="Landscape" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d742ebba-d67b-4e4c-b586-3d00fca25014">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[select
+    coalesce(condpag.name, 'À vista') as condicao_pagamento,
+    coalesce(orc.vr_total_venda_impostos, 0) as valor,
+    coalesce(condpag_maodeobra.name, 'À vista') as condicao_pagamento_maodeobra,
+    coalesce(orc.mao_de_obra_instalacao, 0) as valor_maodeobra,
+    array_to_string(array(
+  select distinct
+      coalesce(c.nome, '') as categoria
+
+  from
+      sale_order o
+      join sale_order_line oi on oi.order_id = o.id
+      join orcamento_categoria c on c.id = oi.orcamento_categoria_id
+
+  where
+      o.id = 4976
+      and c.id not in (4, 6)
+
+  order by
+      categoria
+), ' + ') as categorias
+
+from
+    sale_order orc
+    left join account_payment_term condpag on condpag.id = orc.payment_term
+    left join account_payment_term condpag_maodeobra on condpag_maodeobra.id = orc.mao_de_obra_instalacao_payment_term_id
+
+where
+    orc.id = 4976]]>
+	</queryString>
+	<field name="condicao_pagamento" class="java.lang.String"/>
+	<field name="valor" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor]]></fieldDescription>
+	</field>
+	<field name="condicao_pagamento_maodeobra" class="java.lang.String"/>
+	<field name="valor_maodeobra" class="java.lang.Double"/>
+	<field name="categorias" class="java.lang.String"/>
+	<detail>
+		<band height="36" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="R$ #,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="455" y="0" width="100" height="18" isRemoveLineWhenBlank="true" uuid="d9c008aa-706b-4fcd-a8a9-0b7977108f73"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="0" width="455" height="18" isRemoveLineWhenBlank="true" uuid="f9cb9b84-895f-475b-ba65-9d8afff85bf0"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{categorias} + ": " + $F{condicao_pagamento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="R$ #,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="455" y="18" width="100" height="18" isRemoveLineWhenBlank="true" uuid="16ad633e-0a42-45de-a522-e16a61e994ae"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_maodeobra}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="18" width="455" height="18" isRemoveLineWhenBlank="true" uuid="e67b527d-bd46-4ae9-b58f-a284dbe40665"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["MÃO DE OBRA: " + $F{condicao_pagamento_maodeobra}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

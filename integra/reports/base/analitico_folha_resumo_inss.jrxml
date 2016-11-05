@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="analitico_folha_resumo_inss" language="groovy" pageWidth="502" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="502" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="3428d709-0900-4855-9796-42c30a9352fc">
+	<property name="ireport.zoom" value="1.4641000000000024"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPOS" class="java.lang.String">
+		<defaultValueExpression><![CDATA["('N', 'R')"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_INICIAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2014-02-01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_FINAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2014-02-28"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CNPJS" class="java.lang.String">
+		<defaultValueExpression><![CDATA["('82.891.802/0001-37')"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+  h.company_id,
+  p.razao_social as empresa,
+  p.cnpj_cpf as cnpj
+
+from
+  hr_payslip h
+  join hr_employee e on e.id = h.employee_id
+  join hr_contract c on c.id = h.contract_id
+  join res_company cp on cp.id = c.company_id
+  join res_partner p on p.id = cp.partner_id
+  join hr_payslip_line hl on hl.slip_id = h.id
+  join hr_salary_rule r on r.id = hl.salary_rule_id
+  join hr_salary_rule_category rc on rc.id = r.category_id
+
+where
+  h.tipo in $P!{TIPOS} and (h.simulacao = False or h.simulacao is null)
+  and (
+    (h.tipo in ('N', 'D') and h.date_from >= cast($P{DATA_INICIAL} as date) and h.date_to <= cast($P{DATA_FINAL} as date))
+     or (h.tipo = 'R' and h.data_afastamento between cast($P{DATA_INICIAL} as date) and cast($P{DATA_FINAL} as date))
+  )
+  and p.cnpj_cpf in $P!{CNPJS}
+  and r.code not in ('INSS_RAT', 'INSS_FAP_AJUSTADO', 'INSS_DEDUCAO_PREVIDENCIARIA', 'INSS_OUTRAS_ENTIDADES', 'INSS_EMPRESA')
+
+group by
+  h.company_id,
+  p.razao_social,
+  p.cnpj_cpf,
+  p.endereco,
+  p.numero,
+  p.complemento,
+  p.bairro,
+  p.cidade,
+  p.estado,
+  p.cep,
+  h.tipo,
+  e.id,
+  e.nome,
+  c.date_start,
+  c.date_end,
+  c.name
+
+order by
+  p.cnpj_cpf,
+  e.nome]]>
+	</queryString>
+	<field name="company_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Company]]></fieldDescription>
+	</field>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="cnpj" class="java.lang.String">
+		<fieldDescription><![CDATA[CNPJ]]></fieldDescription>
+	</field>
+	<variable name="TOTAL_DEDUCAO" class="java.lang.Double"/>
+	<variable name="TOTAL_PROVENTO" class="java.lang.Double"/>
+	<variable name="DATA_INICIAL" class="java.util.Date">
+		<variableExpression><![CDATA[$P{DATA_INICIAL}]]></variableExpression>
+	</variable>
+	<variable name="VALOR_FUNCIONARIOS" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="System"/>
+	<variable name="VALOR_PROLABORE" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="System"/>
+	<variable name="VALOR_AUTONOMO" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="System">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="SALARIO_MATERNIDADE" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="System"/>
+	<variable name="VALOR_COOPERATIVAS" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="System"/>
+	<variable name="RAT" class="java.math.BigDecimal" calculation="System"/>
+	<variable name="TOTAL" class="java.math.BigDecimal" calculation="System"/>
+	<variable name="EMPREGADO" class="java.lang.Integer" calculation="System"/>
+	<variable name="SALARIO_FAMILIA" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="System"/>
+	<variable name="TOTAL_BRUTO" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa">
+		<variableExpression><![CDATA[$V{TOTAL} + $V{RAT} + $V{VALOR_FUNCIONARIOS} + $V{VALOR_PROLABORE} +
+$V{VALOR_AUTONOMO} + $V{VALOR_COOPERATIVAS}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="TOTAL_COMPENSACOES" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa">
+		<variableExpression><![CDATA[$V{SALARIO_MATERNIDADE} + $V{SALARIO_FAMILIA} + $V{RETENCOES_FORNECEDORES}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="RETENCOES_FORNECEDORES" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="System"/>
+	<group name="empresa" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{cnpj}]]></groupExpression>
+		<groupFooter>
+			<band height="171">
+				<subreport isUsingCache="false">
+					<reportElement x="0" y="0" width="502" height="56" uuid="e221414d-1fde-4784-9a3a-a2bf53dfa856"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="TIPOS">
+						<subreportParameterExpression><![CDATA[$P{TIPOS}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="DATA_INICIAL">
+						<subreportParameterExpression><![CDATA[$P{DATA_INICIAL}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="DATA_FINAL">
+						<subreportParameterExpression><![CDATA[$P{DATA_FINAL}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="CNPJ">
+						<subreportParameterExpression><![CDATA[$F{cnpj}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "analitico_folha_resumo_inss_bases.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement x="0" y="87" width="402" height="14" uuid="4f78af9b-cc91-450d-97e2-1b31db510647"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[INSS empresa - RAT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="73" width="402" height="14" uuid="553efb43-4aca-45e7-8367-5a79aa436f3d"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[INSS empresa - 20%]]></text>
+				</staticText>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="402" y="87" width="100" height="14" uuid="7a9d6ff0-f807-4e31-80ac-e611fb46b60d"/>
+					<box rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{RAT}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="402" y="73" width="100" height="14" uuid="4f91d42a-155c-4391-baaf-a1c3b02d4386"/>
+					<box rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="1" y="143" width="402" height="14" uuid="a9d69fd9-60a2-47a9-888a-c16a6bf8be85"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[INSS empresa - Cooperativa]]></text>
+				</staticText>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="403" y="115" width="100" height="14" uuid="e4318fda-280f-4e9a-bb31-2710bb17296d"/>
+					<box rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{VALOR_PROLABORE}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="403" y="143" width="100" height="14" uuid="7c844f36-1e11-49fa-ac59-bbb113d011c5"/>
+					<box rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{VALOR_COOPERATIVAS}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="403" y="129" width="100" height="14" uuid="fda4e650-c7fa-4c52-a588-d24c680f77bd"/>
+					<box rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{VALOR_AUTONOMO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="1" y="101" width="402" height="14" uuid="5bb19357-1003-465f-ad62-8d72b35d7a1c"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[INSS empresa - Funcionário]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="1" y="115" width="402" height="14" uuid="675c9d03-fae7-4f88-9e60-61d43a7434ec"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[INSS empresa - Pró-labore]]></text>
+				</staticText>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="403" y="101" width="100" height="14" uuid="afe72dd2-3c45-48b0-a37c-0a87bf83129a"/>
+					<box rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{VALOR_FUNCIONARIOS}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="1" y="129" width="402" height="14" uuid="a4db3c94-0c21-4f97-8227-019c1f4fdaa8"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[INSS empresa - Autônomo]]></text>
+				</staticText>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="403" y="157" width="100" height="14" uuid="5e6012b5-c934-49fc-a204-b6ff95159633"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_BRUTO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="157" width="403" height="14" uuid="f6055b6a-09ec-43a6-9187-62b0c9f0c1cc"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Totalização bruto do INSS]]></text>
+				</staticText>
+			</band>
+			<band height="84">
+				<staticText>
+					<reportElement x="0" y="15" width="403" height="14" uuid="aff0838c-11d7-4416-8a02-992528719afc"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[(-) Dedução previdenciária (Salário família)]]></text>
+				</staticText>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="403" y="15" width="100" height="14" uuid="003a1039-96b3-4d46-be13-96525d19062e"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SALARIO_FAMILIA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="1" y="29" width="402" height="14" uuid="479a1743-113a-4abc-9f73-556869414992"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[(-) Dedução previdenciária (Licença maternidade)]]></text>
+				</staticText>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="403" y="29" width="99" height="14" uuid="0e147d77-4854-4d95-89a0-537b3bb70e9d"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SALARIO_MATERNIDADE}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="403" y="43" width="99" height="14" uuid="fc260b8d-f902-44ed-a70d-8447133011d1"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{RETENCOES_FORNECEDORES}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="1" y="43" width="402" height="14" uuid="27f88f78-df8b-4e30-941b-9800b44bb203"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[(-) Valor retençao do mes]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="57" width="403" height="14" uuid="2baeecca-3ecc-44dc-8032-8b01c5eb888c"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[(=) Total de Compensações]]></text>
+				</staticText>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="403" y="57" width="99" height="14" uuid="97df28aa-4b28-45e6-9e7a-9583685bb3a2"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_COMPENSACOES}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<columnHeader>
+		<band height="11">
+			<subreport isUsingCache="false">
+				<reportElement x="366" y="0" width="25" height="11" uuid="f4e687a5-ec90-44c5-8df0-8cd4f57b0367"/>
+				<subreportParameter name="TIPOS">
+					<subreportParameterExpression><![CDATA[$P{TIPOS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_INICIAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_INICIAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_FINAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_FINAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CNPJ">
+					<subreportParameterExpression><![CDATA[$F{cnpj}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="RAT" toVariable="RAT"/>
+				<returnValue subreportVariable="TOTAL" toVariable="TOTAL"/>
+				<returnValue subreportVariable="RETENCAO_FORNECEDORES" toVariable="RETENCOES_FORNECEDORES"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "analitico_folha_resumo_inss_aliquotas.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="false">
+				<reportElement x="403" y="0" width="22" height="11" uuid="abcb6712-0745-4707-885b-3b311236e081"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPOS">
+					<subreportParameterExpression><![CDATA[$P{TIPOS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_INICIAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_INICIAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_FINAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_FINAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CNPJ">
+					<subreportParameterExpression><![CDATA[$F{cnpj}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="SALARIO_MATERNIDADE" toVariable="SALARIO_MATERNIDADE"/>
+				<returnValue subreportVariable="SALARIO_FAMILIA" toVariable="SALARIO_FAMILIA"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "analitico_folha_resumo_inss_maternidade.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="false">
+				<reportElement x="333" y="0" width="23" height="11" uuid="1664f036-1789-46ba-b71d-ab7e2fe243e8"/>
+				<subreportParameter name="TIPOS">
+					<subreportParameterExpression><![CDATA[$P{TIPOS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_INICIAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_INICIAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_FINAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_FINAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CNPJ">
+					<subreportParameterExpression><![CDATA[$F{cnpj}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="VALOR_FUNCIONARIOS" toVariable="VALOR_FUNCIONARIOS"/>
+				<returnValue subreportVariable="VALOR_PROLABORE" toVariable="VALOR_PROLABORE"/>
+				<returnValue subreportVariable="VALOR_COOPERATIVAS" toVariable="VALOR_COOPERATIVAS"/>
+				<returnValue subreportVariable="VALOR_AUTONOMO" toVariable="VALOR_AUTONOMO"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "analitico_folha_resumo_inss_funcionario.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</columnHeader>
+	<summary>
+		<band height="42">
+			<staticText>
+				<reportElement x="0" y="0" width="402" height="14" uuid="c6299019-e55c-4410-92c5-1213328d4416"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Bruto]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="402" y="0" width="100" height="14" uuid="14e26eaa-d3dd-49dd-860a-0d870c8b436b"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_BRUTO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="28" width="402" height="14" uuid="8e4a83ed-a76d-4f3c-854d-f3570906662c"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Totalização liquida do INSS]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="403" y="28" width="100" height="14" uuid="edbb345f-c830-4c68-8d4f-08c0224b0e48"/>
+				<box rightPadding="2">
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_BRUTO} - $V{TOTAL_COMPENSACOES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="402" y="14" width="100" height="14" uuid="07195c7a-7f3f-4de8-8937-f42a155c6e4c"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_COMPENSACOES}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="14" width="402" height="14" uuid="7023d0c9-7faa-4933-8227-d97e055174f5"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[(-) Retenção de tomadores de serviço]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

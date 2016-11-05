@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="project_phase_form">
+        <field name="name">project.phase.form</field>
+        <field name="model">project.phase</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="project_long_term.view_project_phase_form"/>
+        <field name="arch" type="xml">
+            <field name="date_start" position="before">
+                <field name="parent_id" colspan="6" />
+            </field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="project_phase_tree">
+        <field name="name">project.phase.tree</field>
+        <field name="model">project.phase</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="project_long_term.view_project_phase_list"/>
+        <field name="arch" type="xml">
+            <field name="project_id" position="replace" />
+            <field name="name" position="before">
+                <field name="project_id" on_change="onchange_project(project_id)"/>
+                <field name="parent_id" />
+            </field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="project_phase_search">
+        <field name="name">project.phase.search</field>
+        <field name="model">project.phase</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="project_long_term.view_project_phase_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@string='Project']" position="before">
+                <filter string="Fase superior" icon="terp-folder-violet" domain="[('parent_id', '!=', False)]" context="{'group_by': 'parent_id'}" name="parent_id"/>
+            </xpath>
+        </field>
+    </record>
+
+</data>
+</openerp>

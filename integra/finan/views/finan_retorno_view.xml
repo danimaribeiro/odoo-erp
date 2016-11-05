@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_retorno_tree">
+            <field name="name">finan.retorno.tree</field>
+            <field name="model">finan.retorno</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Retornos de cobrança">
+                    <field name="carteira_id" />
+                    <field name="numero_arquivo" />
+                    <field name="data" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_retorno_form">
+            <field name="name">finan.retorno.form</field>
+            <field name="model">finan.retorno</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Retorno de cobrança">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="carteira_id" colspan="4" />
+                        <newline />
+                        <field name="numero_arquivo" colspan="4"/>
+                        <newline />
+                        <field name="data" colspan="4" />
+                        <newline />
+                        <field name="arquivo_binario" colspan="4" />
+                        <button icon="gtk-execute" string="Processar retorno" name="processar_retorno" type="object" />
+                    </group>
+                    <group col="4" colspan="4">
+                        <separator string="Boletos" colspan="4"/>
+                        <newline />
+                        <field name="retorno_item_ids" nolabel="1" readonly="1" >
+                            <tree>
+                                <field name="comando" />
+                                <field name="data_vencimento" />
+                                <field name="nosso_numero" />
+                                <field name="partner_id" string="Cliente"/>
+                                <field name="data_quitacao" />
+                                <field name="valor_documento" sum="Valor do documento" />
+                                <field name="valor_desconto" sum="Desconto" />
+                                <field name="valor_juros" sum="Juros" />
+                                <field name="valor_multa" sum="Multa" />
+                                <field name="valor" sum="Valor recebido" />
+                                <field name="data" string="Data crédito" />
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_retorno_search">
+            <field name="name">finan.retorno.search</field>
+            <field name="model">finan.retorno</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Retornos de cobrança">
+                    <field name="carteira_id" select="1" />
+                    <field name="numero_arquivo" />
+                </search>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="finan_retorno_acao">
+            <field name="name">Retornos de cobrança</field>
+            <field name="res_model">finan.retorno</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_retorno_tree" />
+        </record>
+
+        <menuitem action="finan_retorno_acao"
+            id="menu_finan_retorno" name="Retornos de cobrança" parent="menu_finan_tesouraria" />
+
+    </data>
+</openerp>

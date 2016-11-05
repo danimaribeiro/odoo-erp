@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="caixa_item_tree">
+            <field name="name">caixa.item.tree</field>
+            <field name="model">caixa.item</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="caixa_id" />
+                    <field name="company_id" />
+                    <field name="data_hora_abertura" />
+                    <field name="data_hora_fechamento" />
+                    <field name="tipo" />
+                    <field name="vr_devido" />
+                    <field name="vr_recebido" />
+                    <field name="vr_saldo" />
+                    <field name="partner_id" />
+                    <field name="sale_order_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="caixa_item_form">
+            <field name="name">caixa.item.form</field>
+            <field name="model">caixa.item</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Caixas">
+
+                    <separator string="Informações básicas" colspan="4" />
+                    <field name="movimento_id" required="1" colspan="2" readonly="1" />
+                    <field name="tipo" required="1" colspan="2" readonly="1" />
+                    <newline />
+                    <field name="sale_order_id" colspan="4" readonly="1" />
+                    <newline />
+                    <field name="partner_id" colspan="4" required="1" readonly="1" />
+                    <newline />
+                    <group colspan="4" col="4">
+                        <separator string="Abertura" colspan="2" />
+                        <separator string="Fechamento" colspan="2" />
+                        <newline />
+                        <field name="data_hora_abertura" align="-1" required="1" readonly="1" colspan="2" nolabel="1" />
+                        <field name="data_hora_fechamento" align="-1" readonly="1" colspan="2" nolabel="1" />
+                        <newline />
+                        <field name="state" widget="statusbar" colspan="4" />
+                    </group>
+                    <group colspan="4" col="4">
+                        <separator string="Valor" colspan="1" />
+                        <separator string="Recebido" colspan="1" />
+                        <separator string="Troco" colspan="1" />
+                        <separator string="Saldo" colspan="1" />
+                        <field name="vr_devido" nolabel="1" colspan="1" readonly="1" />
+                        <field name="vr_recebido" nolabel="1" colspan="1" readonly="1" />
+                        <field name="vr_troco" nolabel="1" colspan="1" readonly="1" />
+                        <field name="vr_saldo" nolabel="1" colspan="1" readonly="1" />
+                        <newline />
+                        <button name="recalcula" string="Recalcula" type="object" colspan="3" states="aberto" />
+                        <button name="gera_notas" string="Gera notas" type="object" attrs="{'invisible': ['|', ('vr_saldo', '!=', 0), ('state', '!=', 'aberto')]}" />
+                    </group>
+                    <group colspan="4" col="5">
+                        <group colspan="2" col="4">
+                            <separator string="Condições de pagamento" colspan="4" />
+                            <newline />
+                            <field name="condicao_pagamento_ids" nolabel="1" colspan="4" context="{'default_valor': vr_saldo, 'default_data_hora_abertura': data_hora_abertura, 'default_data_hora_fechamento': data_hora_fechamento}">
+                                <tree editable="top">
+                                    <field name="data_hora_abertura" invisible="1" />
+                                    <field name="data_hora_fechamento" invisible="1" />
+                                    <field name="payment_term_id" />
+                                    <field name="formapagamento_id" />
+                                    <field name="conta_id" invisible="1" />
+                                    <field name="carteira_id" invisible="1" />
+                                    <field name="partner_bank_id" invisible="1" />
+                                    <field name="valor" />
+                                </tree>
+                            </field>
+                        </group>
+                        <group colspan="1" width="20" >
+                            <label string="" colspan="1" />
+                            <newline/>
+                            <label string="" colspan="1" />
+                            <newline/>
+                            <label string="" colspan="1" />
+                            <newline/>
+                            <label string="" colspan="1" />
+                            <newline/>
+                            <label string="" colspan="1" />
+                            <newline/>
+                            <label string="" colspan="1" />
+                            <newline/>
+                            <label string="" colspan="1" />
+                            <newline/>
+                            <label string="" colspan="1" />
+                            <newline/>
+                            <label string="" colspan="1" />
+                            <newline/>
+                            <label string="" colspan="1" />
+                            <newline/>
+                            <button name="recalcula" string="" type="object" icon="gtk-go-forward" />
+                        </group>
+                        <group colspan="2" col="4">
+                            <separator string="Recebimentos" colspan="4" />
+                            <newline />
+                            <field name="pagamento_ids" nolabel="1" colspan="4" readonly="1">
+                                <tree editable="top">
+                                    <field name="formapagamento_id" readonly="1" />
+                                    <field name="valor" readonly="1" />
+                                    <field name="vencimento" readonly="1" />
+                                </tree>
+                            </field>
+                        </group>
+                    </group>
+                    <group colspan="4">
+                        <separator string="Itens" colspan="4" />
+                        <field name="sale_order_line_ids" colspan="4" nolabel="1">
+                            <tree>
+                                <field name="product_id" />
+                                <field name="product_uom_qty" />
+                                <field name="vr_unitario_margem_desconto" />
+                                <field name="price_subtotal" sum="Subtotal" />
+                            </tree>
+                        </field>
+                        <separator string="Notas Fiscais" colspan="4" />
+                        <field name="sped_documento_ids" colspan="4" nolabel="1">
+                            <tree>
+                                <field name="modelo" />
+                                <field name="serie" />
+                                <field name="numero" />
+                                <field name="numero_rps" />
+                                <field name="data_emissao" />
+                                <field name="vr_produtos" />
+                                <field name="vr_nf" />
+                                <field name="situacao" />
+                                <field name="state" />
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="caixa_item_search">
+            <field name="name">caixa.item.search</field>
+            <field name="model">caixa.item</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Caixa">
+                    <field name="movimento_id" />
+                    <field name="sale_order_id" />
+                    <field name="partner_id" />
+                    <field name="data_abertura" />
+                    <field name="data_fechamento" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="caixa_item_acao">
+            <field name="name">Lançamentos</field>
+            <field name="res_model">caixa.item</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="caixa_item_tree" />
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem action="caixa_item_acao"
+            id="menu_caixa_item" name="Lançamentos" parent="menu_caixa" />
+
+    </data>
+</openerp>

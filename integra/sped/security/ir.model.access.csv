@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+cfop_full_all,CFOP,model_sped_cfop,sped_base.group_sped_base,1,1,1,1
+naturezaoperacao_full_all,Natureza de Operação,model_sped_naturezaoperacao,sped_base.group_sped_base,1,1,1,1
+veiculo_full_all,Veículo,model_sped_veiculo,sped_base.group_sped_base,1,1,1,1
+documento_full_all,Documento,model_sped_documento,group_sped_documento,1,1,1,1
+documentoitem_full_all,Documento - item,model_sped_documentoitem,group_sped_documento,1,1,1,1
+documentoduplicata_full_all,Documento - duplicata,model_sped_documentoduplicata,group_sped_documento,1,1,1,1
+documentoreferenciado_full_all,Documento - referenciado,model_sped_documentoreferenciado,group_sped_documento,1,1,1,1
+operacao_full_all,Operação,model_sped_operacao,group_sped_documento,1,1,1,1
+operacaoitem_full_all,Operação - Item,model_sped_operacaoitem,group_sped_documento,1,1,1,1

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="base.group_rh_valida_calculo" model="res.groups">
+            <field name="name">Integra / Validar cálculo da folha</field>
+        </record>
+
+        <record id="base.group_rh_menus_antigos" model="res.groups">
+            <field name="name">Integra / Menus antigos do RH - não usar</field>
+        </record>
+
+    </data>
+</openerp>

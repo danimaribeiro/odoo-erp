@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_receber_rateio_tree">
+            <field name="name">finan.receber.item.tree</field>
+            <field name="model">finan.lancamento.rateio</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="finan.finan_receber_rateio_tree"/>
+            <field name="arch" type="xml">
+                <field name="porcentagem" position="before">
+                    <field name="project_id" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

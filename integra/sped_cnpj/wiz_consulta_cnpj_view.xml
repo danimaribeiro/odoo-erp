@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="sped_participante_form_view">
+            <field name="name">consulta_cnpj.form</field>
+            <field name="model">sped.consulta_cnpj</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Consulta CNPJ na Receita Federal">
+                    <group colspan="4" >
+                        <field name="cnpj" />
+                        <newline />
+                        <field name="imagem" widget="image" string="Imagem anti-robô" readonly="1" />
+                        <newline />
+                        <field name="texto_captcha" string="Digite o texto da imagem" default_focus="1" />
+                        <newline />
+                        <field name="mensagem" string="Mensagem do servidor" />
+                    </group>
+                    <separator string="" colspan="4" />
+                    <group colspan="4" col="6">
+                        <button  icon="gtk-cancel" special="cancel" string="Cancel"/>
+                        <button  icon="gtk-ok" name="acao_consultar_cnpj" string="Consultar" type="object" default_focus="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window name="Consulta CNPJ na Receita Federal"
+            res_model="sped.consulta_cnpj"
+            view_mode="form"
+            target="new"
+            id="janela_consulta_cnpj"/>
+<!--            key2="client_action_multi"-->
+
+    </data>
+</openerp>

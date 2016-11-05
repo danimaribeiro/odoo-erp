@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="product_normal_form_view" model="ir.ui.view">
+            <field name="name">product.normal.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="sped_product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <page string="Suppliers" position="before">
+                    <page string="Foto de capa">
+                        <field name="foto_capa" nolabel="1" widget="image" colspan="4"/>
+                        <field name="legenda_foto_capa" nolabel="1" colspan="4"/>
+                    </page>
+                </page>
+                <field name="variants" position="after">
+                    <field name="titulo" />
+                    <field name="subtitulo" />
+                    <field name="registro_anvisa" />
+                    <field name="sped_pais_id" />
+                    <field name="comissao" />
+                    <field name="produto_principal" invisible="0"/>
+                </field>
+                <field name="categ_id" position="replace">
+                    <field name="categ_id" string="Linha de produto" />
+                </field>  
+                
+                <page string="Procurement &amp; Locations" position="after">              
+                    <page string="Histórico">
+                        <group col="6" colspan="6">                            
+                            <group col="2" colspan="2">                            
+                            <separator colspan="2" string="Histórico de Alterações"/>
+                            <field colspan="2" name="create_uid" readonly="1" string="Criado por"/>
+                            <newline />                     
+                            <field colspan="2" name="write_uid" readonly="1"/>
+                            <newline />                     
+                            <field colspan="2" name="write_date" readonly="1"/>
+                            </group>
+                            <group col="4" colspan="4">                            
+                            </group>
+                        </group>
+                    </page>
+                </page>
+                
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="integra_product_search">
+            <field name="name">integra.product.search</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="integra_product.product_search_form_view_inherit"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <field name="name" position="replace">
+                    <field name="name" string="Produto ou código"
+                        filter_domain="['|', ('name','ilike',self), ('default_code','ilike',self)]" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_product_search">
+            <field name="name">product.product.search</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_search_form_view"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <field name="categ_id" position="replace">
+                    <field name="categ_id" widget="selection" operator="child_of" groups="base.group_extended" string="Linha de produto" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_product_tree">
+            <field name="name">product.product.tree</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_product_tree_view"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <field name="default_code" position="replace">
+                    <field name="default_code" string="Código"/>
+                </field>
+                <field name="name" position="replace">
+                    <field name="name" string="Produto"/>
+                </field>
+                <field name="categ_id" position="replace">
+                    <field name="categ_id" string="Linha de produto" />
+                </field>
+            </field>
+        </record>
+        
+
+    </data>
+</openerp>

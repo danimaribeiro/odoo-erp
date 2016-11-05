@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="hr_tabela_salario_minimo_tree">
+            <field name="name">hr.tabela.salario.minimo.tree</field>
+            <field name="model">hr.tabela.salario.minimo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Tabela Salário Mínimo">
+                    <field name="ano" />
+                    <field name="valor"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_tabela_salario_minimo_form">
+            <field name="name">hr.tabela.salario.minimo.form</field>
+            <field name="model">hr.tabela.salario.minimo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <group col="4" colspan="4">
+                        <field name="ano" required="1" />
+                        <newline/>
+                        <field name="valor" required="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_tabela_salario_minimo_search">
+            <field name="name">hr.tabela.salario.minimo.search</field>
+            <field name="model">hr.tabela.salario.minimo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Tabela Salário Mínimo">
+                    <field name="ano"/>
+                    <field name="valor" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_tabela_salario_minimo_acao">
+            <field name="name">Salário Mínimo</field>
+            <field name="res_model">hr.tabela.salario.minimo</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_tabela_salario_minimo_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            action="hr_tabela_salario_minimo_acao"
+            id="menu_hr_tabela_salario_minimo"
+            name="Salário Mínimo"
+            parent="menu_hr_tabelas"
+            sequence="45"
+            />
+
+        <record model="ir.actions.act_window.view" id="hr_tabela_salario_minimo_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_tabela_salario_minimo_acao"/>
+            <field name="view_id" ref="hr_tabela_salario_minimo_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_tabela_salario_minimo_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_tabela_salario_minimo_acao"/>
+            <field name="view_id" ref="hr_tabela_salario_minimo_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

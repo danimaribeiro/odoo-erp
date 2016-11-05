@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="view_partner_tree_sped_base" model="ir.ui.view">
+            <field name="name">res.partner.tree.sped_base</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="cnpj_cpf" />
+                   <field name="razao_social" />
+                    <field name="fantasia" />
+<!--                    <field name="endereco" />
+                    <field name="numero" />
+                    <field name="complemento" />
+                    <field name="bairro" />
+                    <field name="municipio_id" />
+                    <field name="cep" />
+                    <field name="fone" />
+                    <field name="email_nfe" />
+                    <field name="ie" />
+                    <field name="im" />
+                    <field name="suframa" />
+                    <field name="rntrc" />
+                    <field name="crc" />-->
+                </field>
+                <field name="city" position="replace">
+                    <field name="municipio_id"/>
+                    <field name="city" invisible="1"/>
+                </field>
+                <field name="country" position="replace">
+                    <field name="country" invisible="1"/>
+                </field>
+            </field>
+        </record>
+
+
+        <record id="view_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="lang" position="after">
+                    <field name="eh_orgao_publico" />
+                    <field name="eh_cooperativa" />
+                </field>
+                <field name="address" position="replace">
+                    <field colspan="4" mode="tree,form" name="address" nolabel="1" select="1" height="260">
+                        <form string="Partner Contacts">
+                            <group colspan="4" col="6">
+                                <field name="name" string="Contact Name"/>
+                                <field domain="[('domain', '=', 'contact')]" name="title" size="0"/>
+                                <field name="function"/>
+                            </group>
+                            <newline/>
+                              <group colspan="2" col="4">
+                                <separator string="Endereço" colspan="4" col="4" />
+                                <field name="type" string="Type" colspan="2"/>
+                                <field name="endereco" colspan="4"/>
+                                <field name="numero" colspan="4"/>
+                                <field name="complemento" colspan="4"/>
+                                <field name="bairro" colspan="4"/>
+                                <field name="municipio_id"/>
+                                <newline />
+                                <field name="cep" on_change="onchange_cep(cep)" />
+                                <button name="consulta_cep" string="Consultar CEP" type="object" />
+                             </group>
+                             <group colspan="2" col="2">
+                                <separator string="Communication" colspan="2" col="2" />
+                                <field name="phone"/>
+                                <field name="mobile"/>
+                                <field name="fax"/>
+                                <field name="email" widget="email"/>
+                             </group>
+                             <group colspan="2" col="2" attrs="{'invisible': [('type', '!=', 'assina')]}">
+                                 <separator string="Documentos" colspan="2" col="2" />
+                                 <field name="cpf" on_change="onchange_cpf(cpf)" />
+                                 <field name="rg_numero" />
+                             </group>
+                        </form>
+                        <tree string="Partner Contacts" editable="top">
+                            <field name="type" string="Tipo" />
+                            <field name="name"/>
+                            <field name="function"/>
+                            <field name="phone"/>
+                            <field name="mobile"/>
+                            <field name="email"/>
+                        </tree>
+                    </field>
+                </field>                 
+                <page string="General" position="before">
+                <page string="SPED">
+                    <field name="cnpj_cpf" on_change="onchange_cnpj_cpf(cnpj_cpf)" />
+                    <field name="tipo_pessoa" invisible="1" />
+                    <newline/>
+                    <field name="razao_social" colspan="4" />
+                    <newline/>
+                    <field name="fantasia" colspan="4" />
+                    <notebook colspan="4">
+                        <page string="Dados básicos">
+                            <group colspan="4" col="4" string="Telefones">
+                                <field name="fone" colspan="2" on_change="onchange_fone_celular(fone, None)"/>
+                                <field name="celular" colspan="2" on_change="onchange_fone_celular(None, celular)"/>
+                                <field name="email" widget="email" colspan="4" />
+                            </group>
+                            <newline/>
+                            <group colspan="4" col="4" string="Endereço" >
+                                <field name="endereco" colspan="2" />
+                                <field name="numero" colspan="2" />
+                                <field name="complemento" colspan="2" />
+                                <newline/>
+                                <field name="bairro" colspan="2" />
+                                <newline/>
+                                <field name="municipio_id" colspan="2" />
+                                <newline/>
+                                <field name="cep" colspan="1" on_change="onchange_cep(cep)" />
+                            </group>
+                        </page>
+                        <page string="Inscrições e registros">
+                            <field name="contribuinte" colspan="2" />
+                            <field name="ie" colspan="2" on_change="onchange_ie(ie, municipio_id, contribuinte)" attrs="{'invisible': [('contribuinte', '!=', '1')]}" />
+                            <newline/>
+                            <group col="4" colspan="4"  attrs="{'invisible': [('tipo_pessoa', '=', 'F')]}" >
+                                <field name="im" colspan="2" />
+                                <newline/>
+                                <field name="nire" colspan="2" />
+                                <newline/>
+                                <field name="suframa" colspan="2" on_change="onchange_suframa(suframa)"/>
+                                <newline/>
+                                <field name="cei" colspan="2" />
+                                <newline/>
+                                <field name="rntrc" colspan="2" />
+                                <newline/>
+                                <field name="cnae_id" colspan="4" />
+                            </group>
+                            <group col="4" colspan="4" string="Documentos" attrs="{'invisible': [('tipo_pessoa', '!=', 'F')]}" >
+                                <field name="rg_numero" colspan="2" />
+                                <field name="rg_orgao_emissor" colspan="2" />
+                                <newline/>
+                                <field name="rg_data_expedicao" colspan="2" />
+                                <field name="profissao" colspan="2" />
+                                <newline/>
+                                <field name="sexo" colspan="2" />
+                                <field name="estado_civil" colspan="2" />
+                                <newline/>
+                                <field name="crc" colspan="2" />
+                                <field name="crc_uf" colspan="2" />
+                                <newline/>
+                                <field name="pais_nacionalidade_id" colspan="2" />
+                                <newline/>
+                            </group>
+                            <newline/>
+                        </page>
+                        <page string="Emissão de documento eletrônico">
+                            <field name="email_nfe" colspan="4" />
+                        </page>
+                    </notebook>
+                </page>
+                </page>
+            </field>
+        </record>
+        
+       <record id="view_partner_property_form" model="ir.ui.view">
+            <field name="name">res.partner.property.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">  
+                <page string="Accounting" position="attributes">         
+                    <attribute name="invisible">True</attribute>         
+                </page>         
+            </field>
+       </record>
+
+       <record model="ir.ui.view" id="res_partner_search">
+            <field name="name">res.partner.search</field>
+            <field name="model">res.partner</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <field name="name" position="replace">
+                    <field name="name" filter_domain="['|', '|', '|', ('name','ilike',self), ('razao_social','ilike',self), ('fantasia','ilike',self), ('cnpj_cpf','ilike',self)]" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

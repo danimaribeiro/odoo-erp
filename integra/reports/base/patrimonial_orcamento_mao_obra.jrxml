@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="patrimonial_orcamento_mao_obra" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="05a7678d-6397-4816-97ba-742668ea4f5f">
+	<property name="ireport.zoom" value="3.797498335832428"/>
+	<property name="ireport.x" value="60"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/ari/integra/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UID" class="java.lang.Integer"/>
+	<parameter name="BASE_DIR" class="java.lang.String"/>
+	<parameter name="REGISTRO_IDS" class="java.lang.String">
+		<defaultValueExpression><![CDATA["(2327)"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="OPERACIONAL" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+    --
+    -- ID do orçamento
+    --
+    orc.id as ordem_id,
+
+    --
+    -- Dados da categoria do orçamento
+    --
+    orcat.ordem as ordem_categoria,
+    orcat.nome as orcamento_categoria,
+    orcat.id as categoria_id,
+
+    --
+    -- Dados do item do orçamento
+    --
+    oi.id as item_id,
+    oi.name as descricao,
+    oi.sequence as orcamento_item_ordem,
+    prod.name_template as orcamento_item_produto,
+    prod.default_code as orcamento_item_produto_codigo,
+    unid.name as orcamento_item_produto_unidade,
+    oi.product_uom_qty as orcamento_item_quantidade,
+    oi.vr_unitario_minimo as orcamento_item_vr_unitario_minimo,
+    oi.vr_unitario_venda_impostos as orcamento_item_vr_unitario_sugerido,
+    case
+        when oi.usa_unitario_minimo then oi.vr_unitario_minimo
+        else oi.vr_unitario_venda_impostos
+    end as orcamento_item_vr_unitario,
+    oi.vr_total_minimo as orcamento_item_vr_total,
+    oi.margem as orcamento_item_margem,
+    oi.desconto as orcamento_item_desconto,
+    cast(oi.vr_total_venda_impostos as numeric(18,2)) as orcamento_item_vr_total_margem_desconto,
+    cast(oi.vr_total_venda_impostos / oi.product_uom_qty as numeric(18,2)) as vr_unitario_margem_desconto,
+    oi.vr_comissao as orcamento_item_comissao,
+    orc.vr_total_minimo as valor_minimo,
+    coalesce((select oio.product_uom_qty from sale_order_line oio where oio.id = oi.order_line_id), 0) as quantidade_original
+
+from
+    sale_order orc
+    join sale_order_line oi on oi.order_id = orc.id
+    join product_product prod on prod.id = oi.product_id
+    join product_template prodmod on prodmod.id = prod.product_tmpl_id
+    join product_uom as unid on unid.id = prodmod.uom_id
+    join orcamento_categoria as orcat on orcat.id = oi.orcamento_categoria_id
+
+where
+    orc.id in $P!{REGISTRO_IDS}
+    and orcat.considera_venda = True
+    and orcat.id = 6
+
+order by
+    ordem_categoria,
+    orcamento_item_ordem,
+    item_id]]>
+	</queryString>
+	<field name="ordem_id" class="java.lang.Integer"/>
+	<field name="ordem_categoria" class="java.lang.Integer"/>
+	<field name="orcamento_categoria" class="java.lang.String"/>
+	<field name="categoria_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Categoria]]></fieldDescription>
+	</field>
+	<field name="item_id" class="java.lang.Integer"/>
+	<field name="descricao" class="java.lang.String">
+		<fieldDescription><![CDATA[Patrimônio]]></fieldDescription>
+	</field>
+	<field name="orcamento_item_ordem" class="java.lang.Integer"/>
+	<field name="orcamento_item_produto" class="java.lang.String"/>
+	<field name="orcamento_item_produto_codigo" class="java.lang.String"/>
+	<field name="orcamento_item_produto_unidade" class="java.lang.String"/>
+	<field name="orcamento_item_quantidade" class="java.math.BigDecimal"/>
+	<field name="orcamento_item_vr_unitario_minimo" class="java.lang.Double"/>
+	<field name="orcamento_item_vr_unitario_sugerido" class="java.math.BigDecimal"/>
+	<field name="orcamento_item_vr_unitario" class="java.lang.Double"/>
+	<field name="orcamento_item_vr_total" class="java.lang.Double"/>
+	<field name="orcamento_item_margem" class="java.lang.Double"/>
+	<field name="orcamento_item_desconto" class="java.lang.Double"/>
+	<field name="orcamento_item_vr_total_margem_desconto" class="java.math.BigDecimal"/>
+	<field name="vr_unitario_margem_desconto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Unitário margem/desconto]]></fieldDescription>
+	</field>
+	<field name="orcamento_item_comissao" class="java.lang.Double"/>
+	<field name="valor_minimo" class="java.math.BigDecimal"/>
+	<field name="quantidade_original" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Quantidade]]></fieldDescription>
+	</field>
+	<variable name="orcamento_item_vr_total_margem_desconto_1" class="java.lang.Double" resetType="Group" resetGroup="categoria" calculation="Sum">
+		<variableExpression><![CDATA[$F{orcamento_item_vr_total_margem_desconto}]]></variableExpression>
+	</variable>
+	<variable name="orcamento_item_vr_unitario_sugerido_1" class="java.lang.Double" resetType="Group" resetGroup="categoria" calculation="Sum">
+		<variableExpression><![CDATA[$F{orcamento_item_vr_unitario_sugerido}]]></variableExpression>
+	</variable>
+	<variable name="orcamento_item_quantidade_1" class="java.math.BigDecimal" resetType="Group" resetGroup="categoria" calculation="Sum">
+		<variableExpression><![CDATA[$F{orcamento_item_quantidade}]]></variableExpression>
+	</variable>
+	<group name="categoria">
+		<groupExpression><![CDATA[$F{orcamento_categoria}]]></groupExpression>
+		<groupHeader>
+			<band height="36">
+				<staticText>
+					<reportElement x="0" y="18" width="40" height="15" uuid="b2524441-cf05-4c9a-9eeb-1e9486118be6"/>
+					<box topPadding="5">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[Código]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="40" y="18" width="304" height="15" uuid="3675301b-0376-4423-9df6-7c1dbc4d21e0"/>
+					<box topPadding="5">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Left">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[Descrição]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="397" y="18" width="53" height="15" uuid="8d8cdf97-a64a-4c82-9f76-5340ce55092f"/>
+					<box topPadding="5">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[Qtd. pontos]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="555" height="18" uuid="8adc9cc5-f1b4-49a7-9ffd-d1b671f975ee"/>
+					<box topPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{orcamento_categoria}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="450" y="18" width="50" height="15" uuid="db4f711a-f657-4179-bd9e-13dc276a353a"/>
+					<box topPadding="5">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[Vr. Unit.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="500" y="18" width="55" height="15" uuid="b4cea202-906d-4b10-9d05-668d5a37a179"/>
+					<box topPadding="5">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[Vr. Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="344" y="18" width="53" height="15" uuid="2fa95159-e774-45b1-859e-7a27a6cdb358"/>
+					<box topPadding="5">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[Qtd. produto]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="18" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="18" uuid="267d868b-3107-42b6-893e-a2b403e5d472"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="BASE_DIR">
+					<subreportParameterExpression><![CDATA[$P{BASE_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OPERACIONAL">
+					<subreportParameterExpression><![CDATA[$P{OPERACIONAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="UID">
+					<subreportParameterExpression><![CDATA[$P{UID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PAGINA">
+					<subreportParameterExpression><![CDATA[$V{PAGE_COUNT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="VERSAO">
+					<subreportParameterExpression><![CDATA["M"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ORDEM_ID">
+					<subreportParameterExpression><![CDATA[$F{ordem_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "patrimonial_orcamento_cabecalho.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<printWhenExpression><![CDATA[$F{categoria_id} == 6]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="40" height="10" uuid="5d06cff2-8c3a-47dc-9824-32a3e6e83cbc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{orcamento_item_produto_codigo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="397" y="0" width="53" height="10" uuid="86d40850-b6d0-4d7e-9207-7230cf8036d2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{orcamento_item_quantidade}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="40" y="0" width="304" height="10" uuid="508b07cb-6c36-4ba4-905b-d9bdb7f8dd06"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="450" y="0" width="50" height="10" uuid="75ea213e-c3b2-446c-acac-8cad2f11474c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{orcamento_item_vr_unitario_sugerido}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="500" y="0" width="55" height="10" uuid="b1f38a66-ac07-4d79-a9b1-823fbfc34701"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{orcamento_item_vr_total_margem_desconto}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="344" y="0" width="53" height="10" uuid="9425e577-bb69-4370-b981-96ca6df49990"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantidade_original}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="40" splitType="Immediate">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="344" height="14" uuid="837346f5-0454-457e-8b46-d00458391f5e"/>
+				<box topPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TOTAL "+ $F{orcamento_categoria} + ": "]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="397" y="0" width="53" height="14" uuid="b108a3ab-522d-497c-8c75-37632382f76f"/>
+				<box topPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{orcamento_item_quantidade_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="450" y="0" width="105" height="14" uuid="e37065e4-c454-464a-b790-5a241f2a453e"/>
+				<box topPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{orcamento_item_vr_total_margem_desconto_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="344" y="0" width="53" height="14" uuid="db36d67f-61ba-4934-a224-7dc5fef68e90"/>
+				<box topPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="22" width="555" height="18" uuid="8785395d-6058-4df5-83e3-f235c01b5bef"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="BASE_DIR">
+					<subreportParameterExpression><![CDATA[$P{BASE_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="UID">
+					<subreportParameterExpression><![CDATA[$P{UID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="VERSAO">
+					<subreportParameterExpression><![CDATA["M"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ORDEM_ID">
+					<subreportParameterExpression><![CDATA[$F{ordem_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "patrimonial_orcamento_rodape.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

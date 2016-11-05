@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_extrato_fluxo_tree">
+            <field name="name">finan.extrato.fluxo.tree</field>
+            <field name="model">finan.extrato.fluxo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="parent_id" invisible="1"/>
+                    <field name="tipo" invisible="1"/>
+                    <field name="company_id" />
+                    <field name="partner_id" />
+                    <field name="res_partner_bank_id" />                
+                    <field name="conta_id" />     
+                    <field name="data_vencimento" />                
+                    <field name="data_quitacao" />     
+                    <field name="data_compensacao" />                                        
+                    <field name="valor_compensado_credito" sum="Entrada" />
+                    <field name="valor_compensado_debito" sum="Saída" />                     
+                    <field name="valor_saldo" sum="Saldo" />                     
+                </tree>
+            </field>
+        </record>
+
+       
+
+        <record model="ir.ui.view" id="finan_extrato_fluxo_search">
+            <field name="name">finan.extrato.fluxo.search</field>
+            <field name="model">finan.extrato.fluxo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Pesquisa Fluxo de Caixa">
+                    <filter name="entrada" string="Entrada" icon="terp-go-month" domain="[('tipo','=','E')]" />
+                    <filter name="saida" string="Saída" icon="terp-go-month" domain="[('tipo','=','S')]" />
+                    <filter name="transferencia" string="Transferencia" icon="terp-go-month" domain="[('tipo','=','T')]" />
+                    <filter name="receber" string="Receber" icon="terp-go-month" domain="[('tipo','=','R')]" />
+                    <filter name="pagar" string="Pagar" icon="terp-go-month" domain="[('tipo','=','P')]" />
+                    <filter name="saldo_inicial" string="Saldo Inicial" icon="terp-go-month" domain="[('tipo','=','I')]" />
+                    <separator orientation="vertical" />  
+                    <newline />              
+                    <field name="company_id" select="1"/>
+                    <field name="partner_id" />
+                    <field name="res_partner_bank_id" />                    
+                    <field name="conta_id" />
+                    
+                    <field name="data_vencimento_from" string="De vencimento" filter_domain="[('data_vencimento','&gt;=',self)]" widget="calendar" />
+                    <field name="data_vencimento_to" string="A vencimento" filter_domain="[('data_vencimento','&lt;=',self)]" widget="calendar" />
+
+                    <field name="data_documento_from" string="De documento" filter_domain="[('data_documento','&gt;=',self)]" widget="calendar" />
+                    <field name="data_documento_to" string="A documento" filter_domain="[('data_documento','&lt;=',self)]" widget="calendar" />
+                    <newline />
+
+                    <group expand="0" string="Outras datas...">
+                        <field name="data_quitacao_from" string="De quitação" filter_domain="[('data_quitacao','&gt;=',self)]" widget="calendar" />
+                        <field name="data_quitacao_to" string="A quitação" filter_domain="[('data_quitacao','&lt;=',self)]" widget="calendar" />
+
+                        <field name="data_from" string="De conciliação" filter_domain="['|', '&amp;', ('conciliado', '=', False), ('data_quitacao', '&gt;=', self), ('data_compensacao','&gt;=',self)]" widget="calendar"/>
+                        <field name="data_to" string="A conciliação" filter_domain="['|', '&amp;', ('conciliado', '=', False), ('data_quitacao', '&lt;=', self), ('data_compensacao','&lt;=',self)]" widget="calendar"/>
+
+                        
+                    </group>
+                    <newline />
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'parent_id'}" groups="finan.group_finan_manager,finan.group_finan_treasury_manager"/>
+                        <filter string="Unidade de negócio" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Cliente" icon="terp-project" domain="[]" context="{'group_by': 'partner_id'}" />
+                        <filter string="Conta" icon="terp-project" domain="[]" context="{'group_by': 'conta_id'}" />
+                        <filter string="Tipo" icon="terp-project" domain="[]" context="{'group_by': 'tipo'}" />                                                
+                                 
+                    <separator orientation="vertical" />
+                        <filter string="Data de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'data_vencimento'}" />
+                        <filter string="Data de quitação" icon="terp-project" domain="[]" context="{'group_by': 'data_quitacao'}" />
+                        <filter string="Ano de compensação" icon="terp-project" domain="[]" context="{'group_by': 'data_compensacao'}" />    
+                               
+                    </group>                 
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_extrato_fluxo_acao">
+            <field name="name">Pesquisa Fluxo de Caixa</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">finan.extrato.fluxo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{'search_default_entrada':True}</field>
+            <field name="search_view_id" ref="finan_extrato_fluxo_search" />            
+            <field name="view_id" ref="finan_extrato_fluxo_tree" />
+        </record>
+
+        <menuitem action="finan_extrato_fluxo_acao"
+            id="menu_finan_extrato_fluxo" name="Pesquisa Fluxo de Caixa" 
+            parent="finan.menu_finan_tesouraria"
+            sequence="10"/>
+              
+
+    </data>
+</openerp>

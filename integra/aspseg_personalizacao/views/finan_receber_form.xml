@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_receber_form">
+            <field name="name">finan.receber.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_receber_form"/>
+            <field name="priority">64</field>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='gerar_boleto_anexo']" position="replace">
+                    <button icon="gtk-execute" string="Gerar boleto" name="gerar_boleto_anexo" type="object" attrs="{'invisible': [('carteira_id', '=', False)]}" context="{'atualizar': False, 'boleto_valor_saldo': True}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

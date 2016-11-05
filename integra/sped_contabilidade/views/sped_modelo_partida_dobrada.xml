@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_modelo_partida_dobrada_search">
+            <field name="name">sped.modelo_partida_dobrada.search</field>
+            <field name="model">sped.modelo_partida_dobrada</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Parametrização Contabilidade">
+                    <field name="nome" />
+                    <field name="tabela"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_modelo_partida_dobrada_tree_view">
+            <field name="name">sped.modelo_partida_dobrada.tree</field>
+            <field name="model">sped.modelo_partida_dobrada</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome"/>
+                    <field name="tabela"/>
+                    <field name="modelo"/>
+                    <field name="create_uid" />                    
+                    <field name="write_uid" />                    
+                    <field name="write_date" />                  
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_modelo_partida_dobrada_form_view">
+            <field name="name">sped.modelo_partida_dobrada.form</field>
+            <field name="model">sped.modelo_partida_dobrada</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Parametrização para Contabilidade">
+                    <field name="nome" required="1"/>
+                    <field name="tabela" required="1"/>
+                    <separator string="Contas contábeis" colspan="4"/>
+                    <field name="item_ids" colspan="4" nolabel="1" context="{'default_tipo': 'A','default_tabela': tabela}">
+                        <tree editable="bottom">
+                            <field name="tipo" invisible="1" />
+                            <field name="tabela" invisible="1"/>                          
+                            <field name="campo_nota" attrs="{'required': [('tabela', '=', 'DF')], 'invisible': [('tabela', '!=', 'DF')]}"  />
+                            <field name="campo_financeiro" attrs="{'required': [('tabela', 'in', ('PR', 'PP'))], 'invisible': ['!', ('tabela', 'in', ('PR', 'PP'))]}"  />
+                            <field name="conta_debito_id" attrs="{'required': [('tabela', '=', 'FP')]}" domain="[('sintetica','=',False)]"/>
+                            <field name="conta_credito_id" attrs="{'required': [('tabela', '=', 'FP')]}" domain="[('sintetica','=',False)]"/>
+                            <field name="historico_id" />
+                        </tree>
+                    </field>
+                    <newline/>
+<!--                    <separator string="Contas contábeis para a liquidação da dívida" colspan="4" />
+                    <field name="item_duplicata_ids" colspan="4" nolabel="1" context="{'default_tipo': 'B'}">
+                        <tree editable="bottom">
+                            <field name="tipo" invisible="1" />
+                            <field name="campo_financeiro" required="0" />
+                            <field name="conta_debito_id" required="0" domain="[('sintetica','=',False)]"/>
+                            <field name="conta_credito_id" required="0" domain="[('sintetica','=',False)]"/>
+                            <field name="historico_id" />
+                        </tree>
+                    </field>-->
+                    <group name="sped_documento" colspan="4" attrs="{'invisible': [('tabela', '!=', 'DF')]}">
+                        <separator string="Operações Fiscais" colspan="4" />
+                        <field name="operacao_fiscal_ids" readonly="1" colspan="4" nolabel="1" model="form,tree" />
+                        <separator string="Modelo Fiscal" colspan="4" />
+                        <field name="modelo" colspan="4" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_modelo_partida_dobrada_acao">
+            <field name="name">Parametrizacao Contabilidade</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">sped.modelo_partida_dobrada</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_modelo_partida_dobrada" name="Modelo Partida Dobrada" parent="sped_base.menu_sped_fiscal_tabela" sequence="10" action="sped_modelo_partida_dobrada_acao" />
+    </data>
+</openerp>

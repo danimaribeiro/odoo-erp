@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_dirf_tree" >
+            <field name="name">hr.dirf.tree</field>
+            <field name="model">hr.dirf</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="DIRF">
+                    <field name="company_id"/>            
+                    <field name="ano" required="1" />
+                    <field name="data" />                    
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_dirf_form" >
+            <field name="name">hr.dirf.form</field>
+            <field name="model">hr.dirf</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="DIRF">
+                    <group colspan="2">
+                        <field name="company_id" required="1" domain="[('cnpj_cpf', '!=', False)]" colspan="4" />
+                        <newline/>                        
+                        <field name="employee_id" required="1" colspan="4" />
+                        <newline/>                   
+                        <field name="ano" required="1" />                        
+                        <field name="declaracao" required="1" />
+                        <field name="data" />                                                                     
+                        <field name="codigo_receita_idrec" />                                                                     
+                        <field name="numero_recibo" attrs="{'invisible': [('declaracao', '!=', 'S')]}"/>                                                                     
+                        <newline/>
+                        <field name="nome_arquivo" colspan="4" />
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar arquivo" name="gera_arquivo_dirf" type="object" context="{'company_id' : company_id, 'ano': ano }" colspan="4" />
+                        <newline/>
+                        <separator string="Arquivo DIRF" colspan="4" />
+                        <field name="arquivo" nolabel="1" filename="nome_arquivo" colspan="4"/>
+                        <newline/>
+                        <field name="arquivo_texto" nolabel="1" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_dirf_acao">
+            <field name="name">DIRF</field>
+            <field name="res_model">hr.dirf</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_dirf_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_dirf_form"/>
+            <field name="act_window_id" ref="hr_dirf_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_dirf_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="hr_dirf_tree"/>
+            <field name="act_window_id" ref="hr_dirf_acao"/>
+        </record>
+
+        <menuitem action="hr_dirf_acao"
+                  id="menu_hr_dirf"
+                  name="DIRF"
+                  parent="integra_rh.menu_hr_arquivo"
+                  sequence="5" />
+
+    </data>
+</openerp>

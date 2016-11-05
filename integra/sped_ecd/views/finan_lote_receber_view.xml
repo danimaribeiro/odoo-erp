@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_lote_receber_form">
+            <field name="name">finan.lote.receber.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_lote_receber_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="data_quitacao" position="after" >                   
+                    <field name="lote_id" readonly="1" colspan="2" />
+                </field>   
+                         
+            </field>
+        </record>
+
+    </data>
+</openerp>

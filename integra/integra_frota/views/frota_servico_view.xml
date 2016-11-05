@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="frota_servico_tree">
+            <field name="name">frota.servico.tree</field>
+            <field name="model">frota.servico</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="parent_id" invisible="1" />
+                    <field name="nome" />
+                    <field name="nome_completo" />
+                    <field name="ignora_km" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="frota_servico_form">
+            <field name="name">frota.servico.form</field>
+            <field name="model">frota.servico</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Serviços e atividades">
+                    <field name="nome" />
+                    <group col="4" colspan="4">
+                        <separator string="Agrupamento" colspan="4"/>
+                        <newline />
+                        <field name="parent_id" colspan="4" />
+                    </group>
+                    <separator string="Configurações" colspan="4"/>
+                    <newline />
+                    <field name="ignora_km" />
+                    <newline />
+                    <field name="custo_ativo" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="frota_servico_search">
+            <field name="name">frota.servico.search</field>
+            <field name="model">frota.servico</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="nome" select="1" />
+                    <field name="ignora_km" />
+                    <field name="custo_ativo" />
+                    <newline />
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Serviço" icon="terp-project" domain="[]" context="{'group_by': 'parent_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="frota_servico_acao">
+            <field name="name">Serviços e atividades</field>
+            <field name="res_model">frota.servico</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain"></field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="frota_servico_tree" />
+        </record>
+
+        <menuitem action="frota_servico_acao"
+            id="menu_frota_servico" name="Serviços e atividades" parent="menu_frota_config" />
+
+        <record model="ir.actions.act_window.view" id="frota_servico_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="frota_servico_form"/>
+            <field name="act_window_id" ref="frota_servico_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="frota_servico_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="frota_servico_tree"/>
+            <field name="act_window_id" ref="frota_servico_acao"/>
+        </record>
+
+    </data>
+</openerp>

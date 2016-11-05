@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_employee_form_integra" model="ir.ui.view">
+            <field name="name">hr.employee.form.integra</field>
+            <field name="model">hr.employee</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <field name="active" position="replace"/>
+                <field name="parent_id" position="replace"/>
+                <field name="user_id" position="replace"/>
+                <field name="company_id" position="replace">
+                    <field name="company_id" readonly="1" colspan="6"/>
+                </field>
+                <field name="department_id" position="replace">
+                    <field name="department_id" readonly="1" colspan="6" />
+                </field>
+                <field name="name" position="before">
+                    <field name="codigo" colspan="2" />
+                </field>
+                <page position="replace" string="Personal Information">
+                    <page string="Personal Information">
+                        <group col="2" colspan="2">
+                            <separator colspan="2" string="Dados básicos"/>
+                            <field name="cpf" on_change="onchange_cpf(cpf)" />
+                            <field name="nis"/>
+                            <field name="sexo"/>
+                            <field name="raca_cor"/>
+                            <field name="tipo_sanguineo"/>
+                            <field name="estado_civil"/>
+                            <field name="grau_instrucao"/>
+                            <field invisible="1" name="ssnid"/>
+                            <field groups="base.group_extended" invisible="1" name="sinid"/>
+                            <field groups="base.group_extended" invisible="1" name="identification_id"/>
+                            <field invisible="1" name="passport_id"/>
+                            <field invisible="1" name="otherid"/>
+                            <field colspan="4" mode="form,tree" name="address_home_id" invisible="1" />
+                        </group>
+                        <group col="2" colspan="2">
+                            <separator colspan="2" string="Endereço"/>
+                            <field name="endereco"/>
+                            <field name="numero"/>
+                            <field name="complemento"/>
+                            <field name="bairro"/>
+                            <field name="municipio_id"/>
+                            <field name="cep" on_change="onchange_cep(cep)" />                                                       
+                            <field name="fone" on_change="onchange_fone_celular(fone, None)"/>
+                            <field name="celular" on_change="onchange_fone_celular(None, celular)"/>
+                            <field name="email"/>
+                        </group>
+
+                        <group col="2" colspan="2">
+                            <separator colspan="2" string="Nascimento e filiação"/>
+                            <field name="data_nascimento" required="1" />
+                            <field name="municipio_nascimento_id" required="1" />
+                            <field name="pais_nacionalidade_id" required="1" />
+                            <field name="nome_mae"/>
+                            <field name="nome_pai"/>
+                            <field invisible="1" name="gender"/>
+                            <field invisible="1" name="marital"/>
+                            <field invisible="1" name="country_id"/>
+                            <field invisible="1" name="birthday"/>
+                        </group>
+                        <group col="10" colspan="10" string="Documentos">
+                            <group col="2" colspan="2">
+                                <separator colspan="2" string="Carteira de trabalho"/>
+                                <field name="carteira_trabalho_numero"/>
+                                <field name="carteira_trabalho_serie"/>
+                                <field name="carteira_trabalho_estado"/>
+                            </group>
+                            <group col="2" colspan="2">
+                                <separator colspan="2" string="RG"/>
+                                <field name="rg_numero"/>
+                                <field name="rg_orgao_emissor"/>
+                                <field name="rg_data_expedicao"/>
+                            </group>
+                            <newline/>
+                            <group col="2" colspan="2">
+                                <separator colspan="2" string="Registro no órgão de classe"/>
+                                <field name="roc_numero"/>
+                                <field name="roc_orgao_emissor"/>
+                                <field name="roc_data_expedicao"/>
+                                <field name="roc_data_validade"/>
+                            </group>
+                            <group col="2" colspan="2">
+                                <separator colspan="2" string="CNH"/>
+                                <field name="cnh_numero"/>
+                                <field name="cnh_orgao_emissor"/>
+                                <field name="cnh_data_expedicao"/>
+                                <field name="cnh_data_validade"/>
+                                <group colspan="2" string="Categoria">
+                                    <field name="cnh_categoria_a" string="A"/>
+                                    <field name="cnh_categoria_b" string="B"/>
+                                    <field name="cnh_categoria_c" string="C"/>
+                                    <field name="cnh_categoria_d" string="D"/>
+                                    <field name="cnh_categoria_e" string="E"/>
+                                </group>
+                            </group>
+                            <newline/>
+                            <group col="2" colspan="2">
+                                <separator colspan="2" string="Título de eleitor"/>
+                                <field name="numero_titulo_eleitor" on_change="onchange_titulo_eleitor(numero_titulo_eleitor)"/>
+                                <field name="zona_eleitoral"/>
+                                <field name="secao_eleitoral"/>
+                            </group>
+                            <group col="2" colspan="2">
+                                <separator colspan="2" string="Carteira de Reservista"/>
+                                <field name="carteira_reservista" />
+                            </group>
+                        </group>
+                        <group col="2" colspan="2">
+                            <separator colspan="2" string="Dados bancários"/>
+                            <field name="bank_id"/>
+                            <field name="banco_tipo_conta"/>
+                            <field name="banco_agencia"/>
+                            <field name="banco_conta"/>
+                        </group>
+                        <group col="2" colspan="2">
+                            <separator colspan="2" string="Dados do Trabalhador estrangeiro"/>
+                            <field name="estrangeiro_data_chegada"/>
+                            <field name="estrangeiro_data_naturalizacao"/>
+                            <field name="estrangeiro_casado_com_brasileiro"/>
+                            <field name="estrangeiro_filho_com_brasileiro"/>
+                        </group>
+                        <group col="2" colspan="2">
+                            <separator colspan="2" string="Deficiências físicas"/>
+                            <field name="deficiente_motor"/>
+                            <field name="deficiente_visual"/>
+                            <field name="deficiente_auditivo"/>
+                            <field name="deficiente_reabilitado"/>
+                            <field name="deficiente_obs"/>
+                        </group>
+                    </page>
+                    <page string="Dependentes">
+                        <group col="6" colspan="4">
+                            <separator colspan="4" string="Dependentes"/>
+                            <field colspan="4" height="260" mode="tree,form" name="dependente_ids" nolabel="1" select="1" widget="one2many_list">
+                                <form string="Dependente">
+                                    <group col="6" colspan="4">
+                                        <field name="tipo_dependente"/>
+                                        <newline/>
+                                        <field name="nome"/>
+                                        <newline/>
+                                        <field name="sexo"/>
+                                        <newline/>
+                                        <field name="data_nascimento"/>
+                                        <field name="data_cadastro"/>
+                                        <newline/>
+                                        <field name="matricula_certidao" on_change="onchange_matricula_certidao(matricula_certidao, tipo_dependente)" colspan="4" />
+                                        <newline/>
+                                        <field name="cartorio"/>
+                                        <field name="registro_cartorio"/>
+                                        <newline/>
+                                        <field name="numero_livro"/>
+                                        <field name="folha"/>
+                                        <newline/>
+                                        <field name="cidade_registro"/>
+                                        <field name="deduz_irrf"/>
+                                        <newline/>
+                                        <field name="cpf"/>
+                                        <field name="salario_familia"/>
+                                    </group>
+                                </form>
+                                <tree string="Dependentes">
+                                    <field name="tipo_dependente"/>
+                                    <field name="nome"/>
+                                    <field name="sexo"/>
+                                    <field name="data_nascimento"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                    <page string="Contratos e vínculos">
+                        <field invisible="1" name="id"/>
+                        <field colspan="10" context="{'form_view_ref' : 'hr_contract_view_form_integra_funcionario', 'default_company_id': company_id}" mode="form,tree" name="contract_ids" widget="many2one_list" readonly="1" />
+                        <field invisible="1" name="coach_id"/>
+                        <field domain="[('state','!=','old')]" invisible="1" name="job_id"/>
+                    </page>
+                </page>
+                <page string="Notes" position="after">
+                    <page string="Outras informações">
+                        <field name="user_id" string="Usuário da Pessoa no Sistema" colspan="4" />
+                        <field name="parent_id" colspan="4" />
+                    </page>
+                </page>
+
+            </field>
+        </record>
+        <record id="view_employee_form_contract_integra" model="ir.ui.view">
+            <field name="name">hr.employee.form.contract.integra</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_contract.hr_hr_employee_view_form2"/>
+            <field name="arch" type="xml">
+                <page position="replace" string="Miscellaneous"/>
+            </field>
+        </record>
+        <record id="hr.view_employee_filter" model="ir.ui.view">
+            <field name="name">Employees</field>
+            <field name="model">hr.employee</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Pessoa física/empregado">
+                    <field name="name"/>
+                    <field name="department_id" widget="selection"/>
+                    <field name="company_id" widget="selection"/>
+                    <field name="job_id" widget="selection"/>
+                    <field name="parent_id"/>
+                    <newline/>
+                    <group expand="0" string="Group By...">
+                        <filter context="{'group_by':'parent_id'}" domain="[]" icon="terp-personal" string="Manager"/>
+                        <separator orientation="vertical"/>
+                        <filter context="{'group_by':'department_id'}" domain="[]" icon="terp-personal+" string="Department"/>
+                        <filter context="{'group_by':'job_id'}" domain="[]" icon="terp-gtk-select-all" string="Job"/>
+                        <filter context="{'group_by':'company_id'}" domain="[]" groups="base.group_multi_company" icon="terp-go-home" string="Company"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+    </data>
+</openerp>

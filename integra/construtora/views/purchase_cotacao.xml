@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="purchase_cotacao_tree">
+            <field name="name">purchase.cotacao.tree</field>
+            <field name="model">purchase.cotacao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id" />
+                    <field name="codigo" />
+                    <field name="data" />
+                    <field name="situacao" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="purchase_cotacao_form">
+            <field name="name">purchase.cotacao.form</field>
+            <field name="model">purchase.cotacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Cotação">
+                    <group colspan="4">
+                        <field name="codigo" readonly="1" />
+                        <field name="company_id" colspan="4" required="1"/>
+                        <field name="data" />
+                        <field name="situacao" />
+                        <button icon="gtk-execute" string="Confirmar cotação e enviar emails para os fornecedores" name="confirma_cotacao" type="object"  attrs="{'invisible': [('situacao', '!=', 'A')]}" colspan="4" />
+                    </group>
+                    <notebook>
+                        <page string="Planejamento">
+<!--                            <separator string="Itens planejados/solicitados" colspan="4" />
+                            <field name="planejamento_ids" nolabel="1" domain="[('cotacao_ids', '=', False)]" >
+                            </field>-->
+                            <separator string="Itens solicitados" colspan="4" />
+                            <field name="solicitacao_ids" nolabel="1" domain="[('aprovado', '=', True),('cotacao_aprovada_id','=', False)]"/>
+                            
+                            <separator string="Fornecedores" colspan="4"/>
+                            <field name="fornecedor_ids" nolabel="1" >
+                                <tree editable="top">
+                                    <field name="numero" readonly="1" />
+                                    <field name="partner_id" domain="[('supplier', '=', True)]" on_change="onchange_partner_id(partner_id)" required="1"/>
+                                    <field name="email" required="1" />
+                                    <field name="condicao_pagamento"  />
+                                </tree>
+                            </field>
+                            <separator string="Mapa de análise" colspan="4" />
+                            <button string="Equalização" type="object" name="equalizacao" colspan="4" attrs="{'invisible': [('situacao', '!=', 'C')]}" />
+                            <field name="item_ids" nolabel="1">
+                                <tree editable="top">
+                                    <field name="product_id" required="1" readonly="1" />
+                                    <field name="quantidade" required="1" readonly="1" />
+
+                                    <field name="preco_1"  readonly="1" />
+                                    <field name="total_1"  readonly="1" sum="total_1" />
+                                    <field name="preco_negociado_1" />
+                                    <field name="total_negociado_1" sum="total_negociado_1" />
+<!--                                     <field name="condicao_pagamento_1"  readonly="1" /> -->
+                                    <field name="prazo_1"  readonly="1" />
+                                    <field name="escolhido_1" />
+
+                                    <field name="preco_2"  readonly="1" />
+                                    <field name="total_2"  readonly="1" sum="total_2" />
+<!--                                     <field name="condicao_pagamento_2"  readonly="1" /> -->
+                                    <field name="preco_negociado_2" />
+                                    <field name="total_negociado_2" sum="total_negociado_2" />
+                                    <field name="prazo_2"  readonly="1" />
+                                    <field name="escolhido_2" />
+
+                                    <field name="preco_3"  readonly="1" />
+                                    <field name="total_3"  readonly="1" sum="total_3" />
+<!--                                     <field name="condicao_pagamento_3"  readonly="1" /> -->
+                                    <field name="preco_negociado_3" />
+                                    <field name="total_negociado_3" sum="total_negociado_3" />
+                                    <field name="prazo_3"  readonly="1" />
+                                    <field name="escolhido_3" />
+
+                                    <field name="preco_4"  readonly="1" />
+                                    <field name="total_4"  readonly="1" sum="total_4" />
+<!--                                     <field name="condicao_pagamento_4"  readonly="1" /> -->
+                                    <field name="preco_negociado_4" />
+                                    <field name="total_negociado_4" sum="total_negociado_4" />
+                                    <field name="prazo_4"  readonly="1" />
+                                    <field name="escolhido_4" />
+
+                                    <field name="preco_5"  readonly="1" />
+                                    <field name="total_5"  readonly="1" sum="total_5" />
+                                    <field name="preco_negociado_5" />
+                                    <field name="total_negociado_5" sum="total_negociado_5" />
+<!--                                     <field name="condicao_pagamento_5"  readonly="1" /> -->
+                                    <field name="prazo_5"  readonly="1" />
+                                    <field name="escolhido_5" />
+
+                                    <field name="melhor_preco" string="Menor Preço" />
+                                    <field name="melhor_total" sum="melhor_total" string="Total menor preço" />
+                                </tree>
+                            </field>
+                            <separator string="Aprovação e pedidos de compra" colspan="4" />
+                            <button string="Aprovar e gerar pedidos de compra" type="object" name="gera_pedido_compra" colspan="4" attrs="{'invisible': [('situacao', '!=', 'C')]}" />
+                            <field name="purchase_order_ids" nolabel="1" colspan="4" readonly="1" />
+                        </page>
+                        <page string="Observação">
+                            <field name="obs"/>
+                        </page>
+                    </notebook>                    
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="purchase_cotacao_search">
+            <field name="name">purchase.cotacao.search</field>
+            <field name="model">purchase.cotacao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search >
+                    <field name="codigo" />
+                    <field name="company_id" />
+                    <field name="data" />
+                    <field name="situacao" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="purchase_cotacao_acao">
+            <field name="name">Cotação</field>
+            <field name="res_model">purchase.cotacao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="purchase_cotacao_tree" />
+            <field name="search_view_id" ref="purchase_cotacao_search" />
+        </record>
+
+        <menuitem
+            action="purchase_cotacao_acao"
+            id="purchase_cotacao"
+            name="Cotação"
+            sequence="1"
+            parent="menu_purchase_cotacao" />
+
+        <record model="ir.actions.act_window.view" id="purchase_cotacao_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="purchase_cotacao_form"/>
+            <field name="act_window_id" ref="purchase_cotacao_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="purchase_cotacao_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="purchase_cotacao_tree"/>
+            <field name="act_window_id" ref="purchase_cotacao_acao"/>
+        </record>
+
+    </data>
+</openerp>

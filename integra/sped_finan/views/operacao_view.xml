@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_operacao_nfe_emitida_form">
+            <field name="name">sped.operacao.nfe.emitida.form</field>
+            <field name="model">sped.operacao</field>
+            <field name="inherit_id" ref="sped.sped_operacao_nfe_emitida_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Informações adicionais" position="after">
+                    <page string="Financeiro">
+                        <group colspan="4">
+                            <separator string="Integração financeira" colspan="10" />
+                            <field name="finan_conta_id" colspan="4"  domain="[('sintetica', '=', False)]" />
+                            <newline />
+                            <field name="finan_documento_id" colspan="2"  attrs="{'required': [('forma_pagamento', '!=', '2')]}" />
+                            <newline />
+                            <field name="finan_centrocusto_id" colspan="4" domain="[('sintetico', '=', False)]" />
+                            <newline />
+                            <field name="res_partner_bank_id" colspan="4" />
+                            <newline />
+                            <field name="finan_carteira_id" colspan="4" />
+                            <newline />
+                            <field name="payment_term_id" />
+                            <newline />
+                            <field name="formapagamento_id" />
+                        </group>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_operacao_nfse_emitida_form">
+            <field name="name">sped.operacao.nfse.emitida.form</field>
+            <field name="model">sped.operacao</field>
+            <field name="inherit_id" ref="sped.sped_operacao_nfse_emitida_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Informações adicionais" position="after">
+                    <page string="Financeiro">
+                        <group colspan="4">
+                            <separator string="Integração financeira" colspan="10" />
+                            <field name="finan_conta_id" colspan="4" domain="[('sintetica', '=', False)]" />
+                            <newline />
+                            <field name="finan_documento_id" colspan="2" attrs="{'required': [('finan_conta_id', '!=', False)]}" />
+                            <newline />
+                            <field name="finan_centrocusto_id" colspan="4" domain="[('sintetico', '=', False)]" />
+                            <newline />
+                            <field name="res_partner_bank_id" colspan="4" />
+                            <newline />
+                            <field name="finan_carteira_id" colspan="4" />
+                            <newline />
+                            <field name="payment_term_id" />
+                            <newline />
+                            <field name="formapagamento_id" />
+                        </group>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_operacao_recibo_locacao_emitido_form">
+            <field name="name">sped.operacao.recibo.locacao.emitido.form</field>
+            <field name="model">sped.operacao</field>
+            <field name="inherit_id" ref="sped.sped_operacao_recibo_locacao_emitido_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Informações adicionais" position="after">
+                    <page string="Financeiro">
+                        <field name="forma_pagamento" invisible="1" />
+                        <group colspan="4">
+                            <separator string="Integração financeira" colspan="10" />
+                            <field name="finan_conta_id" colspan="4" domain="[('sintetica', '=', False)]" />
+                            <newline />
+                            <field name="finan_documento_id" colspan="2" attrs="{'required': [('finan_conta_id', '!=', False), ('forma_pagamento', '!=', '2')]}" />
+                            <newline />
+                            <field name="finan_centrocusto_id" colspan="4" domain="[('sintetico', '=', False)]" />
+                            <newline />
+                            <field name="res_partner_bank_id" colspan="4" />
+                            <newline />
+                            <field name="finan_carteira_id" colspan="4" />
+                            <newline />
+                            <field name="payment_term_id" />
+                        </group>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

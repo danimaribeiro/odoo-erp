@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_analise_contratos" >
+            <field name="name">finan.relatorio.analise.contratos</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório Análise de Contratos">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="company_id" required="1" colspan="4" />
+                        <newline/>
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />
+                        <newline/>
+                        <field name="vendedor_id" colspan="4" />
+                        <newline/>
+                        <field name="hr_department_id" colspan="4" />
+                        <newline/>
+                        <field name="res_partner_category_id" colspan="4" />
+                        <newline/>
+                        <field name="grupo_economico_id" colspan="4" />
+                        <newline/>
+                        <field name="tipo_rel" required="1" colspan="4" />
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_analise_contratos" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_relatorio_analise_contratos_acao">
+            <field name="name">Análise de Contratos</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_relatorio_analise_contratos_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_relatorio_analise_contratos"/>
+            <field name="act_window_id" ref="finan_relatorio_analise_contratos_acao"/>
+        </record>
+
+        <menuitem
+            action="finan_relatorio_analise_contratos_acao"
+            id="menu_finan_relatorio_analise_contratos"
+            name="Análise de Contratos"
+            parent="finan.menu_finan_relatorios" sequence="4" />
+
+    </data>
+</openerp>

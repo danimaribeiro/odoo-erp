@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="account.view_account_list" model="ir.ui.view">
+            <field name="name">account.account.tree</field>
+            <field name="model">account.account</field>
+            <field name="type">tree</field>
+<!--             <field name="inherit_id" ref="account.view_account_list"/> -->
+            <field name="arch" type="xml">
+                <tree colors="blue:sintetica and tipo == 'R';red:sintetica and tipo == 'D';green:sintetica and tipo == 'T'">
+                    <field name="codigo_completo" />
+                    <field name="nome" />
+                    <field name="nome_completo" />
+                    <field name="parent_id" invisible="1" />
+                    <field name="sintetica" invisible="1" />
+                    <field name="tipo" invisible="1" />
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</openerp>

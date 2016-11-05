@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="condominio_project_tree">
+            <field name="name">condominio.project.tree</field>
+            <field name="model">project.project</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" string="Condomínio" />
+                    <field name="sindico_id" />
+                    <field name="partner_id" string="Entidade jurídica" />
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="condominio_project_form">
+            <field name="name">condominio.project.form</field>
+            <field name="model">project.project</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Condomínio">
+                    <field name="eh_condominio" invisible="1" />
+                    <field name="company_id" invisible="1" />
+                    <field name="currency_id" invisible="1" />
+                    <field name="active" invisible="1" />
+                    <field name="name" colspan="4" string="Condomínio" />
+                    <newline />
+                    <field name="partner_id" colspan="4" string="Entidade jurídica" />
+                    <newline />
+                    <field name="sindico_id" colspan="4" />
+                    <newline />
+                    <separator string="Unidades" colspan="4" />
+                    <field name="imovel_ids" nolabel="1" colspan="4" />
+                </form>
+            </field>
+        </record>
+        
+        
+        <record model="ir.ui.view" id="condominio_project_search">
+            <field name="name">condominio.project.search</field>
+            <field name="model">project.project</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Condomínios">
+                    <field name="name" string="Condomínio" />
+                </search>
+            </field>
+        </record>
+        
+        
+        <record model="ir.actions.act_window" id="condominio_project_acao">
+            <field name="name">Condomínios</field>
+            <field name="res_model">project.project</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="condominio_project_tree" />
+            <field name="search_view_id" ref="condominio_project_search" />
+            <field name="domain">[('eh_condominio', '=', True)]</field>
+            <field name="context">{'default_eh_condominio': True, 'default_active': True}</field>
+        </record>       
+        
+        <menuitem
+            action="condominio_project_acao"
+            id="menu_condominio_project"
+            name="Condomínios"
+            sequence="1"
+            parent="menu_condominio_cadastro" />
+
+        <record model="ir.actions.act_window.view" id="condominio_project_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="condominio_project_form"/>
+            <field name="act_window_id" ref="condominio_project_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="condominio_project_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="condominio_project_tree"/>
+            <field name="act_window_id" ref="condominio_project_acao"/>
+        </record>
+
+    </data> 
+</openerp>

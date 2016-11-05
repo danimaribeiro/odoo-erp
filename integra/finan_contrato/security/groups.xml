@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record id="group_finan_contract_manager" model="res.groups">
+            <field name="name">Integra / Gerente de Contratos Financeiros</field>
+        </record>
+
+        <record id="group_finan_contract_staff" model="res.groups" context="{'noadmin':True}">
+            <field name="name">Integra / Funcionário de Contratos Financeiros</field>
+        </record>
+
+        <record id="group_finan_contrato_suprimentos" model="res.groups" context="{'noadmin':True}">
+            <field name="name">Integra / Contratos Financeiros - suprimentos - aprovação</field>
+        </record>
+
+        <record id="group_finan_contrato_suprimentos_conferencia" model="res.groups" context="{'noadmin':True}">
+            <field name="name">Integra / Contratos Financeiros - suprimentos - conferência</field>
+        </record>
+
+        <record id="group_finan_contrato_gestao" model="res.groups" context="{'noadmin':True}">
+            <field name="name">Integra / Contratos Financeiros - gestão de área</field>
+        </record>
+
+        <record id="group_finan_contrato_direcao" model="res.groups" context="{'noadmin':True}">
+            <field name="name">Integra / Contratos Financeiros - direção</field>
+        </record>
+
+    </data>
+</openerp>

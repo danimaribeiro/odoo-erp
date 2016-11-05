@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="stock_picking_out_form" model="ir.ui.view">
+            <field name="name">stock.picking.out.form</field>
+            <field name="model">stock.picking</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_out_form"/>
+            <field name="arch" type="xml">
+                <field name="address_id" position="replace">
+                    <field name="partner_id" colspan="4" />
+                    <newline/>
+<!--                     <field name="finan_contrato_id" colspan="4" domain="[('partner_id', '=', partner_id)]" /> -->
+                    <newline/>
+                    <field name="address_id" on_change="onchange_partner_in(address_id)" context="{'contact_display':'partner'}" colspan="4" domain="[('partner_id', '=', partner_id)]"/>
+                    <newline/>
+                    <field name="trata_locacao_notas" invisible="1" />
+<!--                     <field name="trata_locacao_baixas" invisible="1" /> -->
+
+                </field>
+                <field name="company_id" position="after">
+                    <button string="Reabre ordem" icon="gtk-execute" name="forca_novo" type="object" colspan="2"/>
+                    <button string="Fecha ordem" icon="gtk-execute" name="forca_concluido" type="object" colspan="2"/>
+                    <group colspan="4" col="4" attrs="{'invisible': [('sale_id', '=', False)]}">
+                        <separator string="Forçar cancelamento do pedido de venda" colspan="4" />
+                        <button string="Confirmar cancelamento do pedido de venda" icon="gtk-execute" name="forca_cancelamento_pedido_venda" type="object" colspan="2"/>
+                    </group>
+                </field>
+                <field name="stock_journal_id" position="after">
+                    <field name="formato" required="1" />
+                </field>
+                <field name="move_lines" position="before">
+                    <group colspan="4">
+                        <separator string="Romaneio" colspan="4" />
+                        <field name="operacao_id" colspan="4" on_change="onchange_operacao_id(operacao_id, company_id)" domain="['|', ('tipo', '=', 'S'), ('tipo', '=', 'E')]" />
+                        <field name="location_id" colspan="4" readonly="0" invisible="0" />
+                        <field name="location_dest_id" colspan="4" readonly="0" invisible="0" />
+                        <newline />
+<!--                         <button string="Próximo romaneio" icon="gtk-execute" name="proximo_romaneio" type="object" colspan="2"/> -->
+                        <field name="romaneio" invisible="1" />
+                    </group>
+                    <newline/>
+                    <button string="Imprimir Ordem de Entrega" icon="gtk-print" name="imprime_romaneio" type="object" colspan="2" context="{'saida': True}"/>
+                    <button string="Imprimir Saldo" icon="gtk-print" name="imprime_saldo" type="object" colspan="2" />
+                    <button string="Imprimir Romaneio de Pendência" icon="gtk-print" name="imprime_romaneio_zero" type="object" colspan="2" context="{'saida': True}"/>
+                </field>
+                <field name="move_lines" position="replace">
+                    <field colspan="4" name="move_lines" nolabel="1" widget="one2many_list" context="{'address_out_id': address_id, 'picking_type': type, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id}" >
+                        <tree string="Stock Moves">
+                            <field name="orcamento_categoria_id"/>
+                            <field name="product_id"/>
+                            <field name="product_qty" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)"/>
+                            <field name="product_uom" string="UoM"/>
+                            <field name="location_id"/>
+                            <field name="location_dest_id" invisible="1"/>
+                            <field name="date"/>
+                            <field name="state"/>
+                            <button name="action_cancel" states="assigned" string="Cancel" type="object" icon="gtk-cancel"/>
+                            <button name="action_confirm" states="draft" string="Confirm" type="object" icon="gtk-apply"/>
+                            <button name="force_assign" states="confirmed" string="Force Availability" type="object" icon="gtk-jump-to"/>
+                            <button name="cancel_assign" states="assigned" string="Cancel Availability" type="object" icon="gtk-find"/>
+                            <button name="%(stock.action_partial_move_server)d" string="Process" type="action" states="confirmed,assigned" icon="gtk-go-forward"/>
+                            <field name="romaneio" />
+                        </tree>
+                        <form string="Stock Moves">
+                            <group colspan="2" col="4">
+                                <separator colspan="4" string="Move Information"/>
+                                <field name="name" invisible="1" colspan="4" />
+                                <field name="product_id" on_change="onchange_product_id(product_id,location_id,location_dest_id, parent.address_id)" colspan="4" />
+                                <field name="orcamento_categoria_id" colspan="4" required="1" />
+                                <field name="product_qty" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)" colspan="3" />
+                                <field name="product_uom" string="Unit Of Measure" colspan="4" />
+                            </group>
+
+                            <group colspan="2" col="2">
+                                <separator string="Locations" colspan="2" />
+                                <field name="location_id" domain="[('usage','=','internal')]" />
+                                <field name="location_dest_id" domain="[('usage','&lt;&gt;','view')]" />
+                            </group>
+
+                            <group colspan="2" col="2">
+                                <separator string="Dates" colspan="2" />
+                                <field name="create_date" invisible="1"/>
+                                <field name="date"/>
+                                <field name="date_expected" on_change="onchange_date(date,date_expected)"/>
+                            </group>
+
+                            <label string="" colspan="4"/>
+                            <field name="state"/>
+                            <group col="4" colspan="2">
+                                <button name="action_cancel" states="assigned" string="Cancel" type="object" icon="gtk-cancel"/>
+                                <button name="action_confirm" states="draft" string="Confirm" type="object" icon="gtk-apply"/>
+                                <button name="force_assign" states="confirmed" string="Force Availability" type="object" icon="gtk-jump-to"/>
+                                <button name="cancel_assign" states="assigned" string="Cancel Availability" type="object" icon="gtk-find"/>
+                            </group>
+                        </form>
+                    </field>
+                </field>
+                <page string="Notes" position="before">
+                    <page string="Notas Fiscais e Movimentações de Baixa de Locação">
+                        <button string="Gerar NF-es de remessa e movimentações de baixa" icon="gtk-print" name="gerar_notas_remessa_baixa_locacao" type="object" colspan="2" attrs="{'invisible': [('trata_locacao_notas', '!=', False)]}" />
+<!--                         <button string="Gerar NF-es de remessa" icon="gtk-print" name="gerar_notas_remessa_locacao" type="object" colspan="2" attrs="{'invisible': [('trata_locacao_notas', '=', False)]}" /> -->
+                        <newline />
+                        <separator string="Notas Fiscais emitidas" colspan="4" />
+                        <field name="sped_documento_ids" nolabel="1" colspan="4" readonly="1">
+                            <tree>
+                                <field name="company_id" />
+                                <field name="modelo" />
+                                <field name="data_emissao" />
+                                <field name="serie" />
+                                <field name="numero" />
+                                <field name="partner_id" string="Destinatário" />
+                                <field name="vr_nf" />
+                                <button type="object" name="abre_nota_emitida" icon="gtk-go-forward"/>
+                            </tree>
+                        </field>
+                        <newline />
+<!--                         <button string="Gerar movimentações de baixa" icon="gtk-print" name="gerar_movimentacao_baixa_locacao" type="object" colspan="2" /> -->
+                        <newline />
+                        <separator string="Ordens de entrega para baixa" colspan="4" />
+                        <field name="entrega_ids" nolabel="1" colspan="4" readonly="1">
+                            <tree>
+                                <field name="name"/>
+                                <field name="partner_id"/>
+                                <field name="saldo_obra_liberado" string="Saldo da obra liberado?"/>
+                                <field name="origin"/>
+                                <field name="date"/>
+                                <field name="state"/>
+                                <button type="object" name="abre_ordem_entrega" icon="gtk-go-forward"/>
+                            </tree>
+                        </field>
+                    </page>
+                </page>
+                <page string="Notes" position="after">
+                    <page string="Alimentar Proposta com o Saldo">
+                        <button name="ajusta_proposta_saldo" string="Alimentar a Proposta Comercial com o Saldo da Obra" type="object" icon="gtk-apply" />
+                    </page>
+                    <page string="Liberar Proposta para Faturamento">
+                        <button name="liberar_proposta_faturamento" string="Liberar a Proposta Comercial de Venda para Faturamento" type="object" icon="gtk-apply" />
+                    </page>
+                </page>
+
+            </field>
+        </record>
+
+        <record  model="ir.ui.view" id="stock_picking_out_tree">
+            <field name="name">stock.picking.out.tree</field>
+            <field name="model">stock.picking</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="stock.view_picking_out_tree"/>
+            <field name="arch" type="xml">
+                <tree string="Delivery Orders" position="replace">
+                    <tree colors="green:trata_locacao_notas;darkcyan:saldo_obra_liberado or trata_locacao_notas;blue:state == 'draft';grey:state == 'cancel';red:state not in ('cancel', 'done')" string="Ordens de Entrega">
+                        <field name="name"/>
+                        <field name="partner_id"/>
+                        <field name="saldo_obra_liberado" string="Saldo da obra liberado?"/>
+                        <field name="trata_locacao_notas" string="Geradas NF/movimentação baixa" />
+                        <field name="origin"/>
+                        <field name="date"/>
+                        <field name="min_date" invisible="1" />
+                        <field name="backorder_id" groups="base.group_extended" invisible="1" />
+                        <field name="invoice_state" invisible="1" />
+                        <field name="stock_journal_id" groups="base.group_extended" widget="selection" invisible="1" />
+                        <field name="state"/>
+                        <button name="action_process" states="assigned" string="Process" type="object" icon="gtk-go-forward"/>
+                        <field name="operacao_id" />
+                    </tree>
+                </tree>
+            </field>
+        </record>
+
+        <record  model="ir.ui.view" id="stock_picking_out_search">
+            <field name="name">stock.picking.out.search</field>
+            <field name="model">stock.picking</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="stock.view_picking_out_search"/>
+            <field name="arch" type="xml">
+                <search string="Picking list" position="replace">
+                    <search string="Ordens de entrega">
+                        <group>
+                            <filter icon="terp-check" name="available" string="Ready" domain="[('state','=','assigned')]" help="Assigned Delivery Orders"/>
+                            <filter icon="terp-camera_test" name="confirmed" string="Waiting" domain="[('state','=','confirmed')]" help="Confirmed Delivery Orders"/>
+                            <filter icon="terp-dialog-close" name="done" string="Done" domain="[('state','=','done')]" help="Delivery orders already processed"/>
+                            <separator orientation="vertical"/>
+<!--                             <filter icon="terp-accessories-archiver-minus" string="Back Orders" domain="[('backorder_id', '!=', False)]" help="Is a Back Order" groups="base.group_extended"/> -->
+<!--                             <separator orientation="vertical"/> -->
+<!--                             <filter icon="terp-dolar" name="to_invoice" string="To Invoice" domain="[('invoice_state','=','2binvoiced')]" help="Delivery orders to invoice"/> -->
+                            <separator orientation="vertical"/>
+                            <field name="name"/>
+                            <field name="origin"/>
+<!--                             <field name="stock_journal_id" groups="base.group_extended" widget="selection"/> -->
+                            <field name="company_id" />
+                            <newline />
+                            <field name="partner_id"/>
+                            <field name="operacao_id"/>
+                        </group>
+                        <newline/>
+                        <group expand="0" string="Group By...">
+                            <filter string="Operação" icon="terp-partner" domain="[]" context="{'group_by':'operacao_id'}"/>
+                            <filter string="Partner" icon="terp-partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                            <separator orientation="vertical"/>
+                            <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                            <separator orientation="vertical"/>
+                            <filter string="Order Date" icon="terp-go-month" domain="[]" context="{'group_by':'date'}"/>
+<!--                             <filter string="Expected Date" icon="terp-go-month" domain="[]" context="{'group_by':'min_date'}"/> -->
+<!--                             <separator orientation="vertical"/> -->
+<!--                             <filter string="Journal" icon="terp-folder-orange" domain="[]" context="{'group_by':'stock_journal_id'}" groups="base.group_extended"/> -->
+                        </group>
+                    </search>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</openerp>

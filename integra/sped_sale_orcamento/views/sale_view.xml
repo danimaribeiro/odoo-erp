@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="orcamento_sale_order_form" model="ir.ui.view">
+            <field name="name">orcamento.sale_order_form</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="orcamento.orcamento_sale_order_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="replace">
+                    <field context="{'search_default_customer':1}" domain="[('customer','=',True)]" name="partner_id" on_change="onchange_cliente_id(partner_id, company_id, context)" options="{&quot;quick_create&quot;: false}" required="1"/>
+                </field>
+                <field name="payment_term" position="after">
+                    <field name="operacao_fiscal_produto_id" domain="[('modelo', '=', '55')]"/>
+                    <field name="operacao_fiscal_servico_id" domain="[('modelo', '=', 'SE')]"/>
+                </field>
+                <field name="orcamento_resumo_ids" position="after">
+                    <button name="gera_notas" string="Recalcula lucro e margem líquidos" icon="gtk-go-forward" type="object" context="{'temporario': True}"/>
+                    <newline/>
+                    <group colspan="2">
+                        <separator string="Impostos" colspan="2" />
+                        <newline/>
+                        <field name="vr_icms_proprio" colspan="2" />
+                        <newline/>
+                        <field name="vr_ipi" colspan="2" />
+                        <newline/>
+                        <field name="vr_iss" colspan="2" />
+                        <newline/>
+                        <field name="vr_pis_proprio" colspan="2" />
+                        <newline/>
+                        <field name="vr_cofins_proprio" colspan="2" />
+                        <newline/>
+                        <field name="vr_csll" colspan="2" />
+                        <newline/>
+                        <field name="vr_irrf" colspan="2" />
+                        <newline/>
+                        <field name="total_imposto" colspan="2" />
+                    </group>
+                    <group colspan="2">
+                        <separator string="Lucro líquido" colspan="2" />
+                        <newline/>
+                        <field name="vr_liquido" colspan="2" />
+                        <newline/>
+                        <field name="margem_liquida" colspan="2" />
+                    </group>
+                </field>
+                <page position="replace" string="History">
+                    <page string="History" groups="base.group_extended">
+                        <button name="gera_notas" string="Gera notas fiscais" icon="gtk-go-forward" type="object"/>
+                        <separator colspan="4" string="Notas Fiscais"/>
+                        <field colspan="4" name="sped_documento_ids" nolabel="1"/>
+                        <separator colspan="4" string="Packings"/>
+                        <field colspan="4" name="picking_ids" nolabel="1"/>
+                    </page>
+                </page>
+            </field>
+        </record>
+    </data>
+</openerp>

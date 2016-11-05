@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+cheque_full_all,Cheque,model_finan_cheque,finan.group_finan_staff,1,1,1,1
+cheque_deposito_full_all,Depósito de cheque,model_finan_cheque_deposito,finan.group_finan_staff,1,1,1,1

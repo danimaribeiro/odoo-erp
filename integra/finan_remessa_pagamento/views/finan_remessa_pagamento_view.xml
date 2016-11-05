@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_remessa_pagamento_tree">
+            <field name="name">finan.remessa.pagamento.tree</field>
+            <field name="model">finan.remessa.pagamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Remessas de pagamento">
+                    <field name="bank_id" />
+                    <field name="numero_arquivo" />
+                    <field name="data" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_remessa_pagamento_form">
+            <field name="name">finan.remessa.pagamento.form</field>
+            <field name="model">finan.remessa.pagamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Remessa de pagamento">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="bank_id" colspan="4" required="1" on_change="onchange_bank_id(bank_id)"/>
+                        <newline />
+						<field name="company_id"
+							colspan="4" required="1" />
+                        <newline />
+                        <field name="numero_arquivo" colspan="4"/>
+                        <newline />
+                        <field name="data" colspan="4" />
+                        <newline />
+                        <field name="comando" colspan="4" />
+                        <button icon="gtk-execute" string="Gerar remessa" name="gerar_remessa_anexo" type="object" attrs="{'invisible': [('bank_id', '=', False)]}" />
+                    </group>
+                    <group col="4" colspan="4">
+                        <separator string="Contas a pagar" colspan="4"/>
+                        <newline />
+                        <field name="lancamento_ids" nolabel="1" domain="[('tipo', '=', 'P'), '|', ('company_id', '=', company_id), ('company_id.parent_id', '=', company_id), ('situacao', '=', 'A vencer'), ('provisionado', '!=', True)]" context="{'form_view_ref' : 'finan.finan_pagar_form', 'tree_view_ref' : 'finan.finan_pagar_tree', 'search_view_ref': 'finan.finan_pagar_search'}">
+                            <tree>
+                                <field name="data_vencimento" />
+                                <field name="numero_documento" />
+                                <field name="partner_id" string="Fornecedor"/>
+                                <field name="valor_documento" sum="Valor do documento" />
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_remessa_pagamento_search">
+            <field name="name">finan.remessa.pagamento.search</field>
+            <field name="model">finan.remessa.pagamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Remessas de pagamento">
+                    <field name="bank_id" select="1" />
+                    <field name="numero_arquivo" />
+                </search>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="finan_remessa_pagamento_acao">
+            <field name="name">Remessas de pagamento</field>
+            <field name="res_model">finan.remessa.pagamento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_remessa_pagamento_tree" />
+        </record>
+
+        <menuitem action="finan_remessa_pagamento_acao"
+            id="menu_finan_remessa" name="Remessas de pagamento" parent="finan.menu_finan_tesouraria" />
+
+    </data>
+</openerp>

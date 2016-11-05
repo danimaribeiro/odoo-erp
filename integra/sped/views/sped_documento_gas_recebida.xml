@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_gas_recebida_form">
+            <field name="name">sped.gas.recebida.form</field>
+            <field name="model">sped.documento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Nota Fiscal/Conta de Gás - modelo 28">
+                    <field name="emissao" invisible="1" />
+                    <field name="modelo" invisible="1" />
+                    <field name="entrada_saida" invisible="1" />
+                    <group colspan="4">
+                        <group colspan="4">
+                            <field name="company_id" colspan="4" required="1" domain="[('cnpj_cpf', '!=', False)]"/>
+                            <newline/>
+                            <field name="operacao_id" colspan="4" required="1" on_change="onchange_operacao(operacao_id)" domain="[('modelo', '=', modelo), ('emissao', '=', emissao)]" />
+                        </group>
+                        <group colspan="4">
+                        <newline/>
+                            <field name="numero" required="1" />
+                            <field name="serie" required="1" />
+                            <newline/>
+                            <field name="data_emissao" required="1" on_change="onchange_data_emissao(data_emissao, data_entrada_saida)" />
+                            <field name="data_entrada_saida" required="1" />
+                        </group>
+                        <newline/>
+                        <field name="situacao" required="1" />
+                        <newline/>
+                        <field name="classe_consumo_gas" required="1" />
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Fornecedor">
+                            <field name="partner_id" colspan="4" on_change="onchange_partner_id(partner_id)" />
+                            <newline />
+                            <field name="municipio_fato_gerador_id" colspan="4" />
+                            <newline />
+                            <field name="partner_cnpj_cpf" colspan="2" readonly="1"/>
+                            <field name="partner_contribuinte" invisible="1" />
+                            <field name="partner_ie" colspan="2" readonly="1"/>
+                            <newline />
+                            <field name="partner_razao_social" colspan="4" readonly="1"/>
+                            <field name="partner_fantasia" colspan="4" readonly="1"/>
+                            <field name="partner_endereco" colspan="4" readonly="1"/>
+                            <field name="partner_numero" colspan="2" readonly="1"/>
+                            <field name="partner_complemento" colspan="2" readonly="1"/>
+                            <field name="partner_bairro" colspan="2" readonly="1"/>
+                            <newline />
+                            <field name="partner_municipio_id" colspan="4" readonly="1"/>
+                            <field name="partner_cep" colspan="2" readonly="1"/>
+                        </page>
+                        <page string="Serviços">
+                            <field name="documentoitem_ids" colspan="4" nolabel="1"
+                            context="{'default_partner_id': partner_id, 'default_entrada_saida': entrada_saida, 'default_data_emissao': data_emissao, 'default_regime_tributario': regime_tributario, 'default_operacao_id': operacao_id, 'default_company_id': company_id, 'default_emissao': emissao, 'default_modelo': modelo, 'default_municipio_fato_gerador_id': municipio_fato_gerador_id, 'default_contribuinte': partner_contribuinte, 'form_view_ref' : 'sped.sped_documentoitem_entrada_manual_form', 'tree_view_ref' : 'sped.sped_documentoitem_entrada_manual_tree'}" mode="tree,form" />
+                        </page>
+                        <page string="Totais">
+                            <group string="Valores principais" colspan="2">
+                                <field name="vr_produtos" />
+                                <newline />
+                                <field name="vr_desconto" />
+                                <newline />
+                                <field name="vr_operacao" />
+                                <newline />
+                                <field name="vr_nf" />
+                                <newline />
+                                <field name="vr_fatura" />
+                            </group>
+                            <group string="ICMS próprio" colspan="2">
+                                <field name="bc_icms_proprio" />
+                                <newline/>
+                                <field name="vr_icms_proprio" />
+                            </group>
+                            <newline />
+                            <group string="PIS próprio" colspan="2">
+                                <field name="bc_pis_proprio" />
+                                <newline/>
+                                <field name="vr_pis_proprio" />
+                            </group>
+                            <group string="COFINS próprio" colspan="2">
+                                <field name="bc_cofins_proprio" />
+                                <newline />
+                                <field name="vr_cofins_proprio" />
+                            </group>
+                        </page>
+                        <page string="Outras informações">
+                            <field name="ie_st" />
+                            <newline />
+                            <field name="naturezaoperacao_id" colspan="4" />
+                            <field name="regime_tributario" colspan="4"/>
+                        </page>
+                        <page string="Informações complementares">
+                            <field name="infcomplementar" colspan="4" />
+                            <field name="infadfisco" colspan="4" />
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_gas_recebida_tree">
+            <field name="name">sped.gas.recebida.tree</field>
+            <field name="model">sped.documento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="parent_company_id" string="Empresa" />
+                    <field name="company_id" string="Unidade de negócio" />
+                    <field name="serie" />
+                    <field name="numero"/>
+                    <field name="data_emissao_brasilia"/>
+                    <field name="data_entrada_saida_brasilia"/>
+                    <field name="partner_id" string="Fornecedor" />
+                    <field name="vr_produtos" sum="vr_produtos" string="Valor dos serviços" />
+                    <field name="vr_nf" sum="vr_nf" />
+                    <field name="vr_fatura" sum="vr_fatura" />
+                    <field name="situacao"/>
+                    <field name="operacao_id" invisible="1" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_gas_recebida_search">
+            <field name="name">sped.gas.recebida.search</field>
+            <field name="model">sped.documento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="NF/Conta de gás">
+                    <field name="company_id" />
+                    <field name="serie"/>
+                    <field name="numero"/>
+                    <field name="situacao" string="Situação Fiscal" />
+                    <newline />
+                    <field name="partner_id" />
+                    <field name="operacao_id" />
+                    <field name="documentoitem_ids" filter_domain="[('documentoitem_ids.produto_id', '=', self)]" string="Produto" />
+                    <field name="data_emissao_from" string="De emissão" filter_domain="[('data_emissao_brasilia','&gt;=', self)]" widget="calendar" />
+                    <field name="data_emissao_to" string="A emissão" filter_domain="[('data_emissao_brasilia','&lt;=', self)]" widget="calendar" />
+
+                    <newline />
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'parent_company_id'}" />
+                        <filter string="Unidade de negócio" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Fornecedor" icon="terp-project" domain="[]" context="{'group_by': 'partner_id'}" />
+                        <filter string="Situação fiscal" icon="terp-project" domain="[]" context="{'group_by': 'situacao'}" />
+                        <filter string="Operação fiscal" icon="terp-project" domain="[]" context="{'group_by': 'operacao_id'}" />
+                        <separator orientation="vertical" />
+                        <filter string="Data de emissão" icon="terp-project" domain="[]" context="{'group_by': 'data_emissao_brasilia'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_gas_recebida_acao">
+            <field name="name">NF/Conta de gás</field>
+            <field name="domain">[('modelo','=','28'),('emissao','=','1'),('entrada_saida', '=', '0')]</field>
+            <field name="context">{'modelo': '28', 'emissao': '1', 'default_modelo': '28', 'default_emissao': '1', 'default_entrada_saida': '0', 'default_classe_consumo_gas': '01'}</field>
+            <field name="res_model">sped.documento</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="sped_gas_recebida_search" />
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_gas_recebida_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_gas_recebida_form"/>
+            <field name="act_window_id" ref="sped_gas_recebida_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_gas_recebida_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sped_gas_recebida_tree"/>
+            <field name="act_window_id" ref="sped_gas_recebida_acao"/>
+        </record>
+
+        <menuitem id="menu_sped_gas_recebida" name="NF/Conta de gás" parent="menu_sped_fiscal_documento_recebido" action="sped_gas_recebida_acao" />
+
+    </data>
+</openerp>

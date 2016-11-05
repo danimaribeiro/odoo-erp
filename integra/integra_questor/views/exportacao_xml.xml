@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="zip_xml_search">
+            <field name="name">zip.xml.search</field>
+            <field name="model">zip_xml</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Exportação NF-e emitida">
+                    <field name="codigo" string="Lote" />
+                    <field name="company_id" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="zip_xml_tree">
+            <field name="name">zip.xml.tree</field>
+            <field name="model">zip_xml</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="codigo" string="Lote" />
+                    <field name="company_id" />
+<!--                     <field name="emissao" /> -->
+<!--                     <field name="modelo_fiscal" /> -->
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="zip_xml_form">
+            <field name="name">zip.xml.form</field>
+            <field name="model">zip_xml</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Exportação NF-e emitida">
+                    <separator string="Parâmetros" colspan="4"/>
+                    <field name="company_id" required="1" colspan="4" domain="[('cnpj_cpf', '!=', False)]" />
+                    <newline/>
+                    <field name="data_inicial" required="1" />
+                    <field name="data_final" required="1" />
+                    <newline/>
+<!--                     <field name="emissao" required="1" colspan="1" /> -->
+<!--                     <field name="codigo_empresa_questor" required="1" colspan="1" /> -->
+                    <newline/>
+<!--                     <field name="modelo_fiscal" required="1" colspan="4" /> -->
+                    <newline/>
+                    <field name="nome" invisible="1"/>
+                    <newline/>
+                    <button icon="gtk-execute" string="Gerar arquivo" name="gera_exportacao" type="object" colspan="4" />
+                    <newline/>
+                    <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="zip_xml_acao">
+            <field name="name">Exportação NF-e emitida</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">zip_xml</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_zip_xml"
+            name="Exportação NF-e emitida"
+            parent="menu_sped_questor" sequence="11" action="zip_xml_acao" />
+    </data>
+</openerp>

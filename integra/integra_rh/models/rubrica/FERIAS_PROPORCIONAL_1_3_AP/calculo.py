@@ -1,0 +1,1 @@
+result = FERIAS_PROPORCIONAL_AP / 3.0

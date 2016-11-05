@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="frota_os_form">
+            <field name="name">frota.os.form</field>
+            <field name="model">frota.os</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Ordem de serviço" >
+                    <group col="4" colspan="4">
+                        <field name="res_company_id" required="1" colspan="4"/>
+                        <newline/>
+                        <field name="data" colspan="2" required="1" />
+                        <field name="numero" string="Número da OS" colspan="2" />
+<!--                         <field name="tipo" colspan="2" required="1" /> -->
+<!--                        <field name="veiculo_id" colspan="4"/>-->
+<!--                         <field name="servico_id" colspan="4" required="1" on_change="onchange_servico_id(veiculo_id, servico_id, res_partner_id)" /> -->
+                        <field name="servico_id" required="1" />
+                        <field name="compra" required="1" />
+                        <newline/>
+                        <button string="Imprimir OS" icon="gtk-print" name="imprime_os" type="object" colspan="4" context="{'tipo': 'G'}" />
+                        <newline/>
+                        <field name="state" colspan="2" widget="statusbar" />
+                        <button name="muda_state" string="Próximo" type="object" icon="gtk-go-forward" context="{'state': state}" />
+                    </group>
+                    <group col="4" colspan="4">
+                        <separator string="Fornecedor" colspan="4" />
+                        <field name="res_partner_id" nolabel="1" colspan="4" />
+                        <separator string="Responsável" colspan="4" />
+                        <field name="hr_employee_id" string="Solicitante"/>
+<!--                         <field name="motorista_terceiro" /> -->
+                        <field name="hr_department_id" />
+                    </group>
+                    <group col="4" colspan="4">
+                        <separator string="Cliente/instalação" colspan="4" />
+                        <field name="cliente_id" colspan="4" on_change="onchange_cliente_id(res_company_id, cliente_id, data)" />
+                        <field name="finan_contrato_id" colspan="4" domain="[('company_id', '=', res_company_id), ('partner_id', '=', cliente_id), ('natureza', '=', 'R')]" />
+                        <separator string="Justificativa" colspan="4" />
+                        <field name="justificativa" nolabel="1" colspan="4" />
+                    </group>
+<!--                    <group col="4" colspan="4">
+                        <separator string="Abastecimento" colspan="4" />
+                        <field name="quantidade_combustivel" />
+                        <field name="unitario_combustivel" />
+                        <field name="valor_combustivel" />
+                    </group>-->
+<!--                    <group col="4" colspan="4">
+                        <separator string="Registros de odômetro" colspan="4" />
+                        <field name="odometro_ids" nolabel="1" widget="many2one_list" context="{'default_veiculo_id': veiculo_id, 'default_hr_employee_id': hr_employee_id, 'default_hr_department_id': hr_department_id, 'default_motorista_terceiro': motorista_terceiro}">
+                            <tree editable="top">
+                                <field name="veiculo_id" invisible="1" />
+                                <field name="data" on_change="search_odometro(parent.veiculo_id, data)" />
+                                <field name="valor_atual" />
+                                <field name="valor_anterior" invisible="1" />
+                                <field name="hr_employee_id" />
+                                <field name="motorista_terceiro" />
+                                <field name="hr_department_id" />
+                                <field name="servico_id" />
+                            </tree>
+                        </field>
+                    </group>-->
+                    <group col="4" colspan="4">
+                        <separator string="Itens da OS" colspan="4" />
+                        <field name="os_item_ids" nolabel="1" widget="many2one_list">
+                            <tree editable="top">
+                                <field name="servico_id" />
+                                <field name="valor" sum="Valor" />
+                            </tree>
+                        </field>
+                    </group>
+                    <group col="4" colspan="4">
+                        <separator string="Observações" colspan="4" />
+                        <field name="obs" nolabel="1" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model='ir.ui.view' id='frota_os_tree'>
+            <field name="name">frota.os.tree</field>
+            <field name="model">frota.os</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Ordens de serviço">
+                    <field name="res_company_id" />
+                    <field name="numero" />
+                    <field name="data" />
+<!--                     <field name="veiculo_id" /> -->
+                    <field name="servico_id" />
+                    <field name="res_partner_id" />
+                    <field name="hr_employee_id" />
+<!--                     <field name="motorista_terceiro" /> -->
+                    <field name="valor" sum="Valor" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="frota_os_search">
+            <field name="name">frota.os.search</field>
+            <field name="model">frota.os</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Ordens de serviço">
+                    <filter name="pendente" string="Pendente" icon="terp-go-month" domain="[('state','=','P')]" />
+                    <filter name="em_andamento" string="Em andamento" icon="terp-go-month" domain="[('state','=','A')]" />
+                    <filter name="fechada" string="Fechada" icon="terp-go-month" domain="[('state','=','F')]" />
+
+                    <field name="res_company_id" select="1" />
+<!--                     <field name="veiculo_id" select="1" /> -->
+                    <field name="servico_id" select="1" />
+                    <field name="numero" />
+                    <field name="data" />
+                    <newline />
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'res_company_id'}" />
+                        <filter string="Fornecedor" icon="terp-project" domain="[]" context="{'group_by': 'res_partner_id'}"/>
+<!--                         <filter string="Veículo" icon="terp-project" domain="[]" context="{'group_by': 'veiculo_id'}" /> -->
+                        <filter string="Serviço" icon="terp-project" domain="[]" context="{'group_by': 'servico_id'}" />
+                        <filter string="Motorista" icon="terp-project" domain="[]" context="{'group_by': 'hr_employee_id'}" />
+<!--                         <filter string="Mot. 3º" icon="terp-project" domain="[]" context="{'group_by': 'motorista_terceiro'}" /> -->
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="frota_os_acao">
+            <field name="name">Ordens de serviço</field>
+            <field name="res_model">frota.os</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('veiculo_id', '=', False)]</field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="frota_os_tree" />
+            <field name="search_view_id" ref="frota_os_search" />
+        </record>
+
+        <menuitem action="frota_os_acao"
+            id="menu_frota_os" name="Ordens de serviço" parent="menu_frota_veiculos" />
+
+        <record model="ir.actions.act_window.view" id="frota_os_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="frota_os_tree"/>
+            <field name="act_window_id" ref="frota_os_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="frota_os_form_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="frota_os_form"/>
+            <field name="act_window_id" ref="frota_os_acao"/>
+        </record>
+
+    </data>
+</openerp>

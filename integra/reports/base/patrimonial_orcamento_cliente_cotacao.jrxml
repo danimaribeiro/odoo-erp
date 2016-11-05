@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="patrimonial_orcamento_detalhado_mensalidade" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="94577470-fe32-4331-94c0-35a934265f21">
+	<property name="ireport.zoom" value="1.771561000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ORDEM_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+2 as ordem, 'SERVIÇO DE BACKUP' as descricao, orc.vr_becape_chip as vr_mensal
+from sale_order orc
+where orc.id = $P{ORDEM_ID} and orc.vr_becape_chip > 0 and  produto_chip_id is not null
+
+union
+
+select
+1, 'MONITORAMENTO ELETRÔNICO', orc.monitoramento_eletronico as vr_mensal
+from sale_order orc
+where orc.id = $P{ORDEM_ID} and orc.monitoramento_eletronico > 0
+
+union
+
+select
+4, 'MONITORAMENTO DE IMAGENS', orc.monitoramento_imagens as vr_mensal
+from sale_order orc
+where orc.id = $P{ORDEM_ID} and orc.monitoramento_imagens > 0
+
+union
+
+select
+5, 'MANUTENÇÃO TÉCNICA', orc.manutencao_tecnica as vr_mensal
+from sale_order orc
+where orc.id = $P{ORDEM_ID} and orc.manutencao_tecnica > 0
+
+union
+
+select
+3, 'MONITORAMENTO GARANTIDO', orc.vr_monitoramento_garantido as vr_mensal
+from sale_order orc
+where orc.id = $P{ORDEM_ID} and orc.vr_monitoramento_garantido > 0 and produto_monitoramento_garantido_id is not null
+
+
+union
+
+select
+6, 'SERVIÇO DE RONDA', orc.ronda as vr_mensal
+from sale_order orc
+where orc.id = $P{ORDEM_ID} and orc.ronda > 0
+
+union
+
+select
+7, 'ANIMAL ADESTRADO', orc.animal_adestrado as vr_mensal
+from sale_order orc
+where orc.id = $P{ORDEM_ID} and orc.animal_adestrado > 0
+
+union
+
+select
+8, 'POSTO MOVEL', orc.posto_movel as vr_mensal
+from sale_order orc
+where orc.id = $P{ORDEM_ID} and orc.posto_movel > 0
+
+order by
+ordem]]>
+	</queryString>
+	<field name="ordem" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Ordem no orçamento]]></fieldDescription>
+	</field>
+	<field name="descricao" class="java.lang.String">
+		<fieldDescription><![CDATA[Patrimônio]]></fieldDescription>
+	</field>
+	<field name="vr_mensal" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor mensal]]></fieldDescription>
+	</field>
+	<variable name="vr_mensal_1" class="java.lang.Double" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_mensal}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="555" height="16" uuid="05429380-dfe8-48a5-8f45-c254d5aadca5"/>
+				<box>
+					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

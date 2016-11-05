@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="frota_os_veiculo" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="1.0245201830476118"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/ari/openerp/openerp_integra/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="COMPANY_ID" class="java.lang.Integer"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="VEICULO_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SERVICO_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SINTETICO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select 1 as reg from frota_veiculo limit 1;]]>
+	</queryString>
+	<field name="reg" class="java.lang.Integer"/>
+	<pageHeader>
+		<band height="45">
+			<textField>
+				<reportElement positionType="Float" x="0" y="24" width="555" height="21" uuid="385fc5b8-99af-49c7-86dc-557483328107"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ORDEM DE SERVIÇO POR VEÍCULO"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="433" y="0" width="73" height="24" uuid="453dbd64-729e-41c5-a21a-9291162c097a"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATA:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="506" y="0" width="49" height="24" uuid="b221938b-015c-42e6-b9aa-07dfe34815e0"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="14">
+			<printWhenExpression><![CDATA[$P{SINTETICO} == "1"]]></printWhenExpression>
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="14" uuid="2c189b53-8c41-42c3-bbb9-4e399687df71"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SERVICO_ID">
+					<subreportParameterExpression><![CDATA[$P{SERVICO_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="VEICULO_ID">
+					<subreportParameterExpression><![CDATA[$P{VEICULO_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_ID">
+					<subreportParameterExpression><![CDATA[$P{TIPO_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="COMPANY_ID">
+					<subreportParameterExpression><![CDATA[$P{COMPANY_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_INICIAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_INICIAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_FINAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_FINAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "frota_os_veiculo_sintetico.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="14">
+			<printWhenExpression><![CDATA[$P{SINTETICO} == "0"]]></printWhenExpression>
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="14" uuid="eb36d74d-66ea-4f1d-b494-cde54d4b7d6e"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SERVICO_ID">
+					<subreportParameterExpression><![CDATA[$P{SERVICO_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="VEICULO_ID">
+					<subreportParameterExpression><![CDATA[$P{VEICULO_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_ID">
+					<subreportParameterExpression><![CDATA[$P{TIPO_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="COMPANY_ID">
+					<subreportParameterExpression><![CDATA[$P{COMPANY_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_INICIAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_INICIAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_FINAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_FINAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "frota_os_veiculo_analitico.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="12">
+			<textField>
+				<reportElement positionType="Float" x="433" y="0" width="91" height="12" uuid="f5496e66-278a-4d08-8089-ddaf7d45dca3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement positionType="Float" x="524" y="0" width="31" height="12" uuid="af7c86c3-93a7-4e4f-bfd3-9c3e37bc790b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

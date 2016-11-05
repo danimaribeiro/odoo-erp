@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem
+            id="hr_menus_antigos"
+            name="Menus antigos"
+            parent="hr.menu_hr_management"
+            sequence="5"
+            groups="base.group_rh_menus_antigos"/>
+
+        <menuitem
+            id="hr.menu_hr_reporting"
+            name="Reporting"
+            sequence="10"
+            parent="hr_menus_antigos"
+            groups="base.group_rh_menus_antigos"/>
+
+    <!--  Menus de contrato - removidos (contrato dentro da tela do funcionário) -->
+        <menuitem
+            id="hr_contract.next_id_56"
+            name="Contract"
+            parent="hr_menus_antigos"
+            sequence="5"
+            groups="base.group_rh_menus_antigos"/>
+
+        <menuitem
+            action="hr_contract.action_hr_contract_type"
+            id="hr_contract.hr_menu_contract_type"
+            parent="hr_contract.next_id_56"
+            sequence="6"
+            groups="base.group_rh_menus_antigos" />
+
+        <menuitem
+            action="hr_contract.action_hr_contract"
+            id="hr_contract.hr_menu_contract"
+            parent="hr_contract.next_id_56"
+            name="Contracts"
+            sequence="4"
+            groups="base.group_rh_menus_antigos"/>
+
+    <!--  Menus de folgas - removidos -->
+        <menuitem
+            id="hr_holidays.menu_open_ask_holidays"
+            name="Leaves"
+            parent="hr_menus_antigos"
+            sequence="5"
+            groups="base.group_rh_menus_antigos"/>
+
+        <menuitem
+            id="hr.menu_open_view_attendance_reason_config"
+            sequence="3"
+            parent="hr_menus_antigos"
+            name="Leaves"
+            groups="base.group_rh_menus_antigos"/>
+
+<!--        <menuitem
+            id="hr_holidays.menu_open_view_holiday_status"
+            name="Leave Type"
+            action="open_view_holiday_status"
+            parent="hr_menus_antigos"
+            groups="base.group_rh_menus_antigos"/>-->
+
+        <menuitem
+            id="hr_holidays.menu_hr_reporting_holidays"
+            name="Leaves"
+            parent="hr_menus_antigos"
+            sequence="6"
+            groups="base.group_rh_menus_antigos"/>
+
+        <menuitem
+            id="hr_payroll.menu_hr_payslip_run"
+            action="hr_payroll.action_hr_payslip_run_tree"
+            groups="base.group_rh_menus_antigos"/>
+
+        <menuitem
+            id="hr.menu_view_employee_category_form"
+            action="hr.open_view_categ_form"
+            parent="hr_menus_antigos"
+            groups="base.group_rh_menus_antigos"/>
+
+        <menuitem
+            id="hr.menu_view_employee_category_tree"
+            action="hr.open_view_categ_tree"
+            parent="hr_menus_antigos"
+            groups="base.group_rh_menus_antigos"/>
+
+        <menuitem
+            id="hr_payroll.menu_action_hr_contribution_register_form"
+            action="hr_payroll.action_contribution_register_form"
+            parent="hr_menus_antigos"
+            groups="base.group_rh_menus_antigos"/>
+
+        <menuitem
+            id="hr_payroll.menu_hr_salary_rule_category"
+            action="hr_payroll.action_hr_salary_rule_category"
+            parent="hr_menus_antigos"
+            groups="base.group_rh_menus_antigos"/>
+
+        <menuitem
+            id="hr_payroll.menu_hr_salary_rule_category_tree_view"
+            action="hr_payroll.action_hr_salary_rule_category_tree_view"
+            parent="hr_menus_antigos"
+            groups="base.group_rh_menus_antigos"/>
+
+    </data>
+</openerp>
+

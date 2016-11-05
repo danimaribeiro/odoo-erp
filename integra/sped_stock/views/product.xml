@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="product_product_form">
+            <field name="name">product.product.form</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <page string="Procurement &amp; Locations" position="replace">
+                    <page string="Procurement &amp; Locations">
+                        <group colspan="2" col="2" name="delay">
+                            <separator string="Delays" colspan="2"/>
+                            <field name="sale_delay" attrs="{'readonly':[('sale_ok','=',0)]}"/>
+                            <field name="produce_delay"/>
+                            <field name="warranty"/>
+                        </group>
+                        <group colspan="2" col="2" name="store">
+                            <separator string="Storage Localisation" colspan="2"/>
+                            <field name="loc_rack" attrs="{'readonly':[('type','=','service')]}"/>
+                            <field name="loc_row" attrs="{'readonly':[('type','=','service')]}"/>
+                            <field name="loc_case" attrs="{'readonly':[('type','=','service')]}"/>
+                        </group>
+                        <group colspan="2" col="2" name="misc" groups="base.group_extended">
+                            <separator string="Miscellaneous" colspan="2"/>
+                            <field name="active"/>
+                            <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                        </group>
+                        <group colspan="2" col="2" name="misc" groups="base.group_extended">
+                            <separator string="Miscellaneous" colspan="2"/>
+                            <field name="active"/>
+                            <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                        </group>
+                        <newline/>
+<!--                        <group colspan="4" attrs="{'invisible': True}">
+                            <separator string="Locais e custos" colspan="4"/>
+                            <field name="custo_ids" nolabel="1" readonly="1" colspan="4">
+                                <tree>
+                                    <field name="company_id" />
+                                    <field name="location_id" />
+                                    <field name="quantidade" sum="Quantidade"/>
+                                    <field name="vr_unitario" />
+                                    <field name="vr_total" sum="Total" />
+                                </tree>
+                            </field>
+                            <separator string="Notas de entrada no estoque" colspan="4"/>
+                            <field name="sped_documentoitem_ids" nolabel="1" readonly="1" colspan="4">
+                                <tree>
+                                    <field name="company_id" />
+                                    <field name="modelo" />
+                                    <field name="stock_location_dest_id" />
+                                    <field name="data_emissao" />
+                                    <field name="numero" />
+                                    <field name="partner_id" string="Fornecedor" />
+                                    <field name="quantidade" />
+                                    <field name="vr_unitario_custo" />
+                                    <field name="vr_custo" />
+                                    <field name="org_icms" />
+                                    <field name="cst_icms" />
+                                </tree>
+                            </field>
+                        </group>-->
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

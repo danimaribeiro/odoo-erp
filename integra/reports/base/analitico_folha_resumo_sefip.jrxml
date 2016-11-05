@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="analitico_folha_resumo_sefip" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="41d806b3-e14b-4032-afb9-62fbd218830b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="CNPJ" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+  'I' as tipo,
+  'INSS contribuintes individuais                               ' as nome,
+  sum(coalesce(hi.amount, 0)) as base,
+  case
+     when sum(coalesce(hi.amount, 0)) = 0 then 0
+     else sum(coalesce(hi.total, 0)) / sum(coalesce(hi.amount, 0)) * 100.00
+  end as aliquota,
+  sum(coalesce(hi.total, 0)) as valor
+
+from
+  hr_payslip h
+  join hr_contract c on c.id = h.contract_id
+  join res_company cp on cp.id = c.company_id
+  join res_partner p on p.id = cp.partner_id
+  join hr_payslip_line hi on hi.slip_id = h.id
+  join hr_salary_rule r on r.id = hi.salary_rule_id
+  join hr_salary_rule_category rc on rc.id = r.category_id
+
+where
+  h.tipo in ('N', 'R')
+  and h.date_from >= cast($P{DATA_INICIAL} as date)
+  and h.date_to <= cast($P{DATA_FINAL} as date)
+  and p.cnpj_cpf = $P{CNPJ}
+  and r.code in ('INSS', 'INSS_anterior')
+  and c.categoria_trabalhador between '700' and '799'
+
+union
+
+select
+  'I' as tipo,
+  'INSS segurados/funcionários' as nome,
+  sum(coalesce(hi.amount, 0)) as base,
+  case
+     when sum(coalesce(hi.amount, 0)) = 0 then 0
+     else sum(coalesce(hi.total, 0)) / sum(coalesce(hi.amount, 0)) * 100.00
+  end as aliquota,
+  sum(coalesce(hi.total, 0)) as valor
+
+from
+  hr_payslip h
+  join hr_contract c on c.id = h.contract_id
+  join res_company cp on cp.id = c.company_id
+  join res_partner p on p.id = cp.partner_id
+  join hr_payslip_line hi on hi.slip_id = h.id
+  join hr_salary_rule r on r.id = hi.salary_rule_id
+  join hr_salary_rule_category rc on rc.id = r.category_id
+
+where
+  h.tipo in ('N', 'R')
+  and h.date_from >= cast($P{DATA_INICIAL} as date)
+  and h.date_to <= cast($P{DATA_FINAL} as date)
+  and p.cnpj_cpf = $P{CNPJ}
+  and r.code in ('INSS', 'INSS_anterior')
+  and c.categoria_trabalhador not between '700' and '799'
+
+union
+
+select
+  'E' as tipo,
+  'INSS Empresa contribuintes individuais' as nome,
+  sum(coalesce(hi.amount, 0)) as base,
+  case
+     when sum(coalesce(hi.amount, 0)) = 0 then 0
+     else sum(coalesce(hi.total, 0)) / sum(coalesce(hi.amount, 0)) * 100.00
+  end as aliquota,
+  sum(coalesce(hi.total, 0)) as valor
+
+from
+  hr_payslip h
+  join hr_contract c on c.id = h.contract_id
+  join res_company cp on cp.id = c.company_id
+  join res_partner p on p.id = cp.partner_id
+  join hr_payslip_line hi on hi.slip_id = h.id
+  join hr_salary_rule r on r.id = hi.salary_rule_id
+  join hr_salary_rule_category rc on rc.id = r.category_id
+
+where
+  h.tipo in ('N', 'R')
+  and h.date_from >= cast($P{DATA_INICIAL} as date)
+  and h.date_to <= cast($P{DATA_FINAL} as date)
+  and p.cnpj_cpf = $P{CNPJ}
+  and r.code in ('INSS_EMPRESA_TOTAL')
+  and c.categoria_trabalhador between '700' and '799'
+
+union
+
+select
+  'E' as tipo,
+  'INSS Empresa segurados/funcionários' as nome,
+  sum(coalesce(hi.amount, 0)) as base,
+  case
+     when sum(coalesce(hi.amount, 0)) = 0 then 0
+     else sum(coalesce(hi.total, 0)) / sum(coalesce(hi.amount, 0)) * 100.00
+  end as aliquota,
+  sum(coalesce(hi.total, 0)) as valor
+
+from
+  hr_payslip h
+  join hr_contract c on c.id = h.contract_id
+  join res_company cp on cp.id = c.company_id
+  join res_partner p on p.id = cp.partner_id
+  join hr_payslip_line hi on hi.slip_id = h.id
+  join hr_salary_rule r on r.id = hi.salary_rule_id
+  join hr_salary_rule_category rc on rc.id = r.category_id
+
+where
+  h.tipo in ('N', 'R')
+  and h.date_from >= cast($P{DATA_INICIAL} as date)
+  and h.date_to <= cast($P{DATA_FINAL} as date)
+  and p.cnpj_cpf = $P{CNPJ}
+  and r.code in ('INSS_EMPRESA_TOTAL')
+  and c.categoria_trabalhador not between '700' and '799'
+
+
+order by 1, 2]]>
+	</queryString>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="-50" y="20" width="100" height="20" uuid="830a4f70-7017-4d5d-8966-516d5414a074"/>
+				<textFieldExpression><![CDATA[$F{field}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

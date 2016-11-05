@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_sped_ecd"
+            name="Contábil"
+            web_icon="images/contabil_grey.png"
+            web_icon_hover="images/contabil.png"
+            groups="base.group_fiscal"/>
+
+        <menuitem id="menu_sped_ecd_cadastro"
+            name="Cadastro"
+            parent="menu_sped_ecd"
+            sequence="01"/>
+
+        <menuitem action="sped_contabilidade.finan_historico_acao"
+            id="ecd_historico"
+            name="Histórico"
+            parent="menu_sped_ecd_cadastro"
+            sequence="10" />
+        
+        <menuitem action="finan.finan_conta_acao"
+            id="menu_ecd_finan_conta"
+            name="Contas Contábeis"
+            parent="menu_sped_ecd_cadastro"
+            sequence="01"/>
+        
+        <menuitem action="finan.finan_centrocusto_acao"
+            id="menu_ecd_centrocusto"
+            name="Centros de custo"
+            parent="menu_sped_ecd_cadastro"
+            sequence="05" />
+             
+        <menuitem id="menu_sped_ecd_movimento"
+            name="Movimentos"
+            parent="menu_sped_ecd"
+            sequence="05"/>
+
+        <menuitem id="menu_sped_ecd_importacao"
+            name="Importação"
+            parent="menu_sped_ecd"
+            sequence="06"/>
+
+        <menuitem id="menu_sped_ecd_relatorio"
+            name="Relatórios"
+            parent="menu_sped_ecd"
+            sequence="10"/>
+
+        <menuitem id="menu_sped_ecd_relatorio_gerencial"
+            name="Relatórios Gerenciais"
+            parent="menu_sped_ecd"
+            sequence="11" />
+
+        <menuitem id="menu_sped_ecd_analises"
+            name="Análises"
+            parent="menu_sped_ecd_relatorio"
+            sequence="5" />
+
+        <menuitem id="menu_sped_ecd_demonstrativo"
+            name="Demonstrativos"
+            parent="menu_sped_ecd_relatorio"
+            sequence="6" />
+
+        <menuitem id="menu_sped_ecd_demonstrativo_gerencial"
+            name="Demonstrativos Gerenciais"
+            parent="menu_sped_ecd_relatorio_gerencial"
+            sequence="6" />
+
+        <menuitem id="menu_sped_ecd_patrinomino"
+            name="Patrimônio"
+            parent="menu_sped_ecd"
+            sequence="09" />
+
+        <menuitem action="account_asset.action_account_asset_asset_form"
+            id="ecd_sped_patrimonio"
+            name="Patrimônio"
+            parent="menu_sped_ecd_patrinomino"
+            sequence="01" />
+
+        <menuitem action="account_asset.action_account_asset_asset_list_normal"
+            id="ecd_sped_patrimonio_category"
+            name="Categorias do Patrimônio"
+            parent="menu_sped_ecd_config"
+            sequence="08"/>
+
+        <menuitem action="sped_contabilidade.sped_modelo_partida_dobrada_acao"
+            id="ecd_sped_modelo_partida_dobrada"
+            name="Modelo Partida Dobrada"
+            parent="menu_sped_ecd_config"
+            sequence="09"/>
+
+        <menuitem id="menu_sped_ecd_arquivo"
+            name="Arquivos"
+            parent="menu_sped_ecd"
+            sequence="12" />
+
+        <menuitem id="menu_sped_ecd_config"
+            name="Configurações"
+            parent="menu_sped_ecd"
+            sequence="20" />
+
+        <menuitem action="sped_contabilidade.plano_conta_referencial_acao"
+            id="ecd_plano_conta_referencial"
+            name="Plano Contas Referencial"
+            parent="menu_sped_ecd_config"
+            sequence="10" />
+
+        <menuitem id="menu_sped_ecd_config_demonstrativo"
+            name="Demonstrativos"
+            parent="menu_sped_ecd_config"
+            sequence="20"/>
+
+        <menuitem id="menu_sped_ecd_config_demonstrativo_gerencial"
+            name="Demonstrativos gerenciais"
+            parent="menu_sped_ecd_config"
+            sequence="30"/>
+
+    </data>
+</openerp>

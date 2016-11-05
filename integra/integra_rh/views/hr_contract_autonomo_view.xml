@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_contract_autonomo_form" model="ir.ui.view">
+            <field name="name">hr.contract.autonomo.form</field>
+            <field name="model">hr.contract</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Autônomo">
+                    <group colspan="3" col="6">
+                        <field name="name" string="Matrícula"/>
+                        <field name="company_id" domain="[('cnpj_cpf', '!=', False)]" required="1"/>
+                        <newline />
+                        <field name="department_id" />
+                        <newline />
+                        <field name="motivo_contratacao" />
+                    </group>
+                    <notebook colspan='4'>
+                        <page string="Informações pessoais">
+                            <group col="2" colspan="4" name="right_column">
+                                <separator colspan="4" string="Dados pessoais"/>
+                                <field name="employee_id" on_change="onchange_employee_id(employee_id)"/>
+                                <field name="employee_endereco" />
+                                <field name="employee_numero" />
+                                <field name="employee_complemento" />
+                                <field name="employee_bairro" />
+                                <field name="employee_municipio_id" />
+                                <field name="employee_cep" />
+                                <field name="employee_fone" />
+                                <field name="employee_celular" />
+                                <field name="employee_email" />
+                            </group>
+                        </page>
+                        <page string="Recibo de Pagamento de Autônomo">
+                            <group col="2" colspan="2" name="left_column">
+                                <separator colspan="2" string="Admissão"/>
+                                <field name="date_start" string="Data de Emissão de Recibo" on_change="onchange_date_start(date_start)" />
+                                <field name="date_end" string="Data de de Termino de Serviço Prestado" />
+                                <field name="tipo_contrato" />
+                                <field name="tipo_admissao" />
+                                <field name="indicativo_admissao" />
+                            </group>
+                            <group col="2" colspan="2" name="left_column">
+                                <separator colspan="2" string="Salário"/>
+                                <field name="wage" />
+                                <field name="unidade_salario" />
+                                <field name="horas_mensalista" />
+                                <field name="salario_variavel" invisible="1" />
+                                <field name="unidade_salario_variavel" invisible="1" />
+                                <field name="struct_id" required="1" domain="[('tipo', '=', 'N')]" />
+                                <field name="schedule_pay" />
+                            </group>
+                            <group col="2" colspan="2" name="right_column">
+                                <separator colspan="2" string="Legislação contratual"/>
+                                <field name="regime_trabalhista" required="1"/>
+                                <field name="regime_previdenciario" required="1" />
+                                <field name="natureza_atividade" required="1"/>
+                                <field name="categoria_trabalhador" required="1"/>
+                                <field name="job_id" string="Cargo/função" required="1"/>
+                            </group>
+                        </page>
+                        <page string="Etiqueta">
+                            <separator colspan="4" string="Etiqueta"/>
+                            <newline/>
+                            <field name="mes" required="1"  />
+                            <newline/>
+                            <field name="ano" required="1"  />
+                            <newline/>
+                            <button string="Gerar etiquetas" icon="gtk-execute" name="gerar_etiquetas" type="object" />
+                            <newline/>
+                            <field name="nome" invisible="1"/>
+                            <newline/>
+                            <field name="arquivo" nolabel="1" readonly="1" filename="nome"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        <!-- <record id="hr_contract_autonomo_form" model="ir.ui.view"> <field name="name">hr.contract.autonomo.form</field> <field name="model">hr.contract</field> <field name="type">form</field> <field name="inherit_id" ref="hr_contract_form"/> <field name="arch" type="xml"> <page string="Admissão e salário" position="replace"> <page string="Recibo de RPA"> <group col="2" colspan="2" name="left_column"> <separator colspan="2" string="Admissão"/> <field name="date_start" string="Data de Emissão de Recibo" on_change="onchange_date_start(date_start)" /> <field name="date_end" string="Data de de Termino de Serviço Prestado" /> <field name="tipo_contrato" /> <field name="tipo_admissao" /> <field name="indicativo_admissao" /> </group> <group col="2" colspan="2" name="left_column"> <separator colspan="2"
+            string="Salário"/> <field name="wage" /> <field name="unidade_salario" /> <field name="horas_mensalista" /> <field name="salario_variavel" invisible="1" /> <field name="unidade_salario_variavel" invisible="1" /> <field name="struct_id" required="1" domain="[('tipo', '=', 'N')]" /> <field name="schedule_pay" /> </group> <group col="2" colspan="2" name="right_column"> <separator colspan="2" string="Legislação contratual"/> <field name="regime_trabalhista" required="1"/> <field name="regime_previdenciario" required="1" /> <field name="natureza_atividade" required="1"/> <field name="categoria_trabalhador" required="1"/> <field name="job_id" string="Cargo/função" required="1"/> </group> </page> </page> <page string="Vínculos anteriores e cedentes" position="replace"/> <page string="Saúde
+            ocupacional" position="replace"/> <page string="Rubricas Especiais" position="replace"/> <page string="Processo judicial" position="replace"/> <page string="Controle de férias" position="replace"/> <page string="Alterações contratuais" position="replace"/> </field> </record>-->
+
+        <record id="hr_contract_autonomo_acao" model="ir.actions.act_window">
+            <field name="name">Autônomo</field>
+            <field name="res_model">hr.contract</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('categoria_trabalhador', 'in', ['701','702','703'])]</field>
+            <field name="context">{'categoria_trabalhador': '701','default_categoria_trabalhador': '701' }</field>
+        </record>
+
+        <menuitem action="hr_contract_autonomo_acao" id="menu_contract_autonomo"
+            parent="menu_hr_contratos"/>
+
+        <record model="ir.actions.act_window.view" id="hr_contract_autonomo_acao_form">
+            <field eval="5" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_contract_autonomo_acao"/>
+            <field name="view_id" ref="hr_contract_autonomo_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_contract_autonomo_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_contract_autonomo_acao"/>
+            <field name="view_id" ref="hr_contract.hr_contract_view_tree"/>
+        </record>
+
+    </data>
+</openerp>

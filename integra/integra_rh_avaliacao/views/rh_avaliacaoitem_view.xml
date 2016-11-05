@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="rh_avaliacao_item_tree">
+            <field name="name">rh.avaliacao.item.tree</field>
+            <field name="model">rh.avaliacao_item</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Campanhas/avaliações" colors="blue:tipo=='+';red:tipo=='-'">
+                    <field name="company_id"/>
+                    <field name="avaliacao_id"/>
+                    <field name="data"/>
+                    <field name="tipo_id"/>
+                    <field name="tipo"/>
+                    <field name="pontos" sum="Pontos"/>
+                    <field name="employee_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="rh_avaliacao_item_form">
+            <field name="name">rh.avaliacao.item.form</field>
+            <field name="model">rh.avaliacao_item</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Campanha/avaliação">
+                    <group colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="avaliacao_id" colspan="4" />
+                        <newline />
+                        <field name="data" />
+                        <field name="tipo_id" />
+                        <newline />
+                        <separator string="Descrição" colspan="4" />
+                        <field name="descricao" colspan="4" />
+                        <field name="obs" nolabel="1" colspan="4" />
+                    </group>
+                    <group colspan="4">
+                        <separator string="Pessoal envolvido" colspan="4" />
+                        <field name="employee_id" colspan="4" />
+                        <field name="supervisor_id" colspan="4" />
+                        <field name="jornada_id" colspan="4" />
+                    </group>
+                    <group colspan="4">
+                        <separator string="Correção" colspan="4" />
+                        <field name="incidente" colspan="4" />
+                        <field name="motivo" colspan="4" />
+                        <field name="acoes_corretivas" colspan="4" />
+                        <field name="responsavel" colspan="4" />
+                    </group>
+                    <group colspan="4">
+                        <separator string="Projeto" colspan="4" />
+                        <field name="o_que" colspan="4" />
+                        <field name="por_que" colspan="4" />
+                        <field name="como" colspan="4" />
+                        <field name="quem" colspan="4" />
+                    </group>
+                    <group colspan="4">
+                        <separator string="Diligência" colspan="4" />
+                        <field name="quando" colspan="4"/>
+                        <field name="data_quando" colspan="4"/>
+                        <field name="quanto" colspan="4" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="rh_avaliacao_item_search">
+            <field name="name">rh.avaliacao.item.search</field>
+            <field name="model">rh.avaliacao_item</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Campanhas/avaliações">
+                    <field name="avaliacao_id" select="1" />
+                    <field name="company_id" select="1" />
+                    <newline/>
+
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Campanha/avaliação" icon="terp-project" domain="[]" context="{'group_by': 'avaliacao_id'}" />
+                        <filter string="Funcionário" icon="terp-project" domain="[]" context="{'group_by': 'employee_id'}" />
+                        <filter string="Tipo" icon="terp-project" domain="[]" context="{'group_by': 'tipo_id'}" />
+                        <filter string="+/-" icon="terp-project" domain="[]" context="{'group_by': 'tipo'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="rh_avaliacao_item_acao">
+            <field name="name">Eventos/avaliações</field>
+            <field name="res_model">rh.avaliacao_item</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="rh_avaliacao_item_tree" />
+        </record>
+
+        <menuitem action="rh_avaliacao_item_acao"
+            id="menu_rh_avaliacao_item" name="Eventos/avaliações" parent="menu_hr_avaliacao" />
+
+    </data>
+</openerp>

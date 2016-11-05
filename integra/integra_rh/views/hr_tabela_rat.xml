@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="hr_tabela_rat_tree">
+            <field name="name">hr.tabela.rat.tree</field>
+            <field name="model">hr.tabela.rat</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Tabela de RAT">
+                    <field name="raiz_cnpj" string="Raiz CNPJ" />
+                    <field name="ano"/>
+                    <field name="aliquota_rat"/>
+                    <field name="ajuste_fap" digits="(8, 4)"/>
+                    <field name="aliquota_outras_entidades"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_tabela_rat_form">
+            <field name="name">hr.tabela.rat.form</field>
+            <field name="model">hr.tabela.rat</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <group col="4" colspan="4">
+                        <field name="raiz_cnpj" required="1" string="Raiz CNPJ (com pontos)" on_change="onchange_cnpj_cpf(raiz_cnpj)" />
+                        <newline/>
+                        <field name="ano" required="1"/>
+                        <newline/>
+                        <field name="aliquota_rat" required="1"/>
+                        <newline/>
+                        <field name="ajuste_fap" required="1" digits="(8,4)" />
+                        <newline/>
+                        <field name="aliquota_final" required="1" invisible="1" digits="(8,4)"/>
+                        <newline/>
+                        <field name="aliquota_outras_entidades" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_tabela_rat_search">
+            <field name="name">hr.tabela.rat.search</field>
+            <field name="model">hr.tabela.rat</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Tabela de RAT">
+                    <field name="raiz_cnpj"/>
+                    <field name="ano"/>
+                    <field name="aliquota_rat" />
+                    <field name="ajuste_fap" />
+                    <field name="aliquota_outras_entidades" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_tabela_rat_acao">
+            <field name="name">RAT e FAP</field>
+            <field name="res_model">hr.tabela.rat</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_tabela_rat_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            action="hr_tabela_rat_acao"
+            id="menu_hr_tabela_rat"
+            name="RAT e FAP"
+            parent="menu_hr_tabelas"
+            sequence="50"
+            />
+
+        <record model="ir.actions.act_window.view" id="hr_tabela_rat_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_tabela_rat_acao"/>
+            <field name="view_id" ref="hr_tabela_rat_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_tabela_rat_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_tabela_rat_acao"/>
+            <field name="view_id" ref="hr_tabela_rat_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

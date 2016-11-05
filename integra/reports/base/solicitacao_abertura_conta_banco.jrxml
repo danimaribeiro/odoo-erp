@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="84950242-1b09-4c1f-a396-4528ded4fadb">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="223"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#BFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#E6FFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="8770e971-9aa7-4ee1-95a3-858de5675e29"/>
+	<parameter name="REGISTRO_IDS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+u.name as unidade,
+u.cnpj_cpf,
+c.name as matricula,
+e.nome as nome,
+a.endereco,
+a.numero,
+a.complemento,
+a.bairro,
+m.nome as cidade,
+me.uf as estado,
+a.cep,
+a.phone as fone,
+a.mobile as celular,
+a.email as email,
+e.cpf,
+e.nis,
+e.sexo,
+case
+   when e.raca_cor = '1' then 'INDÍGENA'
+   when e.raca_cor = '2' then 'BRANCA'
+   when e.raca_cor = '4' then 'NEGRA'
+   when e.raca_cor = '6' then 'AMARELA'
+   when e.raca_cor = '8' then 'PARDA'
+   when e.raca_cor = '9' then 'NÃO INFORMADA'
+end as raca_cor,
+case
+   when e.estado_civil = '1' then 'SOLTEIRO(A)'
+   when e.estado_civil = '2' then 'CASADO(A)'
+   when e.estado_civil = '3' then 'DIVORCIADO(A)'
+   when e.estado_civil = '4' then 'VIÚVO(A)'
+   when e.estado_civil = '5' then 'EM UNIÃO ESTÁVEL'
+   when e.estado_civil = '6' then 'OUTROS'
+end as estado_civil,
+case
+   when e.grau_instrucao = '01' then 'Analfabeto'
+   when e.grau_instrucao = '02' then 'Até o 5º ano incompleto do Ensino
+Fundamental (4ª série, 1º grau ou primário) ou alfabetizado sem ter
+frequentado escola regular'
+   when e.grau_instrucao = '03' then '5º ano completo do Ensino Fundamental
+(4ª série, 1º grau ou primário)'
+   when e.grau_instrucao = '04' then 'Do 6º ao 9º ano incompletos do Ensino
+Fundamental (5ª a 8ª série, 1º grau ou ginásio)'
+   when e.grau_instrucao = '05' then 'Ensino Fundamental completo (1ª a 8ª
+série, 1º grau ou primário e ginásio)'
+   when e.grau_instrucao = '06' then 'Ensino Médio incompleto (2º grau,
+secundário ou colegial)'
+   when e.grau_instrucao = '07' then 'Ensino Médio completo (2º grau,
+secundário ou colegial)'
+   when e.grau_instrucao = '08' then 'Educação Superior incompleta'
+   when e.grau_instrucao = '09' then 'Educação Superior completa'
+   when e.grau_instrucao = '10' then 'Pós-graduação'
+   when e.grau_instrucao = '11' then 'Mestrado'
+   when e.grau_instrucao = '12' then 'Doutorado'
+end as grau_instrucao,
+e.tipo_sanguineo,
+e.data_nascimento,
+mn.nome as municipio_nascimento,
+en.uf as estado_nascimento,
+e.nome_mae,
+e.nome_pai,
+e.carteira_trabalho_numero,
+e.carteira_trabalho_serie,
+e.carteira_trabalho_estado,
+e.rg_numero,
+e.rg_orgao_emissor,
+e.rg_data_expedicao,
+p.nome as nacionalidade,
+e.cnh_numero,
+('' ||
+case when e.cnh_categoria_a then 'A' else '' end ||
+case when e.cnh_categoria_b then 'B' else '' end ||
+case when e.cnh_categoria_c then 'C' else '' end ||
+case when e.cnh_categoria_d then 'D' else '' end ||
+case when e.cnh_categoria_e then 'E' else '' end) as cnh_categoria,
+e.cnh_orgao_emissor,
+e.cnh_data_expedicao,
+e.cnh_data_validade,
+e.roc_numero,
+e.roc_orgao_emissor,
+e.roc_data_expedicao,
+e.roc_data_validade,
+e.casa_propria,
+e.casa_propria_fgts,
+e.deficiente_motor,
+e.deficiente_visual,
+e.deficiente_auditivo,
+e.deficiente_reabilitado,
+e.deficiente_obs,
+(b.bic || ' - ' || b.name) as banco,
+case
+  when e.banco_tipo_conta = '1' then 'CORRENTE'
+  else 'POUPANÇA'
+end as banco_tipo_conta,
+e.banco_agencia,
+e.banco_conta,
+c.date_start as data_admissao,
+j.name as cargo,
+cbo.codigo as cbo_codigo,
+cbo.ocupacao as cbo_descricao,
+case
+  when c.tipo_admissao = '1' then 'Admissão'
+  when c.tipo_admissao = '2' then 'Transferência de empresa no mesmo grupo
+econômico'
+  when c.tipo_admissao = '3' then 'Admissão por sucessão, incorporação ou
+fusão'
+  when c.tipo_admissao = '4' then 'Trabalhador cedido'
+end as tipo_admissao,
+case
+  when c.regime_trabalhista = '1' then 'CLT'
+  when c.regime_trabalhista = '2' then 'RJU'
+  when c.regime_trabalhista = '3' then 'RJP'
+end as regime_trabalhista,
+case
+  when c.regime_previdenciario = '1' then 'RGPS'
+  when c.regime_previdenciario = '2' then 'RPPS'
+  when c.regime_previdenciario = '3' then 'RPPE'
+end as regime_previdenciario,
+case
+  when c.natureza_atividade = '1' then 'Trabalhador urbano'
+  else 'Trabalhador rural'
+end as natureza_atividade,
+case
+  when c.tipo_contrato = '1' then 'Prazo indeterminado'
+  else 'Prazo determinado'
+end as tipo_contrato,
+c.wage as salario,
+case
+  when c.unidade_salario = '1' then 'Por hora'
+  else 'Por mês'
+end as unidade_salario,
+(c.tempo_primeira_experiencia || ' + ' || c.tempo_segunda_experiencia) as
+tempo_experiencia,
+c.data_opcao_fgts,
+c.optante_fgts,
+c.horas_mensalista as horas_mes,
+d.name as departamento,
+s.name as sindicato,
+s.cnpj_cpf as sindicato_cnpj
+
+from hr_employee e
+join hr_contract c on c.employee_id = e.id
+join hr_job j on j.id = c.job_id
+left join hr_cbo cbo on cbo.id = j.cbo_id
+join res_company u on u.id = c.company_id
+left join res_partner_address a on a.id = e.address_home_id
+left join sped_municipio m on m.id = a.municipio_id
+left join sped_estado me on me.id = m.estado_id
+left join sped_municipio mn on mn.id = e.municipio_nascimento_id
+left join sped_estado en on en.id = mn.estado_id
+left join sped_pais p on p.id = e.pais_nacionalidade_id
+left join res_bank b on b.id = e.bank_id
+left join hr_department d on d.id = c.department_id
+left join res_partner s on s.id = c.sindicato_id
+
+where
+e.id in $P!{REGISTRO_IDS}
+
+order by
+u.name,
+e.nome]]>
+	</queryString>
+	<field name="unidade" class="java.lang.String">
+		<fieldDescription><![CDATA[Unidade do produto original]]></fieldDescription>
+	</field>
+	<field name="cnpj_cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[CNPJ/CPF]]></fieldDescription>
+	</field>
+	<field name="matricula" class="java.lang.String"/>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[Descrição]]></fieldDescription>
+	</field>
+	<field name="endereco" class="java.lang.String">
+		<fieldDescription><![CDATA[Endereço]]></fieldDescription>
+	</field>
+	<field name="numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Número]]></fieldDescription>
+	</field>
+	<field name="complemento" class="java.lang.String">
+		<fieldDescription><![CDATA[Complemento]]></fieldDescription>
+	</field>
+	<field name="bairro" class="java.lang.String">
+		<fieldDescription><![CDATA[Bairro]]></fieldDescription>
+	</field>
+	<field name="cidade" class="java.lang.String"/>
+	<field name="estado" class="java.lang.String"/>
+	<field name="cep" class="java.lang.String">
+		<fieldDescription><![CDATA[CEP]]></fieldDescription>
+	</field>
+	<field name="fone" class="java.lang.String">
+		<fieldDescription><![CDATA[Fone]]></fieldDescription>
+	</field>
+	<field name="celular" class="java.lang.String">
+		<fieldDescription><![CDATA[Celular]]></fieldDescription>
+	</field>
+	<field name="email" class="java.lang.String">
+		<fieldDescription><![CDATA[Email]]></fieldDescription>
+	</field>
+	<field name="cpf" class="java.lang.String"/>
+	<field name="nis" class="java.lang.String">
+		<fieldDescription><![CDATA[NIS (PIS, PASEP, NIT)]]></fieldDescription>
+	</field>
+	<field name="sexo" class="java.lang.String">
+		<fieldDescription><![CDATA[Sexo]]></fieldDescription>
+	</field>
+	<field name="raca_cor" class="java.lang.String">
+		<fieldDescription><![CDATA[Raça/cor]]></fieldDescription>
+	</field>
+	<field name="estado_civil" class="java.lang.String">
+		<fieldDescription><![CDATA[Estado civil]]></fieldDescription>
+	</field>
+	<field name="grau_instrucao" class="java.lang.String">
+		<fieldDescription><![CDATA[Grau de instrução]]></fieldDescription>
+	</field>
+	<field name="tipo_sanguineo" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo sanguíneo]]></fieldDescription>
+	</field>
+	<field name="data_nascimento" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de nascimento]]></fieldDescription>
+	</field>
+	<field name="municipio_nascimento" class="java.lang.String"/>
+	<field name="estado_nascimento" class="java.lang.String"/>
+	<field name="nome_mae" class="java.lang.String">
+		<fieldDescription><![CDATA[Nome da mãe]]></fieldDescription>
+	</field>
+	<field name="nome_pai" class="java.lang.String">
+		<fieldDescription><![CDATA[Nome do pai]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Nº da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_serie" class="java.lang.String">
+		<fieldDescription><![CDATA[Série da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_estado" class="java.lang.String">
+		<fieldDescription><![CDATA[Estado da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="rg_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[RG]]></fieldDescription>
+	</field>
+	<field name="rg_orgao_emissor" class="java.lang.String">
+		<fieldDescription><![CDATA[Órgão emisssor do RG]]></fieldDescription>
+	</field>
+	<field name="rg_data_expedicao" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de expedição do RG]]></fieldDescription>
+	</field>
+	<field name="nacionalidade" class="java.lang.String"/>
+	<field name="cnh_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[CNH]]></fieldDescription>
+	</field>
+	<field name="cnh_categoria" class="java.lang.String"/>
+	<field name="cnh_orgao_emissor" class="java.lang.String">
+		<fieldDescription><![CDATA[Órgão emisssor da CNH]]></fieldDescription>
+	</field>
+	<field name="cnh_data_expedicao" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de expedição da CNH]]></fieldDescription>
+	</field>
+	<field name="cnh_data_validade" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de validade da CNH]]></fieldDescription>
+	</field>
+	<field name="roc_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Registro no órgão de classe]]></fieldDescription>
+	</field>
+	<field name="roc_orgao_emissor" class="java.lang.String">
+		<fieldDescription><![CDATA[Órgão emisssor do ROC]]></fieldDescription>
+	</field>
+	<field name="roc_data_expedicao" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de expedição do ROC]]></fieldDescription>
+	</field>
+	<field name="roc_data_validade" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de validade do ROC]]></fieldDescription>
+	</field>
+	<field name="casa_propria" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Possui casa própria?]]></fieldDescription>
+	</field>
+	<field name="casa_propria_fgts" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Casa própria adquirida com recursos do FGTS?]]></fieldDescription>
+	</field>
+	<field name="deficiente_motor" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Deficiente motor?]]></fieldDescription>
+	</field>
+	<field name="deficiente_visual" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Deficiente visual?]]></fieldDescription>
+	</field>
+	<field name="deficiente_auditivo" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Deficiente auditivo?]]></fieldDescription>
+	</field>
+	<field name="deficiente_reabilitado" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Deficiente reabilitado?]]></fieldDescription>
+	</field>
+	<field name="deficiente_obs" class="java.lang.String">
+		<fieldDescription><![CDATA[Deficiente - observações]]></fieldDescription>
+	</field>
+	<field name="banco" class="java.lang.String"/>
+	<field name="banco_tipo_conta" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo da conta]]></fieldDescription>
+	</field>
+	<field name="banco_agencia" class="java.lang.String">
+		<fieldDescription><![CDATA[Agência]]></fieldDescription>
+	</field>
+	<field name="banco_conta" class="java.lang.String">
+		<fieldDescription><![CDATA[Conta]]></fieldDescription>
+	</field>
+	<field name="data_admissao" class="java.sql.Date"/>
+	<field name="cargo" class="java.lang.String"/>
+	<field name="cbo_codigo" class="java.lang.String"/>
+	<field name="cbo_descricao" class="java.lang.String"/>
+	<field name="tipo_admissao" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo de admissão]]></fieldDescription>
+	</field>
+	<field name="regime_trabalhista" class="java.lang.String">
+		<fieldDescription><![CDATA[Regime trabalhista]]></fieldDescription>
+	</field>
+	<field name="regime_previdenciario" class="java.lang.String">
+		<fieldDescription><![CDATA[Regime previdenciário]]></fieldDescription>
+	</field>
+	<field name="natureza_atividade" class="java.lang.String">
+		<fieldDescription><![CDATA[Natureza da atividade]]></fieldDescription>
+	</field>
+	<field name="tipo_contrato" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo do contrato]]></fieldDescription>
+	</field>
+	<field name="salario" class="java.math.BigDecimal"/>
+	<field name="unidade_salario" class="java.lang.String">
+		<fieldDescription><![CDATA[Unidade do salário]]></fieldDescription>
+	</field>
+	<field name="tempo_experiencia" class="java.lang.String"/>
+	<field name="data_opcao_fgts" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de opção pelo FGTS]]></fieldDescription>
+	</field>
+	<field name="optante_fgts" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Optante pelo FGTS?]]></fieldDescription>
+	</field>
+	<field name="horas_mes" class="java.lang.Integer"/>
+	<field name="departamento" class="java.lang.String"/>
+	<field name="sindicato" class="java.lang.String"/>
+	<field name="sindicato_cnpj" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="696" splitType="Stretch">
+			<textField>
+				<reportElement x="1" y="0" width="100" height="20" uuid="6300ff5a-fd1d-4641-9c3a-1c8f707da7a1"/>
+				<textFieldExpression><![CDATA[$F{cidade}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement x="100" y="0" width="237" height="20" uuid="2a7025ec-5586-4a1e-bbd1-dbfb8bb52dd6"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="90" width="39" height="20" uuid="80a23076-ba2c-4ce9-a428-05d6c379e74b"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[A/C]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1" y="152" width="147" height="20" uuid="fd7d9f22-700f-45e3-b573-67c83db26185"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{banco}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="171" width="63" height="20" uuid="0603d30d-fb4a-46ac-9a7e-2f12188232af"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Agência:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="63" y="171" width="100" height="20" uuid="fc55ddfe-ee84-44bb-b096-535c7e5fdcf9"/>
+				<textFieldExpression><![CDATA[$F{banco_agencia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="209" width="63" height="20" uuid="438610e7-883e-4c75-87c2-749748b125c4"/>
+				<text><![CDATA[CNPJ:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="63" y="190" width="100" height="20" uuid="f5ec8d2c-fbcb-4d7a-bea1-754c4683bc93"/>
+				<textFieldExpression><![CDATA[$F{banco_conta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="-1" y="190" width="65" height="20" uuid="c37f55f2-3b0a-4af7-9a81-09dd585eaeaa"/>
+				<textFieldExpression><![CDATA[$F{banco_tipo_conta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="287" width="222" height="20" uuid="0e9722bc-fd26-49fb-8039-58fd1ffe2354"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Solicitamos abertura de conta convênio]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="222" y="287" width="332" height="20" uuid="b17e404e-358e-47c5-a9a6-79ed2381d52f"/>
+				<textFieldExpression><![CDATA[$F{unidade}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="306" width="62" height="20" uuid="2a5698be-fd7c-4914-bd64-00454830e973"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[para a Sra.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="62" y="306" width="123" height="20" uuid="b18e26c7-5915-46db-bc30-f9c3442ccfef"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="184" y="306" width="23" height="20" uuid="fd0ee56d-ba39-4e54-92ee-7c7297241fd1"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[de ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="207" y="306" width="51" height="20" uuid="4cb7c1d5-b6e9-4836-933f-e86a882f4a46"/>
+				<textFieldExpression><![CDATA[$F{cidade}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="257" y="306" width="73" height="20" uuid="4d86592c-b501-4ca2-9f37-ac2ee6481191"/>
+				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="444" width="39" height="20" uuid="b5e9e84e-53ba-41d7-a51c-e7cf0dd4fe4a"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[At.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="463" width="272" height="20" uuid="d993502b-e6c5-4772-aea3-77ea567e60a8"/>
+				<textFieldExpression><![CDATA[$F{unidade}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="482" width="271" height="20" uuid="d55fc0fd-fb08-4643-8c5a-2ebbdf00cb12"/>
+				<textFieldExpression><![CDATA[$F{endereco}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="271" y="482" width="60" height="20" uuid="470c916d-63ed-4ad5-b345-72f9e7753f73"/>
+				<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="330" y="482" width="100" height="20" uuid="6935db70-43c2-44bd-84be-ef8d9fb12eae"/>
+				<textFieldExpression><![CDATA[$F{bairro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="558" width="49" height="20" uuid="31799cbd-9fd5-4971-9261-eed1bc2dbb94"/>
+				<textFieldExpression><![CDATA[$F{cidade}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="49" y="558" width="100" height="20" uuid="3a4b76ff-a082-4fa5-b0a6-93038f8d645e"/>
+				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="539" width="26" height="20" uuid="2fa61876-4221-4dda-80dc-52464013b9c1"/>
+				<text><![CDATA[Cep:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="26" y="539" width="100" height="20" uuid="b5e584cb-f033-4a30-b87d-87f489014cc9"/>
+				<textFieldExpression><![CDATA[$F{cep}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="63" y="209" width="100" height="20" uuid="89aeeed1-b90a-4ae3-afe8-5e52580054a0"/>
+				<textFieldExpression><![CDATA[$F{cnpj_cpf}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

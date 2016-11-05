@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="retorno_nfse_manual_form">
+            <field name="name">retorno.nfse.manual.form</field>
+            <field name="model">retorno.nfse.manual</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Retorno NFSE - Manual">
+                    <group col="4" colspan="4">
+                        <separator string="Arquivo" colspan="4" />                    
+                        <field name="data" readonly="1" colspan="4"/>  
+                        <newline />                  
+                        <field name="numero_lote" readonly="1" colspan="4" />                      
+                        <newline />                  
+                        <field name="arquivo_retorno_nfse" colspan="4"/>                                       
+                        <button name="retorna_nfse" string="Importa retorno de RPS" type="object"/>
+                    </group>   
+                    <field name="documento_ids" colspan="4" nolabel="1"> 
+                        <tree>
+                            <field name="company_id" readonly="1" />
+                            <field name="partner_id" readonly="1" />                                                       
+                            <field name="numero_rps" readonly="1" />
+                            <field name="serie" readonly="1" />
+                            <field name="numero" readonly="1" />
+                            <field name="state" readonly="1" />
+                        </tree>                       
+                    </field>                                                                                                  
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="retorno_nfse_manual_tree">
+            <field name="name">retorno.nfse.manual.search</field>
+            <field name="model">retorno.nfse.manual</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="data"/>
+                    <field name="numero_lote"/>                      
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="retorno_nfse_manual_search">
+            <field name="name">retorno.nfse.manual.search</field>
+            <field name="model">retorno.nfse.manual</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="NFES - Manual">
+                    <field name="data"/>                                       
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="retorno_nfse_manual_acao">
+            <field name="name">Retorno NFES - Manual</field>            
+            <field name="res_model">retorno.nfse.manual</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="retorno_nfse_manual_search" />
+        </record>
+
+        <record model="ir.actions.act_window.view" id="retorno_nfse_manual_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="retorno_nfse_manual_form"/>
+            <field name="act_window_id" ref="retorno_nfse_manual_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="retorno_nfse_manual_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="retorno_nfse_manual_tree"/>
+            <field name="act_window_id" ref="retorno_nfse_manual_acao"/>
+        </record>
+
+        <menuitem id="menu_retorno_nfse_manual" name="Retorno NFSE - Manual"
+            sequence="15"
+            parent="sped.menu_sped_fiscal_documento_emitido"
+            action="retorno_nfse_manual_acao" />
+
+    </data>
+</openerp>

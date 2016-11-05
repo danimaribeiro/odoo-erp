@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="fecha_holerites_form" >
+            <field name="name">fecha.holerites.form</field>
+            <field name="model">hr.fecha.holerites</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Fecha cálculo de holerites de funcionários">
+                    <group colspan="4">
+                        <button icon="gtk-execute" string="Fechar cálculos" name="fecha_holerites" type="object" />
+                        <button icon="gtk-cancel" special="cancel" string="Fechar" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window
+            id="action_fecha_holerites_wizard"
+            multi="True"
+            key2="client_action_multi"
+            name="Fechar cálculos de holerites de funcionários"
+            res_model="hr.fecha.holerites"
+            src_model="hr.payslip"
+            view_mode="form"
+            target="new"
+            view_type="form" />
+
+        <record model="ir.actions.act_window.view" id="action_fecha_holerites_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fecha_holerites_form"/>
+            <field name="act_window_id" ref="action_fecha_holerites_wizard"/>
+        </record>
+
+        <record model="ir.ui.view" id="reabre_holerites_form" >
+            <field name="name">reabre.holerites.form</field>
+            <field name="model">hr.fecha.holerites</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Reabre cálculo de holerites de funcionários">
+                    <group colspan="4">
+                        <button icon="gtk-execute" string="Reabrir cálculos" name="reabre_holerites" type="object" />
+                        <button icon="gtk-cancel" special="cancel" string="Fechar" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window
+            id="action_reabre_holerites_wizard"
+            multi="True"
+            key2="client_action_multi"
+            name="Reabrir cálculos de holerites de funcionários"
+            res_model="hr.fecha.holerites"
+            src_model="hr.payslip"
+            view_mode="form"
+            target="new"
+            view_type="form" />
+
+        <record model="ir.actions.act_window.view" id="action_reabre_holerites_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="reabre_holerites_form"/>
+            <field name="act_window_id" ref="action_reabre_holerites_wizard"/>
+        </record>
+
+    </data>
+</openerp>

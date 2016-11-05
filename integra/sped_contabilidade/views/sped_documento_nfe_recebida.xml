@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_nfe_recebida_form">
+            <field name="name">sped.nfe.recebida.form</field>
+            <field name="model">sped.documento</field>
+            <field name="inherit_id" ref="sped.sped_nfe_recebida_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Totais" position="after">
+                    <page string="Contabilização">
+                        <button name="gera_contabilizacao" type="object" string="Gera partidas dobradas" />
+                        <field name="contabilizacao_ids" nolabel="1" colspan="4" readonly="1">
+                            <tree>
+                                <field name="data" />
+                                <field name="conta_credito_id" />
+                                <field name="codigo_reduzido_credito" />
+                                <field name="conta_debito_id" />
+                                <field name="codigo_reduzido_debito" />
+                                <field name="valor" />
+                                <field name="codigo_historico" />
+                                <field name="historico" />
+                            </tree>
+                        </field>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

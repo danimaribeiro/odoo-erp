@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="sale_order_form">
+        <field name="name">sale.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+        <data>
+            <field name="origin" position="after">
+                <newline />
+                <field name="hr_department_id" />
+            </field>
+        </data>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sale_order_tree">
+        <field name="name">sale.order.tree</field>
+        <field name="model">sale.order</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+        <data>
+            <field name="date_order" position="after">
+                <field name="hr_department_id" />
+            </field>
+        </data>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sale_order_search">
+        <field name="name">sale.order.search</field>
+        <field name="model">sale.order</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+        <data>
+            <field name="name" position="after">
+                <field name="hr_department_id" string="NAL" />
+            </field>
+            <xpath expr="//filter[@string='Customer']" position="before">
+                <filter string="NAL" icon="terp-personal" domain="[]" context="{'group_by':'hr_department_id'}" />
+            </xpath>
+        </data>
+        </field>
+    </record>
+
+</data>
+</openerp>

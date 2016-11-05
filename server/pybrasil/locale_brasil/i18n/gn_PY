@@ -1,0 +1,353 @@
+#
+# Charset: UTF-8
+#
+# Locale para o guarani, legível por seres humanos
+#
+# Criado por Ari CALDEIRA
+#
+
+#######################################
+LC_IDENTIFICATION
+#######################################
+
+title      "Guarani locale for Paraguay"
+address    ""
+contact    ""
+email      "ari@laumi.org"
+tel        ""
+fax        ""
+language   "Guarani"
+territory  "Paraguay"
+revision   "6.0"
+date       "2011-08-05"
+
+category  "gn_PY:2000";LC_IDENTIFICATION
+category  "gn_PY:2000";LC_CTYPE
+category  "gn_PY:2000";LC_COLLATE
+category  "gn_PY:2000";LC_TIME
+category  "gn_PY:2000";LC_NUMERIC
+category  "gn_PY:2000";LC_MONETARY
+category  "gn_PY:2000";LC_MESSAGES
+category  "gn_PY:2000";LC_PAPER
+category  "gn_PY:2000";LC_NAME
+category  "gn_PY:2000";LC_ADDRESS
+category  "gn_PY:2000";LC_TELEPHONE
+
+END LC_IDENTIFICATION
+
+
+###############################
+LC_CTYPE
+###############################
+copy "es_PY"
+END LC_CTYPE
+
+###############################
+LC_COLLATE
+###############################
+
+#
+# Usa ordem alfabética com tratamento de
+# maiúsculas/minúsculas antes de acentos
+#
+copy "es_PY"
+
+#
+# Definição dos dígrafos e letras especiais
+#
+collating-symbol <an-guarani>  # Ãã
+collating-symbol <en-guarani>  # Ẽẽ
+collating-symbol <in-guarani>  # Ĩĩ
+collating-symbol <on-guarani>  # Õõ
+collating-symbol <un-guarani>  # Ũũ
+collating-symbol <yn-guarani>  # Ỹỹ
+collating-symbol <nn-guarani>  # Ññ
+collating-symbol <puso-guarani>  # '
+
+collating-symbol <gn-guarani>  # G̃g̃
+collating-element <GN> from "<U0047><U0303>"
+collating-element <gn> from "<U0067><U0303>"
+
+collating-symbol <ch-guarani>
+collating-element <CH> from "<U0043><U0048>"
+collating-element <Ch> from "<U0043><U0068>"
+collating-element <cH> from "<U0063><U0048>"
+collating-element <ch> from "<U0063><U0068>"
+
+collating-symbol <mb-guarani>
+collating-element <MB> from "<U004D><U0042>"
+collating-element <Mb> from "<U004D><U0062>"
+collating-element <mB> from "<U006D><U0042>"
+collating-element <mb> from "<U006D><U0062>"
+
+collating-symbol <nd-guarani>
+collating-element <ND> from "<U004E><U0044>"
+collating-element <Nd> from "<U004E><U0064>"
+collating-element <nD> from "<U006E><U0044>"
+collating-element <nd> from "<U006E><U0064>"
+
+collating-symbol <ng-guarani>
+collating-element <NG> from "<U004E><U0047>"
+collating-element <Ng> from "<U004E><U0067>"
+collating-element <nG> from "<U006E><U0047>"
+collating-element <ng> from "<U006E><U0067>"
+
+collating-symbol <nt-guarani>
+collating-element <NT> from "<U004E><U0054>"
+collating-element <Nt> from "<U004E><U0074>"
+collating-element <nT> from "<U006E><U0054>"
+collating-element <nt> from "<U006E><U0074>"
+
+collating-symbol <rr-guarani>
+collating-element <RR> from "<U0052><U0052>"
+collating-element <Rr> from "<U0052><U0072>"
+collating-element <rR> from "<U0072><U0052>"
+collating-element <rr> from "<U0072><U0072>"
+
+#
+# Difinas, ke la E-aj literoj estos ordigitaj
+# post ĝia ne-ĉapelitaj versioj, kiel apartaj
+# literoj
+#
+reorder-after <a>
+<an-guarani>
+
+reorder-after <b>
+<ch-guarani>
+
+reorder-after <e>
+<en-guarani>
+
+reorder-after <g>
+<gn-guarani>
+
+reorder-after <i>
+<in-guarani>
+
+reorder-after <m>
+<mb-guarani>
+
+reorder-after <n>
+<nd-guarani>
+<ng-guarani>
+<nt-guarani>
+<nn-guarani>
+
+reorder-after <o>
+<on-guarani>
+
+reorder-after <r>
+<rr-guarani>
+
+reorder-after <u>
+<un-guarani>
+
+reorder-after <y>
+<yn-guarani>
+<puso-guarani>
+
+reorder-after <an-guarani>
+<U00C3> <an-guarani>;<CAP>;<BAS>;IGNORE  # Ã
+<U00E3> <an-guarani>;<MIN>;<BAS>;IGNORE  # ã
+
+reorder-after <en-guarani>
+<U1EBC> <en-guarani>;<CAP>;<BAS>;IGNORE  # Ẽ
+<U1EBD> <en-guarani>;<MIN>;<BAS>;IGNORE  # ẽ
+
+reorder-after <in-guarani>
+<U0128> <in-guarani>;<CAP>;<BAS>;IGNORE  # Ĩ
+<U0129> <in-guarani>;<MIN>;<BAS>;IGNORE  # ĩ
+
+reorder-after <on-guarani>
+<U00D5> <on-guarani>;<CAP>;<BAS>;IGNORE  # Õ
+<U00F5> <on-guarani>;<MIN>;<BAS>;IGNORE  # õ
+
+reorder-after <un-guarani>
+<U0168> <un-guarani>;<CAP>;<BAS>;IGNORE  # Ũ
+<U0169> <un-guarani>;<MIN>;<BAS>;IGNORE  # ũ
+
+reorder-after <yn-guarani>
+<U1EF8> <yn-guarani>;<CAP>;<BAS>;IGNORE  # Ỹ
+<U1EF9> <yn-guarani>;<MIN>;<BAS>;IGNORE  # ỹ
+
+reorder-after <gn-guarani>
+<GN> <gn-guarani>;<CAP>;<BAS>;IGNORE  # G̃
+<gn> <gn-guarani>;<MIN>;<BAS>;IGNORE  # g̃
+
+reorder-after <nn-guarani>
+<U00D1> <nn-guarani>;<CAP>;<BAS>;IGNORE  # Ñ
+<U00F1> <nn-guarani>;<MIN>;<BAS>;IGNORE  # ñ
+
+reorder-after <ch-guarani>
+<CH> <ch-guarani>;<CAP>;<BAS>;IGNORE
+<Ch> <ch-guarani>;<CAP>;<BAS>;IGNORE
+<ch> <ch-guarani>;<MIN>;<BAS>;IGNORE
+<cH> <ch-guarani>;<MIN>;<BAS>;IGNORE
+
+reorder-after <mb-guarani>
+<MB> <mb-guarani>;<CAP>;<BAS>;IGNORE
+<Mb> <mb-guarani>;<CAP>;<BAS>;IGNORE
+<mb> <mb-guarani>;<MIN>;<BAS>;IGNORE
+<mB> <mb-guarani>;<MIN>;<BAS>;IGNORE
+
+reorder-after <nd-guarani>
+<ND> <nd-guarani>;<CAP>;<BAS>;IGNORE
+<Nd> <nd-guarani>;<CAP>;<BAS>;IGNORE
+<nd> <nd-guarani>;<MIN>;<BAS>;IGNORE
+<nD> <nd-guarani>;<MIN>;<BAS>;IGNORE
+
+reorder-after <ng-guarani>
+<NG> <ng-guarani>;<CAP>;<BAS>;IGNORE
+<Ng> <ng-guarani>;<CAP>;<BAS>;IGNORE
+<ng> <ng-guarani>;<MIN>;<BAS>;IGNORE
+<nG> <ng-guarani>;<MIN>;<BAS>;IGNORE
+
+reorder-after <nt-guarani>
+<NT> <nt-guarani>;<CAP>;<BAS>;IGNORE
+<Nt> <nt-guarani>;<CAP>;<BAS>;IGNORE
+<nt> <nt-guarani>;<MIN>;<BAS>;IGNORE
+<nT> <nt-guarani>;<MIN>;<BAS>;IGNORE
+
+reorder-after <rr-guarani>
+<RR> <rr-guarani>;<CAP>;<BAS>;IGNORE
+<Rr> <rr-guarani>;<CAP>;<BAS>;IGNORE
+<rr> <rr-guarani>;<MIN>;<BAS>;IGNORE
+<rR> <rr-guarani>;<MIN>;<BAS>;IGNORE
+
+reorder-after <puso-guarani>
+<U0027> <puso-guarani>;<CAP>;<BAS>;IGNORE  # '
+<U02BC> <puso-guarani>;<CAP>;<BAS>;IGNORE  # ʼ
+<U0241> <puso-guarani>;<CAP>;<BAS>;IGNORE  # Ɂ
+<U0242> <puso-guarani>;<MIN>;<BAS>;IGNORE  # ɂ
+<UA78B> <puso-guarani>;<CAP>;<BAS>;IGNORE  # Ꞌ
+<UA78C> <puso-guarani>;<MIN>;<BAS>;IGNORE  # ꞌ
+
+reorder-end
+
+END LC_COLLATE
+
+
+###############################
+LC_MESSAGES
+###############################
+copy "es_PY"
+END LC_MESSAGES
+
+
+###############################
+LC_MONETARY
+###############################
+copy "es_PY"
+END LC_MONETARY
+
+
+###############################
+LC_NUMERIC
+###############################
+copy "es_PY"
+END LC_NUMERIC
+
+
+###############################
+LC_TIME
+###############################
+
+#          "atĩ";"akõ";"apy";"ard";"apo";"apt";"apk"
+abday      "at<U0129>";"ak<U00F5>";"apy";"ard";"apo";"apt";"apk"
+
+#          "arateĩ";"arakõi";"araapy";"ararundy";"arapo";"arapoteĩ";"arapokõi"
+day        "arate<U0129>";"arak<U00F5>i";"ara<U02BC>apy";"ararundy";"arapo";"arapote<U0129>";"arapok<U00F5>i"
+
+#          "jtĩ";"jkõ";"jpy";"jrd";"jpo";"jpt";"jpk";"jpp";"jpr";"jpa";"jaĩ";"jak"
+abmon      "jt<U0129>";"jk<U00F5>";"jpy";"jrd";"jpo";"jpt";"jpk";"jpp";"jpr";"jpa";"ja<U0129>";"jak"
+
+#          "jasyteĩ";"jasykõi";"jasyapy";"jasyrundy";"jasypo";"jasypoteĩ"; \
+#          "jasypokõi";"jasypoapy";"jasyporundy";"jasypa";"jasypateĩ";"jasypakõi"
+mon        "jasyte<U0129>";"jasyk<U00F5>i";"jasy<U02BC>apy";"jasyrundy";"jasypo";"jasypote<U0129>"; \
+           "jasypok<U00F5>i";"jasypo<U02BC>apy";"jasyporundy";"jasypa";"jasypate<U0129>";"jasypak<U00F5>i"
+
+#          "apo, 04/08/2011, 14:11:36 BRT"
+d_t_fmt    "%a, %d/%m/%Y, %H:%M:%S %Z"
+
+#          "04/08/2011"
+d_fmt      "%d/%m/%Y"
+
+#          "14:12:36"
+t_fmt      "%H:%M:%S"
+
+am_pm      "am";"pm"
+
+#          "02:12:36 pm"
+t_fmt_ampm "%I:%M:%S %p"
+
+#           "apo, 04/08/2011, 14:11:36 BRT"
+date_fmt    "%a, %d/%m/%Y, %H:%M:%S %Z"
+
+# A semana tem 7 dias, como de costume, e começa na segunda-feira (ISO 8601)
+week    7;19971130;4
+
+# O primeiro dia da semana é a segunda-feira
+first_weekday 2
+
+# O primeiro dia de trabalho da semana é a segunda-feira
+first_workday 2
+
+END LC_TIME
+
+
+###############################
+LC_PAPER
+###############################
+copy "es_PY"
+END LC_PAPER
+
+
+###############################
+LC_TELEPHONE
+###############################
+copy "es_PY"
+END LC_TELEPHONE
+
+
+###############################
+LC_MEASUREMENT
+###############################
+copy "es_PY"
+END LC_MEASUREMENT
+
+
+###############################
+LC_NAME
+###############################
+copy "es_PY"
+END LC_NAME
+
+
+###############################
+LC_ADDRESS
+###############################
+
+postal_fmt   "\
+%f%N\
+%a%N\
+%d%N\
+%b%N\
+%s&t%h%t%e%t%r%N\
+%T%N\
+%c%N\
+%C%t%z%N"
+
+country_name "Paraguái"
+country_ab2  "PY"
+country_ab3  "PRY"
+country_post "PY"
+country_num  600
+country_car  "PY"
+#country_isbn 99925;99953;99967
+
+lang_name    "avañe'ẽ"
+lang_ab      "gn"
+lang_term    "grn"
+lang_lib     "grn"
+
+END LC_ADDRESS

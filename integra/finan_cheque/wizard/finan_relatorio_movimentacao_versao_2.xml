@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_movimentacao_financeira_versao_2_wizard" >
+            <field name="name">finan.relatorio.movimentacao.financeira.versao_2.wizard</field>
+            <field name="model">finan.relatorio</field>
+            <field name="inherit_id" ref="finan.finan_relatorio_movimentacao_financeira_versao_2_wizard"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">        
+                <field name="saldo_bancario" position="after">
+                    <newline/>
+                    <field name="imprime_cheque" />
+                    <newline/>
+                </field>                
+            </field>
+        </record>
+        
+    </data>
+</openerp>

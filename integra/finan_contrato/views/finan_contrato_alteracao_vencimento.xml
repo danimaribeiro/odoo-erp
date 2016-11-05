@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_vencimento_tree">
+            <field name="name">finan.contrato.alteracao.vencimento.tree</field>
+            <field name="model">finan.contrato.alteracao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="red:aprovado != True">
+                    <field name="aprovado" invisible="1"/>
+                    <field name="tipo" invisible="1"/>
+                    <field name="company_id" />
+                    <field name="contrato_id" />
+                    <field name="dia_vencimento_anterior" />
+                    <field name="dia_vencimento_novo" />
+                    <field name="solicitante_id" />
+                    <field name="data_solicitacao" />
+                    <field name="aprovador_id" />
+                    <field name="data_aprovacao" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_vencimento_form">
+            <field name="name">finan.contrato.alteracao.vencimento.form</field>
+            <field name="model">finan.contrato.alteracao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Alteração de vencimento">
+                    <field name="tipo" invisible="1" />
+                    <separator string="Contrato e alteração" colspan="4" />
+                    <field name="contrato_id" colspan="4" required="1" on_change="onchange_contrato_id(contrato_id, tipo)" domain="[('natureza', '=', 'R'), ('data_distrato', '=', False)]" attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    <field name="company_id" colspan="4" readonly="1" />
+                    <field name="dia_vencimento_anterior" readonly="1" />
+                    <newline />
+                    <field name="dia_vencimento_novo" attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    <newline />
+                    <separator string="Justificativa" colspan="4" />
+                    <field name="obs" nolabel="1" colspan="4" attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    <newline />
+                    <separator string="Solicitante" colspan="4" />
+                    <field name="solicitante_id" colspan="4" readonly="1" />
+                    <field name="data_solicitacao" readonly="1" />
+                    <separator string="Aprovador" colspan="4" />
+                    <field name="aprovado" invisible="1" />
+                    <field name="aprovador_id" colspan="4" readonly="1" />
+                    <field name="data_aprovacao" readonly="1" />
+                    <button name="aprovar" colspan="4" type="object" string="Aprovar" groups="finan_contrato.group_finan_contract_manager" attrs="{'invisible': [('aprovado', '!=', False)]}" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_vencimento_search">
+            <field name="name">finan.contrato.alteracao.vencimento.search</field>
+            <field name="model">finan.contrato.alteracao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Alteração de vencimento">
+                    <filter name="aprovado" string="Aprovado" icon="terp-go-month" domain="[('aprovado', '=', True)]" />
+                    <filter name="pendente" string="Pendente" icon="terp-go-month" domain="[('aprovado', '!=', True)]" />
+                    <separator orientation="vertical" />
+                    <field name="contrato_id" />
+                    <field name="company_id" />
+                    <field name="data_solicitacao" />
+                    <newline/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_contrato_alteracao_vencimento_acao">
+            <field name="name">Alteração de vencimento</field>
+            <field name="res_model">finan.contrato.alteracao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_contrato_alteracao_vencimento_tree" />
+            <field name="domain">[('tipo', '=', 'D')]</field>
+            <field name="context">{'tipo': 'D', 'default_tipo': 'D', 'search_default_pendente': True}</field>
+            <field name="search_view_id" ref="finan_contrato_alteracao_vencimento_search" />
+        </record>
+
+        <menuitem action="finan_contrato_alteracao_vencimento_acao"
+                  id="menu_finan_contrato_alteracao_vencimento" name="Alteração de vencimento" parent="menu_finan_contratos_manutencao" />
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_alteracao_vencimento_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_contrato_alteracao_vencimento_form"/>
+            <field name="act_window_id" ref="finan_contrato_alteracao_vencimento_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_alteracao_vencimento_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_contrato_alteracao_vencimento_tree"/>
+            <field name="act_window_id" ref="finan_contrato_alteracao_vencimento_acao"/>
+        </record>
+
+    </data>
+</openerp>

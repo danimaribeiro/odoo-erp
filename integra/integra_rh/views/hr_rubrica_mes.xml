@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_rubrica_mes_form">
+            <field name="name">hr.rubrica.mes.form</field>
+            <field name="model">hr.rubrica.mes</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Variáveis da Folha">
+                    <group colspan="4" col="6">
+                        <separator string="Informações básicas" colspan="6" />
+                        <field name="mes" required="1" on_change="onchange_ano_mes(ano, mes)" colspan="2"/>
+                        <field name="ano" required="1" on_change="onchange_ano_mes(ano, mes)" colspan="2"/>
+                        <newline />
+                        <field name="data_inicial" invisible="1" colspan="2" />
+                        <field name="data_final" invisible="1" colspan="2" />
+                        <field name="company_id" colspan="6" required="1" />
+                        <newline />
+                        <field name="tipo" colspan="2" required="1" />
+                        <field name="rule_id" colspan="2" required="1" />
+                        <field name="rubricas_similares" colspan="2" invisible="1" />
+                        <newline />
+                        <field name="partner_id" colspan="6" />
+                        <field name="employee_id" colspan="6" />
+                        <newline />
+                        <button icon="gtk-execute" name="busca_entradas" context="{'mes': mes, 'ano': ano, 'data_inicial': data_inicial, 'data_final': data_final, 'company_id': company_id, 'rule_id': rule_id}" string="Buscar lançamentos" type="object" colspan="2"/>
+                        <button icon="gtk-execute" name="gera_relatorio_rubrica_mes" context="{'input_ids': input_ids }" string="Imprimir Rubricas" type="object" colspan="2"/>
+
+                        <separator string="Lançamentos" colspan="6"/>
+                        <field name="input_ids" colspan="6" nolabel="1" >
+                            <tree>
+                                <field name="slip_id" readonly="1" />
+                                <field name="company_id" readonly="1" />
+                                <field name="employee_id" readonly="1" />
+                                <field name="salary_rule_id" readonly="1" />
+                                <field name="total" sum="Valor" readonly="1" />
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_rubrica_mes_acao">
+            <field name="name">Rubricas por Mês</field>
+            <field name="res_model">hr.rubrica.mes</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_rubrica_mes_form" />
+        </record>
+
+        <menuitem action="hr_rubrica_mes_acao"
+            id="menu_hr_rubrica_mes" name="Rubricas por Mês" parent="hr_payroll.menu_hr_root_payroll" />
+
+    </data>
+</openerp>

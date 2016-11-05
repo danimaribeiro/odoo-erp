@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_conta_form">
+            <field name="name">ecd.finan.conta.form</field>
+            <field name="model">finan.conta</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_conta_form"/>
+            <field name="arch" type="xml">        
+                <field name="nome" position="after" >                        
+                    <newline />
+                    <field name="plano_id" required="1" colspan="4"/>                        
+                    <newline />
+                </field>
+            </field>
+        </record>        
+    </data>
+</openerp>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_documento_tree">
+            <field name="name">finan.documento.tree</field>
+            <field name="model">finan.documento</field>
+            <field name="inherit_id" ref="finan.finan_documento_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="postergacao" position="after">
+                    <field name="modelo_partida_dobrada_receber_id" />
+                    <field name="modelo_partida_dobrada_pagar_id" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_documento_form">
+            <field name="name">finan.documento.form</field>
+            <field name="model">finan.documento</field>
+            <field name="inherit_id" ref="finan.finan_documento_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="postergacao" position="after">
+                    <newline />
+                    <field name="modelo_partida_dobrada_receber_id" colspan="4" domain="[('tabela', 'in', ('PR','PP'))]"/>
+                    <field name="modelo_partida_dobrada_pagar_id" colspan="4" domain="[('tabela', 'in', ('PR','PP'))]"/>
+                    <field name="modelo_partida_dobrada_rebimento_id" colspan="4" domain="[('tabela', 'in', ('PR','PP'))]"/>
+                    <field name="modelo_partida_dobrada_pagamento_id" colspan="4" domain="[('tabela', 'in', ('PR','PP'))]"/>
+                </field>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="finan_documento_search">
+            <field name="name">finan.documento.search</field>
+            <field name="model">finan.documento</field>
+             <field name="inherit_id" ref="finan.finan_documento_search"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <field name="nome" position="after">                                        
+                    <field name="modelo_partida_dobrada_receber_id" colspan="4" />
+                    <field name="modelo_partida_dobrada_pagar_id" colspan="4" />
+                </field>                
+            </field>
+        </record>
+
+    </data>
+</openerp>

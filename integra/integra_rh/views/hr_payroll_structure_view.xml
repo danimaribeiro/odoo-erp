@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="hr_payroll.view_hr_payroll_structure_list_view" model="ir.ui.view">
+            <field name="name">hr.payroll.structure.tree</field>
+            <field name="model">hr.payroll.structure</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Employee Function">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="rule_ids"/>
+                    <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_payroll.view_hr_payroll_structure_tree" model="ir.ui.view">
+            <field name="name">hr.payroll.structure.tree</field>
+            <field name="model">hr.payroll.structure</field>
+            <field name="type">tree</field>
+            <field name="field_parent">children_ids</field>
+            <field name="arch" type="xml">
+                <tree string="Salary Structure">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_payroll.view_hr_payroll_structure_filter" model="ir.ui.view">
+            <field name="name">hr.payroll.structure.select</field>
+            <field name="model">hr.payroll.structure</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Payroll Structures">
+                    <group col="8" colspan="4">
+                        <field name="name"/>
+                        <field name="code"/>
+                    </group>
+                    <newline/>
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_payroll.view_hr_employee_grade_form" model="ir.ui.view">
+            <field name="name">hr.payroll.structure.form</field>
+            <field name="model">hr.payroll.structure</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Employee Function">
+                    <group col="6" colspan="6">
+                        <field name="name" select="1"/>
+                        <field name="code" select="1"/>
+                        <newline/>
+                        <field name="tipo" />
+                        <newline/>
+                        <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                        <field name="parent_id"/>
+                    </group>
+                    <notebook colspan="4">
+                         <page string="Salary Rules">
+                            <field colspan="4" name="rule_ids" nolabel="1" domain="[('parent_rule_id','=',False)]">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="category_id"/>
+                                    <field name="sequence" groups="base.group_extended" invisible="1"/>
+                                    <field name="register_id"/>
+                                </tree>
+                            </field>
+                         </page>
+                         <page string="Vínculos para férias e 13º" attrs="{'invisible': [('tipo', '!=', 'N')]}">
+                             <field name="estrutura_ferias_id" colspan="4" domain="[('tipo', '=', 'F')]"/>
+                             <field name="estrutura_retorno_ferias_id" colspan="4" domain="[('tipo', '=', 'P')]" />
+                             <field name="estrutura_adiantamento_decimo_terceiro_id" colspan="4" domain="[('tipo', '=', 'D')]"/>
+                             <field name="estrutura_decimo_terceiro_id" colspan="4" domain="[('tipo', '=', 'D')]"/>
+                         </page>
+                         <page string="Rescisão e outras movimentações">
+                            <field name="afastamento_imediato" />
+                            <newline/>
+                            <field name="dispensa_empregador" />
+                            <newline/>
+                            <field name="codigo_afastamento" string="Código do afastamento ou movimentação no SEFIP" />
+                            <newline/>
+                            <field name="codigo_afastamento_cef" string="Código do afastamento ou movimentação na C.E.F" />
+                            <newline/>
+                            <field name="codigo_saque" />
+                            <newline/>
+                            <field name="codigo_desligamento_rais" />
+                         </page>
+                         <page string="Tratamento de rubricas específicas dos funcionários">
+                            <field name="ignora_rubrica_funcionario" />
+                            <newline/>
+                            <field name="ignora_rubrica_funcionario_quantidade" />
+                         </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+<!--        <record id="hr_payroll.action_view_hr_payroll_structure_list_form" model="ir.actions.act_window">
+            <field name="name">Salary Structures</field>
+            <field name="res_model">hr.payroll.structure</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_hr_payroll_structure_list_view"/>
+        </record>-->
+<!--        <record id="hr_payroll.action_view_hr_payroll_structure_tree" model="ir.actions.act_window">
+            <field name="name">Salary Structures Hierarchy</field>
+            <field name="res_model">hr.payroll.structure</field>
+            <field name="view_type">tree</field>
+            <field name="domain">[('parent_id','=',False)]</field>
+            <field name="view_id" ref="view_hr_payroll_structure_tree"/>
+        </record>-->
+        <!-- End Salary structure -->
+
+        <menuitem
+            id="hr_payroll.menu_hr_payroll_structure_view"
+            action="hr_payroll.action_view_hr_payroll_structure_list_form"
+            parent="hr_payroll.payroll_configure"
+            sequence="20"
+        />
+        <menuitem
+            id="hr_payroll.menu_hr_payroll_structure_tree"
+            action="hr_payroll.action_view_hr_payroll_structure_tree"
+            parent="hr_payroll.payroll_configure"
+            sequence="30"
+            icon="STOCK_INDENT"
+        />
+
+    </data>
+</openerp>

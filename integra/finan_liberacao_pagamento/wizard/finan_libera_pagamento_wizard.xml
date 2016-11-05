@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record forcecreate="True" model="ir.actions.server" id="finan_liberacao_pagamento_server_action">
+            <field name="name">Liberar pagamentos</field>
+            <field name="model_id" ref="model_finan_lancamento"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.aprovar_pagamento(context=context)</field>
+        </record>
+
+        <record model="ir.values" id="finan_liberacao_pagamento_values" >
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'finan.lancamento'" name="model"/>
+            <field name="name">Valores liberação pagamento</field>
+            <field eval="'ir.actions.server,%d'%finan_liberacao_pagamento_server_action" name="value"/>
+            <field eval="True" name="object"/>
+        </record>
+
+    </data>
+</openerp>
+

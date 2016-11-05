@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_estoque_relatorio"
+            name="Relatórios"
+            parent="stock.menu_stock_root"
+            sequence="20"/>
+
+    </data>
+</openerp>

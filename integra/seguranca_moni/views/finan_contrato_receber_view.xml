@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_receber_form">
+            <field name="name">finan.contrato.receber.form</field>
+            <field name="model">finan.contrato</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_receber_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="sensores" position="replace">
+                    <button type="object" name="exporta_moni" string="Exportar para o MONI" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

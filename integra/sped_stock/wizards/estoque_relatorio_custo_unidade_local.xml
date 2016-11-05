@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="estoque_relatorio_custo_unidade_local_form" >
+            <field name="name">estoque.relatorio.custo.unidade.local.form</field>
+            <field name="model">estoque.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Custo por Unidade e Local">
+                    <group colspan="4" string="Filtros do Relatório">                                              
+                        <field name="company_id" colspan="4" required="1" />
+                        <newline/>
+                        <field name="location_ids" colspan="4" />
+                        <newline/>
+                        <field name="data_final" required="1" colspan="2" string="Data" />
+                        <newline/>
+                        <field name="analitico" />
+                        <field name="acumula_produto" />
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Busca Custo/Local" name="gera_custo_unidade_local" context="{'location_ids': location_ids}" type="object" colspan="2" />
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_custo_unidade_local" attrs="{'readonly':[('custo_ids','=', False)]}" context="{'location_ids': location_ids}" type="object" colspan="2" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"  attrs="{'readonly':[('custo_ids','=', False)]}"/>
+                    </group>
+                    <group colspan="4" string="Unidade e Locais">
+                        <field name="custo_ids" colspan="4" nolabel="1" readonly="1">
+                            <tree>
+                                <field name="local_pai_id" />
+                                <field name="data_final" />
+                                <field name="product_id" />
+                                <field name="quantidade" />
+                                <field name="vr_unitario_custo" />
+                                <field name="vr_total" />                                                               
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="estoque_relatorio_custo_unidade_local_acao">
+            <field name="name">Custo por Unidade e Local</field>
+            <field name="res_model">estoque.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="estoque_relatorio_custo_unidade_local_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="estoque_relatorio_custo_unidade_local_form"/>
+            <field name="act_window_id" ref="estoque_relatorio_custo_unidade_local_acao"/>
+        </record>
+
+        <menuitem action="estoque_relatorio_custo_unidade_local_acao"
+                  id="menu_estoque_relatorio_custo_unidade_local"
+                  name="Custo por Unidade e Local"
+                  parent="menu_estoque_relatorio"
+                  sequence="5" />
+
+    </data>
+</openerp>

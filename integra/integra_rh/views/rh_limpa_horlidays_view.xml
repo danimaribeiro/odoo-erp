@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="hr_holidays.view_employee_form_leave_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.leave.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <field name="coach_id" position="after">
+                    <field name="remaining_leaves" invisible="1"/>
+                    <field name="current_leave_id" invisible="1"/>
+                    <field name="current_leave_state" invisible="1" />
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record forcecreate="True" model="ir.cron" id="estoque_acao_demorada_ajusta_saldos_cron">
+            <field name="name">Ajuste de saldos de estoque</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field eval="True" name="active" />
+            <field eval="False" name="doall" />
+            <field eval="'stock.saldo'" name="model" />
+            <field eval="'gera_saldo_estoque_completo'" name="function" />
+            <field eval="'()'" name="args" />
+        </record>
+
+        <record forcecreate="True" model="ir.actions.server" id="estoque_acao_demorada_ajusta_saldos_server_action">
+            <field name="name">Ajuste de saldos de estoque</field>
+            <field name="model_id" ref="model_stock_saldo"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.gera_saldo_estoque_completo(context=context)</field>
+        </record>
+
+    </data>
+</openerp>
+

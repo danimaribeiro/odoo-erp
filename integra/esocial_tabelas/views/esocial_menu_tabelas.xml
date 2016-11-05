@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <menuitem id="esocial_menu_tabelas" name="Tabelas eSocial" parent="hr.menu_hr_root" sequence="15" />
+    </data>
+</openerp>
+
+

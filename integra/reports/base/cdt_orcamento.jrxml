@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report8" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05a7678d-6397-4816-97ba-742668ea4f5f">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.background.image" value="C:\Users\Cliente\Central Traduções\logo_central_e_global.jpg"/>
+	<property name="ireport.background.image.properties" value="true,true,0.25,-8,-8,0,0,1296,1292"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/will/imotion/python/projetos/openerp_integra/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UID" class="java.lang.Integer"/>
+	<parameter name="IDS_PLAIN" class="java.lang.String"/>
+	<parameter name="BASE_DIR" class="java.lang.String"/>
+	<parameter name="LOGO_DIR" class="java.lang.String"/>
+	<parameter name="LOGO_CLIENTE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+--
+-- Dados da empresa
+--
+comp.id as empresa_id,
+comp.name as empresa_nome,
+partcomp.endereco as empresa_endereco,
+partcomp.numero as empresa_numero,
+partcomp.complemento as empresa_complemento,
+partcomp.bairro as empresa_bairro,
+muncomp.nome as empresa_municipio,
+estcomp.uf as empresa_estado,
+partcomp.cep as empresa_cep,
+adrcomp.phone as empresa_fone,
+partcomp.cnpj_cpf as empresa_cnpj,
+partcomp.ie as empresa_ie,
+
+--
+-- Dados do cliente
+--
+partpart.nome as cliente_nome,
+partpart.fantasia as cliente_fantasia,
+partpart.endereco as cliente_endereco,
+partpart.numero as cliente_numero,
+partpart.complemento as cliente_complemento,
+partpart.bairro as cliente_bairro,
+munpart.nome as cliente_municipio,
+estpart.uf as cliente_estado,
+partpart.cep as cliente_cep,
+partpart.cnpj_cpf as cliente_cnpj_cpf,
+partpart.ie as cliente_ie_rg,
+adrpart.phone as cliente_fone,
+adrpart.email as cliente_email,
+
+--
+-- Dados do vendedor
+--
+ven.name as vendedor_nome,
+
+--
+-- Dados do orçamento
+--
+orc.versao as orcamento_versao,
+ped.note as orcamento_observacao,
+
+--
+-- Dados da categoria do orçamento
+--
+orcat.nome as orcamento_categoria,
+
+--
+-- Dados do item do orçamento
+--
+oi.ordem as orcamento_item_ordem,
+prod.name_template as orcamento_item_produto,
+prod.default_code as orcamento_item_produto_codigo,
+unid.name as orcamento_item_produto_unidade,
+oi.quantidade as orcamento_item_quantidade,
+oi.usa_unitario_minimo as orcamento_item_usa_unitario_minimo,
+oi.vr_unitario_minimo as orcamento_item_vr_unitario_minimo,
+oi.vr_unitario as orcamento_item_vr_unitario_sugerido,
+case
+when oi.usa_unitario_minimo then oi.vr_unitario_minimo
+else oi.vr_unitario
+end as orcamento_item_vr_unitario,
+oi.vr_total as orcamento_item_vr_total,
+oi.margem as orcamento_item_margem,
+oi.desconto as orcamento_item_desconto,
+oi.vr_total_margem_desconto as orcamento_item_vr_total_margem_desconto,
+oi.vr_comissao as orcamento_item_comissao
+
+
+from
+orcamento_orcamento orc
+join orcamento_orcamento_item oi on oi.orcamento_id = orc.id
+join product_product prod on prod.id = oi.product_id
+join product_template prodmod on prodmod.id = prod.product_tmpl_id
+join product_uom as unid on unid.id = prodmod.uom_id
+join sale_order ped on ped.id = orc.sale_order_id
+join res_users ven on ped.user_id = ven.id
+join res_company comp on comp.id = ped.company_id
+join res_partner respartcomp on respartcomp.id = comp.partner_id
+join res_partner_address adrcomp on adrcomp.partner_id = respartcomp.id and
+adrcomp.type = 'default'
+left join sped_participante partcomp on partcomp.partner_id = comp.partner_id
+left join sped_municipio muncomp on muncomp.id = partcomp.municipio_id
+left join sped_estado estcomp on estcomp.id = muncomp.estado_id
+join res_partner part on part.id = ped.partner_id
+left join sped_participante partpart on partpart.partner_id = part.id
+left join sped_municipio munpart on munpart.id = partpart.municipio_id
+left join sped_estado estpart on estpart.id = munpart.estado_id
+join orcamento_categoria as orcat on orcat.id = oi.orcamento_categoria_id
+join res_partner_address adrpart on adrpart.partner_id = part.id and
+adrcomp.type = 'default'
+
+order by
+orcat.nome,
+oi.ordem,
+prod.name_template]]>
+	</queryString>
+	<field name="empresa_id" class="java.lang.Integer"/>
+	<field name="empresa_nome" class="java.lang.String"/>
+	<field name="empresa_endereco" class="java.lang.String"/>
+	<field name="empresa_numero" class="java.lang.String"/>
+	<field name="empresa_complemento" class="java.lang.String"/>
+	<field name="empresa_bairro" class="java.lang.String"/>
+	<field name="empresa_municipio" class="java.lang.String"/>
+	<field name="empresa_estado" class="java.lang.String"/>
+	<field name="empresa_cep" class="java.lang.String"/>
+	<field name="empresa_fone" class="java.lang.String"/>
+	<field name="empresa_cnpj" class="java.lang.String"/>
+	<field name="empresa_ie" class="java.lang.String"/>
+	<field name="cliente_nome" class="java.lang.String"/>
+	<field name="cliente_fantasia" class="java.lang.String"/>
+	<field name="cliente_endereco" class="java.lang.String"/>
+	<field name="cliente_numero" class="java.lang.String"/>
+	<field name="cliente_complemento" class="java.lang.String"/>
+	<field name="cliente_bairro" class="java.lang.String"/>
+	<field name="cliente_municipio" class="java.lang.String"/>
+	<field name="cliente_estado" class="java.lang.String"/>
+	<field name="cliente_cep" class="java.lang.String"/>
+	<field name="cliente_cnpj_cpf" class="java.lang.String"/>
+	<field name="cliente_ie_rg" class="java.lang.String"/>
+	<field name="cliente_fone" class="java.lang.String"/>
+	<field name="cliente_email" class="java.lang.String"/>
+	<field name="vendedor_nome" class="java.lang.String"/>
+	<field name="orcamento_versao" class="java.lang.String"/>
+	<field name="orcamento_observacao" class="java.lang.String"/>
+	<field name="orcamento_categoria" class="java.lang.String"/>
+	<field name="orcamento_item_ordem" class="java.lang.Integer"/>
+	<field name="orcamento_item_produto" class="java.lang.String"/>
+	<field name="orcamento_item_produto_codigo" class="java.lang.String"/>
+	<field name="orcamento_item_produto_unidade" class="java.lang.String"/>
+	<field name="orcamento_item_quantidade" class="java.lang.Double"/>
+	<field name="orcamento_item_usa_unitario_minimo" class="java.lang.Boolean"/>
+	<field name="orcamento_item_vr_unitario_minimo" class="java.lang.Double"/>
+	<field name="orcamento_item_vr_unitario_sugerido" class="java.lang.Double"/>
+	<field name="orcamento_item_vr_unitario" class="java.lang.Double"/>
+	<field name="orcamento_item_vr_total" class="java.lang.Double"/>
+	<field name="orcamento_item_margem" class="java.lang.Double"/>
+	<field name="orcamento_item_desconto" class="java.lang.Double"/>
+	<field name="orcamento_item_vr_total_margem_desconto" class="java.lang.Double"/>
+	<field name="orcamento_item_comissao" class="java.lang.Double"/>
+	<variable name="orcamento_item_vr_total_1" class="java.lang.Double" resetType="Group" resetGroup="categoria" calculation="Sum">
+		<variableExpression><![CDATA[$F{orcamento_item_vr_total}]]></variableExpression>
+	</variable>
+	<group name="categoria" isResetPageNumber="true">
+		<groupExpression><![CDATA[$F{orcamento_categoria}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="51" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="ea0069b3-7a05-4e4d-a0a4-3e91b2af5134" x="-19" y="-19" width="597" height="68"/>
+				<subreportParameter name="LOGO_DIR">
+					<subreportParameterExpression><![CDATA[$P{LOGO_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO_CLIENTE">
+					<subreportParameterExpression><![CDATA[$P{LOGO_CLIENTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="COMPANY_ID">
+					<subreportParameterExpression><![CDATA[$F{empresa_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="INTEGRA_REPORT_TITLE">
+					<subreportParameterExpression><![CDATA["COTAÇÃO"]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cabecalho.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="90" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f28b2403-962c-4377-8179-380bab8fb9d9" x="82" y="0" width="165" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{orcamento_versao}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d48a2404-664e-4ed6-a2e0-8be1af980a68" x="82" y="15" width="165" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_nome}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cdab75dd-b497-4343-988a-b32250151d7f" x="336" y="15" width="100" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_fantasia}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c5198d64-bf60-4179-93bf-6f17b1c2dadc" x="82" y="30" width="165" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_endereco}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c523bd81-6661-4f83-ac57-39451cd33b42" x="82" y="45" width="165" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_municipio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="18f7641b-54e2-4333-926b-b5ce91966d5f" x="336" y="29" width="100" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_bairro}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ee8df7fd-3f55-4ea5-8176-a2d8cb5c8416" x="476" y="40" width="79" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_cep}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="718f69e0-2fba-4200-af44-f2f346055933" x="0" y="0" width="81" height="15"/>
+				<textElement markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Orçamento Nº:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6f032ed9-bff0-4a9c-893e-874892ea2e0a" x="1" y="15" width="81" height="15"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente............:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="37ee8d7c-e46e-4433-b44b-fc56031525ba" x="2" y="44" width="80" height="15"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cidade/UF......:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="145cc914-5886-4cf3-badb-011bafc0e388" x="2" y="30" width="80" height="15"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Endereço.......:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bd595121-4afe-4b52-aed3-b99d290c8473" x="0" y="55" width="82" height="15"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CPF / CNPJ....:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4b325eb9-4515-4e6c-b5e9-e059389b17f3" x="2" y="70" width="80" height="15"/>
+				<textElement markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Contato..........:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="eaa2815e-b66f-4be1-b57d-40e772781f07" x="270" y="15" width="65" height="15"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fantasia...:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a8b7f876-6e90-41d5-bdb7-668f880dfd0b" x="270" y="30" width="65" height="15"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bairro......:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="301f2b00-1d9a-4deb-a6ba-82359067161c" x="270" y="45" width="65" height="15"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fone/Fax..:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="80838967-3f3c-446f-ad5e-5b35343ad186" x="270" y="61" width="65" height="15"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RG/ I.E.....:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="18595ab4-cb85-4e93-8c38-9c05951c3e28" x="271" y="74" width="68" height="15"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[E-mail......:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3754ca2e-572a-4460-9809-6434423e0344" x="439" y="40" width="37" height="15"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CEP:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="dacd45ae-9f21-4021-95b7-31c5031876cb" x="82" y="59" width="165" height="15"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_cnpj_cpf}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="057c7e94-876b-4165-9171-b1281728f947" x="335" y="62" width="100" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_ie_rg}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="5e0a81de-8865-42bf-8bcb-6e32cc40dd98" x="337" y="46" width="100" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_fone}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d7e9871f-1aa7-4a87-9e1b-aa0a1c5d88e2" x="336" y="74" width="100" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_email}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c4acc5fd-3e28-4af1-887a-516cd8ad714c" x="269" y="0" width="66" height="15"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Validade..:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="50">
+			<staticText>
+				<reportElement uuid="2bb63ab7-5b2f-4739-afcb-df57b81e5a3e" x="482" y="26" width="74" height="20"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="1.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Valor Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8ccb0cf8-effd-4d24-8a05-17cf2f439e0e" x="364" y="26" width="48" height="20"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="1.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Unid]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="803076b2-a9c4-4f2f-9e8b-3be2a4fbc071" x="412" y="26" width="70" height="20"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="1.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Unitário]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7053362d-056a-49a2-a654-bf428493a178" x="57" y="26" width="239" height="20"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="1.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="144c077b-61f4-4640-9483-d3db11db3477" x="296" y="26" width="68" height="20"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="1.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Quantidade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="139da048-d51f-4277-aef4-e857eaaf138e" x="1" y="6" width="555" height="20"/>
+				<box topPadding="5">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Documentos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8965e942-a364-4d98-bcce-7b189758f1fd" x="2" y="26" width="55" height="20"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="1.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Referência]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5d06cff2-8c3a-47dc-9824-32a3e6e83cbc" x="1" y="0" width="55" height="15"/>
+				<box topPadding="0"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{orcamento_item_produto_codigo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="7942a26b-65c0-443c-8d1c-b2f341f3db9b" x="371" y="0" width="35" height="15"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{orcamento_item_produto_unidade}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="8f54a1c4-a7b0-46a7-98d6-011a276e2e9d" x="473" y="0" width="76" height="15"/>
+				<box topPadding="0"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{orcamento_item_vr_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="86d40850-b6d0-4d7e-9207-7230cf8036d2" x="296" y="0" width="56" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{orcamento_item_quantidade}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="508b07cb-6c36-4ba4-905b-d9bdb7f8dd06" x="75" y="0" width="221" height="15"/>
+				<box topPadding="0"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{orcamento_item_produto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="18520a29-9a8e-4868-af72-d2e7b45827a1" x="417" y="0" width="54" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{orcamento_item_vr_unitario}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="271" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="7c221352-93e6-4a6a-96eb-592a78195101" x="2" y="5" width="100" height="20"/>
+				<textElement>
+					<font size="11" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Observações:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c5e4a386-aaa3-43cb-822e-d3d5eb9b9a1e" x="31" y="25" width="351" height="17"/>
+				<textElement>
+					<font isItalic="false"/>
+				</textElement>
+				<text><![CDATA[1. A lauda é a unidade padrão de cobrança de serviços de tradução.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0c1bf152-d417-4e1a-91be-b30723685454" x="43" y="37" width="513" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[contendo 1000 caracteres sem espaço.
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="87084c78-330e-4918-b77a-a03eaf0c559c" x="30" y="54" width="154" height="17"/>
+				<textElement/>
+				<text><![CDATA[2. Os preços praticados pela ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4be579b1-7695-4ccd-9373-9b9f56de0908" x="376" y="25" width="179" height="17"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Chamamos de lauda folha A4]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ad020124-b3a5-4454-aca6-50630b2773b9" x="178" y="54" width="132" height="17"/>
+				<textElement>
+					<font isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Central de Traduções]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="33fc3020-f01c-4c9c-8d9b-38bec675e196" x="304" y="54" width="274" height="17"/>
+				<textElement/>
+				<text><![CDATA[estão vinculados à alta qualidade dos serviços ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6a20850d-af3f-41f9-b10e-5455f776bc6e" x="44" y="66" width="512" height="33"/>
+				<textElement/>
+				<text><![CDATA[prestados e à confiança que nossos clientes públicos e privados, aprenderam a associar à nossa empresa.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0483019d-5bf3-45fc-ba28-84b8ab6e7261" x="31" y="93" width="31" height="20"/>
+				<textElement/>
+				<text><![CDATA[3.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a73743c6-86df-4435-9b3d-864d77f59b67" x="44" y="93" width="511" height="20" forecolor="#575757"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Material entregue idêntico ao original sem custo adicional para editoração eletrônica;]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a69e7d58-053d-499c-b4b4-6e862a4adc47" x="43" y="124" width="513" height="42"/>
+				<textElement/>
+				<text><![CDATA[fornecimento desse glossário antes da execução do trabalho poderá acarretar divergências de
+termos que não serão de responsabilidade da CT, porém executaremos se necessárias alterações posteriores de terminologia sem nenhum custo adicional.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="20a3dc03-89ac-4643-9d39-dc0749025f78" x="30" y="113" width="525" height="20"/>
+				<textElement/>
+				<text><![CDATA[4. No caso de terminologia própria, o cliente deverá fornecer o glossário a ser utilizado, o não ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8134d748-a47f-40c7-9da1-b5ff4f23ce98" x="30" y="167" width="525" height="20"/>
+				<textElement/>
+				<text><![CDATA[5. Não se deve avaliar a propriedade dos preços de serviços de tradução tomando-se exclusivamente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c1992fb5-9a6b-4405-97d2-a91321a0f83d" x="43" y="179" width="512" height="56"/>
+				<textElement/>
+				<text><![CDATA[o critério preço/lauda/palavra. Com frequência somos solicitados a corrigir, em caráter de extrema urgência, traduções contratadas unicamente em função do baixo preço. Por isso, sabemos bem
+que o prejuízo causado por uma tradução mal feita não se limita ao valor desembolsado e nem ao
+custeio adicional de uma versão corrigida.]]></text>
+			</staticText>
+			<subreport>
+				<reportElement uuid="208c8dc4-b5ef-4d95-bfeb-2d6ee26b548a" x="-19" y="246" width="597" height="25"/>
+				<subreportParameter name="UID">
+					<subreportParameterExpression><![CDATA[$P{UID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rodape.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

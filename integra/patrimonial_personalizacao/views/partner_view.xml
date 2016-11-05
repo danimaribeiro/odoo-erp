@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="res_partner_form_patrimonial" model="ir.ui.view">
+            <field name="name">res.partner.form.patrimonial</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="sped_base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="cnpj_cpf" position="replace">
+                    <field name="cnpj_cpf" on_change="onchange_cnpj_cpf(cnpj_cpf)" required="1"/>
+                </field>
+                <field name="razao_social" position="replace">
+                     <field name="razao_social" colspan="4" required="1"/>
+                </field>
+                <field name="fone" position="replace">
+                    <field name="fone" required="0"/>
+                </field>
+                <field name="celular" position="replace">
+                    <field name="celular" required="1"/>
+                </field>
+                <field name="email" position="replace">
+                    <field name="email" widget="email" string="Resp. Contas à pagar" required="1"/>
+                </field>
+                <field name="endereco" position="replace">
+                     <field name="endereco" colspan="2" required="1"/>
+                </field>
+
+                <field name="numero" position="replace">
+                    <field name="numero" colspan="2" required="1"/>
+                </field>
+
+                <field name="complemento" position="replace">
+                    <field name="complemento" colspan="2" required="1"/>
+                </field>
+
+                <field name="bairro" position="replace">
+                    <field name="bairro" colspan="2" required="1"/>
+                </field>
+
+                <field name="municipio_id" position="replace">
+                    <field name="municipio_id" colspan="2" required="1"/>
+                </field>
+
+                <field name="cep" position="replace">
+                    <field name="cep" on_change="onchange_cep(cep)" required="1"/>
+                </field>
+
+                <field name="email_nfe" position="replace">
+                     <field name="email_nfe" colspan="4" required="1"/>
+                </field>
+
+                <field name="lang" position="after">
+                    <newline/>
+                    <field string="Rota" name="rota_id" />
+                    <field string="Código de Rastreamento da Base" name="rastreamento" />
+                </field>
+
+                <field name="address" position="replace">
+                    <field colspan="4" mode="tree,form" name="address" nolabel="1" select="1" height="260">
+                        <form string="Partner Contacts">
+                            <group colspan="4" col="6">
+                                <field name="name" string="Contact Name"/>
+                                <field domain="[('domain', '=', 'contact')]" name="title" size="0"/>
+                                <field name="function"/>
+                            </group>
+                            <newline/>
+                              <group colspan="2" col="4">
+                                <separator string="Endereço" colspan="4" col="4" />
+                                <field name="type" string="Type" colspan="2"/>
+                                <field name="endereco" colspan="4"/>
+                                <field name="numero" colspan="4"/>
+                                <field name="complemento" colspan="4"/>
+                                <field name="bairro" colspan="4"/>
+                                <field name="municipio_id"/>
+                                <newline />
+                                <field name="cep" on_change="onchange_cep(cep)" />
+                                <button name="consulta_cep" string="Consultar CEP" type="object" />
+                             </group>
+                             <group colspan="2" col="2">
+                                <separator string="Communication" colspan="2" col="2" />
+                                <field name="phone"/>
+                                <field name="mobile"/>
+                                <field name="fax"/>
+                                <field name="email" widget="email"/>
+                             </group>
+                             <group colspan="2" col="2" attrs="{'invisible': [('type', '!=', 'assina')]}">
+                                 <separator string="Documentos" colspan="2" col="2" />
+                                 <field name="cpf" on_change="onchange_cpf(cpf)" />
+                                 <field name="rg_numero" />
+                             </group>
+                             <newline />
+<!--                             <separator string="Referências" colspan="4"/>
+                             <group colspan="4" col="4" >
+                                 <field name="1_referencia_pessoal" required="1" />
+                                 <field name="2_referencia_pessoal" required="1" />
+                                 <field name="1_referencia_comercial" required="1" />
+                                 <field name="2_referencia_comercial" required="1" />
+                             </group>-->
+                        </form>
+                        <tree string="Partner Contacts">
+                            <field name="type" string="Tipo" />
+                            <field name="name"/>
+                            <field name="function"/>
+                            <field name="phone"/>
+                            <field name="mobile"/>
+                            <field name="email"/>
+                        </tree>
+                    </field>
+                </field>
+            </field>
+        </record>
+
+        <record id="res_partner_tree_patrimonial" model="ir.ui.view">
+            <field name="name">res.partner.tree.patrimonial</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Partners" position="replace">
+                    <tree string="Partners" colors="red:vr_limite_credito &lt; 0;green: vr_limite_credito &gt; 0">
+                        <field name="name" />
+                        <field name="ref" groups="base.group_extended"/>
+                        <field name="phone"/>
+                        <field name="email"/>
+                        <field name="city"/>
+                        <field name="country"/>
+                        <field name="user_id"/>
+                        <field name="hr_department_id" />
+                        <field name="grupo_economico_id" />
+                        <field name="partner_category_id" />
+                        <field name="vr_limite_credito"/>
+                        <field name="pendencia_financeira"/>
+                    </tree>
+                </tree>
+            </field>
+        </record>
+
+         <record model="ir.ui.view" id="res_partner_search">
+            <field name="name">res.partner.search</field>
+            <field name="model">res.partner</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <filter name="supplier" position="after">
+                    <filter name="pendencia_financeira" string="Pendência Financeira" icon="terp-emblem-important" domain="[('pendencia_financeira','=', True)]" />
+                    <filter name="credito_indeferido" string="Crédito Indeferido" icon="terp-emblem-important" domain="[('vr_limite_credito','&lt;', 0)]" />
+                    <filter name="sem_analise" string="Sem Análise de Crédito" icon="terp-locked" domain="[('vr_limite_credito','=', False)]" />
+                    <filter name="credito_liberado" string="Crédito Liberado" icon="terp-dolar" domain="[('vr_limite_credito','&gt;', 0)]" />
+                </filter>
+            </field>
+        </record>
+
+        <record id="base.action_partner_form" model="ir.actions.act_window">
+            <field name="name">Customers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban</field>
+            <field name="context">{"search_default_customer":0}</field>
+            <field name="search_view_id" ref="base.view_res_partner_filter"/>
+            <field name="help">A customer is an entity you do business with, like a company or an organization. A customer can have several contacts or addresses which are the people working for this company. You can use the history tab, to follow all transactions related to a customer: sales order, emails, opportunities, claims, etc. If you use the email gateway, the Outlook or the Thunderbird plugin, don't forget to register emails to each contact so that the gateway will automatically attach incoming emails to the right partner.</field>
+        </record>
+
+        <record id="res_partner_form_credito" model="ir.ui.view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="finan.res_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="restricao" position="after">
+                    <separator string="Limite de Credito" colspan="2"/>
+                    <newline />
+                    <group colspan="2" col="6">
+                        <field name="data_analise_credito" readonly="1"/>
+                        <field name="vr_limite_credito" readonly="1"/>
+                        <field name="user_analise" readonly="1"/>
+                    </group>
+                    <newline />
+                    <group colspan="4" col="6">
+                        <button name="liberar_credito" string="Registrar Análise de Credito" icon="gtk-execute" type="object" groups="patrimonial_personalizacao.group_finan_liberacao_credito" />
+                    </group>
+                </field>
+            </field>
+        </record>
+
+         <record id="res_partner_analise_credito_form" model="ir.ui.view">
+            <field name="name">res.partner.analise.credito.form</field>
+            <field name="model">res.partner</field>
+            <field name="priority" eval="100"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <separator string="Limite de Credito" colspan="4"/>
+                    <field name="name" readonly="1"/>
+                    <field name="cnpj_cpf" readonly="1"/>
+                    <field name="data_analise_credito" required="1"/>
+                    <field name="vr_limite_credito" required="1" on_change="onchange_valor(vr_limite_credito)"/>
+                    <field name="user_analise" readonly="1"/>
+                    <button name="confirma_credito" string="Confirmar Análise de Credito" icon="gtk-apply" type="object" colspan="2" />
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+		<record model="ir.ui.view" id="finan_remessa_folha_tree">
+			<field name="name">finan.remessa_folha.tree</field>
+			<field name="model">finan.remessa_folha</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Remessas de Folha de Pagamento">
+					<field name="partner_bank_id" />
+					<field name="company_id" />
+					<field name="tipo" />
+					<field name="data_pagamento" />
+					<field name="data_pagamento_desejada" />
+					<field name="data" />
+                    <field name="payslip_id" string="Pagamento de" />
+                    <field name="sequencia" />
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="finan_remessa_folha_form">
+			<field name="name">finan.remessa_folha.form</field>
+			<field name="model">finan.remessa_folha</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Remessa de Folha de Pagamento">
+					<group col="4" colspan="4">
+						<separator string="Informações básicas" colspan="4" />
+						<field name="partner_bank_id" colspan="4" required="1" on_change="onchange_partner_bank_id(partner_bank_id)" />
+						<newline />
+                        <field name="raiz_cnpj" invisible="1" />
+						<field name="company_id"
+							domain="[('cnpj_cpf', 'ilike', raiz_cnpj)]"
+							colspan="4" required="1" />
+						<newline />
+						<field name="data_pagamento" colspan="2" />
+						<field name="data_pagamento_desejada" colspan="2" />
+						<field name="tipo" colspan="2" />
+						<field name="sequencia" colspan="2" />
+						<newline />
+						<field name="payslip_id" string="Pagamento de" colspan="4"
+							attrs="{'required': [('tipo', 'in', ['R', 'F'])]}" domain="[('tipo', '=', tipo), ('state', '=', 'done')]" />
+						<newline />
+						<field name="data" />
+						<field name="comprovante_salario" />
+						<newline />
+						<button icon="gtk-execute" string="Atualizar dados" name="atualiza"
+							type="object" colspan="2" />
+						<button icon="gtk-execute" string="Gerar Comprovante Salarial" name="gera_arquivo" type="object" colspan="2" attrs="{'invisible': [('comprovante_salario', '=', False)]}" />
+						<button icon="gtk-execute" string="Gerar arquivo" name="gera_arquivo" type="object" colspan="2" attrs="{'invisible': [('comprovante_salario', '!=', False)]}" />
+						<button icon="gtk-execute" string="Gerar financeiro" name="gera_lancamento"	type="object" colspan="2" attrs="{'invisible': [('comprovante_salario', '!=', False)]}" />
+						<newline />
+						<field name="nome_arquivo" colspan="4" />
+						<newline />
+						<separator string="Arquivo" colspan="4" />
+						<field name="arquivo" nolabel="1" filename="nome_arquivo" colspan="4" />
+					</group>
+					<notebook colspan="4">
+						<page string="Holerite a incluir">
+							<field name="prepara_payslip_ids" colspan="4" mode="tree"
+								readonly="1" nolabel="1">
+								<tree
+									colors="red:bank_id == False or banco_agencia == False or banco_conta == False or valor_liquido == False or valor_liquido == 0">
+									<field name="company_id" />
+									<field name="employee_id" />
+									<field name="bank_id" />
+									<field name="banco_agencia" />
+									<field name="banco_conta" />
+									<field name="valor_liquido" sum="Valor líquido" />
+								</tree>
+							</field>
+						</page>
+						<page string="Holerites já incluídos">
+							<field name="payslip_ids" colspan="4" mode="tree" readonly="1"
+								nolabel="1">
+								<tree>
+									<field name="company_id" />
+									<field name="employee_id" />
+									<field name="bank_id" />
+									<field name="banco_agencia" />
+									<field name="banco_conta" />
+									<field name="valor_liquido" sum="Valor líquido" />
+								</tree>
+							</field>
+						</page>
+						<page string="Arquivo de remessa">
+							<field name="arquivo_texto" nolabel="1" colspan="4" />
+						</page>
+						<page string="Arquivo de retorno">
+							<field name="nome_arquivo_retorno" colspan="4" />
+							<newline />
+							<separator string="Arquivo retorno" colspan="4" />
+							<field name="arquivo_retorno" nolabel="1"
+								filename="nome_arquivo_retorno" colspan="4" />
+							<button icon="gtk-execute" string="Tratar retorno" name="trata_retorno"
+								type="object" colspan="2" />
+							<newline />
+							<field name="arquivo_texto_retorno" nolabel="1" colspan="4" />
+						</page>
+					</notebook>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="finan_remessa_folha_search">
+			<field name="name">finan.remessa_folha.search</field>
+			<field name="model">finan.remessa_folha</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Remessas de Folha de Pagamento">
+					<field name="partner_bank_id" select="1" />
+					<field name="company_id" select="1" />
+					<field name="tipo" select="1" />
+					<field name="data_pagamento" />
+					<field name="data_pagamento_desejada" />
+				</search>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="finan_remessa_folha_acao">
+			<field name="name">Remessas de Folha de Pagamento</field>
+			<field name="res_model">finan.remessa_folha</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="finan_remessa_folha_tree" />
+		</record>
+
+		<menuitem action="finan_remessa_folha_acao" id="menu_finan_remessa_folha"
+			name="Remessas de Folha de Pagamento" parent="finan.menu_finan_tesouraria" />
+
+		<menuitem action="integra_rh.hr_rubrica_mes_acao" id="menu_finan_hr_rubrica_mes"
+			name="Rubricas por Mês" parent="finan.menu_finan_tesouraria" />
+
+	</data>
+</openerp>

@@ -1,0 +1,1080 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="recibo_pagamento_decimo" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="1.7715610000000246"/>
+	<property name="ireport.x" value="344"/>
+	<property name="ireport.y" value="1149"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REGISTRO_IDS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+p.razao_social,
+p.cnpj_cpf,
+p.endereco as empresa_endereco,
+p.numero as empresa_numero,
+p.complemento as empresa_complemento,
+p.bairro as empresa_bairro,
+p.cidade as empresa_cidade,
+p.estado as empresa_estado,
+p.cep as empresa_cep,
+e.nome,
+c.name as matricula,
+e.carteira_trabalho_numero,
+e.carteira_trabalho_serie,
+c.date_start as data_admissao,
+(cbo.codigo || ' - ' || j.name) as funcao,
+coalesce((select count(*) from hr_employee_dependente d where d.employee_id =
+e.id), 0) as dependentes,
+c.wage as salario_base,
+h.data_inicio_periodo_aquisitivo,
+h.data_fim_periodo_aquisitivo,
+h.date_from as data_inicio_gozo,
+h.date_to as data_fim_gozo,
+h.data_aviso_ferias,
+b.bic as banco_codigo,
+b.name as banco_nome,
+e.banco_agencia,
+e.banco_conta,
+h.id,
+cast(u.photo as varchar) as photo,
+h.date_from -2 as data_pagamento,
+(SELECT
+cast(sum(
+case
+when sr.sinal = '+' then hl.total
+else hl.total * -1
+end) as numeric(18,2)) as liquido
+
+FROM hr_payslip_line as hl inner join hr_salary_rule as sr on
+hl.salary_rule_id = sr.id
+where sr.sinal in ('+','-') and hl.total > 0 and hl.slip_id = h.id) as liquido,
+((SELECT
+cast(sum(
+case
+when sr.sinal = '+' then hl.total
+else hl.total * -1
+end) as numeric(18,2)) as liquido
+
+FROM hr_payslip_line as hl inner join hr_salary_rule as sr on
+hl.salary_rule_id = sr.id
+where sr.sinal in ('+','-') and hl.total > 0 and hl.slip_id = h.id)) as liquido_extenso,
+
+coalesce((SELECT sum(hl.total)
+FROM hr_payslip_line as hl
+where hl.code = 'BASE_INSS' and hl.slip_id = h.id), 0) as base_inss,
+coalesce((SELECT sum(hl.amount)
+FROM hr_payslip_line as hl
+where hl.code = 'INSS' and hl.slip_id = h.id), 0) as inss,
+coalesce((SELECT sum(hl.total)
+FROM hr_payslip_line as hl
+where hl.code = 'BASE_FGTS' and hl.slip_id = h.id), 0) as base_fgts,
+coalesce((SELECT sum(hl.total)
+FROM hr_payslip_line as hl
+where hl.code = 'FGTS' and hl.slip_id = h.id), 0) as fgts,
+coalesce((SELECT sum(hl.total)
+FROM hr_payslip_line as hl
+where hl.code = 'BASE_IRPF' and hl.slip_id = h.id), 0) as base_irpf,
+d.name as departamento,
+mes_extenso(cast(h.date_from as date))  as competencia,
+case
+  when t.fantasia is not null then t.fantasia
+  else t.razao_social
+end as tomador
+
+--from hr_payslip_line lh
+--join hr_salary_rule r on r.id = lh.salary_rule_id
+--join hr_payslip h on h.id = lh.slip_id
+from hr_payslip h
+join hr_employee e on e.id = h.employee_id
+join hr_contract c on c.id = h.contract_id
+join res_company u on u.id = h.company_id
+join res_partner p on p.id = u.partner_id
+join hr_job j on j.id = c.job_id
+join hr_cbo cbo on cbo.id = j.cbo_id
+left join res_bank b on b.id = e.bank_id
+left join hr_department d on d.id = c.department_id
+left join res_partner t on t.id = c.lotacao_id
+where h.tipo = 'D' and h.id in $P!{REGISTRO_IDS}
+
+order by
+  p.razao_social,
+  e.nome]]>
+	</queryString>
+	<field name="razao_social" class="java.lang.String"/>
+	<field name="cnpj_cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[CNPJ/CPF]]></fieldDescription>
+	</field>
+	<field name="empresa_endereco" class="java.lang.String"/>
+	<field name="empresa_numero" class="java.lang.String"/>
+	<field name="empresa_complemento" class="java.lang.String"/>
+	<field name="empresa_bairro" class="java.lang.String"/>
+	<field name="empresa_cidade" class="java.lang.String"/>
+	<field name="empresa_estado" class="java.lang.String"/>
+	<field name="empresa_cep" class="java.lang.String"/>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[Descrição]]></fieldDescription>
+	</field>
+	<field name="matricula" class="java.lang.String"/>
+	<field name="carteira_trabalho_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Nº da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_serie" class="java.lang.String">
+		<fieldDescription><![CDATA[Série da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="data_admissao" class="java.sql.Date"/>
+	<field name="funcao" class="java.lang.String"/>
+	<field name="dependentes" class="java.lang.Long"/>
+	<field name="salario_base" class="java.math.BigDecimal"/>
+	<field name="data_inicio_periodo_aquisitivo" class="java.sql.Date">
+		<fieldDescription><![CDATA[Início do período aquisitivo]]></fieldDescription>
+	</field>
+	<field name="data_fim_periodo_aquisitivo" class="java.sql.Date">
+		<fieldDescription><![CDATA[Fim do período aquisitivo]]></fieldDescription>
+	</field>
+	<field name="data_inicio_gozo" class="java.sql.Date"/>
+	<field name="data_fim_gozo" class="java.sql.Date"/>
+	<field name="data_aviso_ferias" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data do aviso de férias]]></fieldDescription>
+	</field>
+	<field name="banco_codigo" class="java.lang.String"/>
+	<field name="banco_nome" class="java.lang.String"/>
+	<field name="banco_agencia" class="java.lang.String">
+		<fieldDescription><![CDATA[Agência]]></fieldDescription>
+	</field>
+	<field name="banco_conta" class="java.lang.String">
+		<fieldDescription><![CDATA[Conta]]></fieldDescription>
+	</field>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="photo" class="java.lang.String">
+		<fieldDescription><![CDATA[Photo]]></fieldDescription>
+	</field>
+	<field name="data_pagamento" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de pagamento]]></fieldDescription>
+	</field>
+	<field name="liquido" class="java.math.BigDecimal"/>
+	<field name="liquido_extenso" class="java.math.BigDecimal"/>
+	<field name="base_inss" class="java.math.BigDecimal"/>
+	<field name="inss" class="java.math.BigDecimal"/>
+	<field name="base_fgts" class="java.math.BigDecimal"/>
+	<field name="fgts" class="java.math.BigDecimal"/>
+	<field name="base_irpf" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Base IRPF]]></fieldDescription>
+	</field>
+	<field name="departamento" class="java.lang.String"/>
+	<field name="competencia" class="java.lang.String"/>
+	<field name="tomador" class="java.lang.String"/>
+	<variable name="photo" class="java.lang.String">
+		<variableExpression><![CDATA["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"]]></variableExpression>
+		<initialValueExpression><![CDATA["/9j/4AAQSkZJRgABAQAAAQABAAD//gA+Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2NjIpLCBkZWZhdWx0IHF1YWxpdHkK/9sAQwAIBgYHBgUIBwcHCQkICgwUDQwLCwwZEhMPFB0aHx4dGhwcICQuJyAiLCMcHCg3KSwwMTQ0NB8nOT04MjwuMzQy/9sAQwEJCQkMCwwYDQ0YMiEcITIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIy/8AAEQgAzAEQAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/aAAwDAQACEQMRAD8A9/ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoooNAFBdZ057+SxF0guk4MbAqfXjPX8KvZFeX+P7Y2+vpcKMCaIHPuOP8ACoNH8a6jppWOc/aoB/C5+YD2P+NemsulUpKpSd79DwnnUaWIlQrq1nuj1iisXSfEunawoEEwWbvE/DD/AB/CtkV504Sg+WSsz2aVWFWPNB3QtFFFSaBRRRQAUUUlAC0U01kat4l07R1InmDTdoo+W/8ArfjVQhKb5Yq7M6lWFKPNN2RsZFUX1nTkv47E3SG6kOFjUFj6846fjXm2seNNR1HdHAfssB/hQ/MR7t/hU/gC2M+vvO3IhiJz7nj/ABr0Hl0qdKVWq7W6HjLOo1cRGjQV7vdnqORRmkHSlrzT3QzRmiigAooooAKKKTFAC5ooooASloooASiiigAooooAWiiigApOlLRQBxHxFtd+nWt0BzFIVP0Yf/WrzivdL2xt7+2a3uolkibqprg9c8JaRa3Cxw6ktpK43JHccqf+Bdv1r28uxsIQVKZ8tnOWVKlV16drO3WxxKsUIZSQR0IrqNH8cahYbYrvN1AOPmPzgex7/jWTe+H9SslMjQebD2lhO9fzFZmK9ScKOJjrZo8GnVxODneN4s9ZtPGui3WAbkwN6TLj9elblveW10m63nilX1Rw38q8Kp0cskTBo3ZGHQqcGvPqZPB/BKx7FHiOqv4kE/TQ96yKMivLfC+s6zdazbWa3sjxM2XEmG+Ucnk0eKNa1m21m5szeyJErZQR/L8p5HI5rh/s6ftfZcyva56v9tUvYe35Ha9vmel3F5bWqbrieKJfV3ArDu/Gui2uQtwZ2HaJSf16V5RJK8rFpJGdj1LHJpld1PJ4L45XPLq8RVX/AA4Jeup1WseOL+/3RWn+iQHj5T85/Ht+FcuzFmLMSSeSSetJg1p2Xh/Ub5fMWDyof+esx2L+Z6/hXoQhRw0dLJHjVKuJxk7yvJmXXpHw6tdmnXV0RzLIFH0Uf/XrP0TwlpFzcNHNqS3kqDc0dvwo+rd/0rvbKyt9Ptlt7WJY4l6KK8vMcbCcHSge9k2WVKdVV6lrK/W5YpaKK8Q+pCiiigAooooAKKKKACiiigApKWigBKKKKACiigUALRRRQAUUUUAFcN8RrXdZ2d0BzHIUJ9iM/wBK7mqWp6Zb6rZNa3Slo2IPBwQR3rfDVfZVYzfQ5Mdh3iMPKkt2eKwXdxavugnkib1RitSy6hJc/wDHxHFK398rhvzGM/jmuk1XwUlvcGKy1KFpcbhBOwV8ex71zl3pt7p0gF3avHz/ABD5T9CK+mp1qFbWO/3M+GrYbFYe8Zp2+9FM4ycZAortfD9j4X1lBFJA8F2OsZmbDf7p710X/CC6F/z7y/8Af1qwqZlTpy5ZxaZ1UclrV489OUWvX/gGF8OrDMt3fsPugRIffqf6UfEWw2yWt+o+8DE59+o/rXbabplrpVoLa0QpECWwTk5NGpaXbaraG2u0LxEhsA4ORXk/Xf8Aavb9P0Pov7M/2D6t9r9Tw+gYzzkivVz4F0If8u8v/f1q57xBY+F9GVoo4Hnu8cRiZsL7se1etTzKnUlywi2z52tktahBzqSil6/8A5SLUJLb/j2jiib++Fy35nOPwxUVxd3F0+64nklPq7E1LaabeajJi0tXkyf4R8o/E10ml+Co7i4EV5qMKygbjBAwZwPc9q3qVqFHWW/3s5aOGxWItGCdvuRq/Dm122V5dEcySBB9AM/1ruao6ZplvpVmtraqVjUk8nJJPer1fM4mr7WrKa6n3OBw7w+HjSe6CiiisDrCiiigAooooAKKKKACiiigAooooAKKKKAEpaKKACiiigAooooAKSlooA89+I9rtmsrsDqGjY/TkfzNcdDqV7bpsiupQh6oWyp/A8V69ruiQ67Yi2mdk2tvV16g4x/WvOtV8F6ppu54k+1Qj+KIfMPqvX8s172X4mi6SpVHqu58jm+BxEa8q9JOz7GDJcNJIJAqI4Od0Y28/QcD8K7vwl4tubu6i028UzOwOyYdeBn5v8a8/KlSQwII6g12/wAO7Dfd3N+w4jURr9Tyf0/nXTmEKX1duS22OHKalf63GMHa+/oeig0HpWbq2tWWjW3m3UgBP3UHLN9BRpWtWes23m2sgJH3kPDKfcV837OfLz207n2/t6ftPZ8y5uxyvi7xbdWlzJptmphdQN8x68jPy/41wkdwySNIVSRyc7pBu5/Hg/jXY/ESw2XdtfqOJFMbn3HI/Qn8q4kAsQACSegFfSZfCl9XTit9z4jN6lf63KM3e23oW5tSvbhNkl1KUHRA2FH4Diuv+HFrma9uyOgWNT9eT/SsjSvBeqajteVPssJ/ilHzEey9fzxXo2haJBodibaF2fc29nbqTgD+lc2YYmiqTpU3q+x3ZRgcRKvGvVTsu5pjpS0UV4J9cFFFFABRRRQAUUUUAFFFFABRRRQAUUUlAC0UUUAFFFFABRRRQAUUUUAFFFFABSEZpaKAMjVPDem6spNzbqJO0qfKw/Hv+NY14W8FeHfLsoWuC0hJlYcKT0LY/AV2FQzwR3ELwyoHjcbWUjIIreFdq0Z6x7HJVwkZXnT92bVrniF5e3N/ctcXUzSSt1JPT29qSzvbmwuVntZWjlXoV/kfUVteJ/DUmiXPmxAvZyH5G/un+6aPC/hqTW7nzZQyWcZ+dv7x/uivpvb0PYc/2f60Ph/quJ+tey157/07nW2Rbxr4e8u9ha3KyAiVRwxHUrn8RWxpfhzTdJANvbgy/wDPV/mY/j2/CtG3hjt4UhiQJGg2qo6AVNXzM67d4w0j2PuKWEirTqe9NLcaFxTqKKwOsKKKKACiiigAooooAKKKKACiiigAoopKAKV7rGnadIsd7ew27MMqJHAJFVv+Ep0H/oL2n/f0V558TpN3iG3QH7lsP1ZqxND8L6h4hjmksjCFiIDeYxHJ9ODWyprlu2c8q0ublSPXh4p0InA1az/7+ir9tfWl4u61uYpl9Y3DfyryWT4ca+iFgLaQj+FZef1ArnSL/RdRZSZbW7hbnBwRR7OL+FidaUfiR9B0tc74O159e0USzY+0wt5cuO5xkH8a6GsmrOzOhNNXQtFJmg9KQw3UA5rxXxjf3P8AwlmoLHczKiuFCq5AGFAr0/wfv/4RPTzIzM7R7iWOSckmrlCyuZQq80nE3KKSioNRaTNUNcuprPQ765txmaKFmTjPIHWvIfDOp6pJ4qsmS6nkeWYCQFydyn72fwzVxhzJsznU5Wl3PbqKSioNCC7tIb63e3uIw8TjDKaLS0hsrZLe3jEcSDCqKnzRTu7WvoTyR5ua2oUtJmikULRRSZoAWkopaACiikoAWikqnq1xLaaReXEAzLFC7oOvIBIoBuxczRXh+gapqkniezkS6nkllnUPlydwJ5yPTGa9wFXOHKZ06nOri0UmaM1BoDMFUknAHJNZI8UaGzBRqtoSTgDzRVzU5PJ0q7l/uQu35Ka8F0uPzdXso/786D/x4VpCClcxq1XBpI6D4iSb/Fsq/wByJF/TP9a6r4XR7dEvJP71xj8lH+NcV43k8zxhqB/usq/koqhY6rq1jAY7G6uYYi27EZIBNa8t4JHOp8tRyZ78a8Z+IF5b3fimT7OysIo1jdl6FhnP88fhWdJq/iC8UxPeX8oPBUM3P5Vc0jwRrGqzKZLd7WDPzSzLtOPYdTSjBQd2yp1HUXLFHQ+A76DQ/DWo6neMVgMwVcDJYgdB+dUr/wCI+r3k/l6bAluhPy/L5jn+n6V6NZ6NZWejppaxK9sq7WVxnd6k/Ws21s/DnhISMJbe3eQliZZAXx6Dvio5ott2NeSSiknZHnzeNPFVi6/aZXXPIWa3C5/QV3PhHxgPEIkt7iNYryNdxCn5XXpkZ6VjeMvFeh6poM9lbTefcFlMZEZABDDJyR6Zrnvh6WHi6AL0Mcm76bf/ANVU4qUb2sZqbjNJO6MnxHJ5viXUn9blx+RIrY0bxrrUJsdNheEQhkhUGPnGQK5zUJPO1K6k/vzOfzJr3mwsbeKwtl8iPckajOwZyAKqbSSTRNKLlJtOxxfjPxfqei62tpZPEI/JVjvTJySf/rVWl+Itxb6DbELFNqcwZnOMJGNxAyB34rC+IMm/xhdD+4iL/wCOg/1rU8GeCINUtF1LUiWgYny4VON2DjJP9KXLFRTY+abm4xLem+KtWn8I6vqdxMkksUiJEGjG0ZIyMDr1rP8ABesz3PimCFbSxiEocyNFAFbAUng9uQK3/Gun2WjeDJoLG3SCOWdMqvc9c/pXK/DxM+KBIekcEjf0/rSVnFscnJTUWze1r4ltBcy2+m2it5bFTLMeCR6KP8a5m48d+Ibhift3lD0jjUf0zWA2Z7pvV3/ma91sfDuk2ECxw6fbjA5ZowzH6k805csEtBR56jep5Pa+OPEFrKHN8Zlzykqhgf61dvPiNrtwcQmC2Xt5aZP5nNS/Em0tbXW7b7PCkReDc4RcA/MecVofDjRLC+srq8u7WOaRJdieYNwAwD06d6b5eXmsJc/NyJnMHxl4hL7v7Umz6cY/LFdn4M8b3GpXy6bqW1pXB8qZRjcRzgitvxVpenjwvft9jgUxxFkZYwCpHTFeWeFQW8VaYF6+ep/DvSXLOLdhvmpzSbuex65r1poNibm6YknhI1+859BXml78Rdcu5iLTy7ZD91UQM34k1V8d6m+o+Jp492YbX9yg9x94/n/Ku+8C6Fb6foNvdGJTdXK+YzkcgHoB7YqbKEbstylUnyxdkcRafELX7WYefJHcID8ySRhT+YxXpfh/xBbeINP+02+VdTiSMnlD/h71gfEjS7eXQvt4jUXEEijeByVJxg/pXLfDm9a28QyQZPlzwNuHuvIP8/zoaUo3QoylCfK3c2ta+JbwXEtvptorbGK+bMTgkeij/GuYuPHXiG4JP27yh6Roo/pmsE5nuveR/wCZr3Wx8PaTY26Rw6fbjA5ZowxP1J5qnywWxMeeo3qeT2njnxBayhzfGZQeUlUMD/WvRk8Ti/8ABdzrFuqpNHEwZG5CuO3uOR+dcX8SbO1tNbtvs8KRGSDc4RQAfmODTdGcxfDXW2zw06qP/Hc0SSaTCMpRk4tjPC+vXEvie0jjtLGIzybXeO3Ctjvg9q7/AMTeLLTw5GquhmupBlIgccepPYV5p4Fj8zxjYf7JdvyQ163q+i2OtWv2e+iDAcq44ZT6g1NSykrl0XJwdjzGXx14m1GZvsY8sD+C3g34+uc02D4geIbK423TJNtPzRzRBT+mCK9BXVfDnhy1W0S7toVjGNiNubPvjJz9a898d63put3trLp5LmNGV3KFc88dfxqo2k7cuhM7xV+bU7q416HWfAl/fwgrm3kR0J5VsYI/WvLvDEfm+KNNT/p4Q/kc/wBK29DlaP4ea/z8pkQD6nAP9Kz/AARH5njHTx/dZm/JTTiuVSsTKXM43KniaTzfE+pv/wBPDj8jivVPAUQTwfZZHLb2/wDHjXkGpyedq15J/fnc/wDjxr2rwlH5XhTTV9YA358/1pVfhRVDWbZs7R6UuBS0hrnOs4Hx54tuNOmGl6e/lzFQ0so6qD0A9D3zXNeHPBl74lQ39zcmK3ZiPMb5nkPfH+JpfiHp9xbeJZbt0YwXKqyPjjIABH14/WpvD3j6TRNLjsJLITpGTsYSbTgnODwfWuhJqHunG5J1Hz7FjxZ4P03w9oC3EDzyXDSqm6RhjGCTwB7VR+Hgx4iml/55Wkj/AKgf1qPxT4zk8SW0VsLRbeGN95+fcScY9B6mtL4e6ZcyR6ndiNlSS2aCNiMBmPp+Qp6qHvCXK6i5Diol868Re7yAfma+iFGEA9BXzuhlsb1WZCssMgJVx0IPQ16f4Z8cXmva1HYvaQxRlGZmViTwO1KrFtXQ6Ekm0+pw/jKTzPF2pHPSQL+QA/pXq3g6PyvCWmj1i3fmSf61494hk83xHqT563L/APoRr2zw/H5Xh7Tk9LaP/wBBFKr8KRVDWbZzHxQk2+H7aP8AvXIP5K3+Ncv4B/d3Wq3H/PKxc/y/wre+KkmLXTYvV3b8gP8AGsHwh+70LxLP6WgUH6hqcf4Yp/xTm9Mj87VrOP8Avzov5sK+hK8G8Mx+b4n0xf8Ap4Q/kc/0r3iprborDbM8j+Jcm/xPGv8ActlH6sf611fw0j2eGHf+/cMf0A/pXE+P5PM8X3Qz9xUX/wAdB/rXoPw/j8vwfan++zt/48R/SnP+GhU9arJ/HEnleD9QPqqr+bAV5j4Hj8zxhYDspZj+CmvQ/iLJs8IzL/z0lRf1z/SuH+HUe/xbG39yF2/TH9aIfAwq61UjD1xWXX9RD/e+0yZ/76Ne4aIytoVgU+79njx/3yK86+IHhqeHUZNWtYme3m5lCjOxvU+xqhofj3UNFsFszDFcwx/6veSCo9M+lOS54qxMH7Ob5js/iRdLD4X8kn5p5lUD6cn+VcP4Ihb+0r27A+W2s5XJ9yMD+tVNU1bVfF2pRgxGRx8sUEKnC5/z1ru7TQP+EZ8C6mZSpu5oGMrDtxgKPpmj4Y8r6jvzz5lsjzPSo/O1eyj/AL86D/x4V9B9q8H8MR+b4o0xP+nhD+RzXvPaprborDLRs8i+Jcm/xNGv9y2Uf+PMf60kX7n4Vzn/AJ7XwH5Y/wDiarfECTf4vuRn7iIv/joP9asah+6+F+lp0Mt2zfkX/wDrVa+GJm370mM+HMe/xWr/APPOF2/kP60nirxheavey2tpM8VirFVVDgy+59j6Va+GsPm6xenpi1K59MsK5S8tLnStQe3nQxzQv3Hp0I9qdk5sm7VNWO30f4ZvcQJPql00RYZ8mIfMPqT3rB8aaLZaDqsNpZeZtMAdi7ZJJJH9K6GD4pusCrNpYaQDllmwCfpiuP1/W5fEGqm9kiEZKhFRTnAHv360o8/NqOfs+W0dzYtP3Pwwv2/57Xyr+QU/0pPh1Hv8Wxt/cidv0x/WrGp2k2m/DSxhnQxyT3ZkKMMEDBxn8AKf8MY93iC5f+5bH9WFD+FsaXvxR6SdD0kkk6ZZknqTAv8AhV2ONIY1jjVURRhVUYAHoKfRXMdlkgooooGQ3NrBeRGK4hjljPVHUMD+dZR8I6ATn+yrb/vmtuimm0JpPcyIvC+hQtuTSrTI9Ywf51qJGkaBEVVUcAAYAp9FK9wSS2M280HStQl827sLeWQ9XZBk/jTrPQ9L0+TzLOxggkxjeiANj61oUU7sOVFBtE0t2LPp1ozMckmFSSfyq6iKihVAVQMADoBTqKQWRWubC0vdv2q1hn2/d8xA2PpmmR6XYRRSRR2Vukcow6LGAG+o71coouFkUYtH02CVZYbC1jkU5V0iUEfQ4q7ilooC1ilNpOnXErSz2FtLI3V3iUk/iRViGCK2iWKCNI41+6iKAB+AqWigLIhubW3vI/LuYY5o852yKGGfoait9MsLSTzLazt4XxjdHGFOPTirdFA7CFQRgjINZU3hnRLiQyS6Xas56nywM/lWtRRewmk9ypaabZWClbO1hgB6+WgXP5VPLDFPE0U0ayRsMMjDIP1FSUUBYoxaPpsEqyw6faxyKcqyRKCPxxV2looHYpTaTp1xK0s9hbSyN1d4lJP4kUr6XYSQJA9nbtDGcpGYwVX6DtVyincVkVbbTrKzZmtbSCBmGCY4wuR+FMvdJ0/UgPttnBPjoZEBI/GrtFK4WRif8Ih4f/6BVt/3zVq20DSbJw9vp1tG46MsYyPxrRop3Ycq7Fe4srW8ULc28UyqcgSIGAP402206ys2LWtpBCzDBMcYUkfhVqikOwUUlLQAUUUhoAM0ZrmtWkkttYae+kvI9P2p5Utu5CRNk58wD145ORUniCVxf6XEpuzFIZN6WrlWbC5HQinYnmOhzRmsPUbiWz0SBbZ5Y5JpI4VeY7nj3sASc5yRmks/s9prK2guNRaZkY4uGZo5MYyQTxxntiiwc2pu5ozWTYTSvrGsRtIzJG8YRSeFzGCcfjWY95cf8IAbrz5fP8rPmBju+9jr9KLBzHU5ozXPaDPJJqF8iSXP2WIIoju2JkV+SevO0jHX8KqXOsMniPzxegWsM62b2+8clhy+PZio/A0WFz6XOszRmue8RyXy3WnLYSssu6STyweJdq52n2PT8al0jUv7R1G8ljkZoDBA6IT90ndnjseOfpRbS4+bWxuZozXO6Rby6rapqk17dLLJIzKkcmERQxAXb0PA5zzSeJruUGCxtr0Ws7K828uF4UcD8WI/AGi2tg5tLnR5zRmqumXqahptveR/dmjD49MjkVU0+aR9Y1eN5GZI5Iwik8KDGCcfjSsO5q5ozXCQ6rfW+h3MdzcyM88bTWsxbnh8Mmfbgj2PtW/4nhYaPPdx3FxDLCnymKVkHUdQOtNxJU7o3M0ZrD1eNtM8L3rW89wXEZYSPKWcHjoTzVjSEVY5GCXyZIBF3IWP4ZJotpcd9bGpmjNZXh6aSfRYZJXZ3LyAsxyeHYCqttfy2+l6zdOWlNtcTlFY54UZA+lFg5jfzRmuYiKWrWEt3e6i9xOYyZVLeSWY/dx90D9ak1qVzr1pAftzRG2kcx2jlTkMoBOCPU0W1Dm0OjzRmsHXxcJpFrDaXE0Ekk8UQkLZYZOOT396i03VJb/V7VHJR1tZVuIc8LKroDx+PHsaLaBza2OjzRmubnsM+JYbf7ZfCKW3klZRcuBuDLjHPA5PFGtSP/btnb/6c0TW0jmO0cqxIZACcEccn86LBzHSUtQ2yhLeNRvwFA/eHLfifWpqRQUUUUAFFFFABRRRQBl3+jf2g8iy3tyttKAJLdSu1h6ZxkZ74NPv9KF7LbSrcTW8tvu2PFt7jB6g1o0UXFyoozaal1pxsrt5J1I5diAxOcg8YwR7VBa6MYL2K6mvbm5kiRkjEpXCg4z0AyeB1rVoouFkZV1oomu5LmC8uLV5lCy+SVw4HTqDg+4qWXSLeTR/7MUMluECDaeQB7n6VoUU7hZFMafGmpPfKzCR4hE6jowByCfcZP51UPh6ybTJbJ03ebuLTEDzNzEktnHXJrXoouw5UU5LBJbm0nd3L227aePmyMHNRWGjW2nXl5cW+4G7YM6k/KpGenpkkmtGikFkc+mjXEGrhLWa5h01syyIsi7fMJBwv8QB5yOBWl/ZVu9/LeSoJZJEVAJACEAz0/M1eop3FyoqafYR6dC8MJbyzI0gU9F3HJA9smiCxS3u7u4UsXuWVnBPAwoUY/KrdFIdkY1z4bs7rSYdPkMmyF96OCAwOSTz75Iq/f2KahYy2kpYJIMEr1q1RRdhZFW/sU1DT5rORmVJV2kr1H0ptnZzWoYSXs9znGPNCjb9NoFXKKAstzL07R201gI724eAFiIX27Rk57DPU+tT22nRW8dzGMulxK0jhueW6j6Vdop3CyMSPw4kZgT7bdtawSLJFbsylVKnIGcbsD0zVm90k3d7Fdx3c9tNHG0YMW05BIJzuB9BWlRRdhyopT6eLmC3jllkcwyJKHOAWZTkZ4xUUejW8WtSaqm5Z5IvLZQflPTnHrwB+FaVFK4WRUaxRtSjviW8xImiAzxgkH+gqC90r7XeRXcd3PbTRxtGGi2nKsQSDuB7qK0qKLhZEcMbRQojSNIyjBdsZb3OOKkoooGFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAf/9k="]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="78" splitType="Stretch">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="0" width="74" height="42" uuid="49a9d47b-0d34-400d-b9f9-5844d8e9b7bc"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<imageExpression><![CDATA[new java.io.StringBufferInputStream(new org.w3c.tools.codec.Base64Decoder($F{photo}).processString())]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="74" y="0" width="44" height="14" uuid="23c53fff-7df0-404a-b68b-094b47d92cab"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empresa:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="74" y="14" width="44" height="14" uuid="00bdba32-953e-4b82-9f3d-3aab471dd9fa"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CNPJ:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="74" y="28" width="44" height="14" uuid="76ca7224-10f0-415a-93d6-71a1c40d096a"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="118" y="0" width="244" height="14" uuid="2e0cd308-f12d-48b0-a630-fbb9f79cd255"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{razao_social}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="118" y="28" width="437" height="14" uuid="d36c9022-d5e3-416a-8f3b-2a78802eb639"/>
+				<box leftPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_endereco} + ", "+ $F{empresa_numero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="118" y="14" width="244" height="14" uuid="7860f50e-a5d1-4629-8ebd-7b28b4dd4c55"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cnpj_cpf}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="362" y="0" width="193" height="14" uuid="7d83da65-7f15-4d16-8acb-750d5b67f834"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RECIBO DE PAGAMENTO - 13º SALÁRIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="362" y="14" width="87" height="14" uuid="9c586579-1489-4d56-8a68-fff759aea76b"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Período: ]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="449" y="14" width="106" height="14" uuid="4b4f5d57-886c-4d63-8145-6b2c0d38388c"/>
+				<box leftPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{competencia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="42" width="50" height="12" uuid="c2b94432-59ac-445b-bcd7-5af67d107fc4"/>
+				<box leftPadding="0">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="42" width="357" height="12" uuid="012203dd-ae67-4760-ae53-f8ee5c8009f3"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome do Funcionário]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="407" y="42" width="148" height="12" uuid="643b51d8-c0ba-4ff0-a437-6e95cc789080"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Admissão]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="54" width="50" height="12" uuid="1dd0fe59-d44e-4b1f-b044-5008a1f596a6"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField>
+				<reportElement x="50" y="54" width="270" height="12" uuid="ce28f081-3547-4bbb-b93c-e0026270c38b"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="320" y="54" width="87" height="12" uuid="fc8f6636-fb07-4f0e-9d9d-c7acbe3c4ccb"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="407" y="54" width="148" height="12" uuid="9262d6cb-be3a-4dc6-9c24-0cae437cb243"/>
+				<box leftPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_admissao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="50" y="66" width="68" height="12" uuid="e6694124-de49-4f59-b4ab-c3c67bb96e10"/>
+				<box leftPadding="5" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CBO/Função:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="118" y="66" width="214" height="12" uuid="d4a52881-5a58-4e82-89ed-a25d0552b76e"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{funcao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="332" y="66" width="75" height="12" uuid="abf00791-b359-44c2-8a8a-16fcec42ffc5"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tomador:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="407" y="66" width="148" height="12" uuid="63fa204a-b485-422c-9939-641d72826dd0"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tomador}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="66" width="50" height="12" uuid="23f2cc8f-b02d-49c2-ba55-bc4670a67d61"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+		<band height="243">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="243" uuid="d2a63187-60c8-4560-bfe4-06ab1b4fe762"/>
+				<subreportParameter name="ID">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "hubricas_recibo_pagamento_decimo.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="243" uuid="a449a257-db39-4eab-9ecc-c0311d976e6f"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+		<band height="91">
+			<staticText>
+				<reportElement x="0" y="36" width="555" height="30" uuid="fa34124d-c8cb-415d-beed-a430b9aeb1cf"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="12" width="92" height="12" uuid="087af75a-4030-48b7-b09f-d0f495765405"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Salário Base]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="184" y="12" width="92" height="12" uuid="c9f322c5-c20d-4da8-a317-216161ca8abe"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Base FGTS]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="0" y="24" width="92" height="12" uuid="ced017f5-5618-4dee-9ca1-d5a89be543e0"/>
+				<box leftPadding="0" rightPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salario_base}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="276" y="12" width="92" height="12" uuid="e8b70dbf-4fab-45c5-b2ad-86091b7e10d8"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FGTS Mês]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="368" y="12" width="92" height="12" uuid="231a280f-e3e6-4802-8246-0fa8e27d04c9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Base IRRF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="12" width="95" height="12" uuid="41db7870-d1f4-4e5f-9fe9-882120d5413e"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Faixa IRRF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="12" width="92" height="12" uuid="03b3d57a-c51b-499b-a62c-058dcafd0b30"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Base Contr.INSS]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="92" y="24" width="92" height="12" uuid="e543a2f4-d870-4ce1-90c1-b091c953281b"/>
+				<box leftPadding="0" rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{inss}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="184" y="24" width="92" height="12" uuid="d7eafdaa-26e2-469a-a534-0ea4e82c7fc6"/>
+				<box leftPadding="0" rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_fgts}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="276" y="24" width="92" height="12" uuid="826293d1-1efe-4e44-a305-928aaf62f362"/>
+				<box leftPadding="0" rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fgts}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="368" y="24" width="92" height="12" uuid="16f14f87-f7da-41f0-bbf7-184d57a8b6ad"/>
+				<box leftPadding="0" rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_irpf}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="460" y="24" width="95" height="12" uuid="43102cc2-7590-4cb5-8f99-88694a3f8e7b"/>
+				<box leftPadding="0" rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="40" width="303" height="20" uuid="76f3a6e2-9d90-452e-bcf9-6b4dd6853267"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Recebi a importância líquida discrimanda acima. Data ________/_________/_________]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="314" y="40" width="241" height="20" uuid="da62deee-59ff-45f0-9919-0288a43a1a11"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Assinatura:______________________________________________]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="194" y="0" width="56" height="12" uuid="603ddbb6-2276-4d75-9bf1-4fb69ac8013f"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{banco_agencia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="0" width="114" height="12" uuid="a83ded50-93ca-4e90-a3cc-4d09732cfdbd"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{banco_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="303" y="0" width="104" height="12" uuid="c409b576-e011-4ad0-9032-e4e0598957d6"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{banco_conta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="40" height="12" uuid="91e23974-ed57-45d5-a9ac-7194191bb0a7"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Banco:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="154" y="0" width="40" height="12" uuid="ec49567d-060d-4433-a397-b432f3d1ee73"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Agencia:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="250" y="0" width="53" height="12" uuid="80bf8eab-a6b9-4273-a116-cd8ce63fbeb1"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[C/corrente:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="12" uuid="554fb1c6-14d9-4689-97a7-113db94c940e"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+		<band height="78">
+			<textField>
+				<reportElement x="118" y="28" width="437" height="14" uuid="7697abf2-7408-4406-b46b-4570e6a14ef4"/>
+				<box leftPadding="0">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_endereco} + ", "+ $F{empresa_numero}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="74" y="14" width="44" height="14" uuid="286480af-d599-4897-b472-792a5cd97436"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CNPJ:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="74" y="0" width="44" height="14" uuid="67401240-69e4-41e3-b562-aeda7a0941a0"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empresa:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="50" y="54" width="270" height="12" uuid="feb7248d-d23d-4dac-99ca-c05cfd2d2729"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="320" y="54" width="87" height="12" uuid="da4bdf7f-05c9-48aa-a9e0-eb54e2743eda"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="42" width="50" height="12" uuid="6d41c938-0f52-46ab-8940-5b30eccc3380"/>
+				<box leftPadding="0">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="118" y="14" width="244" height="14" uuid="c97abdd8-da49-437a-9eed-94798b9791ed"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cnpj_cpf}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="74" y="28" width="44" height="14" uuid="d4b46147-c15b-45a9-9213-10182895889f"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="362" y="0" width="193" height="14" uuid="03a622f1-84cc-4a9b-bcb2-5d31c9c043c2"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RECIBO DE PAGAMENTO - 13º SALÁRIO]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="118" y="0" width="244" height="14" uuid="4e9507e5-c022-4ecb-a7c1-e57a928e9267"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{razao_social}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="54" width="50" height="12" uuid="fdac09f7-88e8-4359-99ba-f0544aecd912"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement x="362" y="14" width="98" height="14" uuid="a2060a11-fd79-4a3e-91fd-b4e63db9cf98"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Período: ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="407" y="66" width="148" height="12" uuid="34925c1b-ce10-4014-978e-9f33346b05df"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tomador}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="407" y="54" width="148" height="12" uuid="25311dc4-6d4c-4e53-b6d2-373ebf8674c1"/>
+				<box leftPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_admissao}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Middle" isUsingCache="false">
+				<reportElement x="0" y="0" width="74" height="42" uuid="33f4abff-85dd-4d0f-8abe-9b8b547bbee5"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<imageExpression><![CDATA[new java.io.StringBufferInputStream(new org.w3c.tools.codec.Base64Decoder($F{photo}).processString())]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="50" y="42" width="357" height="12" uuid="680eb986-a587-4ee6-999d-7097f77cd5d4"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome do Funcionário]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="66" width="50" height="12" uuid="2e143b72-e6b4-4d09-ba37-82a7c3edf7ac"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="332" y="66" width="75" height="12" uuid="9db06ead-ae5c-4d5d-a9d8-3b1b0fd95816"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tomador:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="407" y="42" width="148" height="12" uuid="dd188382-1c46-4e89-bc7e-c58799f03a66"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Admissão]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="460" y="14" width="95" height="14" uuid="68f12e87-315b-49d3-9654-5d26423fecf2"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{competencia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="118" y="66" width="214" height="12" uuid="649c7525-3cd1-41f7-9c7d-099141de38ee"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{funcao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="50" y="66" width="68" height="12" uuid="985a7d0f-6f86-45de-97eb-24f597cd2dc1"/>
+				<box leftPadding="5" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CBO/Função:]]></text>
+			</staticText>
+		</band>
+		<band height="230">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="230" uuid="d9dfd715-d8fa-4dd0-b717-4602120b58e2"/>
+				<subreportParameter name="ID">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "hubricas_recibo_pagamento_decimo.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="230" uuid="6ea84fbd-da62-4f27-9369-ad887677f19b"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+		<band height="66">
+			<staticText>
+				<reportElement x="0" y="36" width="555" height="30" uuid="105da9af-4e2a-4a3c-86e0-a6192bc62e83"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="250" y="0" width="53" height="12" uuid="2978c878-3c43-4f48-bbbf-0c6d655f49c0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[C/corrente:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="368" y="12" width="92" height="12" uuid="a703a0ed-0660-46b9-95b3-f5586698d6ac"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Base IRRF]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="0" y="24" width="92" height="12" uuid="b69a5247-1786-42ce-92e0-092293fa5c94"/>
+				<box leftPadding="0" rightPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salario_base}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="154" y="0" width="40" height="12" uuid="1894a0f6-2df6-4cca-89d9-712d3777e714"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Agencia:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="40" y="0" width="114" height="12" uuid="356d23d5-1c6b-4c0b-949a-73200e696507"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{banco_nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="40" height="12" uuid="99b5bccd-ded6-4408-b3e8-f913d0758c06"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Banco:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="368" y="24" width="92" height="12" uuid="5072ab8c-fdfd-42b2-bfb9-51e9b3d05145"/>
+				<box leftPadding="0" rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_irpf}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="460" y="24" width="95" height="12" uuid="32a61112-6818-4884-9447-3264741184fd"/>
+				<box leftPadding="0" rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+			</textField>
+			<textField>
+				<reportElement x="194" y="0" width="56" height="12" uuid="58edfff7-d41c-491a-b119-39498f658cdc"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{banco_agencia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="12" width="92" height="12" uuid="5e9c9bce-53f4-483e-9a80-4f41b1961e7a"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Salário Base]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="12" width="92" height="12" uuid="c8facdfb-8123-47b0-a77b-b6626dd5d907"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Base Contr.INSS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="12" width="95" height="12" uuid="79b6408f-bc1d-47c1-9fc4-e8d4b9a3bca2"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Faixa IRRF]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="276" y="24" width="92" height="12" uuid="9e3038e2-8f86-4684-aeb1-2f72b5ac9c38"/>
+				<box leftPadding="0" rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fgts}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="303" y="0" width="104" height="12" uuid="43dc1e32-0278-4738-82b2-c681173e6b72"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{banco_conta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="276" y="12" width="92" height="12" uuid="6a6e37ce-4b03-4501-b5f4-4d3cd773fd71"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FGTS Mês]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="92" y="24" width="92" height="12" uuid="559415e2-197d-4e0a-98c6-000d584e6794"/>
+				<box leftPadding="0" rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{inss}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="184" y="12" width="92" height="12" uuid="cd17aa83-8353-4e6a-9274-433f0bbf2d53"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Base FGTS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="12" uuid="bb770c28-2da3-4c16-a2ff-cc4b0e482c47"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="184" y="24" width="92" height="12" uuid="e3ad24be-a3fe-4683-b9b6-3495b53842f1"/>
+				<box leftPadding="0" rightPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_fgts}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="41" width="303" height="20" uuid="f5e0a804-c2a6-4277-8866-4c8d0058ce57"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Recebi a importância líquida discrimanda acima. Data ________/_________/_________]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="314" y="41" width="241" height="20" uuid="11b540a9-f035-4239-953f-c29b6d1819c7"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Assinatura:______________________________________________]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

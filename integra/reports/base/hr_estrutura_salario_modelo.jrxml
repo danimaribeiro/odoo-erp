@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hr_estrutura_salario_rubrica" language="groovy" pageWidth="550" pageHeight="752" whenNoDataType="AllSectionsNoDetail" columnWidth="550" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="fbd58ef4-5713-4a00-8f88-0d3c03e1bdea">
+	<property name="ireport.zoom" value="1.210000000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="RUBRICA_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+lm.nome,
+lm.tabela,
+lm.formato
+
+from hr_payroll_structure hps
+left join lo_modelo_hr_structure mh on mh.hr_struct_id = hps.id
+left join lo_modelo lm on lm.id = mh.lo_modelo_id
+
+where
+hps.id = $P{RUBRICA_ID}]]>
+	</queryString>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[Nome]]></fieldDescription>
+	</field>
+	<field name="tabela" class="java.lang.String">
+		<fieldDescription><![CDATA[Tabela]]></fieldDescription>
+	</field>
+	<field name="formato" class="java.lang.String">
+		<fieldDescription><![CDATA[Formato]]></fieldDescription>
+	</field>
+	<pageHeader>
+		<band height="37" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="17" width="182" height="20" uuid="58d19fcc-4be2-4520-a160-98aebeef89e5"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="182" y="17" width="186" height="20" uuid="f67b9cc1-f21e-4346-92af-d0b400f00a13"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tabela]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="368" y="17" width="182" height="20" uuid="68fc95de-9cb1-493e-90bb-6d95b9297ead"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Formato]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="552" height="17" uuid="3f1c6184-f344-4df2-9a16-22613d97d9b7"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Modelos de impressão]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="182" height="14" uuid="a738be98-407a-46ee-813a-855353d6569c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="182" y="0" width="186" height="14" uuid="167396c3-a1e5-481b-92b6-fddde4621c82"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tabela}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="368" y="0" width="182" height="14" uuid="ac9480f0-961d-4943-8e27-31670c75dc62"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{formato}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="7">
+			<line>
+				<reportElement x="0" y="0" width="550" height="1" uuid="0fce2842-de4c-4cb1-9847-d7f2d7ec06cc"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

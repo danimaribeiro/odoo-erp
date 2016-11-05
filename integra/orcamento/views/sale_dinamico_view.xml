@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="orcamento_sale_order_form_dinamico">
+            <field name="name">orcamento.sale_order_form_dinamico</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="priority" eval="20"/>
+            <field name="inherit_id" ref="orcamento_sale_order_form"/>
+            <field name="arch" type="xml">
+                <group string="categoria_order_line" position="replace">
+                    <group colspan="10" string="categoria_order_line_dinamica">
+                        <field colspan="10" context="{'form_view_ref' : 'orcamento.orcamento_sale_order_line_form', 'tree_view_ref' : 'orcamento.orcamento_sale_order_line_tree'}" name="order_line" nolabel="1" widget="one2many_list"/>
+                    </group>
+                </group>
+            </field>
+        </record>
+
+   </data>
+</openerp>

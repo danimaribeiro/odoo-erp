@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finan_contas_receber_ligacao" language="groovy" pageWidth="579" pageHeight="230" orientation="Landscape" columnWidth="579" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6fff61ce-1432-40fb-830b-18bbe5149856">
+	<property name="ireport.zoom" value="1.6105100000000114"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LANCAMENTO_ID" class="java.lang.Integer"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARTNER_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+    lig.*
+from
+(
+select
+    cast( cp.date at time zone 'America/Sao_Paulo' as timestamp) as ligacao_data,
+    cp.name as ligacao_resumo,
+    cp.partner_phone as cliente_telefone,
+    coalesce(rp.name,'') || ' - ' || coalesce(rp.cnpj_cpf,'') || ' - ' || coalesce(rp.fantasia,'') as ligacao_contato,
+    cp.duration as ligacao_duracao,
+    cp.state as ligacao_situacao,
+    cp.partner_mobile as cliente_celular
+
+from
+    finan_lancamento l
+    join crm_phonecall cp on cp.finan_lancamento_id = l.id
+    join res_partner as rp on rp.id = cp.partner_id
+
+where
+     l.partner_id = $P{PARTNER_ID}
+     and cp.date is not null
+     and l.situacao not in ('Quitado', 'Conciliado')
+
+order by
+    cp.date desc
+
+limit 5
+) as lig
+
+order by
+    lig.ligacao_data]]>
+	</queryString>
+	<field name="ligacao_data" class="java.sql.Timestamp"/>
+	<field name="ligacao_resumo" class="java.lang.String"/>
+	<field name="cliente_telefone" class="java.lang.String"/>
+	<field name="ligacao_contato" class="java.lang.String"/>
+	<field name="ligacao_duracao" class="java.lang.Double"/>
+	<field name="ligacao_situacao" class="java.lang.String"/>
+	<field name="cliente_celular" class="java.lang.String"/>
+	<columnHeader>
+		<band height="12">
+			<staticText>
+				<reportElement x="0" y="0" width="72" height="12" uuid="63a3e8d9-0d17-473a-8fdd-3bfde7ce2542"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="195" y="0" width="234" height="12" uuid="0300c797-c10b-4008-b25f-b6895cbf2884"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Contato:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="72" y="0" width="123" height="12" uuid="7d6984e1-0551-481e-b454-87d52da1aacb"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Resumo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="429" y="0" width="50" height="12" uuid="58ad9251-82ce-4d91-8454-0e1230c694cf"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Telefone:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="479" y="0" width="50" height="12" uuid="347b2ff7-62d6-4b27-8b5c-1c1d373316b8"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Celular:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="529" y="0" width="50" height="12" uuid="dbdc902c-ded3-4266-9f9f-b97f496e4399"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Situação:]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="72" y="0" width="123" height="12" uuid="6a6cc51e-e72f-4bcc-8786-cafc7f5602e7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ligacao_resumo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy HH:mm" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="72" height="12" uuid="7721d470-1aa3-42e0-a975-d9c4f44f41fa"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ligacao_data}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="195" y="0" width="234" height="12" uuid="828a0903-fe64-4e6e-b108-35304a777745"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ligacao_contato}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="429" y="0" width="50" height="12" uuid="a090f16c-1329-4ca0-98c8-3a8502b6c73c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente_telefone}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="479" y="0" width="50" height="12" uuid="96685100-dbf2-482e-8f87-cdc4fbf2b260"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente_celular}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="529" y="0" width="50" height="12" uuid="6b07d0f2-00c6-4261-82b0-99608eb66794"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ligacao_situacao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

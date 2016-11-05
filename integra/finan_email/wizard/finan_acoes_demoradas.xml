@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record forcecreate="True" model="ir.cron" id="finan_acao_demorada_envia_email_cron">
+            <field name="name">Enviar email de avisos de vencimento</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field eval="True" name="active" />
+            <field eval="False" name="doall" />
+            <field eval="'finan.email'" name="model" />
+            <field eval="'enviar_emails'" name="function" />
+            <field eval="'()'" name="args" />
+        </record>
+
+        <record forcecreate="True" model="ir.actions.server" id="finan_acao_demorada_envia_email_server_action">
+            <field name="name">Enviar email de avisos de vencimento</field>
+            <field name="model_id" ref="model_finan_email"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.enviar_emails(context=context)</field>
+        </record>
+
+    </data>
+</openerp>
+

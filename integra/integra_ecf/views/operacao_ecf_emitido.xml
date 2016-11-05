@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_operacao_efc_tree">
+            <field name="name">sped.operacao.ecf.tree</field>
+            <field name="model">sped.operacao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="codigo" />
+                    <field name="nome" />
+                    <field name="entrada_saida" />
+                    <field name="modelo" />
+                    <field name="company_id" width="30" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_operacao_ecf_emitido_form">
+            <field name="name">sped.operacao.ecf.emitido.form</field>
+            <field name="model">sped.operacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Operações Fiscais - ECF - modelo 2D">
+                    <field name="company_id" colspan="4" />
+                    <field name="modelo" readonly="1" />
+                    <newline />
+                    <field name="codigo" />
+                    <newline />
+                    <field name="nome" colspan="4" />
+                    <newline/>
+                    <field name="emissao" invisible="1" />
+                    <field name="entrada_saida" />
+                    <field name="regime_tributario" />
+                    <field name="modelo_partida_dobrada_id" domain="[('tabela', '=', 'DF')]" />                 
+                    <field name="forma_pagamento" />
+                    <field name="finalidade_nfe" />
+                    <field name="modalidade_frete" />
+                    <field name="naturezaoperacao_id" colspan="4" />
+                    <newline/>
+                    <notebook colspan="4">
+                        <page string="Itens da operação">
+                            <separator string="Itens da operação" colspan="4" />
+                            <field name="operacaoitem_simples_ids" nolabel="1" colspan="4" mode="tree,form" attrs="{'invisible': [('regime_tributario', '!=', '1')]}" context=" {'default_entrada_saida': entrada_saida,  'default_regime_tributario': regime_tributario, 'form_view_ref': 'sped_operacaoitem_simples_form', 'tree_view_ref': 'sped_operacaoitem_simples_tree'}"/>
+                            <field name="operacaoitem_normal_ids" nolabel="1" colspan="4" mode="tree,form" attrs="{'invisible': [('regime_tributario', '=', '1')]}" context="{'default_entrada_saida': entrada_saida,  'default_regime_tributario': regime_tributario, 'form_view_ref': 'sped.sped_operacaoitem_form', 'tree_view_ref': 'sped.sped_operacaoitem_tree'}"/>
+                        </page>
+                        <page string="Retenções de tributos">
+                            <field name="deduz_retencao" />
+                            <newline />
+                            <separator string="Retenção de tributos federais" colspan="4" />
+                            <field name="limite_retencao_pis_cofins_csll" colspan="4" />
+                            <newline />
+                            <field name="pis_cofins_retido" />
+                            <field name="al_pis_retido" />
+                            <newline/>
+                            <separator colspan="2" />
+                            <field name="al_cofins_retido" />
+                            <newline/>
+                            <field name="csll_retido" />
+                            <field name="al_csll" />
+                            <field name="irrf_retido" />
+                            <field name="al_irrf" />
+                            <field name="previdencia_retido" />
+<!--                             <field name="al_previdencia" /> -->
+                        </page>
+                        <page string="Informações adicionais">
+                            <separator string="Informações adicionais de interesse do fisco" colspan="4" />
+                            <field name="infadfisco" colspan="4" nolabel="1"/>
+                            <newline/>
+                            <separator string="Informações complementares" colspan="4" />
+                            <field name="infcomplementar" colspan="4" nolabel="1" />
+                        </page>
+                        <page string="Financeiro">
+                            <group colspan="4">
+                                <separator string="Integração financeira" colspan="10" />
+                                <field name="finan_conta_id" colspan="4" domain="[('sintetica', '=', False)]" />
+                                <newline />
+                                <field name="finan_documento_id" colspan="2" attrs="{'required': [('finan_conta_id', '!=', False)]}" />
+                                <newline />
+                                <field name="finan_centrocusto_id" colspan="4" domain="[('sintetico', '=', False)]" />
+                                <newline />
+                                <field name="res_partner_bank_id" colspan="4" />
+                                <newline />
+                                <field name="finan_carteira_id" colspan="4" />
+                                <newline />
+                                <field name="payment_term_id" />
+                                <newline />
+                                <field name="formapagamento_id" />
+                            </group>
+                        </page>
+                        <page string="Usuários permitidos">
+                            <separator string="Usuários com permissão de usar esta operação" colspan="4" />
+                            <field name="user_ids" colspan="4" nolabel="1" />
+                        </page>
+                        <page string="Empresas permitidas">
+                            <separator string="Empresas com permissão de usar esta operação" colspan="4" />
+                            <field name="company_ids" colspan="4" nolabel="1" />
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_operacao_ecf_emitido_acao">
+            <field name="name">Operações fiscais - ECF</field>
+            <field name="domain">[('modelo', '=', '2D'), ('emissao', '=', '0')]</field>
+            <field name="context">{'default_modelo': '2D', 'default_emissao': '0'}</field>
+            <field name="res_model">sped.operacao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_operacao_ecf_emitido"
+            name="ECF - 2D"
+            parent="sped.menu_sped_operacao_emitido" sequence="53" action="sped_operacao_ecf_emitido_acao" />
+
+        <record model="ir.actions.act_window.view" id="sped_operacao_ecf_emitido_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_operacao_ecf_emitido_form"/>
+            <field name="act_window_id" ref="sped_operacao_ecf_emitido_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_operacao_ecf_emitido_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sped.sped_operacao_tree"/>
+            <field name="act_window_id" ref="sped_operacao_ecf_emitido_acao"/>
+        </record>
+
+    </data>
+</openerp>

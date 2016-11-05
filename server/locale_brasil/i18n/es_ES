@@ -1,0 +1,241 @@
+#
+# Charset: UTF-8
+#
+# Locale para o espanhol europeu, legível por seres humanos
+#
+# Criado por Ari CALDEIRA
+#
+
+#######################################
+LC_IDENTIFICATION
+#######################################
+
+title      "Spanish locale for Spain"
+address    ""
+contact    ""
+email      "ari@laumi.org"
+tel        ""
+fax        ""
+language   "Spanish"
+territory  "Spain"
+revision   "6.0"
+date       "2011-08-05"
+
+category  "es_ES:2000";LC_IDENTIFICATION
+category  "es_ES:2000";LC_CTYPE
+category  "es_ES:2000";LC_COLLATE
+category  "es_ES:2000";LC_TIME
+category  "es_ES:2000";LC_NUMERIC
+category  "es_ES:2000";LC_MONETARY
+category  "es_ES:2000";LC_MESSAGES
+category  "es_ES:2000";LC_PAPER
+category  "es_ES:2000";LC_NAME
+category  "es_ES:2000";LC_ADDRESS
+category  "es_ES:2000";LC_TELEPHONE
+
+END LC_IDENTIFICATION
+
+
+###############################
+LC_CTYPE
+###############################
+copy "eo"
+END LC_CTYPE
+
+###############################
+LC_COLLATE
+###############################
+
+copy "eo"
+
+#
+# Definição do Ññ
+#
+collating-symbol <enne-espannol>
+
+#
+# Ordena os acentos
+#
+reorder-after <BAS> # forma básica
+<CIR> # circumflexo
+<GRA> # grave
+<ACA> # agudo
+<TIL> # til
+<REU> # trema
+
+#
+# Difinas, ke la E-aj literoj estos ordigitaj
+# post ĝia ne-ĉapelitaj versioj, kiel apartaj
+# literoj
+#
+
+reorder-after <n>
+<enne-espannol>
+
+reorder-after <enne-espannol>
+<U00D1> <enne-espannol>;<CAP>;<BAS>;IGNORE # Ñ
+<U00F1> <enne-espannol>;<MIN>;<BAS>;IGNORE # ñ
+
+reorder-end
+
+END LC_COLLATE
+
+
+###############################
+LC_MESSAGES
+###############################
+
+yesexpr                 "^[1SsYy].*"
+noexpr                  "^[0Nn].*"
+# sí
+yesstr                  "s<U00ED>"
+nostr                   "no"
+
+END LC_MESSAGES
+
+
+###############################
+LC_MONETARY
+###############################
+
+int_curr_symbol           "EUR "
+currency_symbol           "<U00A0>€"
+mon_decimal_point         ","
+mon_thousands_sep         "."
+mon_grouping              3;3
+positive_sign             ""
+negative_sign             "-"
+frac_digits               2
+p_cs_precedes             0
+n_cs_precedes             0
+p_sep_by_space            0
+n_sep_by_space            0
+int_p_sep_by_space        0
+int_n_sep_by_space        0
+p_sign_posn               1
+n_sign_posn               3
+int_frac_digits           2
+int_p_cs_precedes         1
+int_n_cs_precedes         1
+
+END LC_MONETARY
+
+
+###############################
+LC_NUMERIC
+###############################
+
+decimal_point           ","
+thousands_sep           "."
+grouping                3;3
+
+END LC_NUMERIC
+
+
+###############################
+LC_TIME
+###############################
+
+#          "dom";"lun";"mar";"mié";"jue";"vie";"sáb"
+abday      "dom";"lun";"mar";"mi<U00E9>";"jue";"vie";"s<U00E1>b"
+
+#          "domingo";"lunes";"martes";"miércoles";"jueves";"viernes";"sábado"
+day        "domingo";"lunes";"martes";"mi<U00E9>rcoles";"jueves";"viernes";"s<U00E1>bado"
+
+#          "ene";"feb";"mar";"abr";"may";"jun";"jul";"ago";"sep";"oct";"nov";"dic"
+abmon      "ene";"feb";"mar";"abr";"may";"jun";"jul";"ago";"sep";"oct";"nov";"dic"
+
+#          "enero";"febrero";"marzo";"abril";"mayoo";"junio"; \
+#          "julio";"agosto";"septiembre";"octubre";"noviembre";"diciembre"
+mon        "enero";"febrero";"marzo";"abril";"mayoo";"junio"; \
+           "julio";"agosto";"septiembre";"octubre";"noviembre";"diciembre"
+
+#          "vie, 04/08/2011, 14:11:36 BRT"
+d_t_fmt    "%a, %d/%m/%Y, %H:%M:%S %Z"
+
+#          "04/08/2011"
+d_fmt      "%d/%m/%Y"
+
+#          "14:12:36"
+t_fmt      "%H:%M:%S"
+
+am_pm      "am";"pm"
+
+#          "02:12:36 pm"
+t_fmt_ampm "%I:%M:%S %p"
+
+#           "vie, 04/08/2011, 14:11:36 BRT"
+date_fmt    "%a, %d/%m/%Y, %H:%M:%S %Z"
+
+# A semana tem 7 dias, como de costume, e começa na segunda-feira (ISO 8601)
+week    7;19971130;4
+
+# O primeiro dia da semana é a segunda-feira
+first_weekday 2
+
+# O primeiro dia de trabalho da semana é a segunda-feira
+first_workday 2
+
+END LC_TIME
+
+
+###############################
+LC_PAPER
+###############################
+copy "eo"
+END LC_PAPER
+
+
+###############################
+LC_TELEPHONE
+###############################
+
+tel_int_fmt  "+%c (%a) %l"
+tel_dom_fmt  "(%a) %l"
+int_select   "00"
+int_prefix   "34"
+
+END LC_TELEPHONE
+
+
+###############################
+LC_MEASUREMENT
+###############################
+copy "eo"
+END LC_MEASUREMENT
+
+
+###############################
+LC_NAME
+###############################
+copy "eo"
+END LC_NAME
+
+
+###############################
+LC_ADDRESS
+###############################
+
+postal_fmt   "\
+%f%N\
+%a%N\
+%d%N\
+%b%N\
+%s&t%h%t%e%t%r%N\
+%T%N\
+%c%N\
+%C%t%z%N"
+
+country_name "España"
+country_ab2  "ES"
+country_ab3  "ESP"
+country_post "ES"
+country_num  724
+country_car  "E"
+country_isbn 84
+lang_name    "español"
+lang_ab      "es"
+lang_term    "spa"
+lang_lib     "spa"
+
+END LC_ADDRESS

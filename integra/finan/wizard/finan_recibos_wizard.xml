@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_recibos_form" >
+            <field name="name">finan.recibos.form</field>
+            <field name="model">finan.recibos</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Gerar recibos de lançamentos">
+                    <group colspan="4" col="4">
+                        <group colspan="4" col="4">
+                            <field name="data_quitacao" string="Somente os pagos em" colspan="2" />
+                            <newline />
+                            <field name="recibo_previo" string="Recibo prévio (antes do pagamento efetivo)?" colspan="2" />
+                            <newline />
+                            <button icon="gtk-execute" string="Gerar recibos" name="gerar_recibos" type="object" />
+                            <button icon="gtk-cancel" special="cancel" string="Fechar" />
+                            <field name="nome" invisible="1"/>
+                            <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_recibos_wizard" multi="True" key2="client_action_multi" name="Recibos de lançamentos" res_model="finan.recibos" src_model="finan.lancamento" view_mode="form" target="new" view_type="form" />
+
+    </data>
+</openerp>

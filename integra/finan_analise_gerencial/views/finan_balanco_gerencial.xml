@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_balanco_gerencial_search">
+            <field name="name">finan.balanco.search</field>
+            <field name="model">finan.balanco</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Balanço Financeiro Gerencial">                    
+                    <field name="company_id" />                                 
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_balanco_gerencial_tree">
+            <field name="name">finan.balanco.tree</field>
+            <field name="model">finan.balanco</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Balanço" colors="green:vr_diferenca==0;red:vr_diferenca!=0">                       
+                    <field name="company_id" />
+                    <field name="data_inicial" />
+                    <field name="data_final" /> 
+                    <field name="vr_ativo"/>                                    
+                    <field name="vr_passivo"/>                                    
+                    <field name="vr_diferenca"/>                                    
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_balanco_gerencial_form">
+            <field name="name">finan.balanco.form</field>
+            <field name="model">finan.balanco</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Balanço Financeiro Gerencial">
+                    <separator string="Informações básicas" colspan="4" />
+                    <field name="company_id" required="1" colspan="4" domain="[('cnpj_cpf', '!=', False)]" />
+                    <field name="data_final" required="1" />                    
+                    <field name="data_inicial" required="1" />
+                    <group col="8" colspan="4" >
+                        <group string="Totais" col="4" colspan="4" >
+                            <field name="vr_ativo"/>                                    
+                            <field name="vr_passivo"/>                                    
+                            <field name="vr_diferenca"/>
+                        </group>                    
+                        <group string="Impressão" col="4" colspan="4" >
+                            <field name="formato" required="1"/>
+                            <button icon="gtk-print" string="Imprimir Balanço" name="gera_balanco" type="object" />                                
+                        </group>                    
+                    </group>                    
+                    <group col="8" colspan="4" >
+                        <group string="ATIVO" col="4" colspan="4" >
+                            <field name="lancamentos_ativos_ids" nolabel="1" context="{'conta_simples': True }">                                   
+                                <tree editable="bottom" >                                                                       
+                                    <field name="conta_id" required="1" context="{'conta_simples': True}" domain="[('tipo', '=', 'A'),('sintetica', '=', False)]"/>                                    
+                                    <field name="valor" required="1" sum="Total"/>                                    
+                                </tree>  
+                            </field>                                
+                        </group>
+                        <group string="PASSIVO" col="4" colspan="4" >
+                            <field name="lancamentos_passivos_ids" nolabel="1" context="{'conta_simples': True }">
+                                <tree editable="bottom">                                                                       
+                                    <field name="conta_id" required="1" context="{'conta_simples': True}" domain="[('tipo', '=', 'P'),('sintetica', '=', False)]"/>                                    
+                                    <field name="valor" required="1" sum="Total"/>                                    
+                                </tree>  
+                            </field>                                                                     
+                        </group>                        
+                    </group>
+                                                           
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="finan_balanco_gerencial_acao">
+            <field name="name">Balanço Financeiro Gerencial</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">finan.balanco</field>
+            <field name="search_view_id" ref="finan_balanco_gerencial_search" />
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="fina_menu_balanco_gerencial"
+            action="finan_balanco_gerencial_acao" 
+            name="Balanço Gerencial"
+            parent="finan.menu_finan_relatorios"
+            sequence="21" />
+    </data>
+</openerp>

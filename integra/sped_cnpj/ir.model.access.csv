@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+consulta_cnpj_full_all,SPED - Consulta CNPJ,model_sped_consulta_cnpj,sped_base.group_sped_base,1,1,1,1

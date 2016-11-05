@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="sale_order_tree" model="ir.ui.view">
+            <field name="name">sale_order_tree</field>
+            <field name="model">sale.order</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="orcamento.orcamento_sale_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="frota_veiculo_id" />
+                    <field name="km_atual" />
+                </field>
+                <field name="versao" position="before">
+                    <field name="data_entrega" />
+                </field>
+                <field name="versao" position="replace">
+                    <field name="versao" string="OS" />
+                </field>
+                <field name="name" position="replace">
+                    <field name="name" string="Versão" />
+                </field>
+                <field name="user_id" position="replace">
+                    <field name="user_id" string="Mecânico" />
+                </field>
+                <field name="state" position="replace">
+                    <field name="state" string="Situação" />
+                </field>
+                <field name="picked_rate" position="replace" />
+                <field name="invoiced_rate" position="replace" />
+                <field name="amount_untaxed" position="replace" />
+            </field>
+        </record>
+
+        <record id="orcamento_sale_order_form" model="ir.ui.view">
+            <field name="name">orcamento.sale_order_form</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="orcamento.orcamento_sale_order_form"/>
+            <field name="arch" type="xml">
+                <field name="date_order" position="after">
+                    <field name="data_entrega" />
+                </field>
+                <field name="partner_id" position="after">
+                    <newline/>
+                    <field name="frota_veiculo_id" required="1" domain="[('partner_id', '=', partner_id)]" colspan="4" />
+                    <newline/>
+                    <field name="km_atual" required="1" colspan="2" />
+                    <field name="prisma" required="1" colspan="2" />
+                </field>
+                <field name="user_id" position="replace" />
+                <field name="client_order_ref" position="before">
+                    <field name="user_id" string="Mecânico" />
+                </field>
+                <page string="Locação/Mensalidade" position="replace" />
+                <xpath expr="//group[@string='Totais - locação']" position="replace" />
+                <xpath expr="//group[6]" position="replace" />
+                <xpath expr="//notebook[1]" position="after">
+                        <group col="17" colspan="4">
+                            <field name="state" statusbar_colors="{&quot;shipping_except&quot;:&quot;red&quot;,&quot;invoice_except&quot;:&quot;red&quot;,&quot;waiting_date&quot;:&quot;blue&quot;}" statusbar_visible="draft,progress,done" widget="statusbar"/>
+                            <button icon="gtk-go-forward" name="invoice_recreate" states="invoice_except" string="Recreate Invoice"/>
+                            <button icon="gtk-apply" name="invoice_corrected" states="invoice_except" string="Ignore Exception"/>
+                            <button icon="gtk-ok" name="ship_recreate" states="shipping_except" string="Recreate Packing"/>
+                            <button icon="gtk-apply" name="ship_corrected" states="shipping_except" string="Ignore Exception"/>
+                            <button icon="gtk-cancel" name="action_cancel" states="manual,progress" string="Cancelar orçamento" type="object"/>
+<!--                             <button icon="gtk-convert" name="remove_automatico_itens" states="draft" string="Desvincular itens" type="object"/> -->
+                            <button icon="gtk-print" name="imprime_os" states="waiting_date,manual,progress,done,shipping_except,invoice_except" string="Imprimir OS" type="object"/>
+                            <button icon="gtk-go-forward" name="manual_invoice" states="manual" string="Create Final Invoice" type="object"/>
+                            <button icon="gtk-cancel" name="ship_cancel" states="shipping_except" string="Cancelar orçamento aprovado"/>
+                            <button icon="gtk-convert" name="action_cancel_draft" states="cancel" string="Set to Draft" type="object"/>
+                            <button icon="gtk-cancel" name="cancel" states="draft" string="Cancelar orçamento"/>
+                            <button icon="gtk-cancel" name="invoice_cancel" states="invoice_except" string="Cancelar orçamento faturado"/>
+                            <button icon="gtk-print" name="imprime_os" states="draft" string="Imprimir OS" type="object"/>
+                            <button icon="gtk-apply" name="order_confirm" states="draft" string="Confirmar orçamento"/>
+                            <button icon="gtk-apply" name="confirma_execucao" states="progress" string="Confirmar execução" type="object" />
+<!--                             <field name="orcamento_aprovado" states="draft"/> -->
+                        </group>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="sale.view_sale_order_calendar" model="ir.ui.view">
+            <field name="name">sale.order.calendar</field>
+            <field name="model">sale.order</field>
+            <field name="type">calendar</field>
+            <field name="arch" type="xml">
+                <calendar string="Orçamentos" color="state" date_start="data_entrega">
+                    <field name="partner_id"/>
+                    <field name="amount_total"/>
+                </calendar>
+            </field>
+        </record>
+
+    </data>
+</openerp>

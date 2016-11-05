@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="sale_order_tree" model="ir.ui.view">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="type">tree</field>
+            <field name="priority">3</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="amount_untaxed" position="replace">
+                    <field name="amount_untaxed" invisible="1" />
+                    <field name="bloqueado_limite_credito" groups="base.group_sale_manager" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_order_form">
+            <field name="name">sale_order_form</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped_sale.sale_order_form"/>
+            <field name="arch" type="xml">
+                <field name="operacao_fiscal_produto_id" position="after">
+                    <button icon="gtk-print" name="gera_notas" string="Gerar NF-e" type="object" context="{'temporario': False, 'ajusta_valor_venda': False}" attrs="{'invisible': [('operacao_fiscal_produto_id', '!=', 8)]}"/>
+                </field>
+<!--                <field name="vr_desconto_rateio" position="replace">
+                    <field name="vr_desconto_rateio" />
+                </field>-->
+                <page string="History" position="after">
+                    <page string="Pagamentos" >
+                        <separator colspan="4" string="Pagamentos"/>
+                        <field colspan="4" name="finan_sale_ids" nolabel="1">
+                            <tree editable="top">
+                                <field name="data" required="1"/>
+                                <field name="formapagamento_id" required="1" />
+                                <field name="valor" sum="Total" required="1"/>
+                            </tree>
+                        </field>
+                        <separator colspan="4" string="Cheques"/>
+                        <field colspan="4" name="cheque_ids" nolabel="1" />
+                    </page>
+                </page>
+
+                <field name="payment_term" position="replace" />
+                <field name="finan_formapagamento_id" position="replace" />
+
+                <field name="partner_invoice_id" position="replace">
+                    <field name="partner_invoice_id" invisible="1" />
+                    <field name="finan_formapagamento_id" required="1" />
+                </field>
+                <field name="partner_shipping_id" position="replace">
+                    <field name="partner_shipping_id" invisible="1" />
+                    <field name="payment_term" required="1" />
+                </field>
+            </field>
+        </record>
+
+   </data>
+</openerp>

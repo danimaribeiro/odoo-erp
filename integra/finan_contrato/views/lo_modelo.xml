@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.actions.act_window" id="lo_contrato_modelo_acao">
+            <field name="name">Modelos de contratos</field>
+            <field name="res_model">lo.modelo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tabela', '=', 'finan.contrato')]</field>
+            <field name="view_id" ref="integra_libreoffice.lo_modelo_tree" />
+        </record>
+
+        <menuitem
+            action="lo_contrato_modelo_acao"
+            id="menu_lo_modelo"
+            name="Modelos de contratos"
+            parent="finan.menu_finan_config"
+            sequence="90"/>
+
+    </data>
+</openerp>

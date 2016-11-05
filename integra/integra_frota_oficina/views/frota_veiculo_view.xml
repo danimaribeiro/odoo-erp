@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="frota_veiculo_form">
+            <field name="name">frota.veiculo.form</field>
+            <field name="model">frota.veiculo</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_frota.frota_veiculo_form" />
+            <field name="arch" type="xml">
+                <field name="res_company_id" position="replace">
+                    <field name="partner_id" required="1" />
+                </field>
+                <field name="modelo_id" position="replace">
+                    <field name="modelo_id" on_change="onchange_modelo_id(modelo_id)" />
+                </field>
+            </field>
+        </record>
+
+        <record model='ir.ui.view' id='frota_veiculo_tree'>
+            <field name="name">frota.veiculo.tree</field>
+            <field name="model">frota.veiculo</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="integra_frota.frota_veiculo_tree" />
+            <field name="arch" type="xml">
+                <field name="res_company_id" position="replace">
+                    <field name="partner_id" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="frota_veiculo_search">
+            <field name="name">frota.veiculo.search</field>
+            <field name="model">frota.veiculo</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="integra_frota.frota_veiculo_search" />
+            <field name="arch" type="xml">
+                <field name="res_company_id" position="replace">
+                    <field name="partner_id" select="1" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rodape" language="groovy" pageWidth="785" pageHeight="11" orientation="Landscape" columnWidth="785" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="78373472-3f92-4c44-b333-e9e55668d789">
+	<property name="ireport.zoom" value="1.6105100000000043"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="UID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     res_users."id" AS res_users_id,
+     res_users."name" AS res_users_name,
+     res_users."active" AS res_users_active,
+     res_users."login" AS res_users_login,
+     res_users."email" AS res_users_email,
+     res_users."user_email" AS res_users_user_email,
+     res_users."company_id" AS res_users_company_id
+FROM
+     "public"."res_users" res_users
+
+WHERE res_users."id" = $P{UID}]]>
+	</queryString>
+	<field name="res_users_id" class="java.lang.Integer"/>
+	<field name="res_users_name" class="java.lang.String"/>
+	<field name="res_users_active" class="java.lang.Boolean"/>
+	<field name="res_users_login" class="java.lang.String"/>
+	<field name="res_users_email" class="java.lang.String"/>
+	<field name="res_users_user_email" class="java.lang.String"/>
+	<field name="res_users_company_id" class="java.lang.Integer"/>
+	<pageFooter>
+		<band height="11" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="1" width="785" height="10" uuid="0b68bfe2-cbb1-48b1-8223-42f0be4de7e0"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Usuário: " + $F{res_users_name}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="785" height="1" uuid="a75eaabf-c218-4598-9f20-6565529ffd7f"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

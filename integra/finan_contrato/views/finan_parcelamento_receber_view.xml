@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_parcelamento_receber_tree">
+            <field name="name">finan.parcelamento.receber.tree</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id" />
+                    <field name="data_assinatura" string="Data" />
+                    <field name="numero" string="Número/Descrição" />
+                    <field name="partner_id" />
+                    <field name="valor_mensal" sum="Valor mensal" />
+                    <field name="valor" sum="Valor" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_parcelamento_receber_form">
+            <field name="name">finan.parcelamento.receber.form</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Parcelamento a receber">
+                    <field name="natureza" invisible="1" />
+                    <group colspan="4">
+                        <field name="company_id" colspan="4"  required="1" />
+                        <field name="data_assinatura" string="Data" required="1" />
+                        <field name="numero" required="1" string="Número/Descrição" />
+                    </group>
+                    <notebook colspan="10">
+                        <page string="Dados básicos">
+                            <field name="partner_id" string="Cliente" colspan="4"  required="1" />
+                            <newline />
+                            <group colspan="4">
+                                <separator string="Características e período" colspan="10" />
+                                <field name="data_inicio" required="1" />
+                                <field name="pro_rata" required="1" />
+                                <field name="dia_vencimento"  required="1" />
+                                <group colspan="2" attrs="{'invisible': [('pro_rata', '=', False)]}">
+                                    <field name="data_encerramento" attrs="{'required': [('pro_rata', '=', True)]}" />
+                                </group>
+                                <field name="duracao" required="1" />
+                                <field name="carencia_texto" />
+                                <field name="data_renovacao"  />
+                                <newline/>
+                                <field name="tipo_valor_base" required="1" />
+                                <group colspan="2">
+                                    <field name="valor_mensal" attrs="{'invisible': [('tipo_valor_base', '=', 'T')]}" />
+                                    <field name="valor" attrs="{'invisible': [('tipo_valor_base', '=', 'M')]}" />
+                                </group>
+                            </group>
+                            <group colspan="4">
+                                <separator string="Integração financeira" colspan="10" />
+                                <field name="conta_id" colspan="4" required="1" domain="[('sintetica', '=', False), ('tipo', '=', 'R')]" />
+                                <newline />
+                                <field name="documento_id" colspan="2"  required="1" />
+                                <newline />
+                                <field name="centrocusto_id" colspan="4" domain="[('sintetico', '=', False)]" />
+                                <newline />
+                                <field name="res_partner_bank_id" colspan="4" />
+                                <newline />
+                                <field name="carteira_id" colspan="4" />
+                                <newline />
+                                <field name="res_partner_address_id" colspan="4" domain="[('partner_id', '=', partner_id)]" />
+                                <newline />
+                                <field name="provisionado" colspan="2" />
+                                <button name="gera_provisao" string="Gerar lançamentos" type="object" colspan="1" />
+                            </group>
+                            <group colspan="4">
+                                <separator string="Observações" colspan="10" />
+                                <field name="obs" colspan="4" nolabel="1"/>
+                            </group>
+                        </page>
+                        <page string="Lançamentos financeiros">
+                            <field name="lancamento_ids" readonly="1" nolabel="1" widget="many2one_list" colspan="4">
+                                <tree>
+                                    <field name="provisionado" />
+                                    <field name="documento_id" />
+                                    <field name="numero_documento" />
+                                    <field name="data_documento" />
+                                    <field name="data_vencimento" />
+                                    <field name="valor_documento" sum="Valor documento" />
+                                    <field name="situacao" />
+                                    <field name="data_quitacao" />
+                                    <field name="valor" sum="Valor" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_parcelamento_receber_acao">
+            <field name="name">Parcelamento de recebimento</field>
+            <field name="res_model">finan.contrato</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_parcelamento_receber_tree" />
+            <field name="domain">[('natureza', '=', 'RP')]</field>
+            <field name="context">{'natureza': 'RP', 'default_natureza': 'RP', 'default_ativo': False}</field>
+        </record>
+
+        <menuitem action="finan_parcelamento_receber_acao"
+            id="menu_finan_parcelamento_recebimento" name="Parcelamento de recebimento" parent="finan.menu_finan_conta_receber" />
+
+        <record model="ir.actions.act_window.view" id="finan_parcelamento_receber_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_parcelamento_receber_form"/>
+            <field name="act_window_id" ref="finan_parcelamento_receber_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_parcelamento_receber_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_parcelamento_receber_tree"/>
+            <field name="act_window_id" ref="finan_parcelamento_receber_acao"/>
+        </record>
+
+    </data>
+</openerp>

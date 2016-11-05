@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_sped_country_tree" model="ir.ui.view">
+            <field name="name">res.country.tree</field>
+            <field name="model">res.country</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="base.view_country_tree"/>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="br_codigo_bacen" select="2"/>
+                </tree>
+            </field>
+        </record>        
+    </data>
+</openerp>

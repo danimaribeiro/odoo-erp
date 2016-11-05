@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_servico_form_view">
+            <field name="name">servico.form</field>
+            <field name="model">sped.servico</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped_product.sped_servico_form_view"/>
+            <field name="arch" type="xml">               
+                <field name="codigo" position="after" >
+                    <field name="cd_servico_barueri" colspan="4" />
+                </field>
+            </field>
+        </record>
+        
+    </data>
+</openerp>

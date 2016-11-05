@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="84950242-1b09-4c1f-a396-4528ded4fadb">
+	<property name="ireport.zoom" value="1.2396694214876065"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#BFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#E6FFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="8770e971-9aa7-4ee1-95a3-858de5675e29"/>
+	<parameter name="REGISTRO_IDS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+rp.razao_social,
+rp.cnpj_cpf,
+rp.endereco || ' ' || rp.numero as endereco,
+rp.bairro,
+rp.cidade,
+rp.estado,
+e.nome,
+co.name as matricula,
+co.date_start as data_admissao,
+e.carteira_trabalho_numero,
+e.carteira_trabalho_serie,
+e.carteira_trabalho_estado,
+co.date_start as data_admissao,
+hre.nome as dependente_nome,
+hre.data_nascimento as dependente_nasc,
+hre.cartorio,
+hre.registro_cartorio,
+sm.nome as cidade_dependente,
+hre.numero_livro,
+hre.folha,
+hre.data_cadastro
+
+from hr_contract co
+join hr_employee e on e.id = co.employee_id
+join res_company c on c.id = co.company_id
+join res_partner rp on rp.id = c.partner_id
+left join hr_employee_dependente as hre on hre.employee_id = e.id
+left join sped_municipio sm on sm.id = hre.cidade_registro
+
+where co.id in $P!{REGISTRO_IDS} and hre.salario_familia is true
+
+order by
+  rp.razao_social,
+  e.nome]]>
+	</queryString>
+	<field name="razao_social" class="java.lang.String"/>
+	<field name="cnpj_cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[CNPJ/CPF]]></fieldDescription>
+	</field>
+	<field name="endereco" class="java.lang.String">
+		<fieldDescription><![CDATA[Endereço]]></fieldDescription>
+	</field>
+	<field name="bairro" class="java.lang.String">
+		<fieldDescription><![CDATA[Bairro]]></fieldDescription>
+	</field>
+	<field name="cidade" class="java.lang.String">
+		<fieldDescription><![CDATA[Município]]></fieldDescription>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<fieldDescription><![CDATA[Estado]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[Descrição]]></fieldDescription>
+	</field>
+	<field name="matricula" class="java.lang.String"/>
+	<field name="data_admissao" class="java.sql.Date"/>
+	<field name="carteira_trabalho_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Nº da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_serie" class="java.lang.String">
+		<fieldDescription><![CDATA[Série da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_estado" class="java.lang.String">
+		<fieldDescription><![CDATA[Estado da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="dependente_nome" class="java.lang.String"/>
+	<field name="dependente_nasc" class="java.sql.Date"/>
+	<field name="cartorio" class="java.lang.String">
+		<fieldDescription><![CDATA[Cartório]]></fieldDescription>
+	</field>
+	<field name="registro_cartorio" class="java.lang.String">
+		<fieldDescription><![CDATA[Nro Registro]]></fieldDescription>
+	</field>
+	<field name="cidade_dependente" class="java.lang.String"/>
+	<field name="numero_livro" class="java.lang.String">
+		<fieldDescription><![CDATA[Nro Livro]]></fieldDescription>
+	</field>
+	<field name="folha" class="java.lang.String">
+		<fieldDescription><![CDATA[Folha]]></fieldDescription>
+	</field>
+	<field name="data_cadastro" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data do cadastramento]]></fieldDescription>
+	</field>
+	<columnHeader>
+		<band height="122">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="17" uuid="9ea7dcc1-6ec6-4413-b4b2-a7dde28c6530"/>
+				<box>
+					<pen lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ficha Salário Familia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="411" y="17" width="24" height="16" uuid="2f46f4c2-6ffc-4314-95fd-e6f63d163859"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[CNPJ:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="49" width="78" height="16" uuid="c5bc722a-dc6d-4ca1-a91b-2c27ade2e62c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Nome do Segurado:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="328" y="49" width="39" height="16" uuid="89da043c-9d9a-4979-aacf-c6e2dbd85513"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[CTPS Nº:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="42" y="17" width="369" height="16" uuid="0a143d46-c82b-4a07-aacf-418d0a0713b2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{razao_social}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="17" width="120" height="16" uuid="1ab43bc8-6017-47b5-b689-529fa16fd901"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cnpj_cpf}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="78" y="49" width="250" height="16" uuid="b0bbc849-e9ff-4ad6-9e0d-adaca9610160"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement x="367" y="49" width="188" height="16" uuid="75695783-6602-4145-90ec-240ede7b8b41"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_trabalho_numero} + "/" + $F{carteira_trabalho_serie} +
+ "-" + $F{carteira_trabalho_estado}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="81" width="555" height="16" uuid="f6177cff-8f00-425b-b0a5-da28788fab88"/>
+				<box>
+					<pen lineStyle="Dashed"/>
+					<topPen lineWidth="0.5" lineStyle="Dashed"/>
+					<leftPen lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+					<rightPen lineStyle="Dashed"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[BENEFICIÁRIOS
+ ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="97" width="50" height="25" uuid="fae96ba0-d0b4-45d6-8b43-71cadc5a6b94"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Data Nascimento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="17" width="42" height="16" uuid="a939f414-68fd-4fbc-b49a-9eb6dd468e56"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Empresa:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="42" y="33" width="163" height="16" uuid="8373f4e9-f45a-4a32-9bbd-2cc06cef0399"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{endereco}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="33" width="42" height="16" uuid="0bb8a8d8-96c1-47ca-bedf-f016fcfba4dd"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="235" y="33" width="93" height="16" uuid="7e27709e-81e9-401b-8f48-3ca3b76519f6"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bairro}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="205" y="33" width="30" height="16" uuid="1cfaf54f-b1b5-4cd9-9be2-23d79a4d9196"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Bairro:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="328" y="33" width="35" height="16" uuid="50051cc0-537b-40df-9be2-0a58a4005ed3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Cidade:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="363" y="33" width="76" height="16" uuid="a45887a7-f783-4fa8-bc3d-18f73e6f70de"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bairro}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="439" y="33" width="14" height="16" uuid="32952e34-2e2b-44ac-85ec-899efbe6d144"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[UF:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="453" y="33" width="103" height="16" uuid="082e7bfc-b4a1-4fdb-a350-f9461470a863"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="97" width="160" height="25" uuid="380a0c7f-7bef-437f-863a-b1fc2a35d1fc"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Nome do Filho]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="210" y="97" width="73" height="25" uuid="2489f615-629a-4cb0-a002-05a0d010c88d"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Lugar do Nascimento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="283" y="97" width="77" height="25" uuid="d35bb456-5556-40a4-81f0-75edcec6b585"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Cartorio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="97" width="40" height="25" uuid="9ff40fa5-b221-4102-99df-5caee0b997e8"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Nro  Registro]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="97" width="35" height="25" uuid="715dcf5e-10af-4d85-ab42-3091bea0e1b2"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Nro  Livro]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="435" y="97" width="35" height="25" uuid="68bcf083-8b6a-497e-beca-7a52007a31bf"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Folha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="470" y="97" width="46" height="25" uuid="def11022-b93f-4cc1-af3f-63ec5c0f6ceb"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Data Entrega]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="516" y="97" width="39" height="25" uuid="124e44a1-386f-4d9a-8118-77b14c5a691e"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Visto Fiscal]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="78" y="65" width="231" height="16" uuid="227a01a6-00dd-432a-a22c-c7118d394179"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_admissao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="309" y="65" width="161" height="16" uuid="77d93865-5384-48f9-b222-db6bd4d9921e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Data da Cessao da Relaçao de Emprego:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="65" width="78" height="16" uuid="9f5df5e2-acf6-4eb3-9bd6-950a6ed1d671"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Data de admissão: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="470" y="65" width="85" height="16" uuid="73747a95-269f-4613-b747-953cdcd6cf69"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[_____/ _____/________]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="160" height="16" uuid="305c062c-3aee-41b1-9cd4-5703bac3a70b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dependente_nome}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="160" y="0" width="50" height="16" uuid="76968e65-026e-4a73-87cf-3f10847b70ad"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dependente_nasc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="210" y="0" width="73" height="16" uuid="69bf938f-0293-4c1c-b7a8-1217398d905e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cidade_dependente}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="283" y="0" width="77" height="16" uuid="9fe1c662-b8b8-425f-822d-59ba529d8368"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cartorio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="360" y="0" width="40" height="16" uuid="51cea308-7303-49d1-8e46-872583d19e2c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{registro_cartorio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="400" y="0" width="35" height="16" uuid="4972aa5d-a4c8-46b3-b979-837029e7134b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero_livro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="435" y="0" width="35" height="16" uuid="68ab072a-e3e0-4c9d-9b55-05e97eae573d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{folha}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="470" y="0" width="46" height="16" uuid="d2032fcb-bea7-4dc7-99be-e82b759afe7f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_cadastro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="516" y="0" width="39" height="16" uuid="c17bd970-6680-449f-82bb-6264ec28f4d2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="38">
+			<staticText>
+				<reportElement x="0" y="0" width="55" height="38" uuid="2c5f3009-5710-4ca7-b42f-0aea9f8d187b"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.0" lineStyle="Dashed"/>
+					<topPen lineWidth="0.5" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[Assinatura:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="55" y="0" width="500" height="38" uuid="f6caeded-bda6-460b-99f6-caecede8a9f4"/>
+				<box topPadding="10" leftPadding="0">
+					<topPen lineWidth="0.5" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[____________________________________________________]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

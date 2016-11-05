@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="orcamento_sale_order_tree" model="ir.ui.view">
+            <field name="name">orcamento.sale_order_tree</field>
+            <field name="model">sale.order</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="orcamento.orcamento_sale_order_tree"/>
+            <field name="arch" type="xml">
+                <tree string="Propostas comerciais" position="replace">
+                    <tree string="Propostas comerciais" colors="grey:state=='cancel';blue:state in ('waiting_date','manual') and (not saldo_obra_liberado);red:state in ('invoice_except','shipping_except');green:state=='done';darkcyan:state in ('waiting_date','manual') and saldo_obra_liberado">
+                        <field name="versao"/>
+                        <field name="name" string="Proposta"/>
+                        <field name="client_order_ref" string="Referência"/>
+                        <field name="saldo_obra_liberado" string="Saldo da obra liberado?"/>
+                        <field name="date_order"/>
+                        <field name="partner_id"/>
+                        <field name="user_id"/>
+                        <field name="picked_rate" widget="progressbar" invisible="1"/>
+                        <field name="invoiced_rate" widget="progressbar" invisible="1"/>
+                        <field name="amount_untaxed" sum="Total Tax Excluded" invisible="1"/>
+                        <field name="amount_total" sum="Total Tax Included" invisible="1"/>
+                        <field name="vr_total_minimo"/>
+                        <field name="vr_total_venda_impostos"/>
+                        <field name="vr_mensal"/>
+                        <field name="state"/>
+                    </tree>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="orcamento_orcamento_resumo_tree" >
+            <field name="name">orcamento.orcamento_resumo_tree</field>
+            <field name="model">orcamento.orcamento_locacao</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="orcamento.orcamento_orcamento_resumo_tree"/>
+            <field name="arch" type="xml">
+                <field name="vr_total" position="replace">
+                    <field name="vr_total" sum="Valor total" readonly="1" invisible="1" />
+                </field>
+                <field name="desconto" position="replace">
+                    <field name="desconto" on_change="on_change_desconto(sale_order_id, orcamento_categoria_id, desconto, meses_retorno_investimento)" invisible="1" />
+                </field>
+                <field name="vr_total_margem_desconto" position="replace">
+                    <field name="vr_total_margem_desconto" sum="Valor total com margem e desconto" readonly="1" invisible="1" />
+                    <field name="vr_total_venda_impostos" sum="Valor total" string="Total venda" readonly="1" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="orcamento_orcamento_locacao_tree" >
+            <field name="name">orcamento.orcamento_locacao_tree</field>
+            <field name="model">orcamento.orcamento_locacao</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="orcamento.orcamento_orcamento_locacao_tree"/>
+            <field name="arch" type="xml">
+                <field name="vr_total" position="replace">
+                    <field name="vr_total" sum="Valor total" readonly="1" invisible="1" />
+                </field>
+                <field name="desconto" position="replace">
+                    <field name="desconto" on_change="on_change_desconto(sale_order_id, orcamento_categoria_id, desconto, meses_retorno_investimento)" invisible="1" />
+                </field>
+                <field name="vr_total_margem_desconto" position="replace">
+                    <field name="vr_total_margem_desconto" sum="Valor total com margem e desconto" readonly="1" invisible="1" />
+                    <field name="vr_total_venda_impostos" sum="Valor total" string="Total venda" readonly="1" />
+                </field>
+            </field>
+        </record>
+
+        <record id="orcamento_sale_order_form" model="ir.ui.view">
+            <field name="name">orcamento.sale_order_form</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="orcamento.orcamento_sale_order_form_dinamico"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="replace">
+                    <field name="partner_id" options='{"quick_create": false}' on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True)]" context="{'search_default_customer':1, 'company_id': company_id}" required="1"/>
+                </field>
+                <field name="operacao_fiscal_produto_id" position="replace" />
+                <field name="pricelist_id" position="after">
+                    <field name="operacao_fiscal_ids" invisible="1" />
+                    <field name="operacao_fiscal_produto_id" domain="[('id', 'in', operacao_fiscal_ids)]"/>
+                </field>
+
+                <field name="user_id" position="replace">
+                    <field name="user_id" string="Gestor de contas" required="1" on_change="onchange_user_id(user_id)" />
+                    <field name="hr_department_id" required="1" on_change="onchange_hr_department_id(hr_department_id)" />
+                    <field name="grupo_economico_id" />
+                </field>
+
+                <field name="categ_id" position="replace">
+                    <field name="res_partner_category_id" required="1" />
+                </field>
+
+                <field name="payment_term" position="replace">
+                    <separator string="Condição de pagamento dos equipamentos" colspan="2" />
+                    <field name="payment_term" widget="selection" string="Condição de pagamento" />
+                    <field name="valor_entrada"  />
+                    <separator string="Condição de pagamento da mão de obra de instalação" colspan="2" />
+                    <field name="mao_de_obra_instalacao_payment_term_id" widget="selection" string="Condição de pagamento" />
+                    <field name="mao_de_obra_instalacao_valor_entrada"  />
+                    <separator string="Simulação das parcelas" colspan="2" />
+                    <button icon="gtk-execute" name="simula_parcelas" string="Simular" type="object"/>
+                    <field name="simulacao_parcelas"  nolabel="1" />
+                </field>
+                <field name="name" position="after">
+                    <newline/>
+                    <group colspan="2" col="4">
+                        <field name="orcamento_aprovado" states="draft" string="Negociando para" />
+                        <field name="bonificacao_venda" states="draft" on_change="onchange_bonificacao_venda(bonificacao_venda, company_id)" />
+                    </group>
+                </field>
+<!--                <field name="partner_id" position="before">
+                    <field name="partner_vr_limite_credito" invisible="0" />
+                    <field name="pendencia_financeira" invisible="0" />
+                    <field name="parcela_excede_limite" invisible="0" />
+                    <field name="mensalidade_excede_limite" invisible="0" />
+
+                    <group colspan="4" col="4" attrs="{'invisible': ['|', ('motivo_liberacao_venda_sem_limite', '!=', False), '|', ('partner_vr_limite_credito', '=', False), ('partner_vr_limite_credito', '&gt;', 0)]}">
+                        <html>
+                            <p class="oe_form_paragraph oe_align_center ">
+                                <span style="color:red;text-align:center;">
+                                    Atenção!!! O cliente está com o limite de crédito mensal INDEFERIDO! Proibido realizar a venda/locação sem autorização da Análise de Crédito
+                                </span>
+                            </p>
+                        </html>
+                    </group>
+
+                    <group colspan="4" col="4" attrs="{'invisible': ['|', ('motivo_liberacao_venda_sem_limite', '!=', False), ('partner_vr_limite_credito', '!=', False)]}">
+                        <html>
+                            <p class="oe_form_paragraph oe_align_center ">
+                                <span style="color:red;text-align:center;">
+                                    Atenção!!! O cliente não tem análise de crédito! Atualize os dados do cliente, e solicite a Análise de Crédito
+                                </span>
+                            </p>
+                        </html>
+                    </group>
+
+                    <group colspan="4" col="4" attrs="{'invisible': ['|', ('motivo_liberacao_venda_sem_limite', '!=', False), ('pendencia_financeira', '=', False)]}">
+                        <html>
+                            <p class="oe_form_paragraph oe_align_center ">
+                                <span style="color:red;text-align:center;">
+                                    Atenção!!! O cliente possui pendências com o financeiro! Proibido realizar a venda/locação sem autorização da Análise de Crédito
+                                </span>
+                            </p>
+                        </html>
+                    </group>
+
+                    <group colspan="4" col="4" attrs="{'invisible': ['|', ('motivo_liberacao_venda_sem_limite', '!=', False), ('parcela_excede_limite', '=', False)]}">
+                        <html>
+                            <p class="oe_form_paragraph oe_align_center ">
+                                <span style="color:red;text-align:center;">
+                                    Atenção!!! Uma ou mais parcelas da venda excede o limite de crédito mensal do cliente! Proibido realizar a venda sem autorização da Análise de Crédito
+                                </span>
+                            </p>
+                        </html>
+                    </group>
+
+                    <group colspan="4" col="4" attrs="{'invisible': ['|', ('motivo_liberacao_venda_sem_limite', '!=', False), ('mensalidade_excede_limite', '=', False)]}">
+                        <html>
+                            <p class="oe_form_paragraph oe_align_center ">
+                                <span style="color:red;text-align:center;">
+                                    Atenção!!! Uma ou mais mensalidades excede o limite de crédito mensal do cliente! Proibido realizar o contrato sem autorização da Análise de Crédito
+                                </span>
+                            </p>
+                        </html>
+                    </group>
+
+                    <group colspan="4" col="4" attrs="{'invisible': [('mensalidade_excede_limite', '=', False), ('parcela_excede_limite', '=', False), ('partner_vr_limite_credito', '&gt;', 0), ('pendencia_financeira', '=', False)]}" groups="patrimonial_personalizacao.group_finan_liberacao_credito">
+                        <field name="motivo_liberacao_venda_sem_limite" colspan="4" />
+                    </group>
+
+                </field>-->
+                <field name="partner_id" position="after">
+                    <field name="partner_assinatura_id" domain="[('partner_id','=',partner_id), ('type', '=', 'assinatura')]" />
+                </field>
+<!--                <xpath expr="//button[@string='Recalcula']" position="replace">
+                    <button icon="gtk-apply" name="gera_notas" string="Recalcula" type="object" context="{'temporario': True, 'ajusta_valor_venda': True}"/>
+                </xpath>-->
+                <xpath expr="//group[@string=&quot;Totais&quot;]" position="replace">
+                    <group col="13" colspan="2" string="Totais - Custo/Venda">
+                        <field invisible="1" name="amount_untaxed" sum="Untaxed amount"/>
+                        <field invisible="1" name="amount_tax"/>
+                        <field invisible="1" name="amount_total"/>
+                        <button icon="gtk-execute" invisible="1" name="button_dummy" states="draft" string="Compute" type="object"/>
+                        <button groups="base.group_extended" icon="gtk-execute" invisible="1" name="%(sale.action_view_sale_advance_payment_inv)d" states="draft,manual" string="Advance Invoice" type="action"/>
+                        <field name="vr_total_minimo" string="Valor total mínimo" />
+                        <field name="vr_total_margem_desconto" string="Valor total venda" invisible="1" />
+                        <field name="vr_total_venda_impostos" string="Valor total venda" />
+                        <field name="vr_comissao" string="Valor comissão venda" invisible="1" />
+                        <field name="vr_desconto_rateio" />
+                    </group>
+                </xpath>
+                <xpath expr="//group[@string=&quot;Totais - locação&quot;]" position="replace">
+                    <group col="13" colspan="2" string="Totais - Mensalidades">
+                        <field name="vr_mensal" string="Total mensalidade cliente"/>
+                        <field name="meses_retorno_investimento" invisible="1" />
+                        <field name="vr_comissao_locacao" string="Total mensalidade comissão" invisible="1" />
+                    </group>
+                </xpath>
+                <xpath expr="//page[@string=&quot;Dados básicos&quot;]/group[4]" position="replace" />
+                <xpath expr="//notebook[1]" position="after">
+                        <group col="17" colspan="4">
+                            <field name="state" statusbar_colors="{&quot;shipping_except&quot;:&quot;red&quot;,&quot;invoice_except&quot;:&quot;red&quot;,&quot;waiting_date&quot;:&quot;blue&quot;}" statusbar_visible="draft,autorizado,progress,done" widget="statusbar"/>
+<!--                             <button icon="gtk-go-forward" name="invoice_recreate" states="invoice_except" string="Recreate Invoice"/> -->
+<!--                             <button icon="gtk-apply" name="invoice_corrected" states="invoice_except" string="Ignore Exception"/> -->
+<!--                             <button icon="gtk-ok" name="ship_recreate" states="shipping_except" string="Recreate Packing"/> -->
+<!--                             <button icon="gtk-apply" name="ship_corrected" states="shipping_except" string="Ignore Exception"/> -->
+                            <button icon="gtk-cancel" name="action_cancel" states="manual,progress" string="Cancelar orçamento" type="object"/>
+                            <button icon="gtk-convert" name="remove_automatico_itens" states="draft" string="Desvincular itens" type="object"/>
+<!--                             <button icon="gtk-print" name="imprime_os" states="waiting_date,manual,progress,done,shipping_except,invoice_except" string="Imprimir OS" type="object"/> -->
+<!--                             <button icon="gtk-go-forward" name="manual_invoice" states="manual" string="Create Final Invoice" type="object"/> -->
+<!--                             <button icon="gtk-cancel" name="ship_cancel" states="shipping_except" string="Cancelar orçamento aprovado"/> -->
+                            <button icon="gtk-convert" name="action_cancel_draft" states="cancel" string="Set to Draft" type="object"/>
+                            <button icon="gtk-cancel" name="cancel" states="draft" string="Cancelar orçamento"/>
+                            <button icon="gtk-cancel" name="invoice_cancel" states="invoice_except" string="Cancelar orçamento faturado"/>
+<!--                             <button icon="gtk-print" name="imprime_os" states="draft" string="Imprimir OS" type="object"/> -->
+                            <button icon="gtk-apply" name="order_confirm" states="draft" string="Aprovar" />
+                            <group col="2" colspan="2" attrs="{'invisible': [('orcamento_aprovado', '=', 'locacao')]}">
+                                <button icon="gtk-apply" name="encerrar_pedido" states="manual" string="Liberar faturamento" type="object"/>
+                            </group>
+                            <group col="2" colspan="2" attrs="{'invisible': [('orcamento_aprovado', '!=', 'locacao')]}">
+                                <button icon="gtk-apply" name="gerar_contratos" states="manual" string="Gerar contratos" type="object"/>
+                            </group>
+                        </group>
+                </xpath>
+
+                <field name="x_equipamentos_empresa_sale_ids" position="before">
+                    <group colspan="4" col="8">
+                        <button icon="gtk-apply" name="recalcula" string="Recalcula Acessorios" type="object" />
+                        <field name="percentual_acessorios" groups="base.group_sale_manager" />
+                        <field name="percentual_acessorios_id" invisible="1" />
+                     </group>
+                </field>
+
+                <page string="Locação/Mensalidade" position="replace">
+                    <page string="Locação/Mensalidade">
+                        <group colspan="4">
+                            <field colspan="4" context="{&quot;form_view_ref&quot; : &quot;orcamento.orcamento_orcamento_locacao_form&quot;, &quot;tree_view_ref&quot; : &quot;orcamento.orcamento_orcamento_locacao_tree&quot;}" name="orcamento_resumo_venda_ids" nolabel="1"/>
+                        </group>
+                        <separator string="Mensalidades de serviços" colspan="4"/>
+                        <newline/>
+                        <field name="monitoramento_eletronico" colspan="4" />
+                        <newline/>
+                        <field name="produto_chip_id" colspan="2" string="Serviço de backup" on_change="onchange_becape_chip(produto_chip_id, qtd_becape_chip)" domain="[(&quot;id&quot;, &quot;in&quot;, [1834, 1835, 1833, 1832, 3287, 3288, 3289, 3290, 3291, 3197])]" />
+                        <group colspan="2" col="4">
+                            <newline/>
+                            <field name="qtd_becape_chip" colspan="2" attrs="{&quot;invisible&quot;: [(&quot;produto_chip_id&quot;, &quot;=&quot;, False)]}" on_change="onchange_becape_chip(produto_chip_id, qtd_becape_chip)" />
+                            <newline/>
+                            <field name="vr_becape_chip" colspan="2" attrs="{&quot;invisible&quot;: [(&quot;produto_chip_id&quot;, &quot;=&quot;, False)]}" />
+                            <newline/>
+                        </group>
+                        <newline/>
+                        <field name="produto_monitoramento_garantido_id" colspan="2" on_change="onchange_monitoramento_garantido(produto_monitoramento_garantido_id, qtd_monitoramento_garantido)" domain="[(&quot;id&quot;, &quot;in&quot;, [3204, 3205])]"/>
+                        <group colspan="2" col="4">
+                            <newline/>
+                            <field name="qtd_monitoramento_garantido" colspan="2" attrs="{&quot;invisible&quot;: [(&quot;produto_monitoramento_garantido_id&quot;, &quot;=&quot;, False)]}" on_change="onchange_monitoramento_garantido(produto_monitoramento_garantido_id, qtd_monitoramento_garantido)" />
+                            <newline/>
+                            <field name="vr_monitoramento_garantido" colspan="2" attrs="{&quot;invisible&quot;: [(&quot;produto_monitoramento_garantido_id&quot;, &quot;=&quot;, False)]}" />
+                        </group>
+                        <field name="monitoramento_imagens" colspan="4" />
+                        <newline/>
+                        <field name="manutencao_tecnica" colspan="4" />
+                        <newline/>
+                        <field name="ronda" colspan="4" string="Ronda / Acompanhamento" />
+                        <newline/>
+                        <field name="animal_adestrado" colspan="4" />
+                        <newline/>
+                        <field name="posto_movel" colspan="4" />
+                        <group colspan="4">
+                            <field colspan="4" context="{&quot;form_view_ref&quot; : &quot;orcamento.orcamento_orcamento_locacao_form&quot;, &quot;tree_view_ref&quot; : &quot;orcamento_orcamento_locacao_soh_locacao_tree&quot;}" name="orcamento_resumo_locacao_ids" nolabel="1"/>
+                        </group>
+                    </page>
+                </page>
+                <page string="Resumo da venda" position="replace">
+<!--                     <page string="Resumo da venda" groups="base.group_sale_salesman,base.group_sale_manager"> -->
+                    <page string="Lucratividade" groups="base.group_sale_manager">
+                        <group colspan="10">
+                            <field colspan="10" context="{&quot;form_view_ref&quot; : &quot;orcamento.orcamento_orcamento_resumo_form&quot;, &quot;tree_view_ref&quot; : &quot;orcamento.orcamento_orcamento_resumo_tree&quot;}" name="orcamento_resumo_ids" nolabel="1"/>
+                            <button name="gera_notas" string="Recalcula lucro e margem líquidos" icon="gtk-go-forward" type="object" context="{&quot;temporario&quot;: True}"/>
+                            <newline/>
+                            <group colspan="2">
+                                <separator string="Impostos" colspan="2" />
+                                <newline/>
+                                <field name="vr_icms_proprio" colspan="2" />
+                                <newline/>
+                                <field name="vr_ipi" colspan="2" />
+                                <newline/>
+                                <field name="vr_iss" colspan="2" />
+                                <newline/>
+                                <field name="vr_pis_proprio" colspan="2" />
+                                <newline/>
+                                <field name="vr_cofins_proprio" colspan="2" />
+                                <newline/>
+                                <field name="vr_csll" colspan="2" />
+                                <newline/>
+                                <field name="vr_irrf" colspan="2" />
+                                <newline/>
+                                <field name="total_imposto" colspan="2" />
+                            </group>
+                            <group colspan="2">
+                                <separator string="Lucro líquido" colspan="2" />
+                                <newline/>
+                                <field name="vr_liquido" colspan="2" />
+                                <newline/>
+                                <field name="margem_liquida" colspan="2" />
+                            </group>
+                        </group>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+        <record id="orcamento_sale_order_form_dinamico" model="ir.ui.view">
+            <field name="name">orcamento.orcamento_sale_order_form_dinamico</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="orcamento.orcamento_sale_order_form_dinamico"/>
+            <field name="arch" type="xml">
+                <field name="x_mao_de_obra_sale_ids" position="after">
+                    <group colspan="2" col="4">
+                        <field name="mao_de_obra_instalacao" />
+                        <field name="mao_de_obra_instalacao_faturamento_direto" />
+                        <field name="mao_de_obra_instalacao_id" invisible="1" />
+                    </group>
+                    <group attrs="{'invisible': [('orcamento_aprovado', '!=', 'locacao')]}" colspan="2" col="4">
+                        <separator string="Migração da mão-de-obra para a proposta de venda" colspan="4" />
+                        <field name="proposta_venda_id" />
+                        <button type="object" name="migrar_mao_de_obra" string="Migra mão-de-obra" />
+                    </group>
+                </field>
+            </field>
+        </record>
+
+        <record id="sale_order_form_contrato" model="ir.ui.view">
+            <field name="name">sale.order.form.contrato</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="origin" position="after">
+                    <button type="object" name="abre_oportunidade" string="Abrir oportunidade" colspan="2" />
+                </field>
+                <page string="Other Information" position="after">
+                    <page string="Contrato" attrs="{'invisible': [('orcamento_aprovado', '!=', 'locacao')] }">
+                        <separator string="Dados para os contratos" colspan="4"/>
+                        <field name="data_assinatura" attrs="{'required': [('orcamento_aprovado', '=', 'locacao')] }" />
+                        <newline/>
+                        <field name="data_inicio" attrs="{'required': [('orcamento_aprovado', '=', 'locacao')] }" />
+                        <field name="conferido_vendedor"/>
+                        <field name="dia_vencimento" attrs="{'required': [('orcamento_aprovado', '=', 'locacao')] }" />
+                        <field name="pro_rata"/>
+                        <field name="duracao" attrs="{'required': [('orcamento_aprovado', '=', 'locacao')] }" />
+                        <separator string="Aumento/Renegociação de mensalidade" colspan="4"/>
+                        <field name="renegociacao" />
+                        <field name="eh_mudanca_endereco" />
+                        <field name="contrato_original_comercio_id" colspan="4"  domain="[('partner_id', '=', partner_id), ('ativo', '=', True), ('data_distrato', '=', False), ('company_id.parent_id', '=', 52)]" />
+                        <field name="contrato_original_seguranca_id" colspan="4"  domain="[('partner_id', '=', partner_id), ('ativo', '=', True), ('data_distrato', '=', False), ('company_id.parent_id', '=', 50)]" />
+                        <separator string="Contratos gerados" colspan="4"/>
+                        <field name="finan_contrato_ids" colspan="4"  readonly="1" nolabel="1" />
+                    </page>
+                    <page string="Checklist">
+                        <field name="checklist_id" string="Modelo de checklist" colspan="4" />
+                        <button type="object" name="preencher_checklist" string="Preencher checklist" colspan="4" />
+                        <separator string="Checklist" colspan="4"/>
+                        <field name="checklist_ids" nolabel="1" colspan="4">
+                            <tree>
+                                <field name="ordem" />
+                                <field name="atividade" />
+                                <field name="cargo" />
+                                <field name="data_conclusao" />
+                                <field name="user_id" />
+                            </tree>
+                            <form>
+                                <field name="ordem" required="1" readonly="1" />
+                                <field name="atividade" required="1" colspan="4" readonly="1" />
+                                <field name="cargo" colspan="4" readonly="1" />
+                                <newline />
+                                <field name="data_conclusao" />
+                                <field name="user_id" colspan="4" />
+                                <newline />
+                                <separator string="Observação" colspan="4"/>
+                                <field name="obs" colspan="4" nolabel="1"/>
+                            </form>
+                        </field>
+                        <button string="Imprimir Check-list" name="imprimir_checklist" icon="gtk-print" type="object" colspan="4" />
+                    </page>
+                </page>
+            </field>
+        </record>
+
+        <record id="sale_order_form_historico" model="ir.ui.view">
+            <field name="name">sale.order.form.historico</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped_sale.sale_order_form"/>
+            <field name="arch" type="xml">
+                <field name="picking_ids" position="after">
+                    <separator string="Propostas originais aprovadas" colspan="4" />
+<!--                     <button icon="gtk-print" name="imprime_pdfs_aprovacao" string="Imprimir" type="object"/> -->
+                    <field name="nome_pdf_versao_cliente" invisible="1"/>
+                    <field name="pdf_versao_cliente" nolabel="1" readonly="1" filename="nome_pdf_versao_cliente" colspan="4"/>
+                    <field name="nome_pdf_versao_detalhada" invisible="1"/>
+                    <field name="pdf_versao_detalhada" nolabel="1" readonly="1" filename="nome_pdf_versao_detalhada" colspan="4"/>
+                    <field name="nome_pdf_mao_de_obra" invisible="1"/>
+                    <field name="pdf_versao_mao_de_obra" nolabel="1" readonly="1" filename="nome_pdf_mao_de_obra" colspan="4"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sales_order_search">
+            <field name="name">sale.order.search</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="orcamento.orcamento_sales_order_filter"/>
+            <field name="sequence">100</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <filter string="Quotations" position="replace" />
+                <filter string="Sales" position="replace">
+                    <filter icon="terp-check" string="Venda" domain="[('orcamento_aprovado','=','venda')]" />
+                    <filter icon="terp-check" string="Locação" domain="[('orcamento_aprovado','=','locacao')]" />
+                </filter>
+                <field name="date_order_from" position="before">
+                    <field name="state" />
+                </field>
+            </field>
+        </record>
+
+        <record id="integra_sale_sale_order_form" model="ir.ui.view">
+            <field name="name">integra.sale.sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_sale.sale_order_form"/>
+            <field name="arch" type="xml">
+                <field name="motivo_cancelamento_id" position="after">
+                    <button type="object" name="forca_cancelamento" string="Cancelar" icon="gtk-cancel"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

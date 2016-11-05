@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="lote_nfse_manual_form" >
+            <field name="name">boleto.nfse.manual.form</field>
+            <field name="model">lote.nfse.manual</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Gerar NFSE Manual">
+                    <group colspan="4">
+                        <field name="nome_arquivo_nfse" invisible="1"/>
+                        <button icon="gtk-execute" string="Gerar NFSE" name="action_enviar_nfse" type="object" />
+                        <button icon="gtk-cancel" special="cancel" string="Fechar" />
+                        <field name="arquivo_envio_nfse" nolabel="1" readonly="1" filename="nome_arquivo_nfse" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_nfse_manual_wizard" multi="True" key2="client_action_multi" name="Lote de NFSE Manual" res_model="lote.nfse.manual" src_model="sped.documento" view_mode="form" target="new" view_type="form" />
+
+    </data>
+</openerp>

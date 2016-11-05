@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+contrato_full_all,Contrato,model_finan_contrato,group_finan_contract_staff,1,1,1,1
+contrato_produto_full_all,Produtos para faturamento do contrato,model_finan_contrato_produto,group_finan_contract_staff,1,1,1,1
+contrato_inventario_full_all,Inventário do contrato,model_finan_contrato_inventario,group_finan_contract_staff,1,1,1,1
+finan_gera_nota_full_all,Gerar notas fiscal,model_finan_gera_nota,group_finan_contract_staff,1,1,1,1
+contrato_reajuste_full_all,Contrato - Reajuste,model_finan_contrato_reajuste,group_finan_contract_staff,1,1,1,1
+contrato_reajuste_item_full_all,Contrato - Reajuste - itens,model_finan_contrato_reajuste_contrato,group_finan_contract_staff,1,1,1,1
+motivo_distrato_full_all,Contrato - Motivo Distrato,model_finan_motivo_distrato,group_finan_contract_staff,1,1,1,1
+grupo_economico_full_all,Contrato - Grupo Econômico,model_finan_grupo_economico,group_finan_contract_staff,1,1,1,1

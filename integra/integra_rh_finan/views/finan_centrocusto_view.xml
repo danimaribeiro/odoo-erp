@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+<!--
+        <record model="ir.ui.view" id="finan_rateio_item_tree">
+            <field name="name">finan.rateio.item.tree</field>
+            <field name="model">finan.rateio</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="finan.finan_rateio_item_tree"/>
+            <field name="arch" type="xml">
+                <field name="conta_id" position="after">
+                    <field name="tipo_conta" />
+                </field>
+            </field>
+        </record>-->
+
+        <record model="ir.ui.view" id="finan_rateio_form">
+            <field name="name">finan.rateio.form</field>
+            <field name="model">finan.centrocusto</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_rateio_form"/>
+            <field name="arch" type="xml">
+                <field name="tipo" position="after">
+                    <field name="rateio_rh" />
+                    <newline />
+                    <field name="company_id" colspan="4" attrs="{'required': [('rateio_rh', '=', True), ('company_ids', '=', False)], 'invisible': [('rateio_rh', '=', False)]}" />
+                    <newline />
+                    <field name="company_ids" colspan="4" attrs="{'required': [('rateio_rh', '=', True), ('company_id', '=', False)], 'invisible': [('rateio_rh', '=', False)]}" />
+                    <newline />
+                    <field name="rule_id" colspan="4" attrs="{'invisible': [('rateio_rh', '=', False), ('rule_ids', '=', False)]}" />
+                    <newline />
+                    <field name="rule_ids" colspan="4" attrs="{'invisible': [('rateio_rh', '=', False), ('rule_id', '=', False)]}" />
+                    <newline />
+                    <field name="tipo_parceiro" colspan="4" attrs="{'invisible': [('rateio_rh', '=', False)]}" />
+                    <newline />
+                    <field name="periodo_rh" attrs="{'required': [('rateio_rh', '=', True)], 'invisible': [('rateio_rh', '=', False)]}" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_rateio_tree">
+            <field name="name">finan.rateio.tree</field>
+            <field name="model">finan.centrocusto</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="finan.finan_rateio_tree"/>
+            <field name="arch" type="xml">
+                <field name="nome" position="after">
+                    <field name="rateio_rh" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_rateio_item_tree">
+            <field name="name">finan.rateio.item.tree</field>
+            <field name="model">finan.rateio</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="finan.finan_rateio_item_tree"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="hr_department_id" />
+                </field>
+                <field name="porcentagem" position="before">
+                    <field name="hr_contract_id" />
+                </field>
+            </field>
+        </record>
+        
+    </data>
+</openerp>

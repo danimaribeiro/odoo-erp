@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hr_ficha_financeira_rh" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="3.2153832150000197"/>
+	<property name="ireport.x" value="1735"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CONTRACT_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+
+sum(coalesce(
+case
+    when pc.competencia like '%-01' then pc.valor
+    else 0
+end, 0) *
+case when
+pc.sinal = '+' then 1
+else -1
+end
+) as valor_janeiro,
+
+
+sum(coalesce(
+case
+    when pc.competencia like '%-02' then pc.valor
+    else 0
+end, 0) *
+case when
+pc.sinal = '+' then 1
+else -1
+end
+) as valor_fevereiro,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-03' then pc.valor
+    else 0
+end, 0) *
+case when
+pc.sinal = '+' then 1
+else -1
+end
+) as valor_marco,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-04' then pc.valor
+    else 0
+end, 0)  *
+case when
+pc.sinal = '+' then 1
+else -1
+end
+) as valor_abril,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-05' then pc.valor
+    else 0
+end, 0)  *
+case when
+pc.sinal = '+' then 1
+else -1
+end
+) as valor_maio,
+
+
+sum(coalesce(
+case
+    when pc.competencia like '%-06' then pc.valor
+    else 0
+end, 0)
+ *
+case when
+pc.sinal = '+' then 1
+else -1
+end
+) as valor_junho,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-07' then pc.valor
+    else 0
+end, 0)
+) as valor_julho,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-08' then pc.valor
+    else 0
+end, 0)  *
+case when
+pc.sinal = '+' then 1
+else -1
+end
+) as valor_agosto,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-09' then pc.valor
+    else 0
+end, 0)  *
+case when
+pc.sinal = '+' then 1
+else -1
+end
+) as valor_setembro,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-10' then pc.valor
+    else 0
+end, 0)  *
+case when
+pc.sinal = '+' then 1
+else -1
+end
+) as valor_outubro,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-11' then pc.valor
+    else 0
+end, 0)
+) as valor_novembro,
+
+sum(coalesce(
+case
+    when pc.competencia like '%-12' then pc.valor
+    else 0
+end, 0)  *
+case when
+pc.sinal = '+' then 1
+else -1
+end
+) as valor_dezembro,
+
+
+sum(coalesce(
+case
+    when pc.competencia like '%-13' then pc.valor
+    else 0
+end, 0)  *
+case when
+pc.sinal = '+' then 1
+else -1
+end
+) as valor_13,
+
+sum(coalesce(
+case
+    when pc.sinal = '+' then pc.valor
+    else 0
+end, 0))
+as valor_proventos,
+
+sum(coalesce(
+case
+    when pc.sinal = '-' then pc.valor
+    else 0
+end, 0))
+as valor_descontos
+
+from hr_payslip_line_competencia pc
+join hr_employee e on e.id = pc.employee_id
+
+where
+pc.competencia like '2014%'
+and pc.contract_id = $P{CONTRACT_ID}
+and pc.sinal in ('+','-')]]>
+	</queryString>
+	<field name="valor_janeiro" class="java.math.BigDecimal"/>
+	<field name="valor_fevereiro" class="java.math.BigDecimal"/>
+	<field name="valor_marco" class="java.math.BigDecimal"/>
+	<field name="valor_abril" class="java.math.BigDecimal"/>
+	<field name="valor_maio" class="java.math.BigDecimal"/>
+	<field name="valor_junho" class="java.math.BigDecimal"/>
+	<field name="valor_julho" class="java.math.BigDecimal"/>
+	<field name="valor_agosto" class="java.math.BigDecimal"/>
+	<field name="valor_setembro" class="java.math.BigDecimal"/>
+	<field name="valor_outubro" class="java.math.BigDecimal"/>
+	<field name="valor_novembro" class="java.math.BigDecimal"/>
+	<field name="valor_dezembro" class="java.math.BigDecimal"/>
+	<field name="valor_13" class="java.math.BigDecimal"/>
+	<field name="valor_proventos" class="java.math.BigDecimal"/>
+	<field name="valor_descontos" class="java.math.BigDecimal"/>
+	<variable name="valor_janeiro_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_janeiro}]]></variableExpression>
+	</variable>
+	<variable name="valor_fevereiro_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_fevereiro}]]></variableExpression>
+	</variable>
+	<variable name="valor_marco_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_marco}]]></variableExpression>
+	</variable>
+	<variable name="valor_abril_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_abril}]]></variableExpression>
+	</variable>
+	<variable name="valor_maio_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_maio}]]></variableExpression>
+	</variable>
+	<variable name="valor_junho_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_junho}]]></variableExpression>
+	</variable>
+	<variable name="valor_julho_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_julho}]]></variableExpression>
+	</variable>
+	<variable name="valor_agosto_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_agosto}]]></variableExpression>
+	</variable>
+	<variable name="valor_setembro_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_setembro}]]></variableExpression>
+	</variable>
+	<variable name="valor_outubro_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_outubro}]]></variableExpression>
+	</variable>
+	<variable name="valor_novembro_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_novembro}]]></variableExpression>
+	</variable>
+	<variable name="valor_dezembro_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_dezembro}]]></variableExpression>
+	</variable>
+	<variable name="valor_13_1" class="java.math.BigDecimal" resetType="Group" resetGroup="detalhe" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_13}]]></variableExpression>
+	</variable>
+	<group name="detalhe"/>
+	<summary>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="462" y="0" width="50" height="14" uuid="c532e799-913d-4756-a8dc-6ffa82fa34b5"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_agosto}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="162" y="0" width="50" height="14" uuid="897a02e0-6787-42a4-8765-981d47ca11a5"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_fevereiro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="362" y="0" width="50" height="14" uuid="cf3e0b82-3c3e-45f4-a2b4-7c8e8f69472e"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_junho}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="612" y="0" width="50" height="14" uuid="05346f1d-a535-4712-b620-ca61df210854"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_novembro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="112" y="0" width="50" height="14" uuid="2dbd19f3-d729-412b-9b60-5c2bcc2270c6"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_janeiro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="662" y="0" width="50" height="14" uuid="9610d5c5-1cec-4cfd-a518-873c59ec115d"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_dezembro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="312" y="0" width="50" height="14" uuid="1660c611-6bb1-42f9-8e75-c016e67037af"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_maio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="212" y="0" width="50" height="14" uuid="71cd36e3-4a0e-4ad3-927e-a782c4265f63"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_marco}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="262" y="0" width="50" height="14" uuid="dcc1e18b-b546-4ff7-a875-1d9e747e86ee"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_abril}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="562" y="0" width="50" height="14" uuid="29880902-3f96-43b9-8c95-ce0009915f3f"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_outubro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="412" y="0" width="50" height="14" uuid="3b374c60-b608-4688-a2a9-bbd62da55c9c"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_julho}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="512" y="0" width="50" height="14" uuid="7b329ccf-56a7-4b89-b930-c3a5f8e46e2d"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_setembro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="762" y="0" width="52" height="14" uuid="4d959368-88fa-468b-b335-356030cb4d96"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_proventos} - $F{valor_descontos}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="712" y="0" width="50" height="14" uuid="8f5e3f16-69b9-4dab-983d-2d63ae9641c2"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans Mono" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_13}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="112" height="14" uuid="8b21dd98-e13e-4ab3-96c3-b1fc495dc388"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Liquído]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

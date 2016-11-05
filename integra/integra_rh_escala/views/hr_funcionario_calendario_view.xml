@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view"  id="hr_funcionario_calendario_form">
+            <field name="name">hr.funcionario.calendario.form</field>
+            <field name="model">hr.funcionario.calendario</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Calendário Funcionário">
+                    <separator string="Informações básicas" colspan="4"/>                            
+                     <group col="6" colspan="4" >                        
+                        <group col="4" colspan="4" >                        
+                            <field name="contract_id" required="1" colspan="4" on_change="onchange_contract_id(contract_id)" />                                                                                  
+                            <field name="unidade_salario" invisible="1" />
+                            <newline />                         
+                            <field name="turno_id" on_change="busca_descricao(turno_id)" required="1" colspan="4"/>
+                            <field name="partner_id" readonly="1" colspan="4"/>
+                            <field name="department_id" readonly="1" colspan="4"/>
+                            <field name="jornada_id" readonly="1" colspan="4"/>                                                                                       
+                        </group>
+                        <group col="2" colspan="2" >                                                                              
+                            <field name="mes" required="1" on_change="onchange_ano_mes(ano, mes)"/>
+                            <field name="ano" required="1" on_change="onchange_ano_mes(ano, mes)"/>
+                            <field name="trabalha_dia_1" />
+                            <button string="Preencher" type="object" name="monta_escala" colspan="2" attrs="{'invisible': [('unidade_salario', '=', '1')]}" />
+                        </group>
+                    </group>                                   
+                    <separator string="Datas" colspan="4" />
+                    <field name="data_ids" nolabel="1" colspan="4" context="{'default_turno_id': turno_id, 'default_funcionario_trabalha_id': contract_id}" >
+                        <tree>
+                            <field name="data" required="1" />
+                            <newline />
+                            <field name="turno_id" colspan="4" />
+                            <field name="funcionario_trabalha_id" required="1" colspan="4" />
+                            <field name="funcionario_folga_id" colspan="4" />
+                            <field name="funcionario_falta_id" colspan="4" />
+                            <field name="rule_id" colspan="4" attrs="{'invisible': [('funcionario_falta_id', '=', False)]}" />
+                            <field name="vr_hora" sum="Total" />
+                            <field name="ocorrencia" colspan="4" />                            
+                        </tree>
+                        <form>
+                            <field name="data" required="1" />
+                            <newline />
+                            <field name="turno_id" colspan="4" />
+                            <field name="funcionario_trabalha_id" required="1" colspan="4" />
+                            <field name="funcionario_folga_id" colspan="4" />
+                            <field name="funcionario_falta_id" colspan="4" />
+                            <field name="rule_id" colspan="4" attrs="{'invisible': [('funcionario_falta_id', '=', False)]}" domain="[('afastamento', '=', True)]" />
+                            <field name="vr_hora" sum="Total" />
+                            <field name="ocorrencia" colspan="4" />                            
+                        </form>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_funcionario_calendario_tree">
+            <field name="name">hr.funcionário.calendario.tree</field>
+            <field name="model">hr.funcionário.calendario</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Calendário Funcionário">
+                    <field name="contract_id" />                  
+                    <field name="mes" />                    
+                    <field name="ano" />
+                    <field name="turno_id" />                  
+                </tree>
+            </field>
+        </record>       
+                       
+        <record model="ir.ui.view" id="hr_funcionario_calendario_search">
+            <field name="name">hr.funcionario.calendario.search</field>
+            <field name="model">hr.funcionario.calendario</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Calendario Funcionário">                                      
+                    <field name="contract_id" />                                     
+                    <field name="mes" />                    
+                    <field name="ano" />                    
+                </search>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="hr_funcionario_calendario_acao">
+            <field name="name">Calendário Funcionário</field>
+            <field name="res_model">hr.funcionario.calendario</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_funcionario_calendario_tree" />
+            <field name="search_view_id" ref="hr_funcionario_calendario_search"/>         
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="hr_funcionario_calendario_acao"
+            id="menu_funcionario_calendario"
+            name="Calendário Funcionário"
+            parent="menu_hr_escala_controle"
+            sequence="5" />
+
+    </data>
+</openerp>
+

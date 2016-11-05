@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="gerar_caged_tree">
+            <field name="name">Gerando Arquivo CAGED</field>
+            <field name="model">hr_caged</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Arquivos Enviados" >
+                    <field name="data_geracao" />
+                    <field name="titulo_caged"/>
+                    <field name="company_id" />
+                    <field name="employee_id" />
+                 </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="gerar_caged_form">
+            <field name="name">Gerando Arquivo CAGED</field>
+            <field name="model">hr_caged</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                 <form string="Dados de Identificação do Arquivo CAGED">
+                    <group col="6">
+                        <field name="data_geracao" select="1"/>
+                        <field name="titulo_caged" select="1"/>
+                        <newline/>
+                        <field name="company_id" select="1" colspan="6" domain="[('partner_id.cnpj_cpf', 'like', '/0001')]"/>
+                        <newline/>
+                        <field name="employee_id" select="1" colspan="6" />
+                        <newline/>
+                        <field name="identificador" select="1"/>
+                        <field name="tipo_alteracao" select="1"/>
+                        <field name="primeira_declaracao" select="1"/>
+                        <newline/>
+                        <field name="ddd" select="1"/>
+                        <field name="fone" select="1"/>
+                        <field name="ramal" select="1"/>
+                        <button icon="gtk-execute" string="Gerar Arquivo" name="gera_arquivo_caged" type="object" context="{
+                                'data_geracao' : data_geracao,
+                                'titulo_caged' : titulo_caged,
+                                'company_id' : company_id,
+                                'employee_id' : employee_id,
+                                'identificador' : identificador,
+                                'tipo_alteracao' : tipo_alteracao,
+                                'primeira_declaracao' : primeira_declaracao,
+                                'ddd' : ddd,
+                                'fone' : fone,
+                                'ramal' : ramal
+                                }" colspan="2" />
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="gerar_caged_acao">
+            <field name="name">Arquivo CAGED</field>
+            <field name="res_model">hr_caged</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="gerar_caged_acao" id="gerar_caged" name="Gerar CAGED" parent="esocial_menu_tabelas" sequence="1" />
+    </data>
+</openerp>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="hr_afastamento_tree">
+            <field name="name">hr.afastamento.tree</field>
+            <field name="model">hr.afastamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Afastamentos">
+                    <field name="company_id" />
+                    <field name="employee_id"/>
+                    <field name="rule_id"/>
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                    <field name="valor_inss" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_afastamento_form">
+            <field name="name">hr.afastamento.form</field>
+            <field name="model">hr.afastamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <field name="employee_id" required="1" on_change="onchange_employee_id(employee_id)" colspan="4" />
+                    <field name="contract_id" invisible="1" />
+                    <field name="rule_id" colspan="4" required="1" domain="[('afastamento', '=', True)]"/>
+                    <group string="Período" colspan="4" >
+                        <field name="data_inicial" required="1"/>
+                        <newline />
+                        <field name="data_final" required="0" />
+                        <field name="retorno_informado" required="0" />
+                    </group>
+                    <button string="Gerar Beneficio incapacidade" icon="gtk-print" name="gera_beneficio_incapacidade" type="object" />
+                    <separator string="Valor pago pelo INSS (para horistas)" colspan="4" />
+                    <field name="valor_inss" colspan="2" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_afastamento_search">
+            <field name="name">hr.afastamento.search</field>
+            <field name="model">hr.afastamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Afastamentos">
+                    <field name="company_id" />
+                    <field name="employee_id" />
+                    <field name="rule_id" domain="[('afastamento', '=', True)]" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_afastamento_acao">
+            <field name="name">Afastamento</field>
+            <field name="res_model">hr.afastamento</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_afastamento_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="hr_afastamento_acao" id="menu_hr_afastamento" name="Afastamentos" parent="hr_payroll.menu_hr_root_payroll" sequence="10"/>
+
+        <record model="ir.actions.act_window.view" id="hr_afastamento_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_afastamento_acao"/>
+            <field name="view_id" ref="hr_afastamento_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_afastamento_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_afastamento_acao"/>
+            <field name="view_id" ref="hr_afastamento_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

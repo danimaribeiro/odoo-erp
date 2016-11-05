@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>      
+                  
+        <menuitem id="menu_condominio" 
+        name="Condomínios" 
+        sequence="5"/>
+
+        <menuitem id="menu_condominio_cadastro" 
+        name="Cadastro" 
+        sequence="5"
+        parent="menu_condominio" />
+
+        <menuitem id="menu_condominio_administracao" 
+        name="Administração" 
+        sequence="10"
+        parent="menu_condominio" />
+        
+        <menuitem id="menu_condominio_reuniao"
+            name="Reuniões" 
+            sequence="1"
+            action="crm.crm_case_categ_meet" 
+            parent="menu_condominio_administracao" />
+
+        <menuitem id="menu_condominio_reuniao_convite"
+            name="Convites de reuniões" 
+            sequence="2"
+            action="crm.action_view_attendee_form" 
+            parent="menu_condominio_administracao" />
+
+        <menuitem id="menu_condominio_tarefa"
+            name="Tarefas" 
+            sequence="3"
+            action="project.action_view_task" 
+            parent="menu_condominio_administracao" />
+        
+    </data>
+</openerp>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_sefip_tree" >
+            <field name="name">hr.sefip.tree</field>
+            <field name="model">hr.sefip</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="SEFIP">
+                    <field name="company_id"/>
+                    <field name="mes" required="1" />
+                    <field name="ano" required="1" />
+                    <field name="data" />
+                    <field name="codigo_recolhimento_fgts" />
+                    <field name="nome_arquivo" invisible="1"/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_sefip_form" >
+            <field name="name">hr.sefip.form</field>
+            <field name="model">hr.sefip</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="SEFIP">
+                    <group colspan="2">
+                        <field name="company_id" required="1" colspan="4" on_change="onchange_company_id(company_id)" domain="[('cnpj_cpf', 'like', '/0001-')]" />
+                        <newline/>
+                        <field name="responsavel_id" required="1" colspan="4" domain="[('cnpj_cpf', '!=', False)]" />
+                        <newline/>
+                        <field name="employee_id" required="1" colspan="4" />
+                        <newline/>
+                        <field name="mes" required="1" on_change="onchange_mes_ano(mes, ano, company_id)" />
+                        <field name="ano" required="1" on_change="onchange_mes_ano(mes, ano, company_id)" />
+                        <newline/>
+                        <field name="modalidade_arquivo" />
+                        <newline/>
+                        <field name="indicador_recolhimento_fgts" />
+                        <newline/>
+                        <field name="data_recolhimento_fgts" />
+                        <field name="codigo_recolhimento_fgts" />
+                        <newline/>
+                        <field name="indicador_recolhimento_gps" />
+                        <newline/>
+                        <field name="data_recolhimento_gps" />
+                        <field name="codigo_recolhimento_gps" />
+                        <newline/>
+                        <field name="codigo_fpas" />
+                        <field name="codigo_outras_entidades" />
+                        <newline/>
+                        <field name="centralizadora" />
+                        <newline/>
+                        <field name="data" />
+                        <newline/>
+<!--                         <group attrs="{'invisible': ['!', ('codigo_recolhimento_fgts', 'in' ('650', '660'))]}" colspan="4"> -->
+                        <group colspan="4">
+                            <separator string="Processo ou convenção ou coletiva" colspan="4" />
+                            <field name="processo_numero" />
+                            <field name="processo_ano" />
+                            <field name="processo_vara" />
+                            <newline />
+                            <field name="processo_inicial" />
+                            <field name="processo_final" />
+                        </group>
+                        <field name="nome_arquivo" colspan="4" invisible="1" />
+                        <newline/>
+                        <notebook colspan="4">
+                            <page string="Arquivo">
+                                <button icon="gtk-execute" string="Gerar arquivo" name="gera_arquivo" type="object" context="{'company_id' : company_id, 'ano': ano, 'mes': mes}" colspan="4" states="aberto" />
+                                <separator string="Arquivo SEFIP" colspan="4" />
+                                <field name="arquivo" nolabel="1" filename="nome_arquivo" colspan="4"/>
+                                <newline/>
+                                <field name="arquivo_texto" nolabel="1" colspan="4"/>
+                            </page>
+                            <page string="Fechamento">
+                                <field name="state" invisible="1"/>
+                                <button icon="gtk-execute" string="Confirmar entrega e fechar arquivo" name="fecha_arquivo" type="object" colspan="2" states="aberto" />
+                                <button icon="gtk-execute" string="Reabrir entrega" name="abre_arquivo" type="object" colspan="2" states="fechado" />
+                                <separator string="Valores gerados no SEFIP" colspan="4" />
+                                <group colspan="4">
+                                    <field name="vr_inss_empresa" />
+                                    <field name="vr_inss_rat" />
+                                </group>
+                                <newline/>
+                                <separator string="Holerites considerados" colspan="4" />
+                                <field name="payslip_ids" colspan="4" mode="tree" readonly="1" nolabel="1">
+                                    <tree>
+                                        <field name="company_id" />
+                                        <field name="employee_id" />
+<!--                                         <field name="valor_liquido" sum="Valor líquido" /> -->
+                                        <field name="valor_fgts" sum="Valor FGTS" />
+                                        <field name="valor_inss" sum="Valor INSS func." />
+                                        <field name="valor_inss_13" sum="Valor INSS 13º" />
+                                        <field name="valor_inss_empresa" sum="Valor INSS empresa" />
+                                        <field name="valor_inss_outras" sum="Valor INSS outras" />
+                                        <field name="valor_inss_rat" sum="Valor INSS RAT" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_sefip_acao">
+            <field name="name">SEFIP</field>
+            <field name="res_model">hr.sefip</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_sefip_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_sefip_form"/>
+            <field name="act_window_id" ref="hr_sefip_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_sefip_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="hr_sefip_tree"/>
+            <field name="act_window_id" ref="hr_sefip_acao"/>
+        </record>
+
+        <menuitem action="hr_sefip_acao"
+                  id="menu_hr_sefip"
+                  name="SEFIP"
+                  parent="integra_rh.menu_hr_arquivo"
+                  sequence="1" />
+
+    </data>
+</openerp>

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="linhas de pedido" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="4d119ff0-fa24-42a1-9d62-2b1e8b1586cf">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="1836"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ORDER_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     product_uom."id" AS product_uom_id,
+     product_uom."name" AS product_uom_name,
+     sale_order_line."product_uom" AS product_uom,
+     sale_order_line."price_unit" AS price_unit,
+     sale_order_line."order_id" AS order_id,
+     sale_order_line."product_uom_qty" AS product_uom_qty,
+     sale_order_line."discount" AS discount,
+     sale_order_line."name" AS name,
+     sale_order_line."product_id" AS product_id,
+     sale_order_line."acabamento" AS sale_order_line_acabamento,
+     sale_order_line."comprimento" AS sale_order_line_comprimento,
+     sale_order_line."ambiente" AS sale_order_line_ambiente,
+     sale_order_line."tipo_de_trilho" AS sale_order_line_tipo_de_trilho,
+     sale_order_line."cor_do_vidro" AS sale_order_line_cor_do_vidro,
+     sale_order_line."formato" AS sale_order_line_formato,
+     sale_order_line."tipo_de_veneziana" AS sale_order_line_tipo_de_veneziana,
+     sale_order_line."cor_do_perfil" AS sale_order_line_cor_do_perfil,
+     sale_order_line."expessura" AS sale_order_line_expessura,
+     sale_order_line."numero_de_folhas_de_vidros" AS sale_order_line_numero_de_folhas_de_vidros,
+     sale_order_line."fechadura" AS sale_order_line_fechadura,
+     sale_order_line."material" AS sale_order_line_material,
+     sale_order_line."modelo" AS sale_order_line_modelo,
+     sale_order_line."largura_caixilho" AS sale_order_line_largura_caixilho,
+     sale_order_line."tipo_madeira" AS sale_order_line_tipo_madeira,
+     sale_order_line."numero_de_folhas_de_madeiras" AS sale_order_line_numero_de_folhas_de_madeiras,
+     sale_order_line."altura" AS sale_order_line_altura,
+     sale_order_line."largura" AS sale_order_line_largura,
+     integra_produto_ambiente."id" AS integra_produto_ambiente_id,
+     integra_produto_ambiente."descricao" AS integra_produto_ambiente_descricao,
+     integra_produto_cor_do_perfil."id" AS integra_produto_cor_do_perfil_id,
+     integra_produto_cor_do_perfil."descricao" AS integra_produto_cor_do_perfil_descricao,
+     integra_produto_fechadura."id" AS integra_produto_fechadura_id,
+     integra_produto_fechadura."descricao" AS integra_produto_fechadura_descricao,
+     integra_produto_cor_do_vidro."id" AS integra_produto_cor_do_vidro_id,
+     integra_produto_cor_do_vidro."descricao" AS integra_produto_cor_do_vidro_descricao,
+     integra_produto_largura_caixilho."id" AS integra_produto_largura_caixilho_id,
+     integra_produto_largura_caixilho."descricao" AS integra_produto_largura_caixilho_descricao,
+     integra_produto_material."id" AS integra_produto_material_id,
+     integra_produto_material."descricao" AS integra_produto_material_descricao,
+     integra_produto_modelo."id" AS integra_produto_modelo_id,
+     integra_produto_modelo."descricao" AS integra_produto_modelo_descricao,
+     integra_produto_numero_de_folhas_de_madeiras."id" AS integra_produto_numero_de_folhas_de_madeiras_id,
+     integra_produto_numero_de_folhas_de_madeiras."descricao" AS integra_produto_numero_de_folhas_de_madeiras_descricao,
+     integra_produto_numero_de_folhas_de_vidros."id" AS integra_produto_numero_de_folhas_de_vidros_id,
+     integra_produto_numero_de_folhas_de_vidros."descricao" AS integra_produto_numero_de_folhas_de_vidros_descricao,
+     integra_produto_tipo_de_trilho."id" AS integra_produto_tipo_de_trilho_id,
+     integra_produto_tipo_de_trilho."descricao" AS integra_produto_tipo_de_trilho_descricao,
+     integra_produto_tipo_de_veneziana."id" AS integra_produto_tipo_de_veneziana_id,
+     integra_produto_tipo_de_veneziana."descricao" AS integra_produto_tipo_de_veneziana_descricao,
+     integra_produto_tipo_madeira."id" AS integra_produto_tipo_madeira_id,
+     integra_produto_tipo_madeira."descricao" AS integra_produto_tipo_madeira_descricao,
+     integra_produto_formato."id" AS integra_produto_formato_id,
+     integra_produto_formato."descricao" AS integra_produto_formato_descricao,
+     integra_produto_acabamento."descricao" AS integra_produto_acabamento_descricao,
+     integra_produto_acabamento."id" AS integra_produto_acabamento_id
+FROM
+     "public"."product_uom" product_uom LEFT JOIN "sale_order_line" sale_order_line ON product_uom."id" = sale_order_line."product_uom"
+     LEFT JOIN "public"."integra_produto_acabamento" integra_produto_acabamento ON sale_order_line."acabamento" = integra_produto_acabamento."id"
+     LEFT JOIN "public"."integra_produto_ambiente" integra_produto_ambiente ON sale_order_line."ambiente" = integra_produto_ambiente."id"
+     LEFT JOIN "public"."integra_produto_cor_do_perfil" integra_produto_cor_do_perfil ON sale_order_line."cor_do_perfil" = integra_produto_cor_do_perfil."id"
+     LEFT JOIN "public"."integra_produto_fechadura" integra_produto_fechadura ON sale_order_line."fechadura" = integra_produto_fechadura."id"
+     LEFT JOIN "public"."integra_produto_cor_do_vidro" integra_produto_cor_do_vidro ON sale_order_line."cor_do_vidro" = integra_produto_cor_do_vidro."id"
+     LEFT JOIN "public"."integra_produto_largura_caixilho" integra_produto_largura_caixilho ON sale_order_line."largura_caixilho" = integra_produto_largura_caixilho."id"
+     LEFT JOIN "public"."integra_produto_material" integra_produto_material ON sale_order_line."material" = integra_produto_material."id"
+     LEFT JOIN "public"."integra_produto_modelo" integra_produto_modelo ON sale_order_line."modelo" = integra_produto_modelo."id"
+     LEFT JOIN "public"."integra_produto_numero_de_folhas_de_madeiras" integra_produto_numero_de_folhas_de_madeiras ON sale_order_line."numero_de_folhas_de_madeiras" = integra_produto_numero_de_folhas_de_madeiras."id"
+     LEFT JOIN "public"."integra_produto_numero_de_folhas_de_vidros" integra_produto_numero_de_folhas_de_vidros ON sale_order_line."numero_de_folhas_de_vidros" = integra_produto_numero_de_folhas_de_vidros."id"
+     LEFT JOIN "public"."integra_produto_tipo_de_trilho" integra_produto_tipo_de_trilho ON sale_order_line."tipo_de_trilho" = integra_produto_tipo_de_trilho."id"
+     LEFT JOIN "public"."integra_produto_tipo_de_veneziana" integra_produto_tipo_de_veneziana ON sale_order_line."tipo_de_veneziana" = integra_produto_tipo_de_veneziana."id"
+     LEFT JOIN "public"."integra_produto_tipo_madeira" integra_produto_tipo_madeira ON sale_order_line."tipo_madeira" = integra_produto_tipo_madeira."id"
+    LEFT JOIN "public"."integra_produto_formato" integra_produto_formato ON sale_order_line."formato" = integra_produto_formato."id"
+WHERE
+     order_id = $P{ORDER_ID}]]>
+	</queryString>
+	<field name="product_uom_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[UoM]]></fieldDescription>
+	</field>
+	<field name="product_uom_name" class="java.lang.String"/>
+	<field name="product_uom" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Product UOM]]></fieldDescription>
+	</field>
+	<field name="price_unit" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Unit Price]]></fieldDescription>
+	</field>
+	<field name="order_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Order Reference]]></fieldDescription>
+	</field>
+	<field name="product_uom_qty" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Quantity (UoM)]]></fieldDescription>
+	</field>
+	<field name="discount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Discount (%)]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String"/>
+	<field name="product_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Product]]></fieldDescription>
+	</field>
+	<field name="sale_order_line_acabamento" class="java.lang.Integer"/>
+	<field name="sale_order_line_comprimento" class="java.lang.Double"/>
+	<field name="sale_order_line_ambiente" class="java.lang.Integer"/>
+	<field name="sale_order_line_tipo_de_trilho" class="java.lang.Integer"/>
+	<field name="sale_order_line_cor_do_vidro" class="java.lang.Integer"/>
+	<field name="sale_order_line_formato" class="java.lang.Integer"/>
+	<field name="sale_order_line_tipo_de_veneziana" class="java.lang.Integer"/>
+	<field name="sale_order_line_cor_do_perfil" class="java.lang.Integer"/>
+	<field name="sale_order_line_expessura" class="java.lang.Double"/>
+	<field name="sale_order_line_numero_de_folhas_de_vidros" class="java.lang.Integer"/>
+	<field name="sale_order_line_fechadura" class="java.lang.Integer"/>
+	<field name="sale_order_line_material" class="java.lang.Integer"/>
+	<field name="sale_order_line_modelo" class="java.lang.Integer"/>
+	<field name="sale_order_line_largura_caixilho" class="java.lang.Integer"/>
+	<field name="sale_order_line_tipo_madeira" class="java.lang.Integer"/>
+	<field name="sale_order_line_numero_de_folhas_de_madeiras" class="java.lang.Integer"/>
+	<field name="sale_order_line_altura" class="java.lang.Double"/>
+	<field name="sale_order_line_largura" class="java.lang.Double"/>
+	<field name="integra_produto_ambiente_id" class="java.lang.Integer"/>
+	<field name="integra_produto_ambiente_descricao" class="java.lang.String"/>
+	<field name="integra_produto_cor_do_perfil_id" class="java.lang.Integer"/>
+	<field name="integra_produto_cor_do_perfil_descricao" class="java.lang.String"/>
+	<field name="integra_produto_fechadura_id" class="java.lang.Integer"/>
+	<field name="integra_produto_fechadura_descricao" class="java.lang.String"/>
+	<field name="integra_produto_cor_do_vidro_id" class="java.lang.Integer"/>
+	<field name="integra_produto_cor_do_vidro_descricao" class="java.lang.String"/>
+	<field name="integra_produto_largura_caixilho_id" class="java.lang.Integer"/>
+	<field name="integra_produto_largura_caixilho_descricao" class="java.lang.String"/>
+	<field name="integra_produto_material_id" class="java.lang.Integer"/>
+	<field name="integra_produto_material_descricao" class="java.lang.String"/>
+	<field name="integra_produto_modelo_id" class="java.lang.Integer"/>
+	<field name="integra_produto_modelo_descricao" class="java.lang.String"/>
+	<field name="integra_produto_numero_de_folhas_de_madeiras_id" class="java.lang.Integer"/>
+	<field name="integra_produto_numero_de_folhas_de_madeiras_descricao" class="java.lang.String"/>
+	<field name="integra_produto_numero_de_folhas_de_vidros_id" class="java.lang.Integer"/>
+	<field name="integra_produto_numero_de_folhas_de_vidros_descricao" class="java.lang.String"/>
+	<field name="integra_produto_tipo_de_trilho_id" class="java.lang.Integer"/>
+	<field name="integra_produto_tipo_de_trilho_descricao" class="java.lang.String"/>
+	<field name="integra_produto_tipo_de_veneziana_id" class="java.lang.Integer"/>
+	<field name="integra_produto_tipo_de_veneziana_descricao" class="java.lang.String"/>
+	<field name="integra_produto_tipo_madeira_id" class="java.lang.Integer"/>
+	<field name="integra_produto_tipo_madeira_descricao" class="java.lang.String"/>
+	<field name="integra_produto_formato_id" class="java.lang.Integer"/>
+	<field name="integra_produto_formato_descricao" class="java.lang.String"/>
+	<field name="integra_produto_acabamento_descricao" class="java.lang.String"/>
+	<field name="integra_produto_acabamento_id" class="java.lang.Integer"/>
+	<variable name="preco" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="8af04624-6e36-4f58-a4a8-4ea1fd287e3b" x="28" y="0" width="757" height="20" forecolor="#EFEDED" backcolor="#EFEDED"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="cd1a1963-36a7-47fb-8a9f-5992c521178d" x="30" y="0" width="356" height="20"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ce9d6e71-1bfa-43ef-a9cf-233acea84ab3" x="385" y="0" width="89" height="20" backcolor="#EFEDED"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Quantidade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0eba1d28-e9cb-4a3b-9579-62b7e727df6c" x="473" y="0" width="106" height="20" backcolor="#EFEDED"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor Unitário]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f394875e-29ac-4aef-9dd5-5d782c5e897b" x="578" y="0" width="107" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desconto (%)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fa865ba1-4930-453f-9531-2446b8e82a6c" x="684" y="0" width="100" height="20" backcolor="#EFEDED"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Preço]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="68" splitType="Prevent">
+			<textField>
+				<reportElement uuid="9f8f3fe6-0c40-4fa6-98de-a86a826b56c7" x="386" y="0" width="88" height="20"/>
+				<box topPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{product_uom_qty}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="817add86-2921-4e43-b6c9-35ff07958d7c" x="30" y="0" width="356" height="20"/>
+				<box topPadding="5"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="R$ #,##0.00">
+				<reportElement uuid="b2e4fcc7-ed4d-42ea-bd40-96c867f19402" x="473" y="0" width="106" height="39"/>
+				<box topPadding="5"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{price_unit}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="fe04ddc7-b82d-48d7-98fa-e3e0de5d323d" x="578" y="0" width="106" height="39"/>
+				<box topPadding="5"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{discount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="R$ #,##0.00">
+				<reportElement uuid="7fa10c26-bc96-46e3-8bec-707bd12c0fa3" x="684" y="0" width="100" height="68"/>
+				<box topPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[($F{price_unit} * $F{product_uom_qty}) * ((100 - $F{discount})/100)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ca1bdc18-9b7d-4c72-a017-ba13e8b2351f" x="386" y="19" width="88" height="20"/>
+				<box topPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{product_uom_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d82db24d-ed27-42aa-8907-2097a39dc379" positionType="FixRelativeToBottom" x="100" y="19" width="286" height="13"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sale_order_line_comprimento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a1f3cba3-99d7-492b-801e-bc4da897c66d" positionType="FixRelativeToBottom" x="30" y="19" width="71" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Comprimento:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3a959bef-b13f-4c56-aed5-b798c7b8dae1" positionType="Float" x="100" y="55" width="286" height="13"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sale_order_line_expessura}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6654bfbe-a11c-4460-bfa2-1f4937595ae0" positionType="Float" x="30" y="55" width="71" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Expessura:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7f6db4a6-761c-4388-9f55-9d2c0c5c31ee" positionType="Float" x="100" y="31" width="286" height="13"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sale_order_line_altura}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="155bb4db-1ab4-4f5b-b345-6291fed429df" positionType="Float" x="30" y="31" width="71" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Altura:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="eb9524bf-82c0-4489-baee-60475c283b2b" x="100" y="43" width="286" height="13"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sale_order_line_largura}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a2d8ac61-3d40-4760-8b07-a1b826f83f07" positionType="Float" x="30" y="43" width="71" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Largura:]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

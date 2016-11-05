@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_contract_form" model="ir.ui.view">
+            <field name="name">hr.contract.form</field>
+            <field name="model">hr.contract</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_rh.hr_contract_form"/>
+            <field name="arch" type="xml">
+                 <page string="Cursos e Treinamentos" position="before">
+                    <page string="Vale Transporte">
+                        <field name="linha_transporte_ids" nolabel="1" colspan="4" >
+                            <tree editable="top" >                                                      
+                                <field name="linha_id" required="1" on_change="get_linha(linha_id)" />                            
+                                <field name="vr_unitario" readonly="1" />                            
+                                <field name="quantidade" required="1" on_change="soma_total(vr_unitario,quantidade)" />                            
+                                <field name="vr_total" required="1" />
+                                <field name="data_inicial" required="1"  />                    
+                                <field name="data_final"  />   
+                            </tree>
+                        </field>                     
+                    </page>  
+                    <page string="Vale Refeição/Alimentação">
+                        <field name="vale_refeicao_ids" nolabel="1" colspan="4" >
+                            <tree editable="top" >                                                      
+                                <field name="rule_id" required="1" domain="[('tipo_beneficio','in',('VA','VR'))]" />                                                                                       
+                                <field name="quantidade" required="1" />                                                            
+                                <field name="data_inicial" required="1"  />                    
+                                <field name="data_final"  />   
+                            </tree>
+                        </field>                     
+                    </page>  
+                 </page>
+            </field>
+        </record>
+        
+    </data>
+</openerp>

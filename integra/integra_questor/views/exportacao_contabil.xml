@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="questor_contabilidade_search">
+            <field name="name">questor.contabilidade.search</field>
+            <field name="model">questor.contabilidade</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Exportação Contabilidade">
+                    <field name="codigo" string="Lote" />
+                    <field name="company_id" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="questor_contabilidade_tree">
+            <field name="name">questor.contabilidade.tree</field>
+            <field name="model">questor.contabilidade</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="codigo" string="Lote" />
+                    <field name="company_id" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                    <field name="tipo" />
+                    <field name="emissao" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="questor_contabilidade_form">
+            <field name="name">questor.contabilidade.form</field>
+            <field name="model">questor.contabilidade</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Exportação para Contabilidade">
+                    <separator string="Parâmetros" colspan="4"/>
+                    <field name="data_inicial" required="1" />
+                    <field name="data_final" required="1" />
+                    <newline/>
+                    <field name="company_id" required="1" colspan="4" domain="[('cnpj_cpf', '!=', False)]" />
+                    <newline/>
+                    <field name="tipo" required="1" colspan="2" />
+                    <field name="emissao" colspan="2" />
+                    <newline/>
+                    <notebook colspan="4">
+                        <page string="Arquivo">
+                            <field name="nome" invisible="1"/>
+                            <button icon="gtk-execute" string="Gerar arquivo" name="gera_exportacao" type="object" colspan="4" />
+                            <newline/>
+                            <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                            <newline/>
+                            <field name="arquivo_texto" colspan="4" />
+                        </page>
+                        <page string="Dados gerados">
+                            <separator string="Dados gerados" colspan="4" />
+                            <field name="item_ids" readonly="1" colspan="4" nolabel="1">
+                                <tree>
+                                    <field name="documento_id" />
+                                    <field name="lancamento_id" />
+                                    <field name="data" />
+                                    <field name="conta_debito_id" />
+                                    <field name="codigo_reduzido_debito" />
+                                    <field name="conta_credito_id" />
+                                    <field name="codigo_reduzido_credito" />
+                                    <field name="valor" />
+                                    <field name="codigo_historico" />
+                                    <field name="historico" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Relatório Diário">
+                            <field name="diario_conta_id" colspan="4" />
+                            <newline/>
+                            <field name="nome_diario" invisible="1"/>
+                            <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_diario" type="object" colspan="4" />
+                            <newline/>
+                            <field name="arquivo_diario" nolabel="1" readonly="1" filename="nome_diario" colspan="4"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="questor_contabilidade_acao">
+            <field name="name">Exportação Contabilidade</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">questor.contabilidade</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_questor_contabilidade"
+            name="Exportação Contabilidade"
+            parent="menu_sped_questor" sequence="11" action="questor_contabilidade_acao" />
+    </data>
+</openerp>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_familiatributaria_form">
+            <field name="name">sped.familiatributaria.form</field>
+            <field name="model">sped.familiatributaria</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Família Tributária">
+                    <field name="descricao" colspan="4"/>
+                    <field name="al_previdencia" colspan="2"/>
+                    <field name="usa_mva_ajustado" colspan="2"/>
+                    <newline/>
+                    <notebook colspan="4">
+                        <page string="Itens do ICMS">
+                            <field name="familiatributariaitem_ids" nolabel="1" colspan="4" mode="tree,form">
+                                <tree editable="top">
+                                    <field name="estado_origem_id"/>
+                                    <field name="estado_destino_id"/>
+                                    <field name="data_inicio"/>
+                                    <field name="al_icms_proprio_id"/>
+                                    <field name="al_icms_st_id"/>
+                                    <field name="al_icms_st_retido_id"/>
+                                </tree>
+                                <form>
+                                    <field name="estado_origem_id"/>
+                                    <newline/>
+                                    <field name="estado_destino_id"/>
+                                    <newline/>
+                                    <field name="data_inicio"/>
+                                    <newline/>
+                                    <field name="al_icms_proprio_id" colspan="4" />
+                                    <newline/>
+                                    <field name="al_icms_st_id" colspan="4" />
+                                    <newline/>
+                                    <field name="al_icms_st_retido_id" colspan="4" />
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Itens do ISS">
+                            <field name="familiatributariaitemservico_ids" nolabel="1" colspan="4" mode="tree,form">
+                                <tree editable="top">
+                                    <field name="municipio_id"/>
+                                    <field name="al_iss_id"/>
+                                </tree>
+                                <form>
+                                    <field name="municipio_id" colspan="4" />
+                                    <newline/>
+                                    <field name="al_iss_id" colspan="4" />
+                                </form>
+                            </field>
+                        </page>
+                        <page string="NCM">
+                            <field name="ncm_ids" nolabel="1" colspan="4" mode="tree,form">
+                                <tree editable="top">
+                                    <field name="codigo"/>
+                                    <field name="ex"/>
+                                    <field name="descricao"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Produtos">
+                            <field name="product_ids" nolabel="1" colspan="4" mode="tree,form">
+                                <tree editable="top">
+                                    <field name="default_code"/>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Estados para validade">
+                            <field name="familiatributariaestado_ids" nolabel="1" colspan="4" mode="tree,form">
+                                <tree editable="top">
+                                    <field name="estado_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_familiatributaria_acao">
+            <field name="name">Famílias Tributárias</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">sped.familiatributaria</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_familiatributaria"
+            name="Famílias Tributárias"
+            parent="menu_sped_fiscal_aliquota" sequence="50" action="sped_familiatributaria_acao" />
+    </data>
+</openerp>

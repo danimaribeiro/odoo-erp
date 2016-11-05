@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="hr_tipo_dia_tree">
+            <field name="name">hr.tipo.dia.tree</field>
+            <field name="model">hr.tipo.dia</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Cadastro Tipo de Dia">
+                    <field name="codigo"  />
+                    <field name="descricao" />                    
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_tipo_dia_form">
+            <field name="name">hr.tipo.dia.form</field>
+            <field name="model">hr.tipo.dia</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Cadastro Tipo de Dia">
+                    <field name="codigo" required="1" />
+                    <field name="descricao" required="1"/>                                       
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_tipo_dia_search">
+            <field name="name">hr.tipo.dia.search</field>
+            <field name="model">hr.tipo.dia</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Cadastro Tipo de Dia">
+                    <field name="codigo" />
+                    <field name="descricao" />                                       
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_tipo_dia_acao">
+            <field name="name">Cadastro Tipo de Dia</field>
+            <field name="res_model">hr.tipo.dia</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_tipo_dia_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            action="hr_tipo_dia_acao"
+            id="menu_hr_tipo_dia"
+            name="Tipo de Dia"
+            parent="hr.menu_hr_management"
+            sequence="50" />
+
+        <record model="ir.actions.act_window.view" id="hr_tipo_dia_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_tipo_dia_acao"/>
+            <field name="view_id" ref="hr_tipo_dia_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_tipo_dia_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_tipo_dia_acao"/>
+            <field name="view_id" ref="hr_tipo_dia_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

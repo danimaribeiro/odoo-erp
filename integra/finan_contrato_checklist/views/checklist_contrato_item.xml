@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="checklist_contrato_item_tree">
+            <field name="name">checklist.contrato.item.tree</field>
+            <field name="model">checklist.contrato.item</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="ordem" />   
+                    <field name="atividade" />
+                    <field name="departamento" />                                  
+                    <field name="cargo" />                                  
+                    <field name="obs" />                                  
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="checklist_contrato_item_form">
+            <field name="name">checklist.contrato.item.form</field>
+            <field name="model">checklist.contrato.item</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <field name="ordem" required="1" />   
+                    <field name="atividade" required="1" colspan="4" />
+                    <field name="departamento" required="1" colspan="4" />
+                    <field name="cargo" colspan="4" />
+                    <newline />
+                    <separator string="Observação" colspan="4"/>
+                    <field name="obs" colspan="4" nolabel="1"/>                                                             
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

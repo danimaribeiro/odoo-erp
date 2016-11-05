@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_ajuste_pis_cofins_tree">
+            <field name="name">sped.ajuste.pis.cofins.tree</field>
+            <field name="model">sped.ajuste.pis.cofins</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Ajuste de PIS-COFINS por NCM e CFOP">
+                    <field name="company_id" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                    <field name="al_pis_cofins_id" />
+                    <field name="cst_pis_cofins" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_ajuste_pis_cofins_form">
+            <field name="name">sped.ajuste.pis.cofins.form</field>
+            <field name="model">sped.ajuste.pis.cofins</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Ajuste de PIS-COFINS por NCM e CFOP">
+                    <field name="confirmado" invisible="1" />
+                    <field name="company_id" colspan="4" required="1" />
+                    <newline/>
+                    <field name="data_inicial" required="1" />
+                    <field name="data_final" required="1" />
+                    <newline/>
+                    <field name="al_pis_cofins_id" colspan="4" required="1" />
+                    <field name="cst_pis_cofins" required="1" />
+                    <newline/>
+                    <field name="ncm_ids" colspan="4" />
+                    <newline/>
+                    <field name="cfop_ids" colspan="4" />
+                    <newline/>
+                    <notebook colspan="4">
+                        <page string="Itens das notas fiscais">
+                            <button type="object" name="buscar_itens" string="Buscar itens das notas" colspan="4" attrs="{'invisible': [('confirmado', '!=', False)]}" />
+                            <separator string="Itens das notas fiscais" colspan="4" />
+                            <field name="item_ids" nolabel="1" readonly="1" colspan="4">
+                                <tree>
+                                    <field name="documento_id" />
+                                    <field name="product_id" />
+                                    <field name="ncm_id" />
+                                    <field name="cfop_id" />
+                                    <field name="al_pis_cofins_id" />
+                                    <field name="cst_pis_cofins" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Confirmação da alteração">
+                            <button type="object" name="confirmar_itens" string="Confirmar alteração" colspan="4" attrs="{'invisible': [('confirmado', '!=', False)]}" />
+                            <field name="data_confirmacao" readonly="1" attrs="{'invisible': [('confirmado', '=', False)]}" />
+                            <newline />
+                            <field name="confirmador_id" readonly="1" attrs="{'invisible': [('confirmado', '=', False)]}" />
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_ajuste_pis_cofins_acao">
+            <field name="name">Ajustes de PIS-COFINS</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">sped.ajuste.pis.cofins</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            id="menu_sped_ajuste_pis_cofins"
+            name="Ajustes de PIS-COFINS"
+            parent="sped_base.menu_sped_fiscal_tabela"
+            sequence="13"
+            action="sped_ajuste_pis_cofins_acao" />
+
+    </data>
+</openerp>

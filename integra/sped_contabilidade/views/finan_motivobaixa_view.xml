@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_motivobaixa_tree">
+            <field name="name">finan.motivobaixa.tree</field>
+            <field name="model">finan.motivobaixa</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="finan.finan_motivobaixa_tree"/>
+            <field name="arch" type="xml">
+                <field name="nome" position="after">
+                    <field name="modelo_partida_dobrada_receber_id" />
+                    <field name="modelo_partida_dobrada_pagar_id" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_motivobaixa_form">
+            <field name="name">finan.motivobaixa.form</field>
+            <field name="model">finan.motivobaixa</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_motivobaixa_form"/>
+            <field name="arch" type="xml">
+                <field name="nome" position="after">
+                    <newline />
+                    <field name="modelo_partida_dobrada_receber_id" colspan="4" />
+                    <field name="modelo_partida_dobrada_pagar_id" colspan="4" />               
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

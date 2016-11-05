@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_transacao_tree">
+            <field name="name">finan.transacao.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:tipo == 'E';green:tipo == 'T'">
+                    <field name="company_id" />
+                    <field name="data" />
+                    <field name="documento_id" />
+                    <field name="numero_documento" />
+                    <field name="data_documento" />
+                    <field name="valor" sum="Valor" />
+                    <field name="tipo" />
+                    <field name="complemento" />
+                    <field name="historico" />
+                    <field name="res_partner_bank_id" string="Conta Bancária" />
+                    <field name="res_partner_bank_creditar_id" string="Conta Bancária creditada" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_transacao_form">
+            <field name="name">finan.transacao.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Transações">
+                    <group col="10" colspan="10">
+                        <field name="company_id" colspan="10" />
+                        <newline />
+                        <field name="tipo_transacao" required="1" on_change="onchange_tipo_transacao(tipo_transacao)" />
+                        <field name="tipo" invisible="1" />
+                        <field name="provisionado" invisible="1" />
+                        <field name="situacao" invisible="1" />
+                    </group>
+                    <notebook>
+                        <page string="Dados básicos">
+                            <group colspan="2" col="2">
+                                <group attrs="{'invisible': [('tipo_transacao', '!=', 'E')]}" colspan="2">
+                                    <separator string="Conta bancária a creditar" colspan="2" />
+                                </group>
+                                <group attrs="{'invisible': [('tipo_transacao', '!=', 'S'), ('tipo_transacao', '!=', 'T')]}" colspan="2">
+                                    <separator string="Conta bancária a debitar" colspan="2" />
+                                </group>
+                                <field name="res_partner_bank_id" required="1" colspan="2" on_change="onchange_banco_data(tipo, res_partner_bank_id, data, data_quitacao)" nolabel="1" />
+                                <newline/>
+                                <group attrs="{'invisible': [('tipo_transacao', '!=', 'T')]}" colspan="4">
+                                    <separator string="Conta bancária a creditar" colspan="2" />
+                                    <newline/>
+                                    <field name="res_partner_bank_creditar_id" colspan="2" attrs="{'required': [('tipo_transacao', '=', 'T')]}" nolabel="1" on_change="onchange_banco_data(tipo, res_partner_bank_id, data, data_quitacao, res_partner_bank_creditar_id)" />
+                                </group>
+                                <field name="data" string="Data de compensação" required="1" on_change="onchange_banco_data(tipo, res_partner_bank_id, data, data_quitacao)"/>
+                                <field name="data_quitacao" invisible="1" />
+                                <field name="valor" required="1" on_change="onchange_valor(valor)" />
+                                <field name="partner_id" />
+                                <field name="complemento" />
+                                <field name="documento_id" />
+                                <field name="numero_documento" />
+                                <field name="data_documento" invisible="1" />
+                                <field name="valor_documento" invisible="1" />
+                            </group>
+                            <group colspan="2" col="2">
+                                <group attrs="{'invisible': [('tipo_transacao', '!=', 'E')]}" colspan="2">
+                                    <separator string="Saldo da Conta bancária a creditar" colspan="2" />
+                                </group>
+                                <group attrs="{'invisible': [('tipo_transacao', '!=', 'S'), ('tipo_transacao', '!=', 'T')]}" colspan="2">
+                                    <separator string="Saldo da Conta bancária a debitar" colspan="2" />
+                                </group>
+                                <field name="saldo_banco" readonly="1" nolabel="1" colspan="2" />
+<!--                                <group attrs="{'invisible': [('tipo_transacao', '!=', 'T')]}" colspan="4">
+                                    <separator string="Conta bancária a creditar" colspan="2" />
+                                    <newline/>
+                                    <field name="saldo_banco_creditar" nolabel="1" colspan="2"/>
+                                </group>-->
+                                <separator string="Classificação" colspan="2" />
+                                <field name="conta_id" required="1" domain="[('sintetica', '=', False)]" />
+                                 <separator string="Histórico" colspan="2" />
+                                 <field name="historico" nolabel="1" colspan="2" />
+                            </group>
+                            <group colspan="4">
+                                <separator string="Rateio por centros de custo" colspan="4"/>
+                                <field name="centrocusto_id" string="Centro de custo/Modelo de rateio" domain="['|', ('tipo', '=', 'R'), '&amp;', ('tipo', '=', 'C'), ('sintetico', '=', False)]"
+                                    on_change="onchange_centrocusto_id(centrocusto_id, valor_documento, valor, company_id)"/>
+                                <newline/>
+                                <field name="rateio_ids" widget="many2one_list">
+                                    <tree editable="top">
+                                        <field name="company_id" required="1" />
+                                        <field name="centrocusto_id" required="1" domain="[('tipo', '=', 'C'), ('sintetico', '=', False)]"/>
+                                        <field name="porcentagem" required="1" on_change="onchange_porcentagem(porcentagem, parent.valor_documento, parent.valor)"/>
+                                        <field name="valor_documento" />
+                                        <field name="valor" />
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_transacao_search">
+            <field name="name">finan.transacao.search</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Transações">
+                    <field name="company_id" select="1" />
+                    <field name="tipo" select="1" />
+                    <field name="conta_id" select="1" />
+                    <field name="res_partner_bank_id" select="1" />
+                    <field name="partner_id" select="1" />
+                    <field name="complemento" />
+                    <field name="numero_documento" />
+                    <newline />
+
+                    <group expand="0" string="Outras datas...">
+                        <field name="data_from" string="Data de" filter_domain="[('data','&gt;=',self)]" widget="calendar" />
+                        <field name="data_to" string="Data ate" filter_domain="[('data','&lt;=',self)]" widget="calendar" />
+                    </group>
+                    <newline />
+
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'parent_company_id'}" groups="finan.group_finan_manager,finan.group_finan_treasury_manager"/>
+                        <filter string="Unidade de negócio" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Cliente/Fornecedor" icon="terp-project" domain="[]" context="{'group_by': 'partner_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_transacao_acao">
+            <field name="name">Transações</field>
+            <field name="res_model">finan.lancamento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo', 'in', ['E', 'S', 'T'])]</field>
+            <field name="context">{'default_tipo': 'S', 'default_tipo_transacao': 'S', 'default_provisionado': False, 'conciliado': True, 'default_conciliado': True}</field>
+            <field name="view_id" ref="finan_transacao_tree" />
+            <field name="search_view_id" ref="finan_transacao_search" />
+        </record>
+
+        <menuitem action="finan_transacao_acao"
+            id="menu_finan_transacao" name="Transações" parent="finan.menu_finan_tesouraria" />
+
+        <record model="ir.actions.act_window.view" id="finan_transacao_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_transacao_form"/>
+            <field name="act_window_id" ref="finan_transacao_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_transacao_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_transacao_tree"/>
+            <field name="act_window_id" ref="finan_transacao_acao"/>
+        </record>
+
+        <menuitem id="menu_finan_tesouraria_completo"
+            name="Detalhado"
+            parent="finan.menu_finan_tesouraria"
+            groups="group_finan_master"
+            sequence="99"/>
+
+        <menuitem action="finan.finan_transacaoentrada_acao"
+            id="finan.menu_finan_transacaoentrada" name="Transações de entrada" parent="menu_finan_tesouraria_completo" />
+
+        <menuitem action="finan.finan_transacaosaida_acao"
+            id="finan.menu_finan_transacaosaida" name="Transações de saída" parent="menu_finan_tesouraria_completo" />
+
+        <menuitem action="finan.finan_transacaotransferencia_acao"
+            id="finan.menu_finan_transacaotransferencia" name="Transferências" parent="menu_finan_tesouraria_completo" />
+
+    </data>
+</openerp>

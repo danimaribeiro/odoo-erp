@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="project_os_form">
+            <field name="name">project.os.form</field>
+            <field name="model">project.os</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Projeto OS">
+                    <field name="project_id" colspan="4"/>
+                    <newline />
+                    <field name="data_inicial" colspan="2" />
+                    <field name="data_final" colspan="2" />
+                    <field name="status" colspan="2"/>
+                    <field name="tipo" colspan="2"/>
+                    <field name="assinatura" colspan="2"/>
+<!--                     <button icon="gtk-execute" string="Buscar Tarefas e Suporte" name="busca_tarefa_suporte" type="object" colspan="2" /> -->
+<!--                     <button icon="gtk-execute" string="Vinculas Tarefa Suporte" name="vincula_tarefa_suporte" type="object" colspan="2" /> -->
+                    <button icon="gtk-execute" string="Imprimir OS" name="imprimir_os" type="object" colspan="2" />
+                    <newline />
+                    <separator string="Tarefas" colspan="4"/>
+<!--                    <notebook colspan="4">
+                        <page string="Tarefas a incluir">
+                            <field name="prepara_task_ids" colspan="4" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="Tarefas incluidas">-->
+                            <field name="task_ids" colspan="4" nolabel="1"/>
+<!--                        </page>
+                    </notebook>-->
+                    <separator string="Suporte" colspan="4"/>
+<!--                    <notebook colspan="4">
+                        <page string="Tarefas a incluir">
+                            <field name="prepara_issue_ids" colspan="4" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="Tarefas incluidas">-->
+                            <field name="issue_ids" colspan="4" nolabel="1" />
+<!--                        </page>
+                    </notebook>-->
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="project_os_tree">
+            <field name="name">project.os.tree</field>
+            <field name="model">project.project.os</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="project_id" />
+                    <field name="data_inicial" colspan="2" />
+                    <field name="data_final" colspan="2" />
+                    <field name="status" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="project_os_search">
+            <field name="name">project.os.search</field>
+            <field name="model">project.os</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Busca OS">
+                    <field name="project_id" />
+                    <field name="data_inicial" colspan="2" />
+                    <field name="data_final" colspan="2" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="project_os_acao">
+            <field name="name">Projeto OS</field>
+            <field name="res_model">project.os</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="project_os_tree" />
+        </record>
+
+        <record model="ir.actions.act_window.view" id="project_os_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="project_os_form"/>
+            <field name="act_window_id" ref="project_os_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="project_os_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="project_os_tree"/>
+            <field name="act_window_id" ref="project_os_acao"/>
+        </record>
+
+        <menuitem action="project_os_acao"
+            id="menu_project_os" name="Projeto OS" parent="project.menu_project_management" />
+    </data>
+</openerp>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_order_line_tree" >
+        <field name="name">sale_order_line_tree</field>
+        <field name="model">sale.order.line</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+                <tree string="Sales Order Lines">                      
+                    <field colspan="4" name="order_id"/>
+                    <field name="product_id" string="Produto"/>
+                    <field name="product_uom_qty" string="Qtd."/>
+                    <field name="product_uom" string="Unid."/>
+                    <field groups="product.group_uos" name="product_uos_qty" string="Qty(UoS)"/>
+                    <field groups="product.group_uos" name="product_uos" string="UoS"/>
+                    <field name="discount"/>
+                    <field name="price_unit"/>
+                    <field name="price_subtotal" sum="Total sem impostos" />
+                    <field name="vr_unitario_venda_impostos" />
+                    <field name="vr_total_venda_impostos" sum="Total com impostos" />
+                    <field name="falha_configuracao" />
+                </tree>
+            </field>
+        </record>
+        
+          <record model="ir.ui.view" id="sale_order_line_search">
+            <field name="name">sale.order.line.search</field>
+            <field name="model">sale.order.line</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Consulta Pedido" >
+                    <field name="product_id" colspan="4" />                                      
+                </search>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="sale_order_line_acao">
+            <field name="name">Consulta Pedido</field>
+            <field name="res_model">sale.order.line</field>
+            <field name="view_id" ref="sale_order_line_tree"/>
+            <field name="view_mode">tree</field>
+            <field name="search_view_id" ref="sale_order_line_search" />         
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="sale_order_line_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="sale_order_line_acao"/>
+            <field name="view_id" ref="sale_order_line_tree"/>
+        </record>        
+
+        <menuitem action="sale_order_line_acao"
+            id="menu_sale_order_line" name="Consulta Itens do Pedido" parent="base.menu_sales" />
+
+    </data>
+</openerp>

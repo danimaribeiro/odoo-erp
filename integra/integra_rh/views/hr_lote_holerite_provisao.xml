@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="hr_lote_provisao_tree">
+            <field name="name">hr.lote_holerite.tree</field>
+            <field name="model">hr.lote_holerite</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Lote de provisão">
+                    <field name="ano" />
+                    <field name="mes" />
+                    <field name="company_id" />
+                    <field name="contract_id" />
+                    <field name="tipo_provisao" />
+                    <field name="folha_aberta" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_lote_provisao_form">
+            <field name="name">hr.lote_holerite.form</field>
+            <field name="model">hr.lote_holerite</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <group colspan="4" col="4">
+                        <field name="provisao" invisible="1" />
+                        <field name="mes" required="1" on_change="onchange_ano_mes(ano, mes)" />
+                        <field name="ano" required="1" on_change="onchange_ano_mes(ano, mes)" />
+                        <field name="data_inicial" invisible="1" />
+                        <field name="data_final" invisible="1" />
+                        <field name="company_id" required="1" colspan="4" />
+                        <field name="contract_id" colspan="4" />
+                        <field name="tipo_provisao" required="1" colspan="4" />
+                        <field name="folha_aberta" readonly="1" />
+                    </group>
+                    <group colspan="4" col="6">
+                        <button string="Atualizar informações" icon="gtk-execute" name="atualizar_dados" type="object" />
+                        <button string="Gerar provisões" icon="gtk-execute" name="gerar_holerites" type="object" />
+                        <button string="Gerar relatório" icon="gtk-execute" name="gerar_relatorio_provisao" type="object" />
+                    </group>
+                    <group colspan="4" col="4">
+                        <field name="nome" invisible="1"/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Contratos a gerar">
+                            <field name="contract_ids" colspan="4" mode="tree" readonly="1" nolabel="1">
+                                <tree>
+                                    <field name="name" string="Matrícula" />
+                                    <field name="employee_id" />
+                                    <field name="company_id" />
+                                    <field name="job_id" />
+                                    <field name="department_id" />
+                                    <field name="date_start" string="Contratado" />
+                                    <field name="date_end" string="Rescindido" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Férias a gerar" attrs="{'invisible': [('tipo_provisao', '!=', 'F')]}">
+                            <field name="ferias_ids" colspan="4" mode="tree" readonly="1" nolabel="1">
+                                <tree>
+                                    <field name="descricao" string="Férias" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Provisões já geradas">
+                            <field name="payslip_ids" colspan="4" mode="tree" readonly="1" nolabel="1">
+                                <tree>
+                                    <field name="employee_id" />
+                                    <field name="company_id" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_lote_provisao_search">
+            <field name="name">hr.lote_holerite.search</field>
+            <field name="model">hr.lote_holerite</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Lotes de provisões">
+                    <field name="company_id" />
+                    <field name="contract_id" />
+                    <field name="mes" />
+                    <field name="ano" />
+                    <field name="tipo_provisao" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_lote_provisao_acao">
+            <field name="name">Lotes de provisões</field>
+            <field name="res_model">hr.lote_holerite</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_lote_provisao_tree"/>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('provisao', '=', True)]</field>
+            <field name="context">{'search_default_mes': str(mes_passado.month), 'search_default_ano': str(mes_passado.year), 'default_provisao': True}</field>
+        </record>
+
+        <menuitem
+            action="hr_lote_provisao_acao"
+            id="menu_hr_lote_provisao"
+            name="Lotes de provisão"
+            parent="menu_hr_provisao" sequence="0"/>
+
+        <record model="ir.actions.act_window.view" id="hr_lote_provisao_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_lote_provisao_acao"/>
+            <field name="view_id" ref="hr_lote_provisao_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_lote_provisao_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_lote_provisao_acao"/>
+            <field name="view_id" ref="hr_lote_provisao_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

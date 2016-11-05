@@ -1,0 +1,248 @@
+#
+# Charset: UTF-8
+#
+# Locale para o brasileiro, legível por seres humanos
+#
+# Criado por Aristides CALDEIRA, baseado no locale
+# original da glibc
+#
+# As diferenças em relação ao locale original são:
+#     1. A ordem alfabética, que foi aprimorada
+#     2. Os nomes dos dias da semana e dos meses, que estão em
+#        minúsculas
+#     3. O formato de data e hora está um pouco mais descritivo
+#     4. Os números são agrupados com ponto de milhar e decimal corretos
+#
+
+#######################################
+LC_IDENTIFICATION
+#######################################
+
+title        "Brazilian locale for Brazil"
+source       ""
+address      ""
+contact      ""
+email        "ari@laumi.org"
+tel          ""
+fax          ""
+language     "Brazilian"
+territory    "Brazil"
+audience     ""
+application  "Usign alternate spelling Nova Ortografia Sinplifikada"
+abbreviation ""
+revision     "6.0"
+date         "2011-08-05"
+
+category  "pt_BR@nos:2000";LC_IDENTIFICATION
+category  "pt_BR@nos:2000";LC_CTYPE
+category  "pt_BR@nos:2000";LC_COLLATE
+category  "pt_BR@nos:2000";LC_TIME
+category  "pt_BR@nos:2000";LC_NUMERIC
+category  "pt_BR@nos:2000";LC_MONETARY
+category  "pt_BR@nos:2000";LC_MESSAGES
+category  "pt_BR@nos:2000";LC_PAPER
+category  "pt_BR@nos:2000";LC_NAME
+category  "pt_BR@nos:2000";LC_ADDRESS
+category  "pt_BR@nos:2000";LC_TELEPHONE
+
+END LC_IDENTIFICATION
+
+
+###############################
+LC_CTYPE
+###############################
+copy "pt_BR"
+END LC_CTYPE
+
+
+###############################
+LC_COLLATE
+###############################
+copy "pt_BR"
+
+#
+# Definição dos dígrafos
+#
+collating-symbol <ly-brazileyru>
+collating-element <LY> from "<U004C><U0059>"
+collating-element <Ly> from "<U004C><U0079>"
+collating-element <lY> from "<U006C><U0059>"
+collating-element <ly> from "<U006C><U0079>"
+
+#collating-symbol <nn-brazileyru>
+#collating-element <NN> from "<U004E><U004E>"
+#collating-element <Nn> from "<U004E><U006E>"
+#collating-element <nN> from "<U006E><U004E>"
+#collating-element <nn> from "<U006E><U006E>"
+
+#
+# Definição do Ỹỹ
+#
+collating-symbol <yn-brazileyru>
+
+#
+# Difinas, ke la E-aj literoj estos ordigitaj
+# post ĝia ne-ĉapelitaj versioj, kiel apartaj
+# literoj
+#
+reorder-after <l>
+<ly-brazileyru>
+#<m>
+#<n>
+#<nn-brazileyru>
+
+reorder-after <y>
+<yn-brazileyru>
+
+reorder-after <ly-brazileyru>
+<LY> <ly-brazileyru>;<CAP>;<BAS>;IGNORE
+<Ly> <ly-brazileyru>;<CAP>;<BAS>;IGNORE
+<ly> <ly-brazileyru>;<MIN>;<BAS>;IGNORE
+<lY> <ly-brazileyru>;<MIN>;<BAS>;IGNORE
+
+#reorder-after <nn-brazileyru>
+#<U00D1> <nn-brazileyru>;<CAP>;<BAS>;IGNORE # Ñ
+#<NN> <nn-brazileyru>;<CAP>;<BAS>;IGNORE
+#<Nn> <nn-brazileyru>;<CAP>;<BAS>;IGNORE
+#<U00F1> <nn-brazileyru>;<MIN>;<BAS>;IGNORE # ñ
+#<nN> <nn-brazileyru>;<MIN>;<BAS>;IGNORE
+#<nn> <nn-brazileyru>;<MIN>;<BAS>;IGNORE
+
+reorder-after <yn-brazileyru>
+<U1EF8> <yn-brazileyru>;<CAP>;<BAS>;IGNORE # Ỹ
+<U1EF9> <yn-brazileyru>;<MIN>;<BAS>;IGNORE # ỹ
+
+reorder-end
+
+END LC_COLLATE
+
+
+###############################
+LC_MESSAGES
+###############################
+
+yesexpr                 "^[1SsYy].*"
+noexpr                  "^[0Nn].*"
+yesstr                  "sim"
+nostr                   "nawn"
+
+END LC_MESSAGES
+
+
+###############################
+LC_MONETARY
+###############################
+copy "pt_BR"
+END LC_MONETARY
+
+
+###############################
+LC_NUMERIC
+###############################
+copy "pt_BR"
+END LC_NUMERIC
+
+
+###############################
+LC_PAPER
+###############################
+copy "pt_BR"
+END LC_PAPER
+
+
+###############################
+LC_TELEPHONE
+###############################
+copy "pt_BR"
+END LC_TELEPHONE
+
+
+###############################
+LC_MEASUREMENT
+###############################
+copy "pt_BR"
+END LC_MEASUREMENT
+
+
+###############################
+LC_NAME
+###############################
+copy "pt_BR"
+END LC_NAME
+
+
+###############################
+LC_TIME
+###############################
+
+#          "dom";"seg";"ter";"qua";"qui";"sex";"sáb"
+abday      "dom";"seg";"ter";"kwa";"kin";"ses";"s<U00E1>b"
+
+#          "domingu";"segunda-feyra";"tersa-feyra";"kwarta-feyra";"kinta-feyra";"sesta-feyra";"sábado"
+day        "domingu";"segunda-fera";"tersa-fera";"kwarta-fera";"kinta-fera";"sesta-fera";"s<U00E1>badu"
+
+#          "jan";"fev";"mar";"abr";"may";"juỹ";"jul";"ago";"set";"owt";"nov";"dez"
+abmon      "jan";"fev";"mar";"abr";"may";"ju<U1EF9>";"jul";"ago";"set";"otu";"nov";"dez"
+
+#          "janeyru";"fevereyru";"marsu";"abriw";"mayu";"juỹu"; \
+#          "julyu";"agostu";"setenbru";"owtubru";"novenbru";"dezenbru"
+mon        "janeru";"fevereru";"marsu";"abriw";"mayu";"ju<U1EF9>u"; \
+           "julyu";"agostu";"setenbru";"otubru";"novenbru";"dezenbru"
+
+#          "kin, 04/08/2011, 14:11:36 BRT"
+d_t_fmt    "%a, %d/%m/%Y, %H:%M:%S %Z"
+
+#          "04/08/2011"
+d_fmt      "%d/%m/%Y"
+
+#          "14:12:36"
+t_fmt      "%H:%M:%S"
+
+am_pm      "am";"pm"
+
+#          "02:12:36 pm"
+t_fmt_ampm "%I:%M:%S %p"
+
+#           "kin, 04/08/2011, 14:11:36 BRT"
+date_fmt    "%a, %d/%m/%Y, %H:%M:%S %Z"
+
+# A semana teyn 7 dias, komu di kostumi, i komesa na segunda-fera (ISO 8601)
+week    7;19971130;4
+
+# U primeru dia da semana è a segunda-fera
+first_weekday 2
+
+# U primero dia de trabalyu da semana è a segunda-fera
+first_workday 2
+
+END LC_TIME
+
+
+###############################
+LC_ADDRESS
+###############################
+
+postal_fmt   "\
+%f%N\
+%a%N\
+%d%N\
+%b%N\
+%s&t%h%t%e%t%r%N\
+%T%N\
+%c%N\
+%C%t%z%N"
+
+country_name "Braziw"
+country_ab2  "BR"
+country_ab3  "BRA"
+country_post "BR"
+country_num  076
+country_car  "BR"
+country_isbn 85
+
+lang_name    "brazileru"
+lang_ab      "pt"
+lang_term    "por"
+lang_lib     "por"
+
+END LC_ADDRESS

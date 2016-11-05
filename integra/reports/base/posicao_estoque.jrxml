@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report8" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05a7678d-6397-4816-97ba-742668ea4f5f">
+	<property name="ireport.zoom" value="1.7715610000000035"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOCATION_ID" class="java.lang.Integer"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="CATEGORIA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+rs.name as empresa,
+lc.name as local_estoque
+
+from
+    resumo_custo_medio($P{DATA_FINAL}) as cm
+    join product_product as p on p.id = cm.product_id
+    join stock_location as lc on lc.id = cm.location_id
+    join product_template as pdt on pdt.id = p.product_tmpl_id
+    join product_category as pdc on pdc.id = pdt.categ_id
+    left join res_company as rs on rs.id = lc.company_id
+where
+     pdc.name = $P{CATEGORIA}
+     and cm.location_id = $P{LOCATION_ID}]]>
+	</queryString>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="local_estoque" class="java.lang.String"/>
+	<variable name="variable1" class="java.lang.String"/>
+	<pageHeader>
+		<band height="117" splitType="Prevent">
+			<staticText>
+				<reportElement x="0" y="30" width="555" height="14" uuid="627417a7-12f6-43ce-bccf-503dbc6bb56e"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empresa/Unidade de Negócio:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="58" width="246" height="14" uuid="d0e547c4-2493-416a-b14f-412028bd8039"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Categoria:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="44" width="555" height="14" uuid="6e08d6b9-57bc-41dd-9f03-c775c53c91ed"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="72" width="246" height="14" uuid="e0f13847-6fd6-4451-8fc0-577691ed9b68"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CATEGORIA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="86" width="555" height="14" uuid="bf06f72a-62c9-489c-8868-285d4c9d7e61"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data da posição:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="100" width="133" height="17" uuid="a2fa4163-837a-49c4-b909-a967d2ad0d71"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse($P{DATA_FINAL}))]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="20" uuid="49ecabfd-ebb9-4eb2-b3d5-14ba85eff7c3"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Relatório Posição de Estoque]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="246" y="72" width="309" height="14" uuid="4332767a-85a5-4111-b973-107545381f5c"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{local_estoque}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="246" y="58" width="309" height="14" uuid="160f18f7-4ff2-4b7b-be26-5cfdb6801547"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Local:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="17" uuid="fe104f57-f303-4008-a9e1-6e0cba7a35ab"/>
+				<subreportParameter name="LOCATION_ID">
+					<subreportParameterExpression><![CDATA[$P{LOCATION_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_FINAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_FINAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CATEGORIA">
+					<subreportParameterExpression><![CDATA[$P{CATEGORIA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "posicao_estoque_items.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<summary>
+		<band height="12"/>
+	</summary>
+</jasperReport>

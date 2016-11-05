@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_relatorio_listagem_seguros_form" >
+            <field name="name">hr.relatorio.listagem.seguros.form</field>
+            <field name="model">hr.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Seguros">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="4" />
+<!--                         <field name="mes" required="1" /> -->
+<!--                         <field name="ano" required="1" /> -->
+                        <newline/>
+                        <field name="company_id" required="1"/>
+                        <newline/>
+                        <field name="data" required="1"/>
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <field name="nome_csv" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_listagem_seguros" type="object" colspan="2" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="2"/>
+                        <newline/>
+                        <field name="arquivo_csv" nolabel="1" readonly="1" filename="nome_csv" colspan="2"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_relatorio_listagem_seguros_acao">
+            <field name="name">Seguros</field>
+            <field name="res_model">hr.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_relatorio_listagem_seguros_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_relatorio_listagem_seguros_form"/>
+            <field name="act_window_id" ref="hr_relatorio_listagem_seguros_acao"/>
+        </record>
+
+        <menuitem action="hr_relatorio_listagem_seguros_acao"
+                  id="menu_hr_relatorio_listagem_seguros"
+                  name="Seguros"
+                  parent="menu_hr_relatorio_mensal"
+                  sequence="7" />
+
+    </data>
+</openerp>

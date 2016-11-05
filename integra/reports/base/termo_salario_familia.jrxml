@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="84950242-1b09-4c1f-a396-4528ded4fadb">
+	<property name="ireport.zoom" value="1.3636363636363642"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="486"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#BFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#E6FFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="8770e971-9aa7-4ee1-95a3-858de5675e29"/>
+	<parameter name="REGISTRO_IDS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+rp.razao_social,
+rp.cnpj_cpf,
+rp.endereco || ' ' || rp.numero as endereco,
+rp.cidade,
+rp.estado,
+e.nome,
+co.name as matricula,
+e.carteira_trabalho_numero,
+e.carteira_trabalho_serie,
+e.carteira_trabalho_estado,
+co.date_start as data_admissao,
+hre.nome as dependente_nome,
+hre.data_nascimento as dependente_nasc
+
+from hr_contract co
+join hr_employee e on e.id = co.employee_id
+join res_company c on c.id = co.company_id
+join res_partner rp on rp.id = c.partner_id
+left join hr_employee_dependente as hre on hre.employee_id = e.id
+
+where co.id in $P!{REGISTRO_IDS} and hre.salario_familia is true
+
+order by
+  rp.razao_social,
+  e.nome]]>
+	</queryString>
+	<field name="razao_social" class="java.lang.String"/>
+	<field name="cnpj_cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[CNPJ/CPF]]></fieldDescription>
+	</field>
+	<field name="endereco" class="java.lang.String">
+		<fieldDescription><![CDATA[Endereço]]></fieldDescription>
+	</field>
+	<field name="cidade" class="java.lang.String">
+		<fieldDescription><![CDATA[Município]]></fieldDescription>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<fieldDescription><![CDATA[Estado]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[Descrição]]></fieldDescription>
+	</field>
+	<field name="matricula" class="java.lang.String"/>
+	<field name="carteira_trabalho_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Nº da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_serie" class="java.lang.String">
+		<fieldDescription><![CDATA[Série da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_estado" class="java.lang.String">
+		<fieldDescription><![CDATA[Estado da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="data_admissao" class="java.sql.Date"/>
+	<field name="dependente_nome" class="java.lang.String"/>
+	<field name="dependente_nasc" class="java.sql.Date"/>
+	<columnHeader>
+		<band height="157">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="42" uuid="9ea7dcc1-6ec6-4413-b4b2-a7dde28c6530"/>
+				<box>
+					<pen lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TERMO DE RESPONSABILIDADE
+ (CONCESSAO DE SALARIO-FAMILIA - PORTARIA No.MPAS - 3.040/82)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="61" width="52" height="20" uuid="2f46f4c2-6ffc-4314-95fd-e6f63d163859"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Matrícula:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="80" width="106" height="20" uuid="c5bc722a-dc6d-4ca1-a91b-2c27ade2e62c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Nome do Segurado:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="99" width="53" height="20" uuid="89da043c-9d9a-4979-aacf-c6e2dbd85513"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[CTPS Nº:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="116" y="100" width="52" height="20" uuid="49333bab-0716-4651-9ca3-c7e01e8b1b1f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[SÉRIE Nº:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="221" y="100" width="19" height="20" uuid="21328626-843a-4404-9ab6-5fe4ec36fcf0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[UF:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="53" y="42" width="502" height="20" uuid="0a143d46-c82b-4a07-aacf-418d0a0713b2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{razao_social}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="53" y="61" width="502" height="20" uuid="1ab43bc8-6017-47b5-b689-529fa16fd901"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cnpj_cpf}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="106" y="80" width="449" height="20" uuid="b0bbc849-e9ff-4ad6-9e0d-adaca9610160"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="52" y="99" width="64" height="20" uuid="75695783-6602-4145-90ec-240ede7b8b41"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_trabalho_numero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="168" y="100" width="53" height="19" uuid="3747859a-dfef-4266-b5f8-90f4191d063d"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_trabalho_serie}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="119" width="555" height="19" uuid="f6177cff-8f00-425b-b0a5-da28788fab88"/>
+				<box>
+					<pen lineStyle="Dashed"/>
+					<topPen lineWidth="0.5" lineStyle="Dashed"/>
+					<leftPen lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+					<rightPen lineStyle="Dashed"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[BENEFICIÁRIOS
+ ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="137" width="361" height="20" uuid="6c9b81fd-20f3-464d-96c3-b76bb9c2beaa"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Nome do Filho]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="361" y="137" width="194" height="20" uuid="fae96ba0-d0b4-45d6-8b43-71cadc5a6b94"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Data Nascimento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="42" width="53" height="20" uuid="a939f414-68fd-4fbc-b49a-9eb6dd468e56"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Empresa:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="240" y="100" width="315" height="19" uuid="6fc3e4df-1fb6-4183-983f-69cb720919e8"/>
+				<box topPadding="1" bottomPadding="0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_trabalho_estado}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="361" height="20" uuid="305c062c-3aee-41b1-9cd4-5703bac3a70b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dependente_nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="361" y="0" width="194" height="20" uuid="76968e65-026e-4a73-87cf-3f10847b70ad"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dependente_nasc}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="459">
+			<staticText>
+				<reportElement x="0" y="219" width="555" height="33" uuid="57373ebe-fe73-45b7-b172-6d0b152fbbae"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[      Declaro ainda, que em caso de nascimento de filho, devo comunicar a empresa imediatamente, apresentando documentos necessãrios. ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="266" width="66" height="20" uuid="01859134-36dc-428a-893c-091207dd17fe"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Local e Data:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="330" y="266" width="100" height="20" uuid="c6c5489e-a464-484d-9e4a-de7a4e5bea7a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="328" width="100" height="20" uuid="2c5f3009-5710-4ca7-b42f-0aea9f8d187b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Assinatura:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="417" width="100" height="42" uuid="3ef3b160-84f9-48a9-b1d2-867bb586d618"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[1a.Via: Empresa
+2a.Via: Segurado]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="66" y="266" width="263" height="20" uuid="c48fbf0b-7c7e-4459-a835-82fe070db16c"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cidade} + ", " + $F{estado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="379" width="273" height="20" uuid="0bf6daa1-9fde-4bf1-9f1d-7306ce667450"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-1" y="152" width="553" height="67" uuid="a5aae0b5-60c1-4c18-bc1b-c92f23a322ad"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[       Estou ciente, ainda, de que a falta de cumprimento do compromisso ora assumido, alem de obrigar a devolucao das importancias recebidas indevidamente, sujeitar-me-a as penalidades previstas no art. 171 do Codigo Penal e a rescisao do contrato de trabalho,por justa causa,nos termos do art. 482 da Consolidacao das Leis do Trabalho.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-1" y="30" width="554" height="43" uuid="398577dd-3ed2-4be6-b9e3-2b4fa664af25"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[      Pelo presente TERMO DE RESPONSABILIDADE declaro estar ciente de que deverei comunicar de imediato os seguintes fatos ou ocorrencias que determinam a perda do direito ao salario-familia:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="84" width="228" height="12" uuid="92bc1a9f-85a9-45e2-881c-af3ddbaf1be3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[OBITO DE FILHO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="96" width="229" height="12" uuid="7815d295-a265-43fc-ae76-53431f4479d3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[CESSACAO DA INVALIDEZ DE FILHO INVALIDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="108" width="455" height="33" uuid="7bf2de78-e669-432f-91b1-0f257cf29e7a"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[SENTENCA JUDICIAL QUE DETERMINE O PAGAMENTO A OUTREM ( casos de desquite ou separacao, abandono de filho ou perda do patrio poder).]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

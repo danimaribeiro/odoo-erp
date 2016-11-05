@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_contas_pagar_pagamentos" >
+            <field name="name">finan.relatorio.contas.pagar.pagamentos</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório de Pagamentos de Contas">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="company_id" colspan="4" />
+                        <newline/>
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />
+                        <newline/>
+                        <field name="situacao" invisible="1" />
+                        <field name="partner_id" string="Fornecedor" colspan="4"/>
+                        <newline/>
+                        <field name="ativo" invisible="1" />
+                        <newline/>
+                        <field name="total_empresa" />
+                        <newline/>
+                        <field name="filtrar_rateio" />
+                        <newline/>
+                        <field name="sem_projeto" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}"  />
+                        <newline/>
+                        <field name="sem_centrocusto" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
+                        <field name="res_partner_bank_ids" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}"/>
+<!--                         <field name="res_partner_bank_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}"/> -->
+                        <newline/>
+                        <field name="centrocusto_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
+                        <field name="project_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
+                        <field name="conta_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <field name="nome_csv" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_contas_pagar_pagamentos" type="object" context="{'company_id' : company_id, 'data_inicial': data_inicial, 'data_final': data_final, 'partner_id': partner_id, 'ativo': ativo, 'situacao': situacao}" colspan="4" attrs="{'invisible': [('filtrar_rateio', '=', True)]}"  />
+                        <button icon="gtk-execute" string="Gerar relatório Rateio" name="gera_relatorio_contas_pagar_pagamentos" type="object" context="{'company_id' : company_id, 'data_inicial': data_inicial, 'data_final': data_final, 'partner_id': partner_id,  'ativo': ativo, 'situacao': situacao}" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_relatorio_contas_pagar_pagamentos_acao">
+            <field name="name">Pagamento de contas</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_relatorio_contas_pagar_pagamentos_form_acao">
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_relatorio_contas_pagar_pagamentos"/>
+            <field name="act_window_id" ref="finan_relatorio_contas_pagar_pagamentos_acao"/>
+        </record>
+
+        <menuitem action="finan_relatorio_contas_pagar_pagamentos_acao"
+                  id="menu_finan_relatorio_contas_pagar_pagamentos" name="Pagamento de contas" parent="menu_rel_conta_pagar" sequence="4" />
+
+    </data>
+</openerp>

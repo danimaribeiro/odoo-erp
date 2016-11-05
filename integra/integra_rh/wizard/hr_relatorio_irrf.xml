@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_relatorio_irrf_form" >
+            <field name="name">hr.relatorio.folha.form</field>
+            <field name="model">hr.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relação Pagamento IRRF">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <field name="company_id" required="1" colspan="4" />
+                        <newline/>
+                        <field name="mes" required="1" />
+                        <field name="ano" required="1" />
+                        <newline/>
+                        <field name="tipo" required="1" />
+                        <field name="detalhe_holerite" />
+                        <newline/>                       
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <field name="formato_rel" required="1" />
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_relacao_irrf" type="object" colspan="2" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_relatorio_irrf_acao">
+            <field name="name">Relação Pagamento IRRF</field>
+            <field name="res_model">hr.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_ano': mes_passado.year, 'default_mes': str(mes_passado.month)}</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_relatorio_irrf_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_relatorio_irrf_form"/>
+            <field name="act_window_id" ref="hr_relatorio_irrf_acao"/>
+        </record>
+
+        <menuitem action="hr_relatorio_irrf_acao"
+                  id="menu_hr_relatorio_irrf"
+                  name="Relação Pagamento IRRF"
+                  parent="menu_hr_relatorio_mensal"
+                  sequence="19" />
+
+    </data>
+</openerp>

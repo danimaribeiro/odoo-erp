@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hr_relatorio_irrf" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="816" leftMargin="13" rightMargin="13" topMargin="20" bottomMargin="7" uuid="3428d709-0900-4855-9796-42c30a9352fc">
+	<property name="ireport.zoom" value="1.1000000000000338"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/ari/integra/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPOS" class="java.lang.String">
+		<defaultValueExpression><![CDATA["('N', 'R')"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_INICIAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2014-02-01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_FINAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2014-02-28"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPETENCIA" class="java.lang.String">
+		<defaultValueExpression><![CDATA["dezembro/2013"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPLEMENTAR" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+  h.company_id,
+  p.razao_social as empresa,
+  coalesce(p.endereco, '') || ', ' || coalesce(p.numero, '') || ' - ' || coalesce(p.complemento, '') as empresa_endereco,
+  coalesce(p.bairro, '') as empresa_bairro,
+  coalesce(p.cidade, '') as empresa_cidade,
+  coalesce(p.estado, '') as empresa_estado,
+  coalesce(p.cep, '') as empresa_cep,
+  p.cnpj_cpf as cnpj,
+  e.id,
+  e.nome,
+  to_char(c.date_start, 'dd/mm/yyyy') as data_admissao,
+  to_char(c.date_end, 'dd/mm/yyyy') as data_rescisao,
+  c.name as matricula,
+  case
+  when c.categoria_trabalhador in ('701','702','703') then
+  'AU'
+  when c.categoria_trabalhador in ('721', '722') then
+  'PL'
+  when (h.tipo = 'N' and h.holerite_anterior_id is not null) or h.tipo = 'F' then
+  'FE'
+  when h.tipo = 'N' and exists(select pa.id from hr_payslip_afastamento pa where pa.payslip_id = h.id) then
+  'AF'
+  when h.tipo = 'N' then
+  'NR'
+  when h.tipo = 'R' then
+  'RE'
+  when h.tipo = 'D' then
+  'DT'
+  end as holerite_tipo,
+
+  case
+  when c.categoria_trabalhador in ('701','702','703') then
+  '0588'
+  else '0561'
+  end as codigo_recolhimento,
+
+  case
+  when c.categoria_trabalhador in ('701','702','703') then
+  'Autônomo'
+  when c.categoria_trabalhador in ('721', '722') then
+  'Pro-labore'
+  when (h.tipo = 'N' and h.holerite_anterior_id is not null) or h.tipo = 'F' then
+  'Férias'
+  when h.tipo = 'N' and exists(select pa.id from hr_payslip_afastamento pa where pa.payslip_id = h.id) then
+  'Afastado'
+  when h.tipo = 'N' then
+  'Normal'
+  when h.tipo = 'R' then
+  'Rescisão'
+  when h.tipo = 'D' then
+  'Décimo Terceiro'
+  end as holerite_tipo_descricao,
+
+  h.id as holerite_id,
+
+  coalesce((SELECT sum(hpl.amount)
+  FROM hr_payslip_line as hpl
+  where hpl.code in ('BASE_INSS', 'BASE_INSS_13', 'BASE_INSS_13_AP') and hpl.slip_id = h.id), 0) as base_inss,
+
+  coalesce((SELECT sum(hpl.total * case when hpl.code = 'INSS_FERIAS_GOZADAS' then -1 else 1 end)
+  FROM hr_payslip_line as hpl
+  where hpl.code in ('INSS', 'INSS_13', 'INSS_13_AP', 'INSS_anterior', 'INSS_FERIAS_GOZADAS')
+  and hpl.slip_id = h.id), 0) as inss,
+
+  coalesce((SELECT sum(hpl.total)
+  FROM hr_payslip_line as hpl
+  where hpl.code = 'IRPF' and hpl.slip_id = h.id), 0) as irpf,
+
+  coalesce((SELECT sum(hpl.total)
+  FROM hr_payslip_line as hpl
+  where hpl.code = 'DEDUCAO_DEPENDENTES' and hpl.slip_id = h.id), 0) as deducao_dependentes,
+
+  (select tdd.deducao_dependente from hr_tabela_ir_dependente tdd where tdd.ano = h.ano and tdd.mes <= h.mes order by tdd.ano desc, tdd.mes desc limit 1) as deducao_dependente,
+
+  (select tpd.parcela_deduzir from hr_tabela_ir tpd where tpd.ano = h.ano and tpd.mes <= h.mes and tpd.piso <= h.base_irpf order by tpd.ano desc, tpd.mes desc, tpd.piso desc limit 1) as parcela_deduzir,
+
+ coalesce((select coalesce(hl.rate, 0) from hr_payslip_line hl where hl.slip_id = h.id and coalesce(hl.holerite_anterior_line_id, null) is null and hl.code = 'IRPF'), 0) as aliquota_irpf,
+  h.data_pagamento_irpf,
+  h.data_vencimento_irpf,
+  to_char(h.data_vencimento_irpf, 'MM/YYYY') as competencia
+
+
+from
+  hr_payslip h
+  join hr_employee e on e.id = h.employee_id
+  join hr_contract c on c.id = h.contract_id
+  join res_company cp on cp.id = c.company_id
+  join res_partner p on p.id = cp.partner_id
+
+where
+  h.tipo in $P!{TIPOS} and (h.simulacao = False or h.simulacao is null)
+  and (($P{COMPLEMENTAR} = True and h.complementar = $P{COMPLEMENTAR}) or ($P{COMPLEMENTAR} = False and (h.complementar is null or h.complementar = False)))
+  and ((
+      (h.complementar is null or h.complementar = False)
+      and h.data_pagamento_irpf between '$P!{DATA_INICIAL}'  and '$P!{DATA_FINAL}'
+     )
+    or (
+      h.complementar = True
+      and h.data_pagamento_irpf between '$P!{DATA_INICIAL}'  and '$P!{DATA_FINAL}'
+    ))
+
+  and (
+     cp.id = $P{COMPANY_ID}
+     or cp.parent_id = $P{COMPANY_ID}
+  )
+  and h.valor_irpf > 0
+
+order by
+  p.cnpj_cpf,
+  holerite_tipo,
+  e.nome]]>
+	</queryString>
+	<field name="company_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Company]]></fieldDescription>
+	</field>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="empresa_endereco" class="java.lang.String"/>
+	<field name="empresa_bairro" class="java.lang.String"/>
+	<field name="empresa_cidade" class="java.lang.String"/>
+	<field name="empresa_estado" class="java.lang.String"/>
+	<field name="empresa_cep" class="java.lang.String"/>
+	<field name="cnpj" class="java.lang.String">
+		<fieldDescription><![CDATA[CNPJ]]></fieldDescription>
+	</field>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[unknown]]></fieldDescription>
+	</field>
+	<field name="data_admissao" class="java.lang.String"/>
+	<field name="data_rescisao" class="java.lang.String"/>
+	<field name="matricula" class="java.lang.String"/>
+	<field name="holerite_tipo" class="java.lang.String"/>
+	<field name="codigo_recolhimento" class="java.lang.String"/>
+	<field name="holerite_tipo_descricao" class="java.lang.String"/>
+	<field name="holerite_id" class="java.lang.Integer"/>
+	<field name="base_inss" class="java.math.BigDecimal"/>
+	<field name="inss" class="java.math.BigDecimal"/>
+	<field name="irpf" class="java.math.BigDecimal"/>
+	<field name="deducao_dependentes" class="java.math.BigDecimal"/>
+	<field name="deducao_dependente" class="java.lang.Double">
+		<fieldDescription><![CDATA[Dedução de dependentes]]></fieldDescription>
+	</field>
+	<field name="parcela_deduzir" class="java.lang.Double">
+		<fieldDescription><![CDATA[Parcela a Deduzir]]></fieldDescription>
+	</field>
+	<field name="aliquota_irpf" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Alíquota IRPF]]></fieldDescription>
+	</field>
+	<field name="data_pagamento_irpf" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data base IRPF]]></fieldDescription>
+	</field>
+	<field name="data_vencimento_irpf" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data vencimento IRPF]]></fieldDescription>
+	</field>
+	<field name="competencia" class="java.lang.String"/>
+	<variable name="DATA_INICIAL" class="java.util.Date">
+		<variableExpression><![CDATA[$P{DATA_INICIAL}]]></variableExpression>
+	</variable>
+	<variable name="LOGO_PREVIDENCIA_BASE64" class="java.lang.String">
+		<variableExpression><![CDATA["R0lGODlhawBAAPcAAP77+f7+/f////7+/v39/v79/Pz8/f39/fv7/P78+vv8+/n6+fn5+/Pz+Pf3+vb2+fX1+fT0+P348/359vb59vjz8f338vL38vLy9/Dw9u3t9O7u9ezs8+jo8evr8ubm8Pzz6v317vzw5evy6+707vvu4eTk7+Li7eLs4uXv5d/f7N7e6tzc6tra6NjY59TU5dbW5tLS5NDQ4svL4M7O4fro1/vq2vrl0fnhy8/gz9nn2dzp3NTk1PnexMnJ3sXF28bG3MLC2sPZw8ndyb3Mx7+/2Ly817m51bS00ra207Gx0LOz0bCwz66uzqurzKioyqamyaSkyKGhxp2dxJ6exJycw5mZwZqawpaWwPjWt/jZvffUs/bQq/fRrffPq/bMpPTAj/XFl/XInrfSt7nTub7WvrDOsKbHpqzLrJ7Cnsq1tvK4gpeeuJSUvpOTvZGRvI+PvI2Nuo6Ou4qKuIiIt4WFtoODtIGBs4Oxg5W8lZV/k3t7sH5+snx8sHl5rnp6r3R0q3V1rHBwqXJyqm5uqG1tp2pqpWVlomNjoWFhoGBgn15enltbnFpam1hYm1ZWmVRUmFZVl1FRlk1NlE9PlUxMk0pKkkdHkEVFj0JCjT8/jD8/izw8ijo6iDk5hzg4hzMzhDY2hjIygzExgysrgC8vgiwsgPKyd/K0e/CpZfGtbvCratCUau+gVu+jXO+hWe+eU+6bTe2VQ+2SPeyQOuyPOOyMM+uJLOuGKOuFJuqBH3apdnytfHGmcW6lbmyjbGmhaWKcYk+RT1iWWFqYWl2aXVSUVEuOS0SLRDaBNjyFPOZ4E+l9Gel7FOl4D+h3Deh2CuhzBehxAuhwAehwACkpfioqfyUlfCcnfSQkeyMjeyEheR8feB0ddxoadhkZdBcXdBUVchUVchIScQ8PbgwMbQsLbAoKawkJawgIawcHagUFaAMDaAICZwEBZgAAZjF+MSt7KyJ1IiV3JRpwGh5zHhhvGBZtFhFqEQ5pDgxnDAlmCQVjBQJhAgFgAQBgACH5BAkIAAIALAAAAABrAEAAAAj+AAUIHEhw4ICCCBMqJHiwYEODAwhInEhxoUGEDy1qTJhxo0cBHUGCHECSAAAQN3pk4eLFy5YeNSoQMCCRpEOMH3MKDKlTYUiSNricioXrGbWjSJNKW0YrlZgaNAk0/NnzI8+qNwkGwHGKFrSkYMOC1aUKBwKpVLFqvFqV5MGrAyx0kTVNrN2k02x9AYCWodq1fyG6HWFAY4AetereXZyriwGbOwMvZJuTpIEhxfAh6Bigs8ECa6QtXjztVQipkSVzxOqWJAIzyvz9mwdZwAo+gwxFCKA1i9HRd3PZILCTslrjGFsbOBPvn/N/wTK2Cact1AkWKz7wFhDgRjPgdqf+NcNRW3VWqyUJCEn2/PmYjAgM8F707t26DARx/AYfdlmJ8ual5pFbBoxQjGzt/QOPAgPx5pkA9NUnA3cUavEVf2HRAgByrFU2wHL4JOicP2VsJ1AGdfhRyCAbqADDDBo8ccQLG/D2hWIYJgUGagFeNCABIxgj4ojAmMidDPW9841W29QnSiCNxMFKjmAtYwGHPXE4QAFC0IOgiMlQgFARSW6jlSf1rWNHfZG0QmVSYhDXo4CTAZAHP0P+4488KXDX2Z9BbHKJJII0GIAdm5jyTRv1jVNBLW8eNQuPPVLmWi95OkePDgFkMAMLcxDSiCQMDpTENaaYcskdkRjiRwv/P1QRyAki6BJpNBPIWalFAzBATKaz7fBANeu8Q0U79X1TAEFPJGnOI0k+IVAAHcShxjKR3oBlZT4NQIEwwMbTJwtJUpEkNkY6keQ6irhTXxzbRYDOO3ow82YX21rFUa/DAKvMCNwlkWQV9bnDiWe8OaGOOuysU4g6yAbiYACmvMNIDbnkOA0X+Q6YHAG/AHvMBQ0locgfbchAxxtWJDFDFFRU0UQBDDDQQAQsVGGFG058sIIHD1jRSTUGgABLjhzPKRJDEeUB7DALCCDDG3YQJEWSlxSSZClaqVufKVq7Uw4GATSwwgMFaCGLaNTgKFYPHW+UkVtD4JknMZsJ0Mk7/p9sN4AVWBuSpDVGLpEkN34k2QFvhYyzBFBfoLKM22CBEDdgEF0wT57+CBP1QU1u0uAbBV9yyLlaIfGOO+6Ec0eSK/A2xzt3TDWALcEdoPTSI4GcaZhvHeDNOJA4KIAUnWySSR+CaIONKZT4KZAPoKRayhOcjKLNC501i4jtt1CO1CqXYz5SDv3kic8OAhlwAgwIBPwGHXMEYYcfglSh1QyQ9B/JCpiwBCQaAYFp0UAQfHhCE5QwlQVcSCxaKB+vikOAY2QqDw1BkikGYolkJa4+jihcktoRgyS5Az8CaUJ9CsGbtwwgC+I7Si7ypjTbDeFLCarHAjL4jg0KBBP1/glHH5IUCa0ILE0lLBgKBaCE+hgiMh+KxV3CIMEJuqUYmeIFZJBECptsoj7kWFN9okcQIyRJHTAwIQoHoLp3HKKFIOlBDKnBDAlUcTIjucA+MlUGyGTACTPjDR0U0QhEOMERkKBEHaQnABpgAhOUgMQJHOGIRCQCAxDAwAZWQIUoJAELTgCJBTJmFzHc0YpoABYKWiMQAmzDGpAoQEOOQIlaDmIJfPADIAJREA5sYxvVsMYV0KGOdQBBIEd4hyIEYIBX3IUWstzdRQYADGClAC1uEcA13qEOBkwrCkkyxenAqBUPJOkdbkgSDQQChXf8wQCnuAs0aiBNhxAAHjhM/xAyfHGGEWBTE+7SQENUWB9raK1RGTHBukhXHxcIxA3leMIaFmPKekJkASEClnP08YsRkGQO12AHCw4SADPW5xqDSNKSCHKCJJUjDuv4Rig6cBATZCCe4VmFkep5EAqkT6PPuYcZ0JKBF8QhCkaQwSB2WQcmIGIRhaxNBuQgBSX4oAhz4IMgvDkABKxiMbLYkEUvcoF8atQfeHjMAFyQJD6sbh3ZWNZOiqANbXijG0sMQIS0IZEJuOkutQjBWB1CAX0AVUS+2MwDzFGfPrjrHefw5k5M+g52bIAgmajPJeIii8UE9pSVMUA9DisiXkilFE4sR5Iuu5MfJMmyBLEGN/73EAJI3WUWFhisQoRE2gTlgQB0cAQipmAHRmDCFCegUCPNQY5w4LUzCECAEmTQgNouphUTAG1VnNbb9vBjDFiojycM0oBB/KEOb0CAA+IXAClkohrjSAJJJjCLu0xjDXLVbUJSsMfuPgcfREBWOgoIEnOmaYcDYUSSYhCRv4qlGVsAkH4NUk3/PmcebGhEOH7glg0g6x3teMBIBvBF+wgUDHeJhQgmrBEU5MPCz1EGBRiQgTtggQkuMIQjKoGJDCBgAyfwQBOWQIMOEKAE+0mKM8IQAO1KZgBpgPFzhhE/TtTnEZF5AzuQdQWIpCIs03DFilnskQCETMr/+IUBpP7wCXBsozAHqUOSkGAQEETDbbXoQTTJLDcFYBHNiSVJBuDcSCgooQgYMMgXkmILLuSXzx9RwC7M2ltiXKAgALwEJd7wkAF8lRqz2EICnMzTAJiBHnqCMTx40Be21mcRDGlFKnCwU0hXhQS92AelgboPXpDgIA4Agg+AwAKG7NnWqkHBLuwhZXwAowwkA9BbkN0jCpihGPfYdXvMio9ikEFMfiE1tQcQgByk4RfKqIc+8umPfuRjHsgARh7KQIJai0Tc1C5IAChAAhTwgAc50AEKLrAAe+ME3/me07QTznCf8K7h0mSlThaecIkr5EF+MjhBmmCIO+hu4iO5OBynhf8Q4xmm5BFI+QMCUICURwACvGGAyyPwgJTLp+U0T/kBXA5zARygAVGIQhXIpvIBOCACkmWACTqAAJlD4CA4d0BGAvCAID9GAAswwQfkM60IWP0BDZC6AGQeAfamXLICaUE60qGOc9DhB+pguzpG8QFDyF0dfCiHOoogAIVloxHqgAQM1p4OdHBCA0FY+8JMoQFzpMMUBbBEOo4QgUCAwx3toEIi0rGIARygD2w3REakAA4QF+EBf7i8O67xgwB8YBHkADENRKGOOHieEguzggA0oPcgEMRcncgsJmbXide94wfVeAck7sAHGHDjHU7gwDfcYYSKtYFg1jCEu6Swpmv+3OEOTzjiO2BADnNkAIjd6MMfZKCNd0whAEFoRzjekQmCQOAc70CEIE5AiXdg4w7bZAod0H6lYAeDsALs8A4yMADpNH+DEAACQw5oJwCKkH/PVwWT8A6CkAjvwAkq4C7OhQUCkFlWwIGB8AHIAgP0UQcIMA7vEAVAdA7dcAkHEAiQ9Q4caAkqRA4mcBArwDpBxg3qYC7e8HFjt02ZkAFkcg49GF7d8AfvUAoExgRKwgAykA7eMDuVEAA2SEYgYQDc4A5toAlW8ADj0A5rIoXgFA6UBAMCgAjvYAnuAAoP0CzdgABN4gPJpA4sMC+T4AhVcACoBQj28Q5vQIijQBP/BzAF73ANDNB/IGZiA3EALvAN77AHdPAO3IAACwBEiZBZidBkAyA4j5ABybc675ANAYBab6BcbKUNyzIAZHIN7fRmChYOnAAK0iJn71AObsiBj/AC7rIJ6vAOdHBEn/AJinAC7aANLfBYMcAofIMJT+AIyjQ7puAGcVAfPiAQB+AJluCCbtBGoYAN76ANHwCH7ZAJmiAD5vgGjRCHbpBS6iCM70AKnFAoAtAEn+AHO2EFn9AHRfAJmxABlZCMyehQS5CMUgASkPAJUeAECFkJTzAAcoCQn+AGSfAJf0AAj/AJmGAADGAHpdANpdABBzkHnPAJMyAACpAJn5AEAoEAMJnADaUwB5txBaHQDaDwBxwgABtgCNjADZfQAZ3wCRe5CR5gG8l4kQg5BRAXlQkREAA7"]]></variableExpression>
+		<initialValueExpression><![CDATA["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"]]></initialValueExpression>
+	</variable>
+	<variable name="COMPLEMENTAR" class="java.lang.Boolean">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="base_inss_tipo" class="java.math.BigDecimal" resetType="Group" resetGroup="tipo" calculation="Sum">
+		<variableExpression><![CDATA[$F{base_inss}]]></variableExpression>
+	</variable>
+	<variable name="inss_tipo" class="java.math.BigDecimal" resetType="Group" resetGroup="tipo" calculation="Sum">
+		<variableExpression><![CDATA[$F{inss}]]></variableExpression>
+	</variable>
+	<variable name="deducao_dependentes_tipo" class="java.math.BigDecimal" resetType="Group" resetGroup="tipo" calculation="Sum">
+		<variableExpression><![CDATA[$F{deducao_dependentes}]]></variableExpression>
+	</variable>
+	<variable name="irpf_tipo" class="java.math.BigDecimal" resetType="Group" resetGroup="tipo" calculation="Sum">
+		<variableExpression><![CDATA[$F{irpf}]]></variableExpression>
+	</variable>
+	<variable name="inss_empresa" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{inss}]]></variableExpression>
+	</variable>
+	<variable name="deducao_dependentes_empresa" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{deducao_dependentes}]]></variableExpression>
+	</variable>
+	<variable name="deducoes_empresa" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{deducao_dependentes}]]></variableExpression>
+	</variable>
+	<variable name="irpf_empresa" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{irpf}]]></variableExpression>
+	</variable>
+	<variable name="base_inss_empresa" class="java.math.BigDecimal" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{base_inss}]]></variableExpression>
+	</variable>
+	<variable name="total_por_tipo" class="java.lang.Integer" resetType="Group" resetGroup="tipo" calculation="Count">
+		<variableExpression><![CDATA[$F{id}]]></variableExpression>
+	</variable>
+	<variable name="total_por_empresa" class="java.lang.Integer" resetType="Group" resetGroup="empresa" calculation="Count">
+		<variableExpression><![CDATA[$F{id}]]></variableExpression>
+	</variable>
+	<group name="empresa" isStartNewPage="true" isReprintHeaderOnEachPage="true" keepTogether="true">
+		<groupExpression><![CDATA[$F{cnpj}]]></groupExpression>
+		<groupHeader>
+			<band height="52" splitType="Stretch">
+				<textField>
+					<reportElement x="0" y="20" width="751" height="16" forecolor="#0099FF" uuid="8a8ddaae-31ee-4f1e-beb7-2ba57b184483"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa} + " - " + $F{cnpj}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="773" y="7" width="43" height="8" uuid="3034c81e-9a7a-4a39-bea7-8c07c416e202"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="751" y="7" width="23" height="8" uuid="901ee5c9-ea82-4924-9e88-fec49b2807fa"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Data:]]></text>
+				</staticText>
+				<textField pattern="HH:mm:ss">
+					<reportElement x="773" y="14" width="43" height="8" uuid="6eee1b65-3635-4ee0-880b-e3b3c6ef0dd8"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="751" y="14" width="23" height="8" uuid="1d19666e-e579-43c3-b2e2-7a3183a9afa2"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Hora:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="773" y="0" width="43" height="8" uuid="29dc1237-cab4-45f7-b7f0-66206878870a"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="751" y="0" width="23" height="8" uuid="bd36cf0e-9e03-46aa-bfba-54b04b5784db"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Pág:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="36" width="539" height="16" uuid="19adbfea-e08e-4857-a66e-1aa659e96a69"/>
+					<textElement>
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Competência: " + $P{COMPETENCIA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="0" width="751" height="20" uuid="b092227e-b143-49b7-a80d-0fdaeb7c2a8c"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["MEMÓRIA DE CÁLCULO E RELAÇÃO DE PAGAMENTO DE IRRF"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="152">
+				<textField>
+					<reportElement mode="Transparent" x="0" y="14" width="250" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="2fe3fce0-4ff6-4bf2-bc96-49f6dae2519b"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="UniCNS-UCS2-H" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total geral:"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="676" y="14" width="70" height="14" uuid="6fc556aa-eafc-4613-8f3b-0737417ac5ad"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="746" y="14" width="70" height="14" uuid="f2cf3ddb-d648-43fd-ae45-2383c64c6b54"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{irpf_empresa}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="329" y="14" width="70" height="14" uuid="368e53c1-48ef-4020-a318-14991a7ba02e"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{base_inss_empresa}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="606" y="14" width="70" height="14" uuid="180eca55-03d5-4c2f-8677-cd4e96cef3e6"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0;-###0" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="250" y="14" width="80" height="14" uuid="ecfac7c0-f05e-4ecd-9b36-047e1576deb4"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total_por_empresa}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="469" y="14" width="70" height="14" uuid="78ca2a87-d6e4-468c-a145-fe98c3a8b87e"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{deducao_dependentes_empresa}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="538" y="14" width="70" height="14" uuid="300a5702-0753-4e2b-8301-7fdcc204a8f2"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="398" y="14" width="70" height="14" uuid="06694018-4733-40d7-8fdf-5610a00f9512"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{inss_empresa}]]></textFieldExpression>
+				</textField>
+				<subreport>
+					<reportElement x="144" y="52" width="555" height="100" uuid="a04b9691-1262-4280-b66f-2ef53c8df3f0"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="TIPOS">
+						<subreportParameterExpression><![CDATA[$P{TIPOS}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="COMPLEMENTAR">
+						<subreportParameterExpression><![CDATA[$P{COMPLEMENTAR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="COMPANY_ID">
+						<subreportParameterExpression><![CDATA[$P{COMPANY_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="UID">
+						<subreportParameterExpression><![CDATA[$P{UID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="COMPETENCIA">
+						<subreportParameterExpression><![CDATA[$P{COMPETENCIA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="DATA_INICIAL">
+						<subreportParameterExpression><![CDATA[$P{DATA_INICIAL}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="DATA_FINAL">
+						<subreportParameterExpression><![CDATA[$P{DATA_FINAL}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "hr_relatorio_irrf_resumo.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="tipo" isReprintHeaderOnEachPage="true" keepTogether="true">
+		<groupExpression><![CDATA[$F{holerite_tipo}]]></groupExpression>
+		<groupHeader>
+			<band height="44">
+				<staticText>
+					<reportElement x="0" y="0" width="27" height="20" uuid="766f39df-6b29-42a7-9809-b246544b9289"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+					</textElement>
+					<text><![CDATA[Tipo:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="676" y="20" width="70" height="24" uuid="ee8dc2a4-ca99-458d-bf5d-495ae0cb7a63"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+					</textElement>
+					<text><![CDATA[Dedução]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="20" width="250" height="24" uuid="369efc85-870e-44a8-9431-31c26bbad520"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+					</textElement>
+					<text><![CDATA[Funcionários]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="329" y="20" width="70" height="24" uuid="e4f94ab4-e618-4337-9f1a-97612c5ad423"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+					</textElement>
+					<text><![CDATA[Base cálculo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="606" y="20" width="70" height="24" uuid="55cf2e33-33e1-4593-8c4c-394897629408"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+					</textElement>
+					<text><![CDATA[Alíquota]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="469" y="20" width="70" height="24" uuid="09b8c3c9-030e-45d8-b5ca-3a2bb372d64d"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+					</textElement>
+					<text><![CDATA[Dependentes]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="538" y="20" width="70" height="24" uuid="f3aeb984-960f-46ed-b154-174e91049328"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+					</textElement>
+					<text><![CDATA[nº dep.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="746" y="20" width="70" height="24" uuid="6c2e0fb6-b043-48ec-a60d-185bd0478588"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+					</textElement>
+					<text><![CDATA[Valor IRRF]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="399" y="20" width="70" height="24" uuid="fac01c15-c19f-47ab-ab00-a650782bae5b"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+					</textElement>
+					<text><![CDATA[Abatimentos]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="250" y="20" width="80" height="24" uuid="94c47448-e446-44ac-90d8-4610fd300066"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Data pagamento"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="27" y="0" width="789" height="20" uuid="a7c9d8c6-7e04-4654-a1a5-cb3853f5b964"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{holerite_tipo_descricao}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="746" y="0" width="70" height="14" uuid="840b3665-e448-4723-b212-bf2f95d0e1c3"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{irpf_tipo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="606" y="0" width="70" height="14" uuid="a906beaf-3856-480d-8a4e-7306fad74106"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="469" y="0" width="70" height="14" uuid="a53932d8-9cd8-4580-a8e1-8dfdc3f09d7a"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{deducao_dependentes_tipo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="538" y="0" width="70" height="14" uuid="49a0d87b-d7e5-4c8e-854e-a16c615536bf"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="398" y="0" width="70" height="14" uuid="e83e3750-b015-4c6b-a6fe-6e59b4cc4170"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{inss_tipo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="676" y="0" width="70" height="14" uuid="2480c044-36c1-48ae-be8b-2bdaeb5df4a5"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="329" y="0" width="70" height="14" uuid="503b69c6-6b11-4bda-97f0-8f2b23e909d7"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{base_inss_tipo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0;-###0" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="250" y="0" width="80" height="14" uuid="5d04f0d5-18a6-4816-af21-86444a54b8ad"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total_por_tipo}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Transparent" x="0" y="0" width="250" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="3ed1ab06-a0e8-4e5c-8d19-b411ff054336"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="UniCNS-UCS2-H" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total - " + $F{holerite_tipo_descricao} + ":"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="398" y="0" width="70" height="14" uuid="20a1c78c-e474-48ee-b5e1-f1519238ab65"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{inss}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="746" y="0" width="70" height="14" uuid="bf7618c8-bf51-40b2-bb5f-49a7203cc27c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{irpf}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="676" y="0" width="70" height="14" uuid="c32ef76d-7cdf-4a62-a02a-f60110ab5e4f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parcela_deduzir}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="469" y="0" width="70" height="14" uuid="488c7501-5bae-4fcb-97c9-48f84fff1e43"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deducao_dependentes}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="606" y="0" width="70" height="14" uuid="3d7b3c9d-49be-4f38-9439-9ba6c9b224f7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{aliquota_irpf}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="329" y="0" width="70" height="14" uuid="d2405315-856f-4f6d-9bf3-b9ccb859e1eb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_inss}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="538" y="0" width="70" height="14" uuid="5894c272-c2ab-40da-acc5-e14cd511c4bf"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deducao_dependentes} > 0?
+$F{deducao_dependentes} / $F{deducao_dependente}
+:
+0]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="250" height="14" uuid="358ee122-cd02-46bc-bbd3-e39c8b42cbfb"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["[" + $F{matricula} + " ] - " + $F{nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="250" y="0" width="80" height="14" uuid="63e62022-5ae6-4cdf-80cb-e57908a19f78"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_pagamento_irpf}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

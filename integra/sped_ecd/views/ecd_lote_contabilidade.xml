@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="ecd_lote_contabilidade_search">
+            <field name="name">lote.contabilidade.search</field>
+            <field name="model">lote.contabilidade</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Lote de Lançamentos">
+                    <field name="codigo" string="Lote" />
+                    <field name="company_id" />
+                    <field name="tipo" />
+                    <field name="data" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                    <field name="somente_cnpj" />
+                    <field name="gerar_rateio" />
+                    <field name="importado" />
+                    <field name="create_uid" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ecd_lote_contabilidade_tree">
+            <field name="name">ecd.lote.contabilidade.tree</field>
+            <field name="model">lote.contabilidade</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="codigo" string="Lote" />
+                    <field name="company_id" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                    <field name="tipo" />
+                    <field name="emissao" />
+                    <field name="somente_cnpj" />
+                    <field name="gerar_rateio" />
+                    <field name="importado" />
+                    <field name="create_uid" />                    
+                    <field name="write_uid" />                    
+                    <field name="write_date" />                  
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ecd_lote_contabilidade_form">
+            <field name="name">ecd.lote.contabilidade.form</field>
+            <field name="model">lote.contabilidade</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Lote de Lançamentos">
+                    <separator string="Parâmetros" colspan="4"/>
+                    <field name="company_id" required="1" colspan="4"  on_change="on_change_plano(company_id)" domain="[('cnpj_cpf', '!=', False)]"  attrs="{'readonly':[('importado','!=' , False)]}"/>
+                    <newline/>
+                    <field name="data_inicial" required="1" on_change="onchange_data(data_inicial,data_final)"  attrs="{'readonly':[('importado','!=' , False)]}"/>
+                    <field name="data_final" required="1" on_change="onchange_data(data_inicial,data_final)"  attrs="{'readonly':[('importado','!=' , False)]}"/>
+                    <newline/>
+                    <field name="tipo" required="1" colspan="2"  attrs="{'readonly':[('importado','!=' , False)]}"/>
+                    <field name="emissao" colspan="2" attrs="{'invisible':[('tipo','!=' , 'D')], 'readonly':[('importado','!=' , False)]}" />
+                    <newline/>
+                    <field name="somente_cnpj" />
+                    <field name="importado" readonly="1" />
+                    <field name="plano_id" invisible="1" />
+                    <button icon="gtk-execute" string="Gerar Rateio" name="gera_rateio" attrs="{'invisible':[('importado','=',False)]}" type="object" colspan="2" />
+                    <notebook colspan="4">
+                        <page string="Buscar Lançamentos">
+                            <button icon="gtk-execute" string="Buscar Lançamentos" name="gera_exportacao"  attrs="{'invisible':[('importado','!=' , False)]}" type="object" colspan="4" />
+                            <separator string="Dados gerados" colspan="4" />
+                            <field name="item_ids" readonly="1" colspan="4" nolabel="1" context="{'conta_simples': True }">
+                                <tree>                                                                       
+                                    <field name="data" />                                    
+                                    <field name="documento_id"  />                                    
+                                    <field name="lancamento_id"  />                                    
+                                    <field name="slip_id"  />                                    
+                                    <field name="patrimonio_id" />                                    
+                                    <field name="conta_debito_id" context="{'conta_simples': True}"/>                                    
+                                    <field name="conta_credito_id" context="{'conta_simples': True}"/>                                    
+                                    <field name="centrocusto_id" />
+                                    <field name="valor" sum="Total"/>                                    
+                                    <field name="historico" />
+                                </tree>
+                                <form>
+                                    <field name="cnpj_cpf" />
+                                    <field name="company_id" />
+                                    <field name="data" />
+                                    <field name="documento_id" />
+                                    <field name="lancamento_id" />
+                                    <field name="slip_id" />
+                                    <field name="patrimonio_id" />
+                                    <field name="conta_debito_id" context="{'conta_simples': True}"/>
+                                    <field name="codigo_reduzido_debito" />
+                                    <field name="conta_credito_id" context="{'conta_simples': True}"/>
+                                    <field name="codigo_reduzido_credito" />
+                                    <field name="centrocusto_id" />
+                                    <field name="valor"/>
+                                    <field name="codigo_historico" />
+                                    <field name="historico" />
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Gerar Lançamentos">
+                            <button icon="gtk-execute" string="Gerar Lançamentos" name="gera_contabilidade"  attrs="{'invisible':[('importado','!=' , False)]}" type="object" colspan="4" />
+                            <separator string="Lançamentos Gerados" colspan="4" />
+                            <field name="lancamento_ids" readonly="1" colspan="4" nolabel="1" context="{'conta_simples': True}">                                
+                                <tree>                                                                                                                                                                                                                                                       
+                                    <field name="data" />                                    
+                                    <field name="conta_id" context="{'conta_simples': True}"/>                                                                        
+                                    <field name="vr_debito" sum="Total Debito" />
+                                    <field name="vr_credito" sum="Total Credito" />                                                                     
+                                    <field name="centrocusto_id" />
+                                    <field name="historico" />                                   
+                                </tree>
+                                <form>                                                                                                         
+                                    <field name="codigo" />                                                                                                           
+                                    <field name="lancamento_id" />
+                                    <field name="cnpj_cpf" />
+                                    <field name="company_id" />
+                                    <field name="data" />                                    
+                                    <field name="numero_documento" />
+                                    <field name="conta_id" context="{'conta_simples': True}"/>                                                                        
+                                    <field name="contra_partida_id" context="{'conta_simples': True}"/>                                                                        
+                                    <field name="vr_debito" />
+                                    <field name="vr_credito"/>                                                                     
+                                    <field name="centrocusto_id" />
+                                    <field name="historico" />                                   
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Documento Não Contabilizados/ Sem Partidas">                            
+                            <group string="Impressão" col="8" colspan="4">
+                                <group col="2" colspan="2" >
+                                    <button icon="gtk-print" string="Gerar relatório Inconsistência" name="gera_relatorio_inconsistencia" type="object" />
+                                </group>
+                                <group col="6" colspan="4" >
+                                </group>
+                            </group>
+                            <separator string="Documentos Fiscais" colspan="4" />
+                            <field name="documento_sempartida_ids" readonly="1" colspan="4" nolabel="1">                                                                
+                                <tree>
+                                    <field name="company_id" />
+                                    <field name="modelo"/>                                   
+                                    <field name="serie" />
+                                    <field name="numero"/>
+                                    <field name="data_emissao"/>
+                                    <field name="partner_id"/>                                                                                
+                                    <field name="vr_nf" />
+                                    <field name="operacao_id"/>
+                                </tree>
+                            </field>
+                            <separator string="Documentos Financeiros" colspan="4" />
+                            <field name="finan_sempartida_ids" readonly="1" colspan="4" nolabel="1" >                                                          
+                                <tree>
+                                    <field name="company_id" />
+                                    <field name="tipo"/>                                   
+                                    <field name="lancamento_id"/>
+                                    <field name="numero_documento"/>
+                                    <field name="data"/>
+                                    <field name="data_documento"/>
+                                    <field name="data_quitacao"/>
+                                    <field name="partner_id"/>                                                                                
+                                    <field name="valor_documento" />
+                                </tree>
+                            </field>
+                            <separator string="Holerites" colspan="4" />
+                            <field name="holerite_sempartida_ids" readonly="1" colspan="4" nolabel="1" >                                                                                          
+                                <tree>                                    
+                                    <field name="tipo" />
+                                    <field name="slip_id" />
+                                    <field name="rule_id" />
+                                    <field name="date_from"/>
+                                    <field name="date_to"/>                                    
+                                    <field name="company_id"/>                                                                
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Relatório de Conferência">
+                            <field name="diario_conta_id" domain="[('sintetica','=',False)]" context="{'conta_simples': True}" colspan="4" />
+                            <newline/>
+                            <field name="nome_diario" invisible="1"/>
+                            <button icon="gtk-print" string="Gerar relatório" name="gera_relatorio_conferencia" type="object" colspan="2" />
+                            <button icon="gtk-print" string="Gerar relatório Sintético" name="gera_relatorio_conferencia_sintetico" type="object" colspan="2" attrs="{'invisible':[('tipo','in',('F','D','PT'))]}"/>
+                            <newline/>
+                            <field name="arquivo_diario" nolabel="1" readonly="1" filename="nome_diario" colspan="4" />
+                        </page>  
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="ecd_lote_contabilidade_acao">
+            <field name="name">Lote de Lançamento</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">lote.contabilidade</field>
+            <field name="search_view_id" ref="ecd_lote_contabilidade_search" />
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="ecd_menu_lote_contabilidade"
+            action="ecd_lote_contabilidade_acao" 
+            name="Lotes"
+            parent="menu_sped_ecd_movimento"
+            sequence="1"/>
+    </data>
+</openerp>

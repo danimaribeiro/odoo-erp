@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_carteira_tree">
+            <field name="name">finan.carteira.tree</field>
+            <field name="model">finan.carteira</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="res_partner_bank_id" />
+                    <field name="carteira" />
+                    <field name="modalidade" />
+                    <field name="beneficiario" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_carteira_form">
+            <field name="name">finan.carteira.form</field>
+            <field name="model">finan.carteira</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Carteiras de cobrança">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="res_partner_bank_id" colspan="4" />
+                        <field name="cnpj_cpf" invisible="1"  readonly="1"/>
+                        <field name="raiz_cnpj"  invisible="1" />
+                        <newline />
+                        <field name="carteira" colspan="2"/>
+                        <field name="nosso_numero_pelo_banco" colspan="2"/>
+                        <newline />
+                        <field name="modalidade" colspan="4" />
+                        <newline />
+                        <field name="beneficiario" />
+                        <field name="beneficiario_digito" />
+                    </group>
+                    <group col="4" colspan="4">
+                        <separator string="Boletos e remessas" colspan="4"/>
+                        <newline />
+                        <field name="ultimo_nosso_numero" />
+                        <newline />
+                        <field name="ultimo_arquivo_remessa" />
+                        <newline />
+                        <field name="taxa_boleto" />
+                        <newline />
+                        <separator string="Juros e multa" colspan="4"/>
+                        <field name="porcentagem_juros" digits="(18,8)" />
+                        <newline />
+                        <field name="porcentagem_multa" digits="(5,2)" />
+                        <newline />
+                        <separator string="Protesto" colspan="4"/>
+                        <field name="dias_protesto" />
+                        <separator string="Instrução livre" colspan="4"/>
+                        <field name="instrucao" nolabel="1" colspan="4" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_carteira_acao">
+            <field name="name">Carteiras</field>
+            <field name="res_model">finan.carteira</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_carteira_tree" />
+        </record>
+
+        <menuitem action="finan_carteira_acao"
+            id="menu_finan_carteira" name="Carteiras" parent="menu_finan_config" />
+
+    </data>
+</openerp>

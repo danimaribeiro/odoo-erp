@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="finan_contrato_receber_tree">
+            <field name="name">finan.contrato.receber.tree</field>
+            <field name="model">finan.contrato</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_receber_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="suspenso" position="after">
+                    <field name="contrato_atualizado" invisible="1"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_receber_form">
+            <field name="name">finan.contrato.receber.form</field>
+            <field name="model">finan.contrato</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_receber_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="suspenso" position="after">
+                    <field name="contrato_atualizado" />
+                    <field name="suspenso_inadimplente" readonly="1" attrs="{'invisible': [('contrato_atualizado', '=', False)]}" />
+                </field>
+                <field name="contrato_inventario_ids" position="replace">
+                    <field name="contrato_inventario_ids" widget="many2one_list" nolabel="1">
+                        <tree editable="top">
+                            <field name="product_id" />
+                            <field name="quantidade" />
+                            <field name="vr_unitario" />
+                            <field name="vr_total" />
+                            <field name="vr_unitario_custo_atual" />
+                            <field name="vr_custo_atual" />
+                            <field name="data" />
+                        </tree>
+                    </field>
+                </field>
+                <page string="Ajuste de Conta Financeira" position="after">
+                    <page string="Suspensões" attrs="{'invisible': [('contrato_atualizado', '=', False)]}">
+                        <field name="suspensao_ids" widget="many2one_list" nolabel="1">
+                            <tree editable="top">
+                                <field name="name" required="1" attrs="{'readonly': [('data_liberacao', '!=', False)]}"/>
+                                <field name="data_suspensao" required="1" attrs="{'readonly': [('data_liberacao', '!=', False)]}"/>
+                                <field name="data_liberacao" />
+                                <field name="dias_antes" />
+                                <field name="valor_antes" />
+                                <field name="dias_depois" />
+                                <field name="valor_depois" />
+                                <field name="create_uid" readonly="1"/>
+                                <field name="write_uid" readonly="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_receber_search">
+            <field name="name">finan.contrato.receber.search</field>
+            <field name="model">finan.contrato</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_receber_search"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <filter name="suspenso" position="after">
+                    <filter name="contrato_atualizado" string="Atualizado" icon="terp-go-month" domain="[('contrato_atualizado', '=', True),('ativo', '=', True)]" />
+                    <filter name="inadimplente" string="Inadimplente + 30" icon="terp-go-month" domain="[('pendencia_financeira', '=', True),('ativo', '=', True)]" />
+                    <filter name="suspenso_inadimplente" string="Suspenso + 30" icon="terp-go-month" domain="[('suspenso_inadimplente', '=', True),('ativo', '=', True)]" />
+                </filter>
+            </field>
+        </record>
+
+    </data>
+</openerp>

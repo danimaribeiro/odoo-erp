@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+<!--        <record model="ir.ui.view" id="sped_participante_form_view">
+            <field name="name">participante.form</field>
+            <field name="model">sped.participante</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Form Participante">
+                    <field name="cnpj_cpf" />
+                    <newline/>
+                    <field name="nome" colspan="4" />
+                    <newline/>
+
+                    <notebook colspan="4">
+                        <page string="Dados básicos">
+                            <field name="fantasia" colspan="4" />
+                            <newline/>
+                            <group colspan="4" col="4" string="Endereço" >
+                                <field name="endereco" colspan="2" />
+                                <field name="numero" colspan="2" />
+                                <field name="complemento" colspan="2" />
+                                <newline/>
+                                <field name="bairro" colspan="2" />
+                                <newline/>
+                                <field name="municipio_id" colspan="2" />
+                                <newline/>
+                                <field name="cep" colspan="1" />
+                            </group>
+                        </page>
+                        <page string="Inscrições e registros">
+                                <field name="ie" colspan="1" />
+                                <newline/>
+                                <field name="im" colspan="1" />
+                                <newline/>
+                                <field name="suframa" colspan="1" />
+                                <newline/>
+                                <field name="rntrc" colspan="1" />
+                                <newline/>
+                                <field name="crc" colspan="1" />
+                                <newline/>
+                        </page>
+                        <page string="Emissão de documento eletrônico">
+                                <field name="fone" colspan="1" />
+                                <newline/>
+                                <field name="email_nfe" colspan="1" />
+                        </page>
+                        <page string="Classificação">
+                            <field name="eh_cliente" />
+                            <field name="eh_fornecedor" />
+                            <field name="eh_transportadora" />
+                            <field name="eh_produtor_rural" />
+                            <field name="eh_funcionario" />
+                            <field name="eh_consumidor_final" />
+                            <field name="eh_orgao_publico" />
+                            <field name="eh_contabilista" />
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>-->
+
+
+<!--        <record model="ir.ui.view" id="sped_participante_filter_view">
+            <field name="name">sped.participante.select</field>
+            <field name="model">sped.participante</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Pesquisar: Participantes">
+                   <group col='10' colspan='4'>
+                        <field name="nome" select="1"/>
+                        <field name="fantasia" select="1"/>
+                        <field name="cnpj_cpf" select="1"/>
+                   </group>
+                   <newline />
+                   <group expand="0" string="Agrupar por...">
+                   </group>
+               </search>
+            </field>
+        </record>-->
+
+
+        <record model="ir.actions.act_window" id="sped_participante_acao">
+            <field name="name">Participantes</field>
+            <field name="res_model">res.partner</field>
+            <field name="domain">[('participante_id', '!=', None)]</field>
+            <field name="context">{}</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+<!--             <field name="search_view_id" ref="sped_participante_filter_view"/> -->
+        </record>
+
+        <menuitem id="menu_sped_participante" name="Participantes" parent="menu_sped_tabela" sequence="12" action="sped_participante_acao" />
+
+    </data>
+</openerp>

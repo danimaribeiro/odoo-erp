@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record id="group_sped_documento" model="res.groups">
+            <field name="name">Integra / SPED - Emissão de NF-e/NFS-e</field>
+        </record>
+    </data>
+</openerp>

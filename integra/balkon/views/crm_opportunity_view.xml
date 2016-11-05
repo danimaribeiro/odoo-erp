@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="crm_opportunity_form">
+        <field name="name">crm.opportunity.form</field>
+        <field name="model">crm.lead</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+        <field name="arch" type="xml">
+        <data>
+            <field name="planned_revenue" position="replace" />
+            <field name="type" position="after">
+                <newline />
+                <group colspan="4" col="6">
+                    <field name="qtd_cameras" on_change="onchange_receita(qtd_cameras, vr_unitario_camera)" />
+                    <field name="vr_unitario_camera" on_change="onchange_receita(qtd_cameras, vr_unitario_camera)" />
+                    <field name="planned_revenue" />
+                </group>
+                <newline />
+                <group colspan="4" col="6">
+                    <field name="qtd_adesoes" on_change="onchange_adesao(qtd_adesoes, vr_unitario_adesao)" />
+                    <field name="vr_unitario_adesao" on_change="onchange_adesao(qtd_adesoes, vr_unitario_adesao)" />
+                    <field name="vr_total_adesao" />
+                </group>
+                <field name="hr_department_id" colspan="4" />
+            </field>
+        </data>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="crm_opportunity_tree">
+        <field name="name">crm.opportunity.tree</field>
+        <field name="model">crm.lead</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+        <field name="arch" type="xml">
+        <data>
+            <field name="create_date" position="after">
+                <field name="hr_department_id" string="NAL" />
+            </field>
+        </data>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="crm_opportunity_search">
+        <field name="name">crm.opportunity.search</field>
+        <field name="model">crm.lead</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+        <data>
+            <field name="name" position="after">
+                <field name="hr_department_id" string="NAL" />
+            </field>
+            <xpath expr="//filter[@string='Salesman']" position="before">
+                <filter string="NAL" icon="terp-personal" domain="[]" context="{'group_by':'hr_department_id'}" />
+            </xpath>
+        </data>
+        </field>
+    </record>
+
+</data>
+</openerp>

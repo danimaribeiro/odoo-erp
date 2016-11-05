@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resumo_movimentacao_financeira" language="groovy" pageWidth="786" pageHeight="43" orientation="Landscape" columnWidth="786" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="f94375aa-4d90-4890-a268-711ae837fbb1">
+	<property name="ireport.zoom" value="1.3286707500000012"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="dataset1" uuid="73c422cc-7ea7-4fc0-bb8a-83deb60bc839"/>
+	<parameter name="DATA_QUITACAO_INICIAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2014-02-03]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_QUITACAO_FINAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2014-02-04]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RES_PARTNER_BANK_ID_SUB" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CREDITOS" class="java.lang.Double"/>
+	<parameter name="DEBITOS" class="java.lang.Double"/>
+	<queryString>
+		<![CDATA[select
+sum(coalesce((select ee.saldo from finan_saldo_resumo_data_quitacao ee where ee.data_quitacao < cast($P{DATA_QUITACAO_INICIAL} as date) and ee.res_partner_bank_id = b.id order by ee.data_quitacao desc limit 1), 0)) as saldo_anterior
+
+from res_partner_bank b
+
+where
+true = true
+$P!{RES_PARTNER_BANK_ID_SUB}]]>
+	</queryString>
+	<field name="saldo_anterior" class="java.math.BigDecimal"/>
+	<variable name="valor_total" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{saldo_anterior} + $P{CREDITOS} - $P{DEBITOS}]]></variableExpression>
+	</variable>
+	<variable name="total" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{saldo_anterior} + $P{CREDITOS}]]></variableExpression>
+	</variable>
+	<variable name="saldo_final" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{saldo_anterior} + $P{CREDITOS} - $P{DEBITOS}]]></variableExpression>
+	</variable>
+	<columnFooter>
+		<band height="43" splitType="Immediate">
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="726" y="14" width="60" height="14" uuid="a5f976f0-bd51-4c63-bd54-4d35f1a3c236"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{saldo_final}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="577" y="0" width="89" height="14" uuid="dbbaedbe-8add-4784-b9a3-efd2eceb27fb"/>
+				<box rightPadding="10">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo anterior ]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="666" y="28" width="60" height="14" uuid="145cece8-bf40-4f5a-9685-fb1f1ee6941f"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="666" y="0" width="60" height="14" uuid="a961fe77-8f5f-43ed-b637-d2a065c654f3"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{saldo_anterior}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="726" y="0" width="60" height="14" uuid="da343e80-8e8f-4c90-9694-7d4da1f566db"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[XXXXXXXXX]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="666" y="14" width="60" height="14" uuid="4ee3f338-0b99-4138-9d9a-dfec79d9d9aa"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[XXXXXXXXX]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;#,##0.00-">
+				<reportElement x="726" y="28" width="60" height="14" uuid="83bac336-49da-4f99-a673-6d62123d1684"/>
+				<box rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="577" y="14" width="89" height="14" uuid="9ff65b8a-cd74-4eec-ace7-da31203d6166"/>
+				<box rightPadding="10">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo atual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="577" y="28" width="89" height="14" uuid="ccc05254-124c-48a4-ae53-8b38887f0b49"/>
+				<box rightPadding="10">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Totais]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+</jasperReport>

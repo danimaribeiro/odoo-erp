@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="product_normal_form_view" model="ir.ui.view">
+            <field name="name">product.normal.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <page string="Suppliers" position="before">
+                    <page string="Composição">
+                        <field name="composicao_ids" nolabel="1" colspan="4">
+                            <tree editable="bottom">
+                                <field name="componente_id" required="1" on_change="onchange_componente_id(componente_id)"/>
+                                <field name="uom_id" readonly="1"/>
+                                <field name="list_price" readonly="1" invisible="1" />
+                                <field name="standard_price" readonly="1" />
+                                <field name="quantidade" required="1"/>
+                                <field name="risco" required="1" string="Margem de risco"/>
+                                <field name="vr_total" sum="vr_total" />
+                            </tree>
+                        </field>
+                    </page>
+                </page>
+                <field name="standard_price" position="replace">
+                    <field name="standard_price" attrs="{'readonly': [('composicao_ids', '!=', False)]}" />
+                </field>
+            </field>
+        </record>
+
+        <record id="product_product_form_custo" model="ir.ui.view">
+            <field name="name">product.product.form.custo</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="integra_product.product_normal_form_view_integra"/>
+            <field name="arch" type="xml">
+                <field name="standard_price" position="replace">
+                    <field name="standard_price" attrs="{'readonly':[('composicao_ids', '!=', False)]}" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

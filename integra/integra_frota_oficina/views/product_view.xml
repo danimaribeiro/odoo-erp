@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="product_product_form">
+            <field name="name">product.product.form</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="orcamento.orcamento_product_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Information" position="after">
+                    <page string="Marcas/Modelos">
+                        <field name="qualquer_marca_modelo" />
+                        <newline/>
+                        <separator string="Marcas e modelos" colspan="4"/>
+                        <field name="frota_modelo_ids" nolabel="1" />
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

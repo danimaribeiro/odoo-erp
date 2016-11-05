@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_historico_search">
+            <field name="name">finan.historico.search</field>
+            <field name="model">finan.historico</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Históricos Contabilidade">
+                    <field name="nome" />
+                    <field name="codigo"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_historico_tree_view">
+            <field name="name">finan.historico.tree</field>
+            <field name="model">finan.historico</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome"/>
+                    <field name="codigo"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_historico_form_view">
+            <field name="name">finan.historico.form</field>
+            <field name="model">finan.historico</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Histórico para Contabilidade">
+                    <field name="nome" required="1"/>
+                    <field name="codigo" required="1"/>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_historico_acao">
+            <field name="name">Histórico para Contabilidade</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">finan.historico</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_finan_historico" name="Histórico cont." parent="finan.menu_finan_config" sequence="10" action="finan_historico_acao" />
+    </data>
+</openerp>

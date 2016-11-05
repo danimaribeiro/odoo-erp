@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_fluxo_caixa_analitico" >
+            <field name="name">finan.relatorio.fluxo.caixa.analitico</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_relatorio_fluxo_caixa_analitico"/>
+            <field name="arch" type="xml">
+                <field name="saldo_inicial" position="after">
+                    <field name="hr_department_id" colspan="4" />
+                </field>
+                <field name="filtrar_rateio" position="replace"/>
+                <field name="project_id" position="replace" />
+            </field>
+        </record>
+
+    </data>
+</openerp>

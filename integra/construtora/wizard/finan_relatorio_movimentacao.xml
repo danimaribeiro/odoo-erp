@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_movimentacao_financeira_wizard" >
+            <field name="name">finan.relatorio.movimentacao.financeira.wizard</field>
+            <field name="model">finan.relatorio</field>
+            <field name="inherit_id" ref="finan.finan_relatorio_movimentacao_financeira_wizard"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="res_partner_bank_id" position="replace">
+                    <field name="res_partner_bank_ids" colspan="4"/>                                           
+                    <newline />                 
+                    <field name="filtrar_rateio" />
+                    <field name="centrocusto_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
+                    <field name="project_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
+                    <field name="conta_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />                 
+                </field>
+                <button name="movimentacao_diaria_financeira" position="replace">                     
+                    <button icon="gtk-execute" string="Gerar relatório" name="movimentacao_diaria_financeira" type="object" context="{'data_inicial': data_inicial, 'data_final': data_final, 'partner_id': partner_id}" colspan="4" />
+                </button> 
+                     
+            </field>
+        </record>
+
+       
+    </data>
+</openerp>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="leilao_partner_form">
+            <field name="name">leilao.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="crm.view_crm_partner_info_form1"/>
+            <field name="arch" type="xml">
+                <field name="opportunity_ids" position="before">
+                    <field name="sale_order_line_ids" nolabel="1" colspan="4">
+                        <!-- <tree colors="red:aprovado == False">
+                            <field name="order_id" />
+                            <field name="date_order" />
+                            <field name="product_id" />
+                            <field name="peso_liquido" />
+                            <field name="vr_total_margem_desconto"/>
+                            <field name="aprovado"/>
+                        </tree>-->
+                    </field>
+                    <newline/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

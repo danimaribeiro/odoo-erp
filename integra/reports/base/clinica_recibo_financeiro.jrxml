@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="recibo" language="groovy" pageWidth="221" pageHeight="216" columnWidth="221" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="df8d06c4-008a-44ae-94ea-15cfd72a6f65">
+	<property name="ireport.zoom" value="1.6105100000000037"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="INTEGRA_REPORT_TITLE" class="java.lang.String">
+		<defaultValueExpression><![CDATA["RECIBO"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["/home/ari/openerp/openerp_integra/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO_CLIENTE" class="java.lang.String"/>
+	<parameter name="NUMERO_PAGINA" class="java.lang.Integer"/>
+	<parameter name="TOTAL_PAGINAS" class="java.lang.Integer"/>
+	<parameter name="IDS_PLAIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+  l.id as lancamento,
+  valor_por_extenso(cast(coalesce(sum(l.valor), 0) as varchar)) as extenso,
+  data_por_extenso(coalesce(max(l.data_quitacao), current_date)),
+  me.nome || ' - ' || ufe.uf || ', ' || data_cabecalho(coalesce(max(l.data_quitacao), current_date)) as data_cabecalho,
+  formata_valor(cast(coalesce(sum(l.valor_documento), 0) as varchar)) as valor_documento_formatado,
+  formata_valor(cast(coalesce(sum(l.valor_juros), 0) as varchar)) as valor_juros_formatado,
+  formata_valor(cast(coalesce(sum(l.valor_multa), 0) as varchar)) as valor_multa_formatado,
+  formata_valor(cast(coalesce(sum(l.valor_desconto), 0) as varchar)) as valor_desconto_formatado,
+  formata_valor(cast(coalesce(sum(l.valor), 0) as varchar)) as valor_formatado,
+  l.numero_documento,
+
+  --
+  -- Dados da empresa
+  --
+  e.razao_social as nome_empresa,
+  e.cnpj_cpf as cnpj_empresa,
+  e.endereco as endereco_empresa,
+  e.numero as numero_empresa,
+  e.complemento as complemento_empresa,
+  e.bairro as bairro_empresa,
+  me.nome as cidade_empresa,
+  ufe.uf as estado_empresa,
+  e.cep as cep_empresa,
+  cast(c.photo as varchar) as photo,
+
+  --
+  -- Dados do pagador
+  --
+  case
+  when p.razao_social is not null then
+  p.razao_social
+  else p.name
+  end as nome_pagador,
+  coalesce(p.cnpj_cpf, '') as cnpj_pagador,
+  coalesce(p.endereco, '') as endereco_pagador,
+  coalesce(p.numero, '') as numero_pagador,
+  coalesce(p.complemento, '') as complemento_pagador,
+  coalesce(p.bairro, '') as bairro_pagador,
+  coalesce(mp.nome, '') as cidade_pagador,
+  coalesce(ufp.uf, '') as estado_pagador,
+  coalesce(p.cep, '') as cep_pagador,
+  l.historico as historico,
+
+  --
+  -- Recebedor
+  --
+  case
+    when l.tipo in ('R', 'E') then coalesce(r.razao_social, '')
+    else coalesce(r.razao_social, l.complemento)
+  end as nome_recebedor,
+  coalesce(r.cnpj_cpf, '') as cnpj_recebedor
+
+from
+  finan_lancamento l
+  join res_company c on c.id = l.company_id
+  join res_partner e on e.id = c.partner_id
+  join sped_municipio me on me.id = e.municipio_id
+  join sped_estado ufe on ufe.id = me.estado_id
+
+  left join res_partner p on (l.tipo in ('R', 'E') and p.id = l.partner_id) or (l.tipo in ('P', 'S') and p.id = c.partner_id)
+  left join sped_municipio mp on mp.id = p.municipio_id
+  left join sped_estado ufp on ufp.id = mp.estado_id
+
+  left join res_partner r on (l.tipo in ('R', 'E') and r.id = c.partner_id) or (l.tipo in ('P', 'S') and r.id = l.partner_id)
+  left join sped_municipio mr on mr.id = r.municipio_id
+  left join sped_estado ufr on ufr.id = mr.estado_id
+
+  left join finan_documento d on d.id = l.documento_id
+
+where
+  l.id in $P!{IDS_PLAIN}
+
+group by
+
+  me.nome,
+  ufe.uf,
+  e.razao_social,
+  e.cnpj_cpf,
+  e.endereco,
+  e.numero,
+  e.complemento,
+  e.bairro,
+  e.municipio_id,
+  e.cep,
+  l.id,
+  l.tipo,
+  p.razao_social,
+  l.numero_documento,
+  l.complemento,
+  p.cnpj_cpf,
+  p.razao_social,
+  p.name,
+  p.endereco,
+  p.numero,
+  p.complemento,
+  p.bairro,
+  p.municipio_id,
+  mp.nome,
+  ufp.uf,
+  p.cep,
+  r.razao_social,
+  r.cnpj_cpf,
+  c.photo,
+  l.historico]]>
+	</queryString>
+	<field name="lancamento" class="java.lang.Integer"/>
+	<field name="extenso" class="java.lang.String"/>
+	<field name="data_por_extenso" class="java.lang.String"/>
+	<field name="data_cabecalho" class="java.lang.String"/>
+	<field name="valor_documento_formatado" class="java.lang.String"/>
+	<field name="valor_juros_formatado" class="java.lang.String"/>
+	<field name="valor_multa_formatado" class="java.lang.String"/>
+	<field name="valor_desconto_formatado" class="java.lang.String"/>
+	<field name="valor_formatado" class="java.lang.String"/>
+	<field name="numero_documento" class="java.lang.String"/>
+	<field name="nome_empresa" class="java.lang.String"/>
+	<field name="cnpj_empresa" class="java.lang.String"/>
+	<field name="endereco_empresa" class="java.lang.String"/>
+	<field name="numero_empresa" class="java.lang.String"/>
+	<field name="complemento_empresa" class="java.lang.String"/>
+	<field name="bairro_empresa" class="java.lang.String"/>
+	<field name="cidade_empresa" class="java.lang.String"/>
+	<field name="estado_empresa" class="java.lang.String"/>
+	<field name="cep_empresa" class="java.lang.String"/>
+	<field name="photo" class="java.lang.String">
+		<fieldDescription><![CDATA[Photo]]></fieldDescription>
+	</field>
+	<field name="nome_pagador" class="java.lang.String"/>
+	<field name="cnpj_pagador" class="java.lang.String"/>
+	<field name="endereco_pagador" class="java.lang.String"/>
+	<field name="numero_pagador" class="java.lang.String"/>
+	<field name="complemento_pagador" class="java.lang.String"/>
+	<field name="bairro_pagador" class="java.lang.String"/>
+	<field name="cidade_pagador" class="java.lang.String"/>
+	<field name="estado_pagador" class="java.lang.String"/>
+	<field name="cep_pagador" class="java.lang.String"/>
+	<field name="historico" class="java.lang.String">
+		<fieldDescription><![CDATA[Histórico]]></fieldDescription>
+	</field>
+	<field name="nome_recebedor" class="java.lang.String"/>
+	<field name="cnpj_recebedor" class="java.lang.String"/>
+	<group name="lancamento">
+		<groupExpression><![CDATA[$F{lancamento}]]></groupExpression>
+		<groupFooter>
+			<band height="88">
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+					<reportElement positionType="Float" x="0" y="0" width="221" height="12" uuid="f9601711-7f97-43ba-b773-308976221f04"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="false" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{data_cabecalho}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="16" width="221" height="12" isPrintWhenDetailOverflows="true" uuid="610b2545-f67e-4e70-9d1e-95d79dbf703b"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="false" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nome_empresa}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="28" width="221" height="12" uuid="dd8c31ee-65ea-476c-b3ff-cc3ee2a96451"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{endereco_empresa} + ", " + $F{numero_empresa}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="40" width="221" height="12" uuid="12912f88-e94f-4df8-9996-9dea99750a8e"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cidade_empresa} + " - " + $F{estado_empresa} + " CEP: " + $F{cep_empresa}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="57" width="221" height="31" uuid="49993009-4910-4ad7-b01b-bda38bbefa7f"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="false"/>
+					</textElement>
+					<text><![CDATA[CLINICA DE PERSONAL TRAINING SIMONE PERES                             sua saúde merece o melhor!]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="12">
+			<staticText>
+				<reportElement x="0" y="0" width="221" height="12" uuid="1c7f98da-44da-4fb9-a33a-dd4d3f1cf436"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[********************** SEM VALOR FISCAL ********************]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="92" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="36" width="221" height="12" uuid="f38c9329-e624-4236-83b4-3bd8c6b723cb"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="6" isBold="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["**" + $F{extenso}  + "**"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="115" y="0" width="100" height="12" uuid="d5b888a9-0ec8-4395-bab3-c003e268b68d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["VALOR:" + $F{valor_formatado}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="60" width="221" height="12" uuid="44822cb5-c3c2-4ee4-8e0a-0eb482ef5781"/>
+				<box topPadding="0"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{historico}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="12" width="221" height="12" uuid="8fe1fd73-c522-4be6-bc90-79627fc37612"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Recebemos de: " + $F{nome_pagador}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="32" height="12" uuid="14bb7a83-4af7-49f2-a92d-011caf8ffd59"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[RECIBO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="24" width="66" height="12" uuid="86acf64b-c845-4d3a-8968-ee3b038078d9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Importância de:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="48" width="47" height="12" uuid="834e1099-a342-43c4-9e81-9c4b485cb8d6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Referente a:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="32" y="0" width="83" height="12" uuid="14afb63c-332e-47dc-bf75-aac97d8ba07e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero_documento}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="82" width="221" height="1" uuid="ad6ea1fc-9ef9-4703-8c0f-26e911a8432d"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+</jasperReport>

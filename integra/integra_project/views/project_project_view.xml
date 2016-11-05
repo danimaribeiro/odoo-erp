@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Project -->
+        <record id="project.edit_project" model="ir.ui.view">
+            <field name="name">project.project.form</field>
+            <field name="model">project.project</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Project">
+                    <group colspan="6" col="6">
+                        <field name="name" string="Project Name" select="1"/>
+<!--                         <field name="analytic_account_id" invisible="1" required="0"/> -->
+                        <field name="parent_id" string="Parent" />
+                        <field name="user_id" string="Project Manager" select="1" attrs="{'readonly':[('state','in',['close', 'cancelled'])]}"/>
+                        <field name="date_start" string="Start Date" attrs="{'readonly':[('state','in',['close', 'cancelled'])]}"/>
+                        <field name="date" string="End Date" attrs="{'readonly':[('state','in',['close', 'cancelled'])]}"/>
+<!--                         <field name="progress_rate" widget="progressbar"/> -->
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Administration">
+                            <group col="2" colspan="2">
+                                <separator colspan="2" string="Performance"/>
+<!--                                 <field name="planned_hours" widget="float_time"/> -->
+<!--                                 <field name="effective_hours" widget="float_time" /> -->
+<!--                                 <field name="resource_calendar_id"/> -->
+                            </group>
+                            <group col="2" colspan="2" name="misc">
+                                <separator colspan="4" string="Miscelleanous"/>
+                                <field name="company_id" select="1" groups="base.group_multi_company" widget="selection" required="1"/>
+<!--                                 <field name="warn_manager"/> -->
+<!--                                 <field name="priority"/> -->
+                                <field name="active" attrs="{'invisible':[('state','in',['open', 'pending', 'template'])]}"/>
+                            </group>
+                            <newline/>
+                            <separator colspan="4"/>
+                            <group col="9" colspan="8">
+                                <field name="state" widget="statusbar" statusbar_visible="open,close" statusbar_colors='{"pending":"blue"}' select="1" readonly="1"/>
+                                <button name="set_cancel" string="Cancel" type="object" states="open,pending" icon="gtk-cancel"/>
+                                <button name="set_template" string="Set as Template" type="object" states="open" icon="gtk-convert" groups="base.group_extended"/>
+                                <button name="set_open" string="Re-open project" type="object" states="pending,cancelled,close" icon="gtk-ok"/>
+                                <button name="set_pending" string="Pending" type="object" states="open" icon="gtk-media-pause"/>
+                                <button name="set_done" string="Done" type="object" states="open,pending" icon="terp-dialog-close"/>
+                                <button name="reset_project" string="Reset as Project" type="object" states="template" icon="gtk-convert"/>
+                                <button
+                                    string="New Project Based on Template"
+                                    name="duplicate_template"  type="object"
+                                    states="template" icon="gtk-new" context="{'parent_id':parent_id}"/>
+                            </group>
+                        </page>
+                        <page string="Members">
+                            <field colspan="4" name="members" nolabel="1">
+                                <tree string="Members">
+                                    <field name="name"/>
+                                    <field name="user_email"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Billing" groups="account.group_account_invoice">
+                            <field colspan="4" name="partner_id" on_change="onchange_partner_id(partner_id)" select="1" string="Customer"/>
+                            <field domain="[('partner_id','=',partner_id)]" name="contact_id" string="Contact Address"/>
+<!--                             <field name="warn_customer"/> -->
+<!--                             <field name="currency_id" select="1" groups="base.group_multi_company" required="1"/> -->
+                            <newline/>
+<!--                            <group colspan="4" col="4" groups="base.group_extended">
+                                <separator colspan="2" string="Mail Header"/>
+                                <separator colspan="2" string="Mail Footer"/>
+                                <field name="warn_header" nolabel="1" colspan="2"/>
+                                <field name="warn_footer" nolabel="1" colspan="2"/>
+                            </group>-->
+<!--                            <group col="3" colspan="4" groups="base.group_extended">
+                                <separator string="Automatic variables for headers and footer. Use exactly the same notation." colspan="4"/>
+                                <label string="Task: %%(name)s"/>
+                                <label string="User: %%(user_id)s"/>
+                                <label string="ID: %%(task_id)s"/>
+                                <label string="Status: %%(state)s"/>
+                                <label string="Date Start: %%(date_start)s"/>
+                                <label string="Date Stop: %%(date)s"/>
+                            </group>-->
+                        </page>
+<!--                        <page string="Tasks Stages" groups="base.group_extended">
+                           <field nolabel="1" name="type_ids" colspan="4"/>
+                        </page>
+                        <page string="Notes">
+                            <field colspan="4" name="description" nolabel="1"/>
+                        </page>-->
+                    </notebook>
+                    <newline/>
+                </form>
+            </field>
+        </record>
+
+       <record id="project.view_project_project_filter" model="ir.ui.view">
+            <field name="name">project.project.select</field>
+            <field name="model">project.project</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Search Project">
+                   <group>
+                       <filter icon="terp-check" string="Open" name="Current" domain="[('state', '=','open')]" help="Open Projects"/>
+<!--                       <filter icon="gtk-media-pause" string="Pending" name="Pending" domain="[('state', '=','pending')]" help="Pending Projects"/>-->
+                       <filter icon="gtk-media-pause" string="Template"
+                            name="Template" domain="[('state', '=','template')]" help="Templates of Projects"
+                            groups="base.group_extended"/>
+                       <separator orientation="vertical"/>
+<!--                       <filter icon="terp-personal+" string="Member" domain="['|',('user_id', '=', uid),('members', '=', uid)]" help="Projects in which I am a member."/>
+                       <separator orientation="vertical"/>-->
+                       <field name="nome_completo" string="Project Name"/>
+<!--                       <field name="user_id" string="Project Manager">
+                            <filter domain="[('user_id','=',uid)]" help="Projects in which I am a manager" icon="terp-personal"/>
+                       </field>-->
+<!--                        <field name="partner_id" string="Partner"/> -->
+                   </group>
+                   <newline />
+                    <group expand="0" string="Group By..." groups="base.group_extended">
+<!--                        <filter string="Manager" name="Manager"  icon="terp-personal" domain = "[]" context="{'group_by':'user_id'}"/>
+                        <filter string="Partner" name="Partner" icon="terp-partner" domain = "[]" context="{'group_by':'partner_id'}"/>
+                         <separator orientation="vertical"/>-->
+                        <filter string="Parent" name="Parent"  help="Parent" icon="terp-folder-blue" domain = "[]" context="{'group_by':'parent_id'}"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+        <record id="project.view_project" model="ir.ui.view">
+            <field name="name">project.project.tree</field>
+            <field name="model">project.project</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Projects">
+                    <field name="nome_completo" />
+                    <field name="parent_id" string="Parent" invisible="1"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+<!--       <record id="project.view_project_project_gantt" model="ir.ui.view">
+            <field name="name">project.project.gantt</field>
+            <field name="model">project.project</field>
+            <field name="type">gantt</field>
+            <field name="arch" type="xml">
+                <gantt date_delay="planned_hours" date_start="date_start" string="Projects">
+                </gantt>
+            </field>
+        </record>-->
+
+        <record id="project.open_view_project_all" model="ir.actions.act_window">
+            <field name="name">Projects</field>
+            <field name="res_model">project.project</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="project.view_project"/>
+            <field name="search_view_id" ref="project.view_project_project_filter"/>
+            <field name="context">{'search_default_Current':1}</field>
+            <field name="help">A project contains a set of tasks or issues that will be performed by your resources assigned to it. A project can be hierarchically structured, as a child of a Parent Project. This allows you to design large project structures with different phases spread over the project duration cycle. Each user can set his default project in his own preferences to automatically filter the tasks or issues he usually works on. If you choose to invoice the time spent on a project task, you can find project tasks to be invoiced in the billing section.</field>
+        </record>
+
+<!--        <record id="open_view_template_project" model="ir.actions.act_window">
+            <field name="name">Templates of Projects</field>
+            <field name="res_model">project.project</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('state','=','template')]</field>
+            <field name="view_id" ref="view_project"/>
+        </record>
+
+        <record id="view_task_work_form" model="ir.ui.view">
+            <field name="name">project.task.work.form</field>
+            <field name="model">project.task.work</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Task Work">
+                    <field colspan="4" name="name" select="1"/>
+                    <field name="hours" select="1" widget="float_time"/>
+                    <field name="date" select="1"/>
+                    <field name="user_id" select="1"/>
+                    <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_task_work_tree" model="ir.ui.view">
+            <field name="name">project.task.work.tree</field>
+            <field name="model">project.task.work</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree editable="top" string="Task Work">
+                    <field name="date"/>
+                    <field name="name"/>
+                    <field name="hours" widget="float_time"/>
+                    <field name="user_id"/>
+                </tree>
+            </field>
+        </record>-->
+
+    </data>
+</openerp>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_distribuicao_dfe_search">
+            <field name="name">distribuicao_dfe.search</field>
+            <field name="model">sped.distribuicao_dfe</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="situacao_dfe"/>
+                    <field name="situacao_manifestacao"/>
+                    <field name="company_id"/>
+                    <field name="cnpj"/>
+                    <field name="nome"/>
+                    <newline />
+                    <field name="data_emissao"/>
+                    <field name="chave"/>
+                    <field name="serie"/>
+                    <field name="numero"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_distribuicao_dfe_tree">
+            <field name="name">distribuicao_dfe.tree</field>
+            <field name="model">sped.distribuicao_dfe</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id"  />
+                    <field name="data_emissao"  />
+                    <field name="cnpj"  />
+                    <field name="nome"  />
+                    <field name="serie"  />
+                    <field name="numero"  />
+                    <field name="chave"  />
+                    <field name="data_autorizacao"  />
+                    <field name="data_cancelamento"  />
+                    <field name="situacao_dfe"  />
+                    <field name="situacao_manifestacao"  />
+                    <button name="manifestar_destinatario" type="object" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_distribuicao_dfe_form">
+            <field name="name">distribuicao_dfe.form</field>
+            <field name="model">sped.distribuicao_dfe</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Distribuição DF-e">
+                    <field name="company_id"  colspan="4" />
+                    <field name="cnpj"  />
+                    <field name="nome"  colspan="4" />
+<!--                     <field name="partner_id"  colspan="4" /> -->
+                    <field name="chave"  colspan="4" />
+                    <field name="data_emissao"  />
+                    <group colspan="2" col="4">
+                        <field name="serie"  />
+                        <field name="numero"  />
+                    </group>
+                    <field name="data_autorizacao"  />
+                    <field name="data_cancelamento"  />
+                    <field name="situacao_dfe"  />
+                    <newline />
+                    <field name="situacao_manifestacao" />
+                    <field name="justificativa" colspan="4" />
+                    <field name="data_manifestacao"  />
+                    <button string="Gerar manifestação" name="manifestar_destinatario" type="object" />
+                    <button string="Baixar XML" name="download_nfe" type="object" />
+                    <button string="Importar XML" name="importa_nfe" type="object" />
+                    <separator string="Documento original de venda/transferência/remessa (para automatizar entradas de retorno)" colspan="4" />
+                    <field name="documento_original_id" colspan="4"  />
+                    <separator string="XML de autorização" colspan="4" />
+                    <field name="documento_id" colspan="4"  />
+                    <field name="xml_autorizacao" colspan="4" nolabel="1"  invisible="[('documento_id', '!=', False)]" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_distribuicao_dfe_acao">
+            <field name="name">Controle DF-e</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">sped.distribuicao_dfe</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            id="menu_sped_controle_dfe"
+            name="Controle DF-e"
+            parent="menu_sped_distribuicao_dfe"
+            action="sped_distribuicao_dfe_acao" />
+    </data>
+</openerp>

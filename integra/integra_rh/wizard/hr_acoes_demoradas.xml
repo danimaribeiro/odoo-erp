@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record forcecreate="True" model="ir.cron" id="hr_acao_demorada_recalcula_ferias_cron">
+            <field name="name">Recalculo automatico de Ferias</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field eval="True" name="active" />
+            <field eval="False" name="doall" />
+            <field eval="'hr.contract'" name="model" />
+            <field eval="'acao_demorada_recalcula_ferias'" name="function" />
+            <field eval="'()'" name="args" />
+        </record>
+
+        <record forcecreate="True" model="ir.actions.server" id="hr_acao_demorada_recalcula_ferias_server_action">
+            <field name="name">Recalculo automatico de Ferias</field>
+            <field name="model_id" ref="model_hr_contract"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.acao_demorada_recalcula_ferias(context=context)</field>
+        </record>
+
+<!--        <record model="ir.values" id="hr_acao_demorada_recalcula_ferias_values" >
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'hr.contract'" name="model"/>
+            <field name="name">Recalcula férias</field>
+            <field eval="'ir.actions.server,%d'%hr_acao_demorada_recalcula_ferias_server_action" name="value"/>
+            <field eval="True" name="object"/>
+        </record>-->
+
+        <record forcecreate="True" model="ir.cron" id="hr_acao_demorada_ajusta_afastamentos_cron">
+            <field name="name">Ajuste automatico de Afastamentos</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field eval="True" name="active" />
+            <field eval="False" name="doall" />
+            <field eval="'hr.afastamento'" name="model" />
+            <field eval="'ajusta_afastamentos_empresa'" name="function" />
+            <field eval="'()'" name="args" />
+        </record>
+
+        <record forcecreate="True" model="ir.actions.server" id="hr_acao_demorada_ajusta_afastamentos_server_action">
+            <field name="name">Ajuste automatico de Afastamentos</field>
+            <field name="model_id" ref="model_hr_contract"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.ajusta_afastamentos_empresa(context=context)</field>
+        </record>
+
+    </data>
+</openerp>
+

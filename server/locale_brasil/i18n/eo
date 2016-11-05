@@ -1,0 +1,371 @@
+#
+# Charset: UTF-8
+#
+# Esperanto Lokaĵaro home legebla
+#
+# Kreita de Ari CALDEIRA, bazita sur pluraj
+# diversaj lokaĵaroj trovitaj en interreto.
+#
+
+
+###############################
+LC_IDENTIFICATION
+###############################
+
+title      "Esperanto locale"
+address    ""
+contact    ""
+email      "ari@laumi.org"
+tel        ""
+fax        ""
+language   "Esperanto"
+territory  ""
+revision   "1.0"
+date       "2011-08-05"
+
+category  "eo:2000";LC_IDENTIFICATION
+category  "eo:2000";LC_CTYPE
+category  "eo:2000";LC_COLLATE
+category  "eo:2000";LC_TIME
+category  "eo:2000";LC_NUMERIC
+category  "eo:2000";LC_MONETARY
+category  "eo:2000";LC_MESSAGES
+category  "eo:2000";LC_PAPER
+category  "eo:2000";LC_NAME
+category  "eo:2000";LC_ADDRESS
+category  "eo:2000";LC_TELEPHONE
+
+END LC_IDENTIFICATION
+
+
+###############################
+LC_CTYPE
+###############################
+copy "i18n"
+
+translit_start
+include "translit_combining";""
+translit_end
+END LC_CTYPE
+
+###############################
+LC_COLLATE
+###############################
+
+#
+# Ĉi tiu ordigoregulo estas la sama ol iso14651_t1,
+# la sola diferenco estas, ke ĝi ordonas unue
+# laŭ uskleco, kaj due laŭ diakritikeco
+#
+copy "latin_order_case_first"
+# copy "iso14651_t1"
+
+#
+# Difinas la deirpunktojn, post kiuj la E-aj literoj
+# estos ordigitaj
+#
+collating-symbol <cx-esperanto>
+collating-symbol <gx-esperanto>
+collating-symbol <hx-esperanto>
+collating-symbol <jx-esperanto>
+collating-symbol <sx-esperanto>
+collating-symbol <ux-esperanto>
+
+#
+# Difinas la iks-metodajn versiojn de la E-aj literoj,
+# kiuj estos ordigitaj samkiel ĝiaj ĉapelitaj versioj
+#
+collating-element <Cx> from "<U0043><U0078>"
+collating-element <CX> from "<U0043><U0058>"
+collating-element <cx> from "<U0063><U0078>"
+collating-element <cX> from "<U0063><U0058>"
+
+collating-element <Gx> from "<U0047><U0078>"
+collating-element <GX> from "<U0047><U0058>"
+collating-element <gx> from "<U0067><U0078>"
+collating-element <gX> from "<U0067><U0058>"
+
+collating-element <Hx> from "<U0048><U0078>"
+collating-element <HX> from "<U0048><U0058>"
+collating-element <hx> from "<U0068><U0078>"
+collating-element <hX> from "<U0068><U0058>"
+
+collating-element <Jx> from "<U004A><U0078>"
+collating-element <JX> from "<U004A><U0058>"
+collating-element <jx> from "<U006A><U0078>"
+collating-element <jX> from "<U006A><U0058>"
+
+collating-element <Sx> from "<U0053><U0078>"
+collating-element <SX> from "<U0053><U0058>"
+collating-element <sx> from "<U0073><U0078>"
+collating-element <sX> from "<U0073><U0058>"
+
+collating-element <Ux> from "<U0055><U0078>"
+collating-element <UX> from "<U0055><U0058>"
+collating-element <ux> from "<U0075><U0078>"
+collating-element <uX> from "<U0075><U0058>"
+
+#
+# Difinas, ke la E-aj literoj estos ordigitaj
+# post ĝia ne-ĉapelitaj versioj, kiel apartaj
+# literoj
+#
+reorder-after <c>
+<cx-esperanto>
+
+reorder-after <g>
+<gx-esperanto>
+
+reorder-after <h>
+<hx-esperanto>
+
+reorder-after <j>
+<jx-esperanto>
+
+reorder-after <s>
+<sx-esperanto>
+
+reorder-after <u>
+<ux-esperanto>
+
+#
+# Majuskloj antaŭ minuskloj
+#
+reorder-after <ECA>
+<MIN>
+<IMI>
+<EMI>
+
+#
+# Spacetoj antaŭ literoj
+#
+reorder-after <9>
+<U202F> <U0020>;<BAS>;<MIN>;<U202F> # <NNBSP> nedisigebla malvasta spaceto
+<U00A0> <U0020>;<BAS>;<MIN>;<U00A0> # <NBSP>  nedisigebla spaceto
+<U0020> <U0020>;<BAS>;<MIN>;<U0020> # <SP>    spaceto
+
+#
+# Esperantaj literoj
+# Iks-metoda teksto ordenata korekte kiel la
+# ĉapelitaj literoj
+#
+reorder-after <cx-esperanto>
+<U0108> <cx-esperanto>;<CAP>;<CIR>;IGNORE # 558 Ĉ
+<Cx>    <cx-esperanto>;<CAP>;<CIR>;IGNORE # 558 Ĉ
+<CX>    <cx-esperanto>;<CAP>;<CIR>;IGNORE # 558 Ĉ
+<U0109> <cx-esperanto>;<MIN>;<CIR>;IGNORE # 241 ĉ
+<cx>    <cx-esperanto>;<MIN>;<CIR>;IGNORE # 241 ĉ
+<cX>    <cx-esperanto>;<MIN>;<CIR>;IGNORE # 241 ĉ
+
+reorder-after <gx-esperanto>
+<U011C> <gx-esperanto>;<CAP>;<CIR>;IGNORE # 610 Ĝ
+<Gx>    <gx-esperanto>;<CAP>;<CIR>;IGNORE # 610 Ĝ
+<GX>    <gx-esperanto>;<CAP>;<CIR>;IGNORE # 610 Ĝ
+<U011D> <gx-esperanto>;<MIN>;<CIR>;IGNORE # 292 ĝ
+<gx>    <gx-esperanto>;<MIN>;<CIR>;IGNORE # 292 ĝ
+<gX>    <gx-esperanto>;<MIN>;<CIR>;IGNORE # 292 ĝ
+
+reorder-after <hx-esperanto>
+<U0124> <hx-esperanto>;<CAP>;<CIR>;IGNORE # 620 Ĥ
+<Hx>    <hx-esperanto>;<CAP>;<CIR>;IGNORE # 620 Ĥ
+<HX>    <hx-esperanto>;<CAP>;<CIR>;IGNORE # 620 Ĥ
+<U0125> <hx-esperanto>;<MIN>;<CIR>;IGNORE # 302 ĥ
+<hx>    <hx-esperanto>;<MIN>;<CIR>;IGNORE # 302 ĥ
+<hX>    <hx-esperanto>;<MIN>;<CIR>;IGNORE # 302 ĥ
+
+reorder-after <jx-esperanto>
+<U0134> <jx-esperanto>;<CAP>;<CIR>;IGNORE # 648 Ĵ
+<Jx>    <jx-esperanto>;<CAP>;<CIR>;IGNORE # 648 Ĵ
+<JX>    <jx-esperanto>;<CAP>;<CIR>;IGNORE # 648 Ĵ
+<U0135> <jx-esperanto>;<MIN>;<CIR>;IGNORE # 331 ĵ
+<jx>    <jx-esperanto>;<MIN>;<CIR>;IGNORE # 331 ĵ
+<jX>    <jx-esperanto>;<MIN>;<CIR>;IGNORE # 331 ĵ
+
+reorder-after <sx-esperanto>
+<U015C> <sx-esperanto>;<CAP>;<CIR>;IGNORE # 741 Ŝ
+<Sx>    <sx-esperanto>;<CAP>;<CIR>;IGNORE # 741 Ŝ
+<SX>    <sx-esperanto>;<CAP>;<CIR>;IGNORE # 741 Ŝ
+<U015D> <sx-esperanto>;<MIN>;<CIR>;IGNORE # 426 ŝ
+<sx>    <sx-esperanto>;<MIN>;<CIR>;IGNORE # 426 ŝ
+<sX>    <sx-esperanto>;<MIN>;<CIR>;IGNORE # 426 ŝ
+
+reorder-after <ux-esperanto>
+<U016C> <ux-esperanto>;<CAP>;<BRE>;IGNORE # 764 Ŭ
+<Ux>    <ux-esperanto>;<CAP>;<BRE>;IGNORE # 764 Ŭ
+<UX>    <ux-esperanto>;<CAP>;<BRE>;IGNORE # 764 Ŭ
+<U016D> <ux-esperanto>;<MIN>;<BRE>;IGNORE # 453 ŭ
+<ux>    <ux-esperanto>;<MIN>;<BRE>;IGNORE # 453 ŭ
+<uX>    <ux-esperanto>;<MIN>;<BRE>;IGNORE # 453 ŭ
+
+reorder-end
+
+END LC_COLLATE
+
+
+###############################
+LC_MESSAGES
+###############################
+
+yesexpr                 "^[1JjYy].*"
+noexpr                  "^[0Nn].*"
+yesstr                  "jes"
+nostr                   "ne"
+
+END LC_MESSAGES
+
+
+###############################
+LC_MONETARY
+###############################
+int_curr_symbol           "EUR "
+# currency_symbol           "<U20AC><U00A0>" # €
+currency_symbol           "<U20B7><U00A0>" # ₷
+mon_decimal_point         ","
+# mon_thousands_sep         "<U202F>" # nedisigebla malvasta spaceto
+mon_thousands_sep         "<U00A0>" # nedisigebla spaceto
+# mon_thousands_sep         "."
+mon_grouping              3;3
+positive_sign             ""
+negative_sign             "-"
+frac_digits               3
+p_cs_precedes             1
+n_cs_precedes             1
+p_sep_by_space            0
+n_sep_by_space            0
+int_p_sep_by_space        0
+int_n_sep_by_space        0
+p_sign_posn               1
+n_sign_posn               3
+int_frac_digits           3
+
+END LC_MONETARY
+
+
+###############################
+LC_NUMERIC
+###############################
+
+decimal_point           ","
+# thousands_sep           "<U202F>" # nedisigebla malvasta spaceto
+thousands_sep           "<U00A0>" # nedisigebla spaceto
+# thousands_sep           "."
+grouping                3;3
+
+END LC_NUMERIC
+
+
+###############################
+LC_TIME
+###############################
+
+#          "dim";"lun";"mar";"mer";"ĵaŭ";"ven";"sab"
+abday      "dim";"lun";"mar";"mer";"<U0135>a<U016D>";"ven";"sab"
+
+#          "dimanĉ";"lund";"mard";"merkred";"ĵaŭd";"vendred";"sabat"
+day        "diman<U0109>";"lund";"mard";"merkred";"<U0135>a<U016D>d";"vendred";"sabat"
+
+#          "Jan";"Feb";"Mar";"Apr";"Maj";"Jun";"Jul";"Aŭg";"Sep";"Okt";"Nov";"Dec"
+abmon      "Jan";"Feb";"Mar";"Apr";"Maj";"Jun";"Jul";"A<U016D>g";"Sep";"Okt";"Nov";"Dec"
+
+#          "Januar";"Februar";"Mart";"April";"Maj";"Juni"; \
+#          "Juli";"Aŭgust";"Septembr";"Oktobr";"Novembr";"Decembr"
+mon        "Januar";"Februar";"Mart";"April";"Maj";"Juni"; \
+           "Juli";"A<U016D>gust";"Septembr";"Oktobr";"Novembr";"Decembr"
+
+#          "ĵaŭ, 04-Aŭg-2011, 14:11:36 BRT"
+d_t_fmt    "%a, %d-%b-%Y, %H:%M:%S %Z"
+
+#          "04-Aŭg-2011"
+d_fmt      "%d-%b-%Y"
+
+#          "14:11:36"
+t_fmt      "%H:%M:%S"
+
+am_pm      "atm";"ptm"
+
+#          "02:11:36 ptm"
+t_fmt_ampm "%I:%M:%S %p"
+
+#           "ĵaŭdon, la 4-an de Aŭgusto 2011, 14:11:36 BRT"
+#date_fmt    "%Aon, la %-e-an de %Bo %Y, %H:%M:%S %Z"
+
+#           "ĵaŭ, 04-Aŭg-2011, 14:11:36 BRT"
+date_fmt    "%a, %d-%b-%Y, %H:%M:%S %Z"
+
+# Semajno havas 7 tagojn, kiel kutime, kaj komencas je lundo (ISO 8601)
+week    7;19971130;4
+
+# Unua semajntago estas lundo
+first_weekday 2
+
+# Unua labortago en la semajno estas ankaŭ lundo
+first_workday 2
+
+END LC_TIME
+
+
+###############################
+LC_PAPER
+###############################
+
+# A4 papergrando
+height   297
+width    210
+
+END LC_PAPER
+
+
+###############################
+LC_TELEPHONE
+###############################
+
+tel_int_fmt  "+%c (%a) %l"
+tel_dom_fmt  "(%a) %l"
+int_select   "00"
+
+END LC_TELEPHONE
+
+
+###############################
+LC_MEASUREMENT
+###############################
+
+# Dekuma Metra Sistemo
+measurement    1
+
+END LC_MEASUREMENT
+
+
+###############################
+LC_NAME
+###############################
+
+name_fmt  "%d%t%g%t%m%t%f"
+name_mr   "S-ro"
+name_mrs  "S-ino"
+name_miss "F-ino"
+name_ms   "S-ino"
+
+END LC_NAME
+
+
+###############################
+LC_ADDRESS
+###############################
+
+postal_fmt   "\
+%f%N\
+%a%N\
+%d%N\
+%b%N\
+%s&t%h%t%e%t%r%N\
+%T%N\
+%c%N\
+%C%t%z%N"
+
+lang_name    "Esperanto"
+lang_ab      "eo"
+lang_term    "epo"
+lang_lib     "epo"
+
+END LC_ADDRESS

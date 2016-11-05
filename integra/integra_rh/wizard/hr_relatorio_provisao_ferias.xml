@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_relatorio_provisao_ferias_form" >
+            <field name="name">hr.relatorio.provisao.ferias.form</field>
+            <field name="model">hr.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Provisão de Férias">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <field name="company_id" required="1" colspan="4" />
+                        <newline/>
+                        <group col="6" colspan="4">                       
+                            <group col="3" colspan="2">
+                                <field name="mes"  required="1" />
+                                <field name="ano" required="1" />
+                            </group>
+                            <group col="3" colspan="2">        
+                                <field name="imprime_recibo" />
+                                <field name="is_sintetico" />
+                            </group>        
+                        </group>        
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_provisao_ferias" type="object" colspan="2" />                        
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="2"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_relatorio_provisao_ferias_acao">
+            <field name="name">Provisão de Férias</field>
+            <field name="res_model">hr.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_relatorio_provisao_ferias_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_relatorio_provisao_ferias_form"/>
+            <field name="act_window_id" ref="hr_relatorio_provisao_ferias_acao"/>
+        </record>
+
+        <menuitem action="hr_relatorio_provisao_ferias_acao"
+                  id="menu_hr_relatorio_provisao_ferias"
+                  name="Provisão de Férias"
+                  parent="menu_hr_relatorio_mensal"
+                  sequence="20" />
+
+    </data>
+</openerp>

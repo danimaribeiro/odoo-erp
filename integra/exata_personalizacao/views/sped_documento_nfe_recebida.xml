@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="sped_nfe_recebida_form" model="ir.ui.view">
+            <field name="name">sped.nfe.recebida.form</field>
+            <field name="model">sped.documento</field>
+            <field name="inherit_id" ref="construtora.sped_nfe_recebida_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="rateio_ids" position="after">
+                    <newline />
+                    <separator string="Provisões de Compras" colspan="4" />
+                    <field name="provisao_compra_ids" nolabel="1" colspan="4" context="{'default_partner_id': partner_id}">
+                        <tree editable="bottom">
+                            <field name="partner_id" invisible="1"/>
+                            <field name="lancamento_id" domain="[('provisionado','=', True),('purchase_order_id','!=', False),('partner_id','=', partner_id)]" on_change="onchange_lancamento_id(lancamento_id)" required="1"/>
+                            <field name="purchase_order_id" invisible="1"/>
+                            <field name="func_purchase_order_id" />
+                            <field name="data_vencimento" invisible="1"/>
+                            <field name="func_data_vencimento" />
+                            <field name="valor_provisionado" invisible="1"/>
+                            <field name="func_valor_provisionado" sum="Total"/>
+                            <field name="valor_atendido" sum="Total" />
+                        </tree>
+                    </field>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

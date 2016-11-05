@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+project_project_full_all,Projeto - Projeto,project.model_project_project,base.group_sale_salesman,1,1,1,1
+project_task_full_all,Projeto - Tarefas,project.model_project_task,base.group_sale_salesman,1,1,1,1
+project_phase_full_all,Projeto - Fases,project_long_term.model_project_phase,base.group_sale_salesman,1,1,1,1

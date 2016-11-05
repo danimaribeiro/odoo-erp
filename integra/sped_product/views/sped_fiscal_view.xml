@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_sped_fiscal_aliquota"
+            name="Alíquotas"
+            parent="sped_base.menu_sped_fiscal"
+            sequence = "80" />
+
+    </data>
+</openerp>

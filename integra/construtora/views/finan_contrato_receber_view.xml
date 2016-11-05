@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_receber_imovel_tree">
+            <field name="name">finan.contrato.receber.imovel.tree</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id" />
+                    <field name="parent_company_id" invisible="1" />
+                    <field name="numero" />
+                    <field name="etapa_id"/>
+                    <field name="partner_id" string="Cliente" />
+                    <field name="valor" sum="Valor" />
+                    <field name="ativo" />
+                    <field name="partner_municipio_id" invisible="1"/>
+                    <field name="partner_bairro" invisible="1" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_comissao_imovel_tree">
+            <field name="name">finan.contrato.comissao.imovel.tree</field>
+            <field name="model">finan.contrato.comissao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="partner_id" />
+                    <field name="vezes" />
+                    <field name="data_inicial" />
+                    <field name="papel" required="1"/>
+                    <field name="porcentagem" sum="Porcentagem" />
+                    <field name="valor_comissao" sum="Valor" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="finan_contrato_comissao_imovel_form">
+            <field name="name">finan.contrato.comissao.imovel.form</field>
+            <field name="model">finan.contrato.comissao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Comissão">
+                    <field name="partner_id" colspan="4" required="1"/>
+                    <field name="data_inicial" required="1"/>
+                    <field name="vezes" />
+                    <field name="papel" required="1"/>
+                    <field name="porcentagem" />
+                    <field name="valor_comissao" />
+                    <newline />
+                    <field name="parcelas_manual" />
+                    <separator string="Parcelas" colspan="4" />
+                    <field name="parcela_ids" nolabel="1" colspan="4">
+                        <tree editable="bottom">
+                            <field name="parcela" required="1" />
+                            <field name="data_vencimento" required="1"/>
+                            <field name="valor" required="1"/>
+                        </tree>
+                    </field>
+                    <separator string="Lançamentos Financeiros" colspan="4" />
+                    <field name="lancamento_ids" nolabel="1" readonly="1" colspan="4"/>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_receber_imovel_form">
+            <field name="name">finan.contrato.receber.imovel.form</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Contrato de imóvel">
+                    <field name="natureza" invisible="1" />
+                    <field name="raiz_cnpj" invisible="1" />
+                    <field name="company_id" colspan="4" invisible="1" />
+                    <field name="parent_company_id" invisible="1" />
+                    <field name="ativo" invisible="1" />
+                    <newline />
+                    <group string="Imóveis" colspan="4">
+                        <field name="imovel_id" domain="[('situacao', '=', 'D')]" required="1" colspan="4" on_change="onchange_imovel_id(imovel_id)" />
+                        <field name="imovel_project_id" readonly="1" colspan="4"/>
+                        <field name="imovel_proprietario_id" readonly="1" colspan="4"/>
+                        <field name="imovel_res_partner_bank_id" readonly="1" colspan="4"/>
+                        <group col="6" colspan="4">
+                            <field name="imovel_codigo" readonly="1" />
+                            <field name="imovel_situacao" readonly="1" />
+                            <field name="imovel_propriedade" readonly="1" />
+                            <field name="imovel_quadra" readonly="1" />
+                            <field name="imovel_lote" readonly="1" />
+                            <field name="imovel_valor_venda" readonly="1" />
+                            <field name="imovel_area_terreno" readonly="1" />
+                            <field name="imovel_area_total" readonly="1" />
+                        </group>
+<!--                        <field colspan="4" name="imovel_ids" nolabel="1"  widget="one2many_list" mode="tree,form">
+                            <tree editable="bottom">
+                                <field name="imovel_id" domain="[('situacao', '=', 'D')]" on_change="onchange_imovel_id(imovel_id)" />
+                                <field name="proprietario_id" readonly="1"/>
+                                <field name="valor_venda" sum="Total" readonly="1"/>
+                            </tree>
+                            <form>
+                                <field name="imovel_id" domain="[('situacao', '=', 'D')]" required="1" colspan="4" on_change="onchange_imovel_id(imovel_id)" />
+                                <field name="project_id" readonly="1" colspan="4"/>
+                                <field name="proprietario_id" readonly="1" colspan="4"/>
+                                <field name="res_partner_bank_id" readonly="1" colspan="4"/>
+                                <group col="6" colspan="4">
+                                    <field name="codigo" readonly="1" />
+                                    <field name="situacao" readonly="1" />
+                                    <field name="propriedade" readonly="1" />
+                                    <field name="quadra" readonly="1" />
+                                    <field name="lote" readonly="1" />
+                                    <field name="valor_venda" readonly="1" />
+                                    <field name="area_terreno" readonly="1" />
+                                    <field name="area_total" readonly="1" />
+                                </group>
+                            </form>
+                        </field>-->
+                    </group>
+                    <group colspan="4">
+                        <field name="numero" colspan="2" string="Número do contrato" />
+                        <group colspan="2" col="2">
+                            <field name="pagamento_direto_proprietario" attrs="{'invisible': ['!', ('imovel_propriedade', 'in', ('T', 'A'))]}" />
+                        </group>
+                        <field name="situacao_imovel" colspan="2" />
+                        <field name="partner_id" string="Cliente principal" colspan="4"  required="1" />
+                        <field name="data_assinatura" colspan="2" required="1" string="Data do contrato" />
+                        <field name="tipo_valor_base" invisible="1" />
+                        <field name="valor" required="1" string="Valor do contrato" />
+                        <!--<separator string="Características e período" colspan="10" />-->
+                        <field name="data_inicio" invisible="1"/>
+                    </group>
+                    <newline />
+                    <group col="6" colspan="2" string="Etapa">
+                        <field name="etapa_seguinte_ids"  invisible="1"/>
+                        <field name="etapa_id" widget="selection" readonly="1" />
+                        <field name="proxima_etapa_id" domain="[('id', 'in', etapa_seguinte_ids)]" />
+                        <button name="avanca_etapa" string="Avançar Etapa" icon="gtk-go-forward" type="object"  />
+                        <field name="codigo" readonly="1" invisible="1"/>
+                        <field name="filtro_etapa" readonly="1" invisible="1"/>
+                    </group>
+                    <group string="Ações">
+                        <button icon="gtk-apply" name="atualiza_valor" string="Atualizar Valores" type="object"/>
+                        <button icon="gtk-print" name="imprime_proposta" string="Imprimir Proposta" type="object"/>
+                        <button icon="gtk-print" name="gera_modelos" string="Gerar Contrato" type="object"/>
+                    </group>
+                    <newline />
+                    <field name="comissao_parcelas_diferente" readonly="1" invisible="1"/>
+                    <group col="1" colspan="10" name="mensagem_pendencia_comissao" attrs="{'invisible': [('comissao_parcelas_diferente', '=',  False)] }">
+                        <html>
+                            <p class="oe_form_paragraph oe_align_center ">
+                                <span style="color:red;text-align:center;">
+                                    Atenção!!! Há diferença entre os valor de comissão informado e a soma das parcelas de comissões!!!
+                                </span>
+                            </p>
+                        </html>
+                    </group>
+                    <newline />
+                    <notebook colspan="10">
+                        <page string="Condições de pagamento" attrs="{'invisible': [('parcelas_manual', '!=', False)]}">
+                            <separator string="Condições de pagamento" colspan="4" />
+                            <field name="condicao_ids" nolabel="1" colspan="4" context="{'default_data_inicio': data_inicio}"/>
+<!--                            <field name="condicao_ids" nolabel="1" colspan="4" context="{'default_data_inicio': data_inicio}">
+                                <tree>
+                                    <field name="tipo_mes"/>
+                                    <field name="valor_parcela" />
+                                    <field name="vezes" />
+                                    <field name="valor_principal" sum="Valor" string="Valor total" />
+                                    <field name="data_inicio" string="Data 1ª parcela" />
+                                    <field name="currency_id"/>
+                                    <field name="obs"/>
+                                </tree>
+                                <form>
+                                    <field name="entrada" />
+                                    <newline />
+                                    <field name="tipo_mes" required="1" />
+                                    <newline />
+                                    <field name="valor_parcela" required="1" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" />
+                                    <field name="vezes" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" attrs="{'invisible': [('entrada', '!=', False)], 'required': True}" />
+                                    <newline />
+                                    <field name="valor_principal" string="Valor total" attrs="{'invisible': [('entrada', '!=', False)], 'required': True}" />
+                                    <newline />
+                                    <field name="data_inicio" required="1" string="Data 1ª parcela" />
+                                    <field name="currency_id" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" />
+                                    <newline />
+                                    <field name="data_base" />
+                                    <field name="tipo_mes_correcao" />
+                                    <field name="obs" colspan="4" />
+                                    <separator string="Cobrança e juros" colspan="4" />
+                                    <field name="carteira_id" colspan="4" invisible="1" />
+                                    <field name="taxa_juros" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" />
+                                    <field name="tipo_taxa" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" />
+                                    <field name="taxa_iof" />
+                                    <field name="taxa_administracao" />
+                                    <field name="taxa_seguro" />
+                                    <newline />
+                                    <separator string="Integração financeira" colspan="4" />
+                                    <field name="conta_id" colspan="4"  required="1" domain="[('sintetica', '=', False)]" />
+                                    <newline />
+                                    <field name="documento_id" colspan="2"  required="1" />
+                                    <newline />
+                                    <field name="centrocusto_id" colspan="4" domain="[('sintetico', '=', False)]" />
+                                    <newline />
+                                    <field name="res_partner_bank_id" colspan="4" string="Conta bancária" />
+                                    <field name="carteira_id" colspan="4" />
+                                    <newline />
+                                    <field name="formapagamento_id" colspan="4" required="1" />
+                                    <newline />
+                                    <field name="res_partner_address_id" colspan="4" domain="[('type', '=', 'delivery')]" context="{'contrato': True}" />
+                                    <field name="ajusta_quantidade_parcelas" />
+                                    <separator string="Parcelas" colspan="4" />
+                                    <field name="parcela_ids" nolabel="1" colspan="4">
+                                        <tree>
+                                            <field name="parcela" />
+                                            <field name="data_vencimento" />
+                                            <field name="valor" sum="valor" />
+                                            <field name="juros" sum="juros" />
+                                            <field name="amortizacao" />
+                                            <field name="divida_amortizada" />
+                                            <field name="saldo_devedor" />
+                                            <field name="entrada" />
+                                            <field name="obs" />
+                                            <field name="currency_id" string="Índice" />
+                                            <field name="data_base" />
+                                            <field name="tipo_mes_correcao" />
+                                            <field name="res_partner_bank_id" string="Conta bancária" />
+                                            <field name="carteira_id" />
+                                        </tree>
+                                        <form>
+                                            <field name="parcela" required="1" />
+                                            <newline />
+                                            <field name="data_vencimento" required="1" />
+                                            <newline />
+                                            <field name="valor" required="1" />
+                                            <newline />
+                                            <field name="juros" />
+                                            <field name="amortizacao" />
+                                            <field name="divida_amortizada" />
+                                            <field name="saldo_devedor" />
+                                            <field name="entrada" />
+                                            <field name="obs" colspan="4" />
+                                            <field name="currency_id" string="Índice" />
+                                            <field name="data_base" />
+                                            <field name="tipo_mes_correcao" />
+                                            <separator string="Integração financeira" colspan="4" />
+                                            <field name="conta_id" colspan="4"  required="1" domain="[('sintetica', '=', False)]" />
+                                            <newline />
+                                            <field name="documento_id" colspan="2"  required="1" />
+                                            <newline />
+                                            <field name="centrocusto_id" colspan="4" domain="[('sintetico', '=', False)]" />
+                                            <newline />
+                                            <field name="res_partner_bank_id" colspan="4" string="Conta bancária" />
+                                            <field name="carteira_id" colspan="4" />
+                                            <newline />
+                                            <field name="formapagamento_id" colspan="4" required="1" />
+                                            <newline />
+                                            <field name="res_partner_address_id" colspan="4" domain="[('type', '=', 'delivery')]" context="{'contrato': True}" />
+                                        </form>
+                                    </field>
+                                    <separator string="Cheques" colspan="4" />
+                                    <field name="cheque_ids" nolabel="1" colspan="4" />
+                                </form>
+                            </field>-->
+                        </page>
+                        <page string="Parcelas">
+                            <field name="parcelas_manual" colspan="4" />
+                            <field name="parcela_ids" nolabel="1" colspan="4"/>
+<!--                            <field name="parcela_ids" nolabel="1" colspan="4">
+                                <tree >
+                                    <field name="parcela" />
+                                    <field name="data_vencimento" />
+                                    <field name="valor" sum="valor" />
+                                    <field name="juros" sum="juros" />
+                                    <field name="amortizacao" />
+                                    <field name="divida_amortizada" />
+                                    <field name="saldo_devedor" />
+                                    <field name="entrada" />
+                                    <field name="obs" />
+                                    <field name="currency_id" string="Índice" />
+                                    <field name="data_base" />
+                                    <field name="tipo_mes_correcao" />
+                                    <field name="res_partner_bank_id" string="Conta bancária" />
+                                    <field name="carteira_id" />
+                                </tree>
+                                <form>
+                                    <field name="parcela" required="1" />
+                                    <newline />
+                                    <field name="data_vencimento" required="1" />
+                                    <newline />
+                                    <field name="valor" required="1" />
+                                    <newline />
+                                    <field name="juros" />
+                                    <field name="amortizacao" />
+                                    <field name="divida_amortizada" />
+                                    <field name="saldo_devedor" />
+                                    <field name="entrada" />
+                                    <field name="obs" colspan="4" />
+                                    <field name="currency_id" string="Índice" />
+                                    <field name="data_base" />
+                                    <field name="tipo_mes_correcao" />
+                                    <separator string="Integração financeira" colspan="4" />
+                                    <field name="conta_id" colspan="4"  required="1" domain="[('sintetica', '=', False), ('tipo', '=', 'R')]" />
+                                    <newline />
+                                    <field name="documento_id" colspan="2"  required="1" />
+                                    <newline />
+                                    <field name="centrocusto_id" colspan="4" domain="[('sintetico', '=', False)]" />
+                                    <newline />
+                                    <field name="res_partner_bank_id" colspan="4" string="Conta bancária" />
+                                    <field name="carteira_id" colspan="4" />
+                                    <newline />
+                                    <field name="formapagamento_id" colspan="4" required="1" />
+                                    <newline />
+                                    <field name="res_partner_address_id" colspan="4" domain="[('type', '=', 'delivery')]" context="{'contrato': True}" />
+                                </form>
+                            </field>-->
+                        </page>
+                        <page string="Clientes adicionais">
+                            <separator string="Clientes adicionais" colspan="4" />
+                            <field name="cliente_ids" nolabel="1" colspan="4">
+                                <tree editable="bottom">
+                                    <field name="partner_id" />
+                                    <field name="porcentagem" sum="Porcentagem" string="Participação percentual" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Honorários da venda">
+                            <group colspan="4" col="4">
+                                <field name="valor_comissao" />
+                                <separator string="Corretores e comissões" colspan="4" />
+                                <field name="comissao_ids" nolabel="1" colspan="4"/>
+                            </group>
+                        </page>
+                        <page string="Financeiro">
+                            <group colspan="4">
+                                <separator string="Integração financeira" colspan="4" />
+                                <field name="conta_id" colspan="4"  required="0" domain="[('sintetica', '=', False)]" />
+                                <newline />
+                                <field name="documento_id" colspan="2"  required="0" />
+                                <newline />
+                                <field name="centrocusto_id" colspan="4" domain="[('sintetico', '=', False)]" />
+                                <newline />
+                                <field name="res_partner_bank_id" colspan="4" domain="['|', '|', ('company_id', '=', company_id), ('company_id', '=', parent_company_id), ('raiz_cnpj', '=', 'raiz_cnpj')]" string="Conta bancária" />
+                                <field name="carteira_id" colspan="4" />
+                                <newline />
+                                <field name="formapagamento_id" colspan="4" required="0" />
+                                <newline />
+                                <field name="res_partner_address_id" colspan="4" domain="[('partner_id', '=', partner_id), ('type', '=', 'delivery')]" context="{'contrato': numero}" />
+                                <newline />
+                                <field name="provisionado" colspan="2" invisible="1" />
+                                <group colspan="4">
+                                    <button name="gera_provisao" string="Gerar lançamentos" type="object" colspan="1" context="{'gera_lancamento': True}" />
+                                    <button name="imprime_nota_promissoria" string="Imprime Notas promissórias" type="object" colspan="1" />
+                                </group>
+                            </group>
+                            <group colspan="4">
+                                <separator string="Lançamentos financeiros" colspan="10" />
+                                <field name="lancamento_ids" readonly="0" nolabel="1" widget="many2one_list">
+                                    <tree editable="top">
+                                        <field name="provisionado" />
+                                        <field name="documento_id" />
+                                        <field name="numero_documento" />
+                                        <field name="numero_documento_original" />
+                                        <field name="data_vencimento_original" />
+                                        <field name="data_documento" />
+                                        <field name="data_vencimento" />
+                                        <field name="valor_original_contrato" sum="Valor original" />
+                                        <field name="valor_documento" sum="Valor documento" />
+                                        <field name="situacao" />
+                                        <field name="data_quitacao" />
+                                        <field name="data_baixa" />
+                                        <field name="motivo_baixa_id" />
+                                        <field name="valor" sum="Valor" />
+                                        <field name="nf_numero" />
+                                        <field name="nf_data" />
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Comunicação e histórico">
+                            <separator string="Emails trocados e anotações" colspan="4" />
+                            <field name="mail_message_ids" colspan="4" nolabel="1" mode="tree" readonly="1">
+                                <tree string="Histórico">
+                                    <field name="date" string="Data" />
+                                    <field name="display_text" string="Texto"/>
+                                    <field name="email_to" invisible="1"/>
+                                    <field name="email_from" invisible="1"/>
+                                    <button
+                                        string="Reply" attrs="{'invisible': [('email_from', '=', False)]}"
+                                        name="%(mail.action_email_compose_message_wizard)d"
+                                        context="{'mail.compose.message.mode':'reply', 'message_id':active_id}"
+                                        icon="terp-mail-replied" type="action" />
+                                </tree>
+                            </field>
+                            <button string="Incluir anotação"
+                                name="incluir_anotacao"
+                                type="object"
+                                icon="terp-document-new" />
+                            <button string="Enviar e-mail"
+                                name="%(mail.action_email_compose_message_wizard)d"
+                                icon="terp-mail-message-new" type="action"/>
+                        </page>
+                        <page string="Check-list" >
+                            <field name="checklist_ids"  nolabel="1" colspan="4" domain="[('contrato_id', '=', id)]">
+                               <tree>
+                                   <field name="ordem" />
+                                   <field name="atividade" />
+                                   <field name="departamento" />
+                                   <field name="data_conclusao" />
+                                   <field name="user_id"   attrs="{'required': [('data_conclusao', '!=', False)]}"/>
+                                   <field name="obs" />
+                               </tree>
+                               <form>
+                                   <group col="6" colspan="4">
+                                       <group col="2" colspan="2">
+                                           <field name="ordem"  />
+                                           <field name="atividade" />
+                                           <field name="departamento" />
+                                           <field name="data_conclusao" />
+                                           <field name="user_id"   attrs="{'required': [('data_conclusao', '!=', False)]}"/>
+                                       </group>
+                                       <group col="4" colspan="4">
+                                       </group>
+                                    </group>
+                                    <newline />
+                                    <separator string="Observação" colspan="4"/>
+                                    <field name="obs" colspan="4" nolabel="1"/>
+                                </form>
+                            </field>
+                            <button string="Imprimir Check-list" name="imprimir_checklist" icon="gtk-print" type="object" colspan="4" />
+                        </page>
+                        <page string="Rescisão Contratual" >
+                            <separator string="Confirmar data de rescisão" colspan="2" />
+                            <separator string="Motivo da rescisão" colspan="2" />
+                            <field name="data_distrato" string="Data da baixa" nolabel="1" colspan="2"/>
+                            <field name="motivo_baixa_id" nolabel="1" colspan="2"/>
+                            <newline />
+                            <button string="Baixar" name="baixa_contrato" icon="gtk-apply" type="object" colspan="4" />
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_receber_imovel_search">
+            <field name="name">finan.contrato.receber.imovel.search</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Contratos de imóveis">
+                    <filter name="ativo" string="Ativo" icon="terp-go-month" domain="[('ativo', '=', True)]" />
+                    <filter name="inativo" string="Inativo" icon="terp-go-month" domain="[('ativo', '=', False)]" />
+                    <separator orientation="vertical" />
+                    <field name="company_id" select="1" />
+                    <field name="partner_id" select="1" string="Cliente" />
+                    <field name="numero" />
+                    <field name="etapa_id" widget="selection"/>
+                    <newline/>
+
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'parent_company_id'}" groups="finan.group_finan_manager,finan.group_finan_treasury_manager"/>
+                        <filter string="Unidade de negócio" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Cliente" icon="terp-project" domain="[]" context="{'group_by': 'partner_id'}" />
+                        <filter string="Data de renovação" icon="terp-project" domain="[]" context="{'group_by': 'data_renovacao'}" />
+                        <filter string="Mês de renovação" icon="terp-project" domain="[]" context="{'group_by': 'ano_mes_renovacao'}" />
+                        <filter string="Ano de renovação" icon="terp-project" domain="[]" context="{'group_by': 'ano_renovacao'}" />
+                    </group>
+
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_contrato_receber_imovel_acao">
+            <field name="name">Contratos de imóveis</field>
+            <field name="res_model">finan.contrato</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_contrato_receber_imovel_tree" />
+            <field name="domain">[('natureza', '=', 'RI'), ('etapa_id.tipo', '=', 'R')]</field>
+            <field name="context">{'natureza': 'RI', 'default_natureza': 'RI', 'search_default_ativo': True, 'default_provisionado': False, 'default_situacao_imovel': 'A'}</field>
+            <field name="search_view_id" ref="finan_contrato_receber_imovel_search" />
+        </record>
+
+        <menuitem
+            action="finan_contrato_receber_imovel_acao"
+            id="menu_finan_contrato_receber_imovel"
+            sequence="10"
+            name="Contratos de imóveis"
+            parent="finan_contrato.menu_finan_contratos" />
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_receber_imovel_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_contrato_receber_imovel_form"/>
+            <field name="act_window_id" ref="finan_contrato_receber_imovel_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_receber_imovel_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_contrato_receber_imovel_tree"/>
+            <field name="act_window_id" ref="finan_contrato_receber_imovel_acao"/>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,1 @@
+result = FERIAS_VENCIDA / 3.0

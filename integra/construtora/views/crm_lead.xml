@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+    <record model="ir.ui.view" id="crm_lead_prospecto_form">
+        <field name="name">crm.lead.prospecto.form</field>
+        <field name="model">crm.lead</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Prospecto">
+                <field name="type" invisible="1"/>
+                <group colspan="4" col="7">
+                    <field name="name" required="1" string="Assunto"/>
+                    <button
+                        name="%(crm.action_crm_lead2opportunity_partner)d"
+                        string="Convert to Opportunity"
+                        help="Convert to Opportunity" icon="gtk-go-forward"
+                        type="action"
+                        />
+                    <newline />
+                    <field name="user_id"  string="Corretor" />
+                    <field name="stage_id" domain="[('stage_type', '=', 'lead')]" />
+                    <group col="2" colspan="1">
+                        <button name="stage_previous" string=""
+                            states="open,pending,draft" type="object"
+                            icon="gtk-go-back" context="{'stage_type': 'lead'}" />
+                        <button name="stage_next" string=""
+                            states="open,pending,draft" type="object"
+                            icon="gtk-go-forward" context="{'stage_type': 'lead'}" />
+                    </group>
+                </group>
+                <notebook colspan="4">
+                    <page string="Prospecto">
+                        <group colspan="4">
+                            <field name="partner_id" string="Contato" colspan="4" />
+                            <separator string="Interesses" colspan="4" />
+                            <field name="tipo" />
+                            <field name="codigo" />
+                            <field name="descricao" colspan="4" />
+                            <field name="valor_documento_from" />
+                            <field name="valor_documento_to" />
+                            <field name="proprietario_id" colspan="4" />
+                            <newline />
+                            <field name="endereco" />
+                            <field name="bairro" />
+                            <field name="municipio_id" />
+                            <field name="ponto_referencia" />
+                            <field name="condominio" />
+                            <newline />
+                            <field name="suite" />
+                            <field name="quarto" />
+                            <field name="garagem" />
+                            <separator colspan="4" string="Notas"/>
+                            <field name="description" nolabel="1" colspan="4"/>
+                        </group>
+                    <separator colspan="4"/>
+                    <group col="8" colspan="4">
+                        <field name="state" widget="statusbar" statusbar_visible="draft,open,done" statusbar_colors='{"pending":"blue"}'/>
+                        <button name="case_cancel" string="Cancel"
+                            states="draft,open,pending" type="object"
+                            icon="gtk-cancel" />
+                        <button name="case_open" string="Open"
+                            states="draft,pending" type="object"
+                            icon="gtk-go-forward" />
+                        <button name="case_mark_lost" string="Close"
+                            states="open,pending" type="object"
+                            icon="gtk-close" />
+                        <button name="case_pending" string="Pending"
+                            states="open" type="object"
+                            icon="gtk-media-pause" />
+                        <button name="case_escalate" string="Escalate"
+                            states="open,pending" type="object"
+                            groups="base.group_extended"
+                            icon="gtk-go-up" />
+                        <button name="case_reset"
+                            string="Reset to Draft" states="done,cancel"
+                            type="object" icon="gtk-convert" />
+                    </group>
+                </page>
+                <page string="Imóveis">
+                    <field name="imovel_ids" nolabel="1" colspan="4" context="{'form_view_ref' : 'construtora.imovel_crm_form', 'tree_view_ref' : 'construtora.imovel_crm_tree', 'search_view_ref': 'construtora.imovel_crm_search'}" />
+                </page>
+                <page string="Comunicação e Histórico">
+                <group colspan="4">
+                    <field colspan="4" name="email_cc" widget="char" size="512"/>
+                </group>
+                    <field name="message_ids" colspan="4" nolabel="1" mode="tree" readonly="1">
+                        <tree string="Histórico">
+                            <field name="display_text" string="Informação"/>
+                            <field name="email_from" invisible="1"/>
+                            <button
+                                string="Responder" attrs="{'invisible': [('email_from', '=', False)]}"
+                                name="%(mail.action_email_compose_message_wizard)d"
+                                context="{'mail.compose.message.mode':'reply', 'message_id':active_id}"
+                                icon="terp-mail-replied" type="action" />
+                        </tree>
+                    </field>
+                    <button string="Adicionar anotação interna"
+                        name="%(crm.action_crm_add_note)d"
+                        context="{'model': 'crm.lead' }"
+                        icon="terp-document-new" type="action" />
+                    <button string="Enviar novo email"
+                        name="%(mail.action_email_compose_message_wizard)d"
+                        icon="terp-mail-message-new" type="action"/>
+                </page>
+                <page string="Informações adicionais">
+                    <group colspan="2" col="2">
+                        <separator string="Categorization" colspan="2" col="2"/>
+                        <field name="company_id" widget="selection" colspan="2" />
+                        <field name="type_id" select="1" widget="selection"/>
+                        <field name="channel_id" select="1" widget="selection"/>
+                        <field name="referred"/>
+                    </group>
+                    <group colspan="2" col="2">
+                        <separator string="Datas" colspan="2" col="2"/>
+                        <field name="create_date"/>
+                        <field name="write_date"/>
+                        <field name="date_open"/>
+                        <field name="date_closed"/>
+                    </group>
+                    <group colspan="2" col="2">
+                        <separator string="Mala direta" colspan="2" col="2"/>
+                        <field name="optin" on_change="on_change_optin(optin)"/>
+                        <field name="optout" on_change="on_change_optout(optout)"/>
+                    </group>
+                </page>
+                </notebook>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="crm_lead_prospecto_tree">
+        <field name="name">crm.lead.prospecto.tree</field>
+        <field name="model">crm.lead</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Prospectos"  colors="blue:state=='pending';grey:state in ('cancel', 'done')">
+                <field name="date_deadline" invisible="1"/>
+                <field name="categ_id" invisible="1"/>
+                <field name="type_id" invisible="1"/>
+                <field name="referred" invisible="1"/>
+                <field name="channel_id" invisible="1"/>
+                <field name="subjects" invisible="1"/>
+
+                <field name="create_date"/>
+                <field name="name" string="Subject"/>
+                <field name="partner_id" string="Contato" />
+                <field name="project_id" string="Projeto" />
+                <field name="tipo" string="Tipo do Imóvel" />
+                <field name="stage_id"/>
+                <button name="stage_previous" string="Previous Stage"
+                    states="open,pending" type="object" icon="gtk-go-back" />
+                <button name="stage_next" string="Next Stage"
+                    states="open,pending" type="object"
+                    icon="gtk-go-forward" />
+                <field name="user_id" string="Corretor" />
+                <field name="state" />
+                <button name="case_open" string="Open"
+                    states="draft,pending" type="object"
+                    icon="gtk-go-forward" />
+                <button name="case_close" string="Close"
+                    states="open,draft,pending" type="object"
+                    icon="gtk-close" />
+                <button name="%(crm.action_crm_lead2opportunity_partner)d"
+                    string="Convert to Opportunity"
+                    states="draft,open,pending" icon="gtk-index"
+                    type="action" />
+                <button name="case_escalate" string="Escalate"
+                    states="open,draft,pending" type="object"
+                    icon="gtk-go-up" />
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="crm_lead_prospecto_search" >
+        <field name="name">crm.lead.prospecto.search</field>
+        <field name="model">crm.lead</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Prospectos">
+                <filter icon="terp-check"
+                    string="Novo"
+                    name="new" help="New Leads"
+                    domain="[('state','=','draft')]"/>
+                <filter icon="terp-camera_test"
+                    string="Aberto"
+                    name="open"
+                    domain="[('state','=','open')]"/>
+                <filter icon="terp-gtk-media-pause"
+                    string="Pendente"
+                    name="pending"
+                    domain="[('state','=','pending')]"/>
+
+                <separator orientation="vertical"/>
+                <field name="name" string="Lead / Customer"
+                    filter_domain="['|',('partner_id','ilike',self),('name','ilike',self)]"/>
+                <field name="user_id" string="Corretor">
+                    <filter icon="terp-personal-"
+                        domain="[('user_id','=', False)]"
+                        help="Unassigned Leads" />
+                </field>
+                <newline/>
+                <field name="valor_documento_from" filter_domain="[('valor_documento_from', '&gt;=', self)]" />
+                <field name="valor_documento_to" filter_domain="[('valor_documento_to', '&lt;=', self)]" />
+                <newline/>
+
+                <group expand="1" string="Group By...">
+                    <filter string="Corretor" icon="terp-personal" domain="[]" context="{'group_by':'user_id'}"/>
+                    <filter string="Tipo do Imóvel" icon="terp-stock_symbol-selection" domain="[]" context="{'group_by':'tipo'}"/>
+                    <filter string="Projeto" icon="terp-stock_symbol-selection" domain="[]" context="{'group_by':'project_id'}"/>
+                    <separator orientation="vertical"/>
+                    <filter string="Stage" icon="terp-stage" domain="[]" context="{'group_by':'stage_id'}"/>
+                    <filter string="Situação" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                    <separator orientation="vertical"/>
+                    <filter string="Criação" icon="terp-go-month"
+                        domain="[]" context="{'group_by':'create_date'}" />
+                </group>
+           </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="crm_lead_prospecto_action">
+        <field name="name">Prospectos</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">['|', ('type','=','lead'), ('type','=',False)]</field>
+        <field name="context">{'search_default_new': True, 'default_type': 'lead', 'stage_type': 'lead'}</field>
+        <field name="view_id" ref="crm_lead_prospecto_tree" />
+        <field name="search_view_id" ref="crm_lead_prospecto_search" />
+    </record>
+
+    <record model="ir.actions.act_window.view" id="crm_lead_prospecto_tree_action">
+        <field name="view_mode">tree</field>
+        <field eval="1" name="sequence"/>
+        <field name="view_id" ref="crm_lead_prospecto_tree"/>
+        <field name="act_window_id" ref="crm_lead_prospecto_action"/>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="crm_lead_prospecto_form_action">
+        <field name="view_mode">form</field>
+        <field eval="2" name="sequence"/>
+        <field name="view_id" ref="crm_lead_prospecto_form"/>
+        <field name="act_window_id" ref="crm_lead_prospecto_action"/>
+    </record>
+
+    <menuitem
+        action="crm_lead_prospecto_action"
+        id="menu_crm_lead_prospecto"
+        parent="base.menu_sales"
+        sequence="1"/>
+
+    </data>
+</openerp>

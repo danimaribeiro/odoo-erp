@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hr_resumo_folha_por_rubrica" language="groovy" pageWidth="595" pageHeight="842" columnWidth="553" leftMargin="21" rightMargin="21" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="1.3636363636363735"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="TIPOS" class="java.lang.String">
+		<defaultValueExpression><![CDATA["('N', 'R')"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CNPJS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select distinct
+     c.id,
+     p.cnpj_cpf,
+     p.name
+
+from res_company c
+     join res_partner p on p.id = c.partner_id
+     join sped_municipio m on m.id = p.municipio_id
+     join sped_cnae cn on cn.id = p.cnae_id
+where
+     p.fone != ''
+     and p.cnpj_cpf in $P!{CNPJS}
+
+order by
+     p.cnpj_cpf
+     limit 1]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="cnpj_cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[CNPJ do fornecedor (importado)]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String"/>
+	<variable name="TOTAL_PROVENTO" class="java.lang.Double" resetType="Group" resetGroup="cnpj"/>
+	<variable name="TOTAL_DEDUCAO" class="java.lang.Double" resetType="Group" resetGroup="cnpj"/>
+	<group name="cnpj" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{name}]]></groupExpression>
+		<groupHeader>
+			<band height="48">
+				<staticText>
+					<reportElement x="0" y="28" width="184" height="20" uuid="01c28eb4-cd9c-4760-8491-f22a64d6134c"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Proventos]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="184" y="28" width="186" height="20" uuid="e1dc4abd-9a5e-4dfd-934b-29b8f7286c2f"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Descontos]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="370" y="28" width="183" height="20" uuid="17c52c47-c64c-4c36-9201-04239b2bd9f3"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Bases]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="14" width="37" height="14" uuid="dff0eeb5-68d8-49e6-b7c1-23d267b64521"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Periodo:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="469" y="0" width="84" height="14" uuid="14d873b1-7257-497f-b7e4-9fcc05c4f678"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cnpj_cpf}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="37" y="0" width="405" height="14" uuid="a7d6e6d2-81ec-46c0-8abc-e02b1636af88"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="37" y="14" width="44" height="14" uuid="4f940f47-de34-4144-b93b-ba858097e957"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse($P{DATA_INICIAL}))]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="37" height="14" uuid="9c7bdc45-8860-4a6d-9708-46e85a0c7053"/>
+					<box leftPadding="0" rightPadding="0">
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Empresa:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="442" y="0" width="27" height="14" uuid="68761088-1130-42ef-aaff-38041c6f86ef"/>
+					<box leftPadding="0" rightPadding="2">
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CNPJ:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="81" y="14" width="15" height="14" uuid="f4e5129c-6698-4acb-8c88-bf4202a8744d"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<text><![CDATA[a]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="96" y="14" width="457" height="14" uuid="ed110edb-1862-4b99-ba64-534cbb6efaec"/>
+					<box leftPadding="0">
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse($P{DATA_FINAL}))]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="42">
+				<staticText>
+					<reportElement x="0" y="0" width="117" height="14" uuid="4f89369a-e838-4147-b511-03deac8eab02"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<text><![CDATA[Total de proventos]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="183" y="0" width="110" height="14" uuid="872b0042-0017-449b-93bb-b5aabe0a58fb"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<text><![CDATA[Total de deduções]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="293" y="0" width="76" height="14" uuid="fcfcfe1a-1762-4996-b712-fbb6cd49371e"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_DEDUCAO} == null ?
+0.00
+:
+$V{TOTAL_DEDUCAO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="117" y="0" width="66" height="14" uuid="73e82ed5-cefa-4df1-a5b6-d0754a747463"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_PROVENTO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="479" y="14" width="74" height="14" forecolor="#000000" uuid="50e416a1-ebdc-4ab5-9d50-5ad10a626709"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_DEDUCAO} == null ?
+0.00
+:
+$V{TOTAL_DEDUCAO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="479" y="0" width="74" height="14" forecolor="#000000" uuid="1e2be143-8990-429c-b0b8-4d35c4a3cde7"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_PROVENTO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="369" y="0" width="110" height="14" forecolor="#000000" uuid="018ae275-6726-479b-ac4f-c023b09b0f9c"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<text><![CDATA[Total de proventos]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement x="479" y="28" width="74" height="14" uuid="01ab44fa-99c3-4592-9359-51b88b032072"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_DEDUCAO} == null ?
+$V{TOTAL_PROVENTO}
+:
+$V{TOTAL_PROVENTO} - $V{TOTAL_DEDUCAO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="369" y="14" width="110" height="14" forecolor="#000000" uuid="e5c444d3-ad2e-4496-b37c-70b8121edfac"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<text><![CDATA[Total de deduções]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="370" y="28" width="109" height="14" uuid="36309e25-3d66-422f-9714-7c01a65de259"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7" isBold="true" pdfEncoding="UniCNS-UCS2-H"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<text><![CDATA[Líquido]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="80">
+			<subreport>
+				<reportElement x="0" y="0" width="553" height="60" uuid="b75057e3-f4c4-466b-8275-ac700054a605"/>
+				<subreportParameter name="COMPANY_ID">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cabecalho_empresa.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="431" y="32" width="91" height="12" uuid="b8bf5ce6-b13e-45ab-ac85-9b11480c1cf1"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="522" y="32" width="31" height="12" uuid="d1992648-56a0-4165-9630-6be6fe460aa6"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="60" width="553" height="20" uuid="5c0acc0e-47f7-4e73-bd73-1e6e6608e0d0"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESUMO RUBRICA - MÊS]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<subreport>
+				<reportElement x="-1" y="0" width="181" height="17" uuid="7033f53b-6c1c-4f0a-b323-b1407ed88b6c"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPOS">
+					<subreportParameterExpression><![CDATA[$P{TIPOS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_INICIAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_INICIAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_FINAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_FINAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CNPJ">
+					<subreportParameterExpression><![CDATA[$F{cnpj_cpf}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="TOTAL_PROVENTO" toVariable="TOTAL_PROVENTO"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "analitico_folha_resumo_provento.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="186" y="0" width="181" height="17" uuid="00e594bf-b0a5-487e-a8dc-f004ad0fa2a3"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPOS">
+					<subreportParameterExpression><![CDATA[$P{TIPOS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_INICIAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_INICIAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_FINAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_FINAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CNPJ">
+					<subreportParameterExpression><![CDATA[$F{cnpj_cpf}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="TOTAL_DEDUCAO" toVariable="TOTAL_DEDUCAO"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "analitico_folha_resumo_deducao.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="372" y="0" width="181" height="17" uuid="d700690b-eec0-4ee6-88ee-b9abf06db22f"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPOS">
+					<subreportParameterExpression><![CDATA[$P{TIPOS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_INICIAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_INICIAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_FINAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_FINAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CNPJ">
+					<subreportParameterExpression><![CDATA[$F{cnpj_cpf}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "analitico_folha_resumo_base_calculo.jasper"]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement stretchType="RelativeToBandHeight" x="183" y="0" width="1" height="17" uuid="a0ca447e-de1a-446b-8393-7eed727e3648"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToBandHeight" x="369" y="0" width="1" height="17" uuid="f52e348d-9658-48dd-b4a1-bb3064fc7ed4"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="17" width="553" height="1" uuid="253ae68d-457f-4464-aeb3-dee5d51f9239"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<summary>
+		<band height="42"/>
+	</summary>
+</jasperReport>

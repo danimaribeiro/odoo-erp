@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_relatorio_notas_canceladas" >
+            <field name="name">sped.relatorio.notas.canceladas</field>
+            <field name="model">sped.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório de Notas Canceladas">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="2" />
+                        <newline/>
+                        <field name="company_id" required="1" colspan="4"/>
+                        <field name="data_inicial" required="1" />                        
+                        <field name="data_final" required="1" />
+                        <newline/>  
+                        <field name="modelo" colspan="4" />
+                        <newline/>                       
+                        <field name="emissao" required="1" colspan="1" />                      
+                        <field name="naturezaoperacao_id" colspan="1" />
+                        <newline/>
+                        <field name="formato" required="1" colspan="2"/>
+                        <newline/>                
+                        <field name="nome" invisible="1" />
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_notas_canceladas" type="object" context="{'company_id' : company_id, 'data_inicial': data_inicial, 'data_final': data_final }" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_relatorio_notas_canceladas_acao">
+            <field name="name">Notas Canceladas</field>
+            <field name="res_model">sped.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_relatorio_notas_canceladas_form_acao">
+            <field eval="10" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_relatorio_notas_canceladas"/>
+            <field name="act_window_id" ref="sped_relatorio_notas_canceladas_acao"/>
+        </record>
+
+        <menuitem action="sped_relatorio_notas_canceladas_acao"
+                  id="menu_sped_relatorio_notas_canceladas" name="Notas Canceladas" parent="menu_sped_fiscal_relatorio" sequence="8" />
+
+    </data>
+</openerp>

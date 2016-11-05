@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="estoque_relatorio_preco_quantidade_form" >
+            <field name="name">estoque.relatorio.preco.quantidade.form</field>
+            <field name="model">estoque.relatorio</field>
+            <field name="inherit_id" ref="sped_stock.estoque_relatorio_preco_quantidade_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="company_id" position="replace"/>                                                                      
+                <field name="variants" position="replace"/>
+                <button name="gera_listagem_estoque" position="replace" >                                     
+                    <button icon="gtk-print" string="Gerar relatório" name="gera_relatorio_produtos_cadastrado" type="object" colspan="4" />                                                        
+                </button>
+            </field>
+        </record>
+
+    </data>
+</openerp>

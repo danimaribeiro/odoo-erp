@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_department_form_integra" model="ir.ui.view">
+            <field name="name">hr.department.form.integra</field>
+            <field name="model">hr.department</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr.view_department_form"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <newline/>
+                    <field name="project_id" colspan="10" />
+                    <newline/>
+                    <field name="estado_id" colspan="10" />
+                    <newline/>
+                    <field name="escala_departamento_ids" colspan="10">
+                        <tree string="Escalas/turnos" editable="top">
+                            <field name="hora_entrada" widget="float_time" />
+                            <field name="hora_saida" widget="float_time" />
+                            <field name="product_id" />
+                        </tree>
+                    </field>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_escala_form" model="ir.ui.view">
+            <field name="name">hr.escala.form</field>
+            <field name="model">hr.escala</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Definição de Escalas e turnos">
+                    <field name="department_id" select="1"/>
+                    <field name="data_referencia"/>
+                    <newline/>
+                    <field name="escala_item_ids" colspan="10" context="{'default_department_id': department_id}">
+                        <tree string="Itens da escala/turno" editable="top">
+                            <field name="department_id" invisible="1"/>
+                            <field name="product_id" invisible="1"/>
+                            <field name="escala_departamento_id" domain="[('department_id', '=', department_id )]" on_change="on_change_escala_departamento_id(escala_departamento_id)"/>
+                            <field name="employee_id"/>
+                            <field name="preco_contratado" />
+                            <field name="data_hora_entrada" readonly="1"/>
+                            <field name="data_hora_saida" readonly="1"/>
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_escala_tree" model="ir.ui.view">
+            <field name="name">hr.escala.tree</field>
+            <field name="model">hr.escala</field>
+            <field name="type">tree</field>
+<!--             <field name="field_parent">child_ids</field> -->
+            <field name="arch" type="xml">
+                <tree string="Definição de Escalas e turnos">
+                    <field name="department_id"/>
+                    <field name="data_referencia"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="open_view_escala" model="ir.actions.act_window">
+            <field name="name">Escalas e turnos</field>
+            <field name="res_model">hr.escala</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+<!--             <field name="context">{"search_default_today":1}</field> -->
+<!--             <field name="search_view_id" ref="view_hr_attendance_filter" /> -->
+        </record>
+
+        <menuitem id="menu_hr_escala" name="Escalas" parent="hr_attendance.menu_hr_attendance" sequence="0" groups="base.group_user,base.group_hr_user,base.group_hr_manager" action="open_view_escala" />
+
+
+        <record id="view_escala_item_calendario_departamento" model="ir.ui.view">
+            <field name="name">hr.view_escala_item_calendario_departamento</field>
+            <field name="model">hr.escala_item</field>
+            <field name="type">calendar</field>
+            <field name="arch" type="xml">
+            <calendar color="department_id" date_start="data_hora_entrada" date_stop="data_hora_saida" day_length="24">
+                    <field name="employee_id" />
+                    <field name="department_id" />
+                </calendar>
+            </field>
+        </record>
+
+        <record id="open_view_escala_calendario_departamento" model="ir.actions.act_window">
+            <field name="name">Calendário de escalas e turnos por departamento</field>
+            <field name="res_model">hr.escala_item</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">calendar,form,tree</field>
+            <field name="view_id" ref="view_escala_item_calendario_departamento"/>
+<!--             <field name="context">{"search_default_today":1}</field> -->
+<!--             <field name="search_view_id" ref="view_hr_attendance_filter" /> -->
+        </record>
+
+
+        <menuitem id="menu_hr_escala_calendario_departamento" name="Calendário de Escalas por departamento" parent="hr_attendance.menu_hr_attendance" sequence="1" groups="base.group_user,base.group_hr_user,base.group_hr_manager" action="open_view_escala_calendario_departamento" />
+
+        <record id="view_escala_item_calendario_funcionario" model="ir.ui.view">
+            <field name="name">hr.view_escala_item_calendario_funcionario</field>
+            <field name="model">hr.escala_item</field>
+            <field name="type">calendar</field>
+            <field name="arch" type="xml">
+            <calendar color="employee_id" date_start="data_hora_entrada" date_stop="data_hora_saida" day_length="24">
+                    <field name="employee_id" />
+                    <field name="department_id" />
+                </calendar>
+            </field>
+        </record>
+
+
+        <record id="open_view_escala_calendario_funcionario" model="ir.actions.act_window">
+            <field name="name">Calendário de escalas e turnos por colaborador</field>
+            <field name="res_model">hr.escala_item</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">calendar,form,tree</field>
+            <field name="view_id" ref="view_escala_item_calendario_funcionario"/>
+<!--             <field name="context">{"search_default_today":1}</field> -->
+<!--             <field name="search_view_id" ref="view_hr_attendance_filter" /> -->
+        </record>
+
+        <menuitem id="menu_hr_escala_calendario_funcionario" name="Calendário de Escalas por colaborador" parent="hr_attendance.menu_hr_attendance" sequence="2" groups="base.group_user,base.group_hr_user,base.group_hr_manager" action="open_view_escala_calendario_funcionario" />
+
+
+     </data>
+</openerp>

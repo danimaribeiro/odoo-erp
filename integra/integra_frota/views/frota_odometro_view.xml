@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="frota_odometro_form">
+            <field name="name">frota.odometro.form</field>
+            <field name="model">frota.odometro</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Registro de odômetro" >
+                    <group col="4" colspan="4">
+                        <field name="state" widget="statusbar" colspan="4" />
+                        <field name="veiculo_id" on_change="search_odometro(veiculo_id, data)" colspan="4" attrs="{'readonly': [('state', '=', 'F')]}" />
+                        <field name="data" on_change="search_odometro(veiculo_id, data)" attrs="{'readonly': [('state', '=', 'F')]}" />
+                        <newline />
+                        <field name="data_fechamento" attrs="{'readonly': [('state', '=', 'F')]}" />
+                        <button name="fecha_odometro" string="Fechar" type="object" states="A" colspan="2" />
+                        <button name="abre_odometro" string="Reabrir" type="object" states="F" groups="integra_frota.group_frota_manager" colspan="2" />
+                        <newline />
+                        <field name="valor_atual" attrs="{'readonly': [('state', '=', 'F')]}" />
+                        <field name="valor_anterior" attrs="{'readonly': [('state', '=', 'F')]}" />
+                        <field name="hr_employee_id" attrs="{'readonly': [('state', '=', 'F')]}" />
+                        <field name="motorista_terceiro" attrs="{'readonly': [('state', '=', 'F')]}" />
+                        <field name="hr_department_id" attrs="{'readonly': [('state', '=', 'F')]}" />
+                        <field name="servico_id" required="1" attrs="{'readonly': [('state', '=', 'F')]}" />
+                        <field name="distancia" readonly="1" attrs="{'readonly': [('state', '=', 'F')]}" />
+                        <newline />
+                        <group col="4" colspan="4">
+                            <separator string="Cliente/instalação" colspan="4" />
+                            <field name="cliente_id" colspan="4" on_change="onchange_cliente_id(company_id, cliente_id, data)" attrs="{'readonly': [('state', '=', 'F')]}" />
+                            <field name="finan_contrato_id" colspan="4" domain="[('company_id', '=', company_id), ('partner_id', '=', cliente_id), ('natureza', '=', 'R')]" attrs="{'readonly': [('state', '=', 'F')]}" />
+                            <separator string="Justificativa" colspan="4" />
+                            <field name="justificativa" nolabel="1" colspan="4" attrs="{'readonly': [('state', '=', 'F')]}" />
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model='ir.ui.view' id='frota_odometro_tree'>
+            <field name="name">frota.odometro.tree</field>
+            <field name="model">frota.odometro</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Registros de odômetro">
+                    <field name="company_id" invisible="1" />
+                    <field name="veiculo_id" />
+                    <field name="data" />
+                    <field name="valor_atual" />
+                    <field name="valor_anterior" />
+                    <field name="distancia" />
+                    <field name="servico_id" />
+                    <field name="hr_employee_id" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="frota_odometro_graph">
+           <field name="name">frota.odometro.graph</field>
+           <field name="model">frota.odometro</field>
+           <field name="type">graph</field>
+           <field name="arch" type="xml">
+                <graph string="Quilometragem por data">
+                    <field name="veiculo_id" group="True" />
+                    <field name="dia" />
+                    <field name="distancia" operator="+"/>
+                </graph>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="frota_odometro_search">
+            <field name="name">frota.odometro.search</field>
+            <field name="model">frota.odometro</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Registros de odômetro">
+                    <filter name="aberto" string="Aberto" icon="terp-go-month" domain="[('state','=','A')]" />
+                    <filter name="fechado" string="Fechado" icon="terp-go-month" domain="[('state','=','F')]" />
+
+                    <field name="veiculo_id" select="1" />
+                    <field name="data" />
+                    <field name="company_id" select="1" />
+                    <field name="servico_id" select="1" />
+                    <field name="hr_employee_id" select="1" />
+
+                    <newline />
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Situação" icon="terp-project" domain="[]" context="{'group_by': 'state'}" />
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Veículo" icon="terp-project" domain="[]" context="{'group_by': 'veiculo_id'}" />
+                        <filter string="Serviço" icon="terp-project" domain="[]" context="{'group_by': 'servico_id'}" />
+                        <filter string="Motorista" icon="terp-project" domain="[]" context="{'group_by': 'hr_employee_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="frota_odometro_acao">
+            <field name="name">Registros de odômetro</field>
+            <field name="res_model">frota.odometro</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('os_id', '=', False)]</field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="frota_odometro_tree" />
+            <field name="search_view_id" ref="frota_odometro_search" />
+        </record>
+
+        <menuitem action="frota_odometro_acao"
+            id="menu_frota_odometro" name="Registros de odômetro" parent="menu_frota_veiculos" />
+
+        <record model="ir.actions.act_window.view" id="frota_odometro_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="frota_odometro_tree"/>
+            <field name="act_window_id" ref="frota_odometro_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="frota_odometro_graph_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="frota_odometro_graph"/>
+            <field name="act_window_id" ref="frota_odometro_acao"/>
+        </record>
+
+    </data>
+</openerp>

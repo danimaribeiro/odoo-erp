@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_relatorio_aniversario_form" >
+            <field name="name">hr.relatorio.aniversario.form</field>
+            <field name="model">hr.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Aniversários">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="4" />                        
+                        <field name="company_id" required="1" colspan="4"/>
+                        <newline/>                        
+                        <field name="mes"  attrs="{'invisible': [('is_sintetico', '=', True)], 'required': [('is_sintetico', '!=', True)]} " />
+                        <field name="ano" attrs="{'invisible': [('is_sintetico', '=', True)], 'required': [('is_sintetico', '!=', True)]}" />
+                        <field name="data_inicial"  attrs="{'invisible': [('is_sintetico', '!=', True)], 'required': [('is_sintetico', '=', True)]}" />
+                        <field name="data_final" attrs="{'invisible': [('is_sintetico', '!=', True)], 'required': [('is_sintetico', '=', True)]}" />
+                        <newline/>
+                        <field name="is_sintetico" string="Por Data"/>                        
+                        <field name="formato" required="1"/>                        
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <field name="nome_csv" invisible="1"/>                     
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_anivirsario" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                        <field name="arquivo_csv" nolabel="1" readonly="1" filename="nome_csv" colspan="4"/>                     
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_relatorio_aniversario_acao">
+            <field name="name">Aniversários</field>
+            <field name="res_model">hr.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_relatorio_aniversario_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_relatorio_aniversario_form"/>
+            <field name="act_window_id" ref="hr_relatorio_aniversario_acao"/>
+        </record>
+
+        <menuitem action="hr_relatorio_aniversario_acao"
+                  id="menu_hr_relatorio_aniversario"
+                  name="Aniversários"
+                  parent="menu_hr_relatorio_contratual"
+                  sequence="12" />
+
+    </data>
+</openerp>

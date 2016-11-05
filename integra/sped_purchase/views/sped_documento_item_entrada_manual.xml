@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_documentoitem_entrada_manual_form">
+            <field name="name">sped.documentoitem.entrada.manual.form</field>
+            <field name="model">sped.documentoitem</field>
+            <field name="inherit_id" ref="sped.sped_documentoitem_entrada_manual_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Custo" position="after">
+                    <page string="Pedido de Compra">
+                        <field name="documentoitem_compra_ids" context="{'default_product_id': produto_id, 'default_partner_id': partner_id, 'default_data_emissao': data_emissao}">
+                            <tree editable="top">
+<!--                                 <field name="order_line_id" on_change="onchange_itempredido(order_line_id,data_emissao, parent.vr_unitario, parent.quantidade_estoque)" domain="[('product_id','=', product_id),('order_id.state','=','approved'), ('partner_id','=', partner_id), ('date_order','&lt;=', data_emissao), ('company_id', '=', parent.company_id)]" /> -->
+                                <field name="order_line_id" on_change="onchange_itempredido(order_line_id,data_emissao, parent.vr_unitario, parent.quantidade_estoque)" domain="[('product_id','=', product_id),('order_id.state','=','approved'), ('order_id.partner_id','=', partner_id), ('date_order','&lt;=', data_emissao), ('order_id.company_id', '=', parent.company_id)]" />
+                                 <field name="preco_pedido" readonly="1" />
+                                 <field name="quantidade_pedido"  sum="total" readonly="1" />
+                                 <field name="saldo_a_atender"  sum="total" readonly="1" />
+                                 <field name="quantidade_item" sum="total" />
+                                 <field name="product_id" invisible="1"/>
+                                 <field name="partner_id" invisible="1"/>
+                                 <field name="data_emissao" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </page>
+            </field>
+        </record>
+    </data>
+</openerp>

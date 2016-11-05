@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_aviso_previo_trabalhado_form" >
+            <field name="name">hr.aviso.previo.trabalhado.form</field>
+            <field name="model">hr.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Aviso prévio trabalhado">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <field name="contract_id" required="1" colspan="4" />
+                        <field name="data_inicial" string="Data do aviso" required="1" colspan="2" />
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_aviso_previo_trabalhado" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_aviso_previo_trabalhado_acao">
+            <field name="name">Aviso prévio trabalhado</field>
+            <field name="res_model">hr.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_aviso_previo_trabalhado_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_aviso_previo_trabalhado_form"/>
+            <field name="act_window_id" ref="hr_aviso_previo_trabalhado_acao"/>
+        </record>
+
+        <menuitem action="hr_aviso_previo_trabalhado_acao"
+                  id="menu_hr_aviso_previo_trabalhado"
+                  name="Aviso prévio trabalhado"
+                  parent="menu_hr_relatorio_mensal"
+                  sequence="13" />
+
+    </data>
+</openerp>

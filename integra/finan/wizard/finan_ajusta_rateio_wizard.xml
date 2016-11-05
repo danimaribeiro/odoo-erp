@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        
+        <record model="ir.ui.view" id="ajusta_rateio_lancamento_form" >
+            <field name="name">ajusta.rateio.lancamento.form</field>
+            <field name="model">finan.ajusta.rateio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Ajusta rateio dos lançamentos">
+                    <group colspan="4">
+                        <button icon="gtk-execute" string="Efetuar o ajuste (reapropriação do rateio)" name="ajusta_rateio_lancamento" type="object" />
+                        <button icon="gtk-cancel" special="cancel" string="Fechar" />
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+        <act_window id="action_efetiva_wizard" multi="True" key2="client_action_multi" name="Ajusta rateio" res_model="finan.ajusta.rateio" src_model="finan.lancamento" view_mode="form" target="new" view_type="form" />
+        
+    </data>
+</openerp>

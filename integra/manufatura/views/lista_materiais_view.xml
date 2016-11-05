@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+       
+        <record id="mrp_bom_form_view" model="ir.ui.view">
+            <field name="name">mrp.bom.form</field>
+            <field name="model">mrp.bom</field>
+            <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <button string="Imprimir Ficha" type="object" colspan="2" name="imprime_lista_materiais" icon="gtk-print"/>
+                    <newline />                 
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_pagar_tree">
+            <field name="name">finan.contrato.pagar.tree</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_pagar_tree"/>
+            <field name="arch" type="xml">
+                <field name="ativo" position="after">
+                    <field name="modelo_partida_dobrada_id" domain="[('tabela', 'in', ['PR', 'PP'])]" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_pagar_form">
+            <field name="name">finan.contrato.pagar.form</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_pagar_form"/>
+            <field name="arch" type="xml">
+                <field name="data_assinatura" position="after">
+                    <field name="modelo_partida_dobrada_id" domain="[('tabela', 'in', ['PR', 'PP'])]" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

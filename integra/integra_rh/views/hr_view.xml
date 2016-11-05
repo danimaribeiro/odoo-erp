@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_hr_relatorio"
+            name="Relatórios"
+            parent="hr.menu_hr_root"
+            sequence="40" />
+        
+        <menuitem id="menu_hr_relatorio_contratual"
+            name="Informações de Contratos"
+            parent="hr.menu_hr_root"
+            sequence="41" />
+        
+        <menuitem id="menu_hr_relatorio_mensal"
+            name="Relatórios Mensais"
+            parent="hr.menu_hr_root"
+            sequence="42"/>
+        
+        <menuitem id="menu_hr_relatorio_anual"
+            name="Relatórios Anuais"
+            parent="hr.menu_hr_root"
+            sequence="43"/>
+                
+        <menuitem id="menu_hr_arquivo"
+            name="Arquivos"
+            parent="hr.menu_hr_root"
+            sequence="44"/>
+
+         <menuitem id="menu_hr_contratos"
+            name="Contratos"
+            parent="hr.menu_hr_root"
+            sequence="3"/>
+
+         <menuitem id="menu_hr_alteracao_contratuais"
+            name="Alterações Contratuais"
+            parent="hr.menu_hr_root"
+            sequence="4"/>
+         
+         <menuitem id="menu_hr_beneficio"
+            name="Benefícios"
+            parent="hr.menu_hr_root"
+            sequence="5"/>
+         
+         <menuitem id="menu_hr_beneficio_relatorio"
+            name="Relatórios"
+            parent="menu_hr_beneficio"
+            sequence="20" />
+                
+         <menuitem id="menu_hr_sindicato"
+            name="Sindicato"
+            parent="hr.menu_hr_configuration"
+            sequence="80" />
+         
+         <menuitem id="menu_hr_tabelas"
+            name="Tabelas legais"
+            parent="hr.menu_hr_configuration"
+            sequence="99"/>
+         
+         <menuitem id="menu_hr_relatorio_config"
+            name="Relatorio Configurações"
+            parent="hr.menu_hr_configuration"
+            sequence="100"/>
+
+         <menuitem id="menu_hr_programacao"
+                   name="Programações"
+                   parent="hr.menu_hr_root"
+                   sequence="35" />
+         
+         <menuitem id="menu_hr_simulacao"
+            name="Simulações"
+            parent="hr.menu_hr_root"
+            sequence="36" />
+
+         <menuitem id="menu_hr_provisao"
+            name="Provisões"
+            parent="hr.menu_hr_root"
+            sequence="37" />
+
+         <menuitem id="menu_hr_provisao_individual"
+            name="Cálculos individuais"
+            parent="menu_hr_provisao"
+            sequence="37" />
+
+    </data>
+</openerp>

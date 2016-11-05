@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_fluxo_caixa_sintetico" >
+            <field name="name">finan.relatorio.fluxo.caixa.sintetico</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Fluxo de Caixa Sintético">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="company_id" invisible="1" />
+                        <field name="company_ids" colspan="4" required="1" />
+                        <newline/>
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />
+                        <field name="opcoes_caixa" required="1"/>
+                        <field name="formato" required="1"/>
+                        <newline/>
+                        <field name="provisionado" colspan="2"/>
+                        <field name="nao_provisionado" string="Não Provisionado"/>
+                        <newline />
+                        <field name="res_partner_bank_ids" colspan="4" />
+                        <newline/>
+                        <field name="saldo_inicial"/>
+<!--                        <newline/>
+                        <field name="saldo_bancario" colspan="2"/>
+                        <field name="zera_saldo" colspan="2"/>
+                        <field name="ativo" string="Ignora contas zeradas" colspan="2"/>
+                        <newline/> -->
+                        <field name="filtrar_rateio" />
+                        <field name="project_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
+                        <newline/>
+                        <field name="nome" invisible="1" />
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_fluxo_caixa_sintetico" type="object" context="{'company_id' : company_id, 'data_inicial': data_inicial, 'data_final': data_final, 'opcoes_caixa': opcoes_caixa,'provisionado': provisionado }" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_relatorio_fluxo_caixa_sintetico_acao">
+            <field name="name">Fluxo de Caixa Sintético</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_relatorio_fluxo_caixa_sintetico_form_acao">
+            <field eval="8" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_relatorio_fluxo_caixa_sintetico"/>
+            <field name="act_window_id" ref="finan_relatorio_fluxo_caixa_sintetico_acao"/>
+        </record>
+
+        <menuitem action="finan_relatorio_fluxo_caixa_sintetico_acao"
+                  id="menu_finan_relatorio_fluxo_caixa_sintetico" name="Fluxo de Caixa Sintético" parent="menu_rel_fluxo_caixa" sequence="2"  />
+
+    </data>
+</openerp>

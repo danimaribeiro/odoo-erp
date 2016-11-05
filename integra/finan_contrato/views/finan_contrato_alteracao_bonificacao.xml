@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_bonificacao_tree">
+            <field name="name">finan.contrato.alteracao.bonificacao.tree</field>
+            <field name="model">finan.contrato.alteracao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="red:aprovado != True and aprovado_area != True;green:aprovado != True and aprovado_area == True;magenta:aprovado == True and aprovado_area != True">
+                    <field name="aprovado" invisible="1"/>
+                    <field name="aprovado_area" invisible="1"/>
+                    <field name="tipo" invisible="1"/>
+                    <field name="company_id" />
+                    <field name="contrato_id" />
+                    <field name="quantidade_bonificada" />
+                    <field name="valor_bonificado" />
+                    <field name="solicitante_id" />
+                    <field name="data_solicitacao" />
+                    <field name="aprovador_id" string="Aprovado fin." />
+                    <field name="data_aprovacao" string="Aprovação fin." />
+                    <field name="aprovador_area_id" string="Aprovado dir." />
+                    <field name="data_aprovacao_area" string="Aprovação dir." />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_bonificacao_form">
+            <field name="name">finan.contrato.alteracao.bonificacao.form</field>
+            <field name="model">finan.contrato.alteracao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Bonificação de mensalidades">
+                    <field name="tipo" invisible="1" />
+                    <field name="aprovado" invisible="1" />
+                    <field name="aprovado_area" invisible="1" />
+                    <separator string="Contrato e alteração" colspan="4" />
+                    <field name="contrato_id" colspan="4" required="1" on_change="onchange_contrato_id(contrato_id, tipo)" domain="[('natureza', '=', 'R'), ('data_distrato', '=', False)]" attrs="{'readonly': ['|', ('aprovado','!=',False), ('aprovado_area', '!=', False)]}" />
+                    <field name="company_id" colspan="4" readonly="1" attrs="{'readonly': ['|', ('aprovado','!=',False), ('aprovado_area', '!=', False)]}" />
+                    <separator string="Mensalidades a bonificar" colspan="4" />
+                    <field name="lancamento_bonificado_ids" colspan="4" nolabel="1" domain="[('contrato_id', '=', contrato_id), ('provisionado', '=', True)]" attrs="{'readonly': ['|', ('aprovado','!=',False), ('aprovado_area', '!=', False)]}">
+                        <tree>
+                            <field name="provisionado" />
+                            <field name="documento_id" />
+                            <field name="numero_documento_original" />
+                            <field name="data_vencimento_original" />
+                            <field name="valor_original_contrato" sum="Valor original" />
+                            <field name="situacao" />
+                            <field name="data_quitacao" />
+                            <field name="data_baixa" />
+                            <field name="motivo_baixa_id" />
+                            <field name="valor" sum="Valor" />
+                            <field name="nf_numero" />
+                            <field name="nf_data" />
+                        </tree>
+                    </field>
+                    <separator string="Motivo para a bonificação" colspan="4" />
+                    <field name="motivo_baixa_id" nolabel="1" colspan="4" required="1" attrs="{'readonly': ['|', ('aprovado','!=',False), ('aprovado_area', '!=', False)]}" />
+                    <separator string="Justificativa" colspan="4" />
+                    <field name="obs" nolabel="1" colspan="4" required="1" attrs="{'readonly': ['|', ('aprovado','!=',False), ('aprovado_area', '!=', False)]}" />
+                    <newline />
+                    <separator string="Solicitante" colspan="4" />
+                    <field name="solicitante_id" colspan="4" readonly="1" />
+                    <field name="data_solicitacao" readonly="1" />
+                    <group colspan="4" col="4">
+                        <separator string="Aprovador - Diretor da Área" colspan="4" />
+                        <field name="aprovador_area_id" colspan="4" readonly="1" />
+                        <field name="data_aprovacao_area" readonly="1" />
+                        <button name="aprovar_area" colspan="4" type="object" string="Aprovar" groups="finan_contrato.group_finan_contrato_direcao" attrs="{'invisible': [('aprovado_area', '!=', False)]}" />
+                    </group>
+                    <group colspan="4" col="4">
+                        <separator string="Aprovador" colspan="4" />
+                        <field name="aprovador_id" colspan="4" readonly="1" />
+                        <field name="data_aprovacao" readonly="1" />
+                        <button name="aprovar" colspan="4" type="object" string="Aprovar" groups="finan_contrato.group_finan_contract_manager" attrs="{'invisible': ['|', ('aprovado', '!=', False), ('aprovado_area', '!=', True)]}" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_bonificacao_search">
+            <field name="name">finan.contrato.alteracao.bonificacao.search</field>
+            <field name="model">finan.contrato.alteracao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Bonificação de mensalidades">
+                    <filter name="aprovado_fin" string="Aprovado fin." icon="terp-go-month" domain="[('aprovado', '=', True)]" />
+                    <filter name="pendente_fin" string="Pendente fin." icon="terp-go-month" domain="[('aprovado', '!=', True), ('aprovado_area', '=', True)]" />
+                    <filter name="aprovado_dir" string="Aprovado dir." icon="terp-go-month" domain="[('aprovado_area', '=', True)]" />
+                    <filter name="pendente_dir" string="Pendente dir." icon="terp-go-month" domain="[('aprovado_area', '!=', True)]" />
+                    <separator orientation="vertical" />
+                    <field name="company_id" />
+                    <field name="contrato_id" />
+                    <newline/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_contrato_alteracao_bonificacao_acao">
+            <field name="name">Bonificação de mensalidades</field>
+            <field name="res_model">finan.contrato.alteracao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_contrato_alteracao_bonificacao_tree" />
+            <field name="domain">[('tipo', '=', 'B')]</field>
+            <field name="context">{'tipo': 'B', 'default_tipo': 'B', 'search_default_pendente_fin': True, 'search_default_pendente_dir': True}</field>
+            <field name="search_view_id" ref="finan_contrato_alteracao_bonificacao_search" />
+        </record>
+
+        <menuitem action="finan_contrato_alteracao_bonificacao_acao"
+                  id="menu_finan_contrato_alteracao_bonificacao"
+                  name="Bonificação de mensalidades"
+                  parent="menu_finan_contratos_manutencao" />
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_alteracao_bonificacao_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_contrato_alteracao_bonificacao_form"/>
+            <field name="act_window_id" ref="finan_contrato_alteracao_bonificacao_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_alteracao_bonificacao_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_contrato_alteracao_bonificacao_tree"/>
+            <field name="act_window_id" ref="finan_contrato_alteracao_bonificacao_acao"/>
+        </record>
+
+    </data>
+</openerp>

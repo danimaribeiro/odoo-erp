@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view"  id="hr_turno_form">
+            <field name="name">hr.turno.form</field>
+            <field name="model">hr.turno</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Turno Contratual">
+                    <group col="4" colspan="4" >                        
+                        <separator string="Informações básicas" colspan="4"/>                            
+                        <field name="partner_id" required="1" colspan="4"/>
+                        <field name="department_id" required="1" colspan="4"/>
+                        <field name="jornada_id" required="1" colspan="4"/>                                                           
+                        <field name="finan_contrato_id" colspan="4" required="1" domain="[('partner_id', '=', partner_id)]" />
+                        <field name="cobranca_extra" />                                                           
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_turno_tree">
+            <field name="name">hr.turno.tree</field>
+            <field name="model">hr.turno</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Turno Contratual">
+                    <field name="partner_id" />
+                    <field name="department_id" />
+                    <field name="jornada_id" />                                                           
+                    <field name="finan_contrato_id" />
+                    <field name="cobranca_extra" />                                                           
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_turno_acao">
+            <field name="name">Turno Contratual</field>
+            <field name="res_model">hr.turno</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="hr_turno_tree" />
+        </record>
+
+        <menuitem action="hr_turno_acao"
+            id="menu_turno"
+            name="Turno Contratual"
+            parent="menu_hr_escala_controle" 
+            sequence="2" />
+
+    </data>
+</openerp>
+

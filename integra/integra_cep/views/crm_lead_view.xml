@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+        <!-- CRM Lead Form View  -->
+        <record model="ir.ui.view" id="integra_crm_form_view_leads_cep">
+            <field name="name">CRM - Leads Form</field>
+            <field name="model">crm.lead</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_crm.integra_crm_form_view_leads"/>
+            <field name="arch" type="xml">
+                <field name="cep" position="replace">
+                    <newline />
+                    <field name="cep" />
+                    <button name="consulta_cep" string="Consultar CEP" type="object" />
+                </field>
+            </field>
+        </record>
+
+        <!-- Opportunities Form View -->
+        <record model="ir.ui.view" id="integra_crm_form_view_opportunities_cep">
+            <field name="name">Opportunities</field>
+            <field name="model">crm.lead</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_crm.integra_crm_form_view_opportunities"/>
+            <field name="arch" type="xml">
+                <field name="cep" position="replace">
+                    <newline />
+                    <field name="cep" />
+                    <button name="consulta_cep" string="Consultar CEP" type="object" />
+                </field>
+            </field>
+        </record>
+
+</data>
+</openerp>

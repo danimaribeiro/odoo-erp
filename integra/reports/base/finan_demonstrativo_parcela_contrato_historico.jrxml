@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finan_demonstrativo_parcela_contrato_atual" language="groovy" pageWidth="802" pageHeight="842" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="57936870-feaf-424b-9859-211db0d42f26">
+	<property name="ireport.zoom" value="1.3310000000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="CONTRATO_ID" class="java.lang.Integer"/>
+	<parameter name="CONDICAO_ID" class="java.lang.Integer"/>
+	<parameter name="DATA_VENCIMENTO" class="java.util.Date"/>
+	<parameter name="PARCELA_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+    p.parcela,
+    p.data_vencimento,
+    coalesce(p.valor_capital, 0) as valor_capital,
+    coalesce(p.porcentagem_juros, 0) as porcentagem_juros,
+    coalesce(p.valor_juros_carteira, 0) as valor_juros_carteira,
+    coalesce(p.indice, 0) as indice,
+    coalesce(p.correcao, 0) as correcao,
+    coalesce(p.valor, 0) as valor_atual,
+    coalesce(p.porcentagem_multa, 0) as porcentagem_multa,
+    coalesce(p.valor_multa_carteira, 0) as valor_multa_carteira,
+    coalesce(p.atraso, 0) as atraso,
+    coalesce(p.valor_original, 0) as valor_original,
+    coalesce(p.valor_juros_sacoc, 0) as valor_juros_sacoc,
+    coalesce(p.valor_seguro, 0) as valor_seguro
+
+from
+    finan_contrato_condicao_parcela_atualizacao p
+
+where
+    p.parcela_id = $P{PARCELA_ID}
+
+order by
+    p.data_vencimento]]>
+	</queryString>
+	<field name="parcela" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Parcela]]></fieldDescription>
+	</field>
+	<field name="data_vencimento" class="java.sql.Date">
+		<fieldDescription><![CDATA[Vencimento novo]]></fieldDescription>
+	</field>
+	<field name="valor_capital" class="java.lang.Double">
+		<fieldDescription><![CDATA[Capital]]></fieldDescription>
+	</field>
+	<field name="porcentagem_juros" class="java.math.BigDecimal"/>
+	<field name="valor_juros_carteira" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Juros da carteira]]></fieldDescription>
+	</field>
+	<field name="indice" class="java.lang.Double">
+		<fieldDescription><![CDATA[Índice]]></fieldDescription>
+	</field>
+	<field name="correcao" class="java.lang.Double">
+		<fieldDescription><![CDATA[Correção]]></fieldDescription>
+	</field>
+	<field name="valor_atual" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor atual]]></fieldDescription>
+	</field>
+	<field name="porcentagem_multa" class="java.math.BigDecimal"/>
+	<field name="valor_multa_carteira" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Multa da carteira]]></fieldDescription>
+	</field>
+	<field name="atraso" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Atraso em dias]]></fieldDescription>
+	</field>
+	<field name="valor_original" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor original]]></fieldDescription>
+	</field>
+	<field name="valor_juros_sacoc" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Juros SACOC]]></fieldDescription>
+	</field>
+	<field name="valor_seguro" class="java.lang.Double">
+		<fieldDescription><![CDATA[Seguro]]></fieldDescription>
+	</field>
+	<variable name="valor_multa_carteira_1" class="java.math.BigDecimal" calculation="Highest">
+		<variableExpression><![CDATA[$F{valor_multa_carteira}]]></variableExpression>
+	</variable>
+	<variable name="valor_juros_carteira_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_juros_carteira}]]></variableExpression>
+	</variable>
+	<variable name="valor_juros_sacoc_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_juros_sacoc}]]></variableExpression>
+	</variable>
+	<variable name="correcao_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{correcao}]]></variableExpression>
+	</variable>
+	<variable name="valor_seguro_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_seguro}]]></variableExpression>
+	</variable>
+	<variable name="valor_original_1" class="java.lang.Double" calculation="First">
+		<variableExpression><![CDATA[$F{valor_original}]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="14">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="0" width="60" height="12" uuid="48517bdf-f4c1-49dc-8ec8-0256cd082b06"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Data"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="330" y="0" width="50" height="12" uuid="46118a91-6f36-425d-b8f3-51d7121dadb7"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["% juros"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="650" y="0" width="100" height="12" uuid="d225f9aa-8905-4cbb-92eb-31e7d60810b8"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Valor atualizado"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="555" y="0" width="50" height="12" uuid="efb5162e-3452-483d-92dd-494d9c0dc4c8"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Correção"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="380" y="0" width="50" height="12" uuid="b7062d2a-2821-4df6-932c-e9edadbb1099"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Juros"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="60" y="0" width="60" height="12" uuid="b63c8d2d-1b6f-485d-a81d-7dc65b88b1b6"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Capital"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="495" y="0" width="60" height="12" uuid="3dfb14aa-96db-40da-8b71-18e4891bb47c"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["% correção"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="120" y="0" width="60" height="12" uuid="c19a3d92-a5d4-4f82-95a6-ca219d40a7f5"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Vr. anterior"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="230" y="0" width="50" height="12" uuid="f261b4ad-a6fe-470b-9c45-cc7b397de0c9"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Multa"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="180" y="0" width="50" height="12" uuid="0837092e-978e-4dc8-b82a-fc46ace211a5"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["% multa"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="430" y="0" width="65" height="12" uuid="f52a75bc-5682-4b5e-be09-a082f7ef4b25"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Juros SACOC"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="280" y="0" width="50" height="12" uuid="ca245b58-b570-48b8-bccb-850b0f26fdfd"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Atraso"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="605" y="0" width="45" height="12" uuid="ce827e85-7491-4d44-9e1e-daa5c3e03d19"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Seguro"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="0" width="60" height="12" uuid="7806f2f6-c232-4daf-ae2a-cba5ef839e68"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_vencimento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="330" y="0" width="50" height="12" uuid="324402f2-1b62-44a5-988e-30c18a560014"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{porcentagem_juros}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="555" y="0" width="50" height="12" uuid="b408011c-c795-4204-93f5-302616270645"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{correcao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="495" y="0" width="60" height="12" uuid="ca45758e-1484-48e2-b7aa-e6908f1cde03"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{indice}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="60" y="0" width="60" height="12" uuid="2fcaa36a-b69c-4c2c-89a0-3f4193eaac1e"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_capital}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="380" y="0" width="50" height="12" uuid="63f3c7c9-c072-4c0d-a588-26d8774edd1b"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_juros_carteira}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="650" y="0" width="100" height="12" uuid="596edfeb-000c-4cf4-8b87-119eb12dd170"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_atual}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="180" y="0" width="50" height="12" uuid="72deb7b5-b60d-4744-8377-1628b1d020ac"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{porcentagem_multa}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="230" y="0" width="50" height="12" uuid="45a9bb71-2368-4e7f-a13f-a868575c0558"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_multa_carteira}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="120" y="0" width="60" height="12" uuid="c95616cd-178b-4310-8fbd-5fdbecbb4334"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_original}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="430" y="0" width="65" height="12" uuid="773891bf-d50e-440a-9e2b-1777a80aa54e"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_juros_sacoc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="280" y="0" width="50" height="12" uuid="4c758caa-a774-4b63-a15b-1f3279eb2185"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{atraso}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="605" y="0" width="45" height="12" uuid="62c8e62a-d104-4891-a20d-08419090631c"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_seguro}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="12">
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="230" y="0" width="50" height="12" uuid="06d10700-9a8b-4f3e-8e3f-fffa6ce0b7ed"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_multa_carteira_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="380" y="0" width="50" height="12" uuid="ff8e8683-15bd-4552-91de-cf6a55be1af7"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_juros_carteira_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="430" y="0" width="65" height="12" uuid="da7ea728-0407-4e08-9119-41fb573fa208"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_juros_sacoc_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="555" y="0" width="50" height="12" uuid="37c40f86-3a24-4846-96d6-944c68cac947"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{correcao_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="605" y="0" width="45" height="12" uuid="921f4ff7-9b17-4e98-b0a8-43e3f28530aa"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_seguro_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="120" y="0" width="60" height="12" uuid="2787b29b-e6cf-41e5-81af-54d8bd9ca277"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_original_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="650" y="0" width="100" height="12" uuid="44d80cc2-31c0-4746-b296-c11b24bce31a"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_original_1} + $V{valor_multa_carteira_1}
++ $V{valor_juros_carteira_1} + $V{valor_juros_sacoc_1}
++ $V{correcao_1} + $V{valor_seguro_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>

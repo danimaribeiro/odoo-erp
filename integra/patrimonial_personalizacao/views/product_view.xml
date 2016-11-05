@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="product_form">
+            <field name="name">product.form</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="type">form</field>
+            <field eval="17" name="priority"/>
+            <field name="arch" type="xml">
+                <field name="variants" position="before">
+                    <field name="nome_generico" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_tree">
+            <field name="name">product.tree</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_product_tree_view"/>
+            <field name="type">tree</field>
+            <field eval="17" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Products" position="replace">
+                    <tree colors="darkcyan:state in ('draft', 'end', 'obsolete');black:virtual_available&gt;=0 and state not in ('draft', 'end', 'obsolete')" string="Products">
+                        <field name="default_code"/>
+                        <field name="name"/>
+                        <field name="categ_id" invisible="1"/>
+                        <field name="variants" groups="product.group_product_variant"/>
+                        <field name="uom_id" string="UoM"/>
+                        <field name="type"/>
+                        <field name="qty_available" invisible="1"/>
+                        <field name="virtual_available" invisible="1"/>
+                        <field name="lst_price" invisible="1"/>
+                        <field name="price" invisible="1" />
+                        <field name="standard_price" groups="base.group_extended" invisible="0"/>
+                        <field name="state" groups="base.group_extended"/>
+                        <field name="company_id" groups="base.group_multi_company" invisible="1"/>
+                    </tree>
+                </tree>
+                <!--<field name="qty_available" position="replace"/>
+                <field name="virtual_available" position="replace"/>-->
+                <field name="qty_available" position="replace">
+                    <field name="qty_available" string="Quantidade na mão venda" />
+                    <field name="qty_locacao" />
+                </field>
+                <field name="virtual_available" position="replace">
+                    <field name="virtual_available" string="Quantidade disponível venda" />
+                    <field name="quantidade_disponivel_locacao" />
+                </field>
+
+                <!--<field name="lst_price" position="replace">
+                    <field name="lst_price" invisible="0" />
+                </field>-->
+                <field name="price" position="replace">
+                    <!--<field name="price" invisible="0" />-->
+                </field>
+                <field name="standard_price" position="replace">
+                    <!--<field name="standard_price" invisible="0" />-->
+                </field>
+
+            </field>
+        </record>
+
+        <record id="product_product_tree_view" model="ir.ui.view">
+            <field name="name">product.product.tree</field>
+            <field name="model">product.product</field>
+            <field name="type">tree</field>
+            <field eval="7" name="priority"/>
+            <field name="arch" type="xml">
+                <tree colors="red:virtual_available&lt;0;blue:virtual_available&gt;=0 and state in ('draft', 'end', 'obsolete');black:virtual_available&gt;=0 and state not in ('draft', 'end', 'obsolete')" string="Products">
+                    <field name="default_code"/>
+                    <field name="name"/>
+                    <field name="categ_id" invisible="1"/>
+                    <field name="variants" groups="product.group_product_variant"/>
+                    <field name="uom_id" string="UoM"/>
+                    <field name="type"/>
+                    <field name="qty_available"/>
+                    <field name="virtual_available"/>
+                    <field name="lst_price"/>
+                    <field name="price" invisible="not context.get('pricelist',False)"/>
+                    <field name="standard_price" groups="base.group_extended"/>
+                    <field name="state" groups="base.group_extended"/>
+                    <field name="company_id" groups="base.group_multi_company" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+
+ <!--       <record model="ir.ui.view" id="sped_sale_product_tree">
+            <field name="name">sped.sale.product.tree</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="sped_sale.product_product_tree"/>
+            <field name="type">tree</field>
+            <field eval="17" name="priority"/>
+            <field name="arch" type="xml">
+                <field name="standard_price" position="replace">
+                    <field name="standard_price" invisible="0" />
+                </field>
+            </field>
+        </record>-->
+
+        <record model="ir.ui.view" id="orcamento_product_form">
+            <field name="name">orcamento.product.form</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="orcamento.orcamento_product_form"/>
+            <field name="type">form</field>
+            <field eval="17" name="priority"/>
+            <field name="arch" type="xml">
+                <field name="autoinsert" position="after">
+                    <group colspan="4">
+                        <separator string="Acessórios" colspan="4" />
+                        <field name="percentual_acessorios" />
+                        <newline />
+                        <field name="valor_acessorios_id" />
+                        <field name="quantidade_referencia_acessorios" />
+                    </group>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

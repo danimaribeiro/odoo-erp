@@ -1,0 +1,959 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report8" language="groovy" pageWidth="595" pageHeight="840" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05a7678d-6397-4816-97ba-742668ea4f5f">
+	<property name="ireport.zoom" value="1.3636363636363729"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="649"/>
+	<property name="ireport.callouts" value="##Thu Feb 20 16:53:50 BRT 2014"/>
+	<property name="ireport.background.image.properties" value="true,true,0.25,-8,-8,0,0,1296,1292"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="dataset1" uuid="52e75bee-e59d-49bd-b575-87869ab237f0"/>
+	<parameter name="REGISTRO_IDS" class="java.lang.String"/>
+	<parameter name="USER_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+--Empresa
+
+up.razao_social as razao_social,
+u.cnpj_cpf,
+
+--Empregado
+c.name as matricula,
+e.nome as nome,
+a.endereco,
+a.numero,
+a.complemento,
+a.bairro,
+m.nome as cidade,
+me.uf as estado,
+a.cep,
+a.phone as fone,
+a.mobile as celular,
+a.email as email,
+e.cpf,
+e.nis,
+e.data_nascimento,
+mn.nome as municipio_nascimento,
+en.uf as estado_nascimento,
+e.nome_mae,
+e.nome_pai,
+e.carteira_trabalho_numero,
+e.carteira_trabalho_serie,
+e.carteira_trabalho_estado,
+e.rg_numero,
+e.rg_orgao_emissor,
+e.rg_data_expedicao,
+
+
+--Contrato
+
+c.date_start as data_admissao,
+case
+when c.tipo_contrato = '1'
+    then 'Prazo indeterminado'
+    else 'Prazo determinado'
+end
+as tipo_contrato,
+hrs.name as causa_afastamento,
+pl.data_afastamento as data_afastamento,
+pl.data_aviso_previo as data_aviso,
+
+(select hl.total
+from hr_payslip_line hl
+where
+hl.slip_id = pl.id
+and hl.code = 'LIQ'
+) as liquido_rescisao,
+
+(select hl.total
+from hr_payslip_line hl
+where
+hl.slip_id = pl.id
+and upper(hl.code) = 'PENSAO_ALIMENTICIA'
+) as pensao_alimenticia,
+
+htc.descricao as categoria_trabalhador,
+s.name as sindicato,
+s.cnpj_cpf as sindicato_cnpj,
+s.codigo_sindical as codigo_sindical,
+hrs.codigo_afastamento_cef,
+rs.name
+
+from hr_employee e
+join hr_contract c on c.employee_id = e.id
+join hr_payslip pl on pl.contract_id = c.id
+join hr_job j on j.id = c.job_id
+left join hr_cbo cbo on cbo.id = j.cbo_id
+join res_company u on u.id = c.company_id
+join res_partner up on up.id = u.partner_id
+left join res_partner_address a on a.id = e.address_home_id
+left join sped_municipio m on m.id = a.municipio_id
+left join sped_estado me on me.id = m.estado_id
+left join sped_municipio mn on mn.id = e.municipio_nascimento_id
+left join sped_estado en on en.id = mn.estado_id
+left join res_partner s on s.id = c.sindicato_id
+left join hr_payroll_structure hrs on hrs.id = pl.struct_id
+join hr_categoria_trabalhador as htc on htc.codigo = c.categoria_trabalhador
+join res_users rs on rs.id = $P{USER_ID}
+
+where
+pl.tipo = 'R' and pl.id = $P!{REGISTRO_IDS}
+
+order by
+up.razao_social,
+e.nome]]>
+	</queryString>
+	<field name="razao_social" class="java.lang.String"/>
+	<field name="cnpj_cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[CNPJ/CPF]]></fieldDescription>
+	</field>
+	<field name="matricula" class="java.lang.String"/>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[Descrição]]></fieldDescription>
+	</field>
+	<field name="endereco" class="java.lang.String">
+		<fieldDescription><![CDATA[Endereço]]></fieldDescription>
+	</field>
+	<field name="numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Número]]></fieldDescription>
+	</field>
+	<field name="complemento" class="java.lang.String">
+		<fieldDescription><![CDATA[Complemento]]></fieldDescription>
+	</field>
+	<field name="bairro" class="java.lang.String">
+		<fieldDescription><![CDATA[Bairro]]></fieldDescription>
+	</field>
+	<field name="cidade" class="java.lang.String">
+		<fieldDescription><![CDATA[Município]]></fieldDescription>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<fieldDescription><![CDATA[Estado]]></fieldDescription>
+	</field>
+	<field name="cep" class="java.lang.String">
+		<fieldDescription><![CDATA[CEP]]></fieldDescription>
+	</field>
+	<field name="fone" class="java.lang.String">
+		<fieldDescription><![CDATA[Fone]]></fieldDescription>
+	</field>
+	<field name="celular" class="java.lang.String">
+		<fieldDescription><![CDATA[Celular]]></fieldDescription>
+	</field>
+	<field name="email" class="java.lang.String">
+		<fieldDescription><![CDATA[Email]]></fieldDescription>
+	</field>
+	<field name="cpf" class="java.lang.String"/>
+	<field name="nis" class="java.lang.String">
+		<fieldDescription><![CDATA[NIS (PIS, PASEP, NIT)]]></fieldDescription>
+	</field>
+	<field name="data_nascimento" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de nascimento]]></fieldDescription>
+	</field>
+	<field name="municipio_nascimento" class="java.lang.String"/>
+	<field name="estado_nascimento" class="java.lang.String"/>
+	<field name="nome_mae" class="java.lang.String">
+		<fieldDescription><![CDATA[Nome da mãe]]></fieldDescription>
+	</field>
+	<field name="nome_pai" class="java.lang.String">
+		<fieldDescription><![CDATA[Nome do pai]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Nº da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_serie" class="java.lang.String">
+		<fieldDescription><![CDATA[Série da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_estado" class="java.lang.String">
+		<fieldDescription><![CDATA[Estado da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="rg_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[RG]]></fieldDescription>
+	</field>
+	<field name="rg_orgao_emissor" class="java.lang.String">
+		<fieldDescription><![CDATA[Órgão emisssor do RG]]></fieldDescription>
+	</field>
+	<field name="rg_data_expedicao" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de expedição do RG]]></fieldDescription>
+	</field>
+	<field name="data_admissao" class="java.sql.Date"/>
+	<field name="tipo_contrato" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo do contrato]]></fieldDescription>
+	</field>
+	<field name="causa_afastamento" class="java.lang.String"/>
+	<field name="data_afastamento" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data afastamento]]></fieldDescription>
+	</field>
+	<field name="data_aviso" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data do aviso]]></fieldDescription>
+	</field>
+	<field name="liquido_rescisao" class="java.math.BigDecimal"/>
+	<field name="pensao_alimenticia" class="java.math.BigDecimal"/>
+	<field name="categoria_trabalhador" class="java.lang.String">
+		<fieldDescription><![CDATA[Categoria do trabalhador]]></fieldDescription>
+	</field>
+	<field name="sindicato" class="java.lang.String"/>
+	<field name="sindicato_cnpj" class="java.lang.String"/>
+	<field name="codigo_sindical" class="java.lang.String">
+		<fieldDescription><![CDATA[Código sindical]]></fieldDescription>
+	</field>
+	<field name="codigo_afastamento_cef" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<variable name="carteira_numero" class="java.lang.String">
+		<variableExpression><![CDATA[$F{carteira_trabalho_numero}+("/")]]></variableExpression>
+	</variable>
+	<group name="categoria" isResetPageNumber="true">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<detail>
+		<band height="653" splitType="Stretch">
+			<staticText>
+				<reportElement x="116" y="172" width="125" height="12" uuid="5e6bfab6-2b0b-4cfb-9ec9-22a587053c96"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[25. Data do Aviso Prévio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="241" y="172" width="95" height="12" uuid="cba8abca-e457-44f1-af83-8b07de47e23e"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[26.Data do Afastamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="433" y="172" width="122" height="12" uuid="a5a7f6e1-2210-425c-a4b7-1dd4dd1e12f6"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[29. Pensão Alimentícia(%) (FGTS)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="181" y="220" width="374" height="12" uuid="7da432d2-e739-4536-b609-0ec2bf7c8105"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[32. CNPJ e Nome da Entidade Sindical Laboral]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="259" width="555" height="14" uuid="c120258a-2f90-49e3-97cb-cd2efeb6553f"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[Foi prestada, gratuitamente, assistência na rescisão do contrato de trabalho, nos termos do artigo nº 477; da Consolidadação das Leis do Trabalho (CLT)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="478" width="212" height="12" uuid="4985e1dc-4a75-404e-95c7-515692374852"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[150. Assinatura do Empregador/Preposto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="25" width="555" height="16" backcolor="#CCCCCC" uuid="db1ef0a3-1696-489e-84c4-64578fc6f90a"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EMPREGADOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="181" y="108" width="85" height="12" uuid="11fcf325-cf11-41fe-88a1-b20ddaa38d60"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[18. CPF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="266" y="108" width="114" height="12" uuid="013f60e7-6059-4b32-9f10-1bfc565e5b26"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[19. Data de Nasc.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="108" width="175" height="12" uuid="22a2fdd5-b847-4644-a5a5-d34e62dadeec"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[20. Nome da mãe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="181" y="81" width="374" height="12" uuid="fa907e23-2e27-4481-a222-de71400daf31"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[11. Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="21" forecolor="#000000" backcolor="#CCCCCC" uuid="718f69e0-2fba-4200-af44-f2f346055933"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[TERMO DE HOMOLOGAÇÃO DE RESCISÃO DE CONTRATO DE TRABALHO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="65" width="555" height="16" backcolor="#CCCCCC" uuid="dfe9b3c9-5e5e-4484-a7d6-d7e54a2bb1ea"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TRABALHADOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="81" width="181" height="12" uuid="c2b90736-cd5b-4b0c-ad1e-19eb285c40dd"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[PIS/PASEP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="108" width="181" height="12" uuid="6e1b3c07-11bd-442a-a6b6-54260ee29e54"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[17. Carteira de Trab. nº,série,UF)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="172" width="116" height="12" uuid="af97c263-192d-40bd-949f-15604182efb5"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[24. Data de Admissão]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="196" width="555" height="12" uuid="e285b7b4-1848-4f61-bde3-114e5c7c0c01"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[30. Categoria do Trabalhador]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="220" width="181" height="12" uuid="42e25b86-e857-4d8b-be6e-36747489866c"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[31. Código Sindical]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="132" width="555" height="16" backcolor="#CCCCCC" uuid="a0617825-3823-48cb-b42e-aa3be7240780"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONTRATO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="148" width="555" height="12" uuid="1891d7b7-a36b-499c-b579-a0295216ec2e"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[22. Causa do afastamento]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="53" width="181" height="12" uuid="a479bf94-c656-43a5-a30c-97e28b6f817e"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cnpj_cpf}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="181" y="53" width="374" height="12" uuid="5416db24-6f23-47e8-9cea-d03497e16fc0"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{razao_social}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="93" width="181" height="15" uuid="ab96442e-5224-4f6c-b0c3-1854f3039e64"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nis}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="181" y="93" width="374" height="15" uuid="9c976169-ca03-4a76-8e6a-583e5ad0a51b"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="120" width="70" height="12" uuid="53dc7e79-c203-497f-bac4-c979099e707f"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{carteira_numero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="70" y="120" width="45" height="12" uuid="d3d523b2-13c6-459d-9682-9195dd4a382e"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_trabalho_serie}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="115" y="120" width="66" height="12" uuid="79fa89ca-bdbe-4bb1-ba41-7f596f815b8f"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_trabalho_estado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="181" y="120" width="85" height="12" uuid="9f24cb7c-b7be-4059-8d0e-7f8a5d908935"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cpf}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="266" y="120" width="114" height="12" uuid="167337fc-38c9-4315-a4a7-85a0fe48bc13"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_nascimento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="120" width="175" height="12" uuid="24fdeb9b-67cd-4a51-adb2-61c37b4eee6f"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome_mae}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="184" width="116" height="12" uuid="6e10bcf1-ad47-40bc-9b29-b46ac868c942"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_admissao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="281" y="232" width="274" height="12" uuid="340c640d-4aee-4cc2-abb1-5eff0eab9add"/>
+				<box leftPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sindicato}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="181" y="232" width="100" height="12" uuid="80fc4fe1-2f4a-4a2a-b7da-ca77a2f9e086"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sindicato_cnpj}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="41" width="181" height="12" uuid="0618397d-87a6-41a5-adc5-5a3507502d26"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[01 CNPJ / CEI ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="181" y="41" width="374" height="12" uuid="51d6b5b5-6e9b-4916-91cb-b5d9a004aa36"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[02 RAZAO SOCIAL/NOME]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="208" width="555" height="12" uuid="e5c47250-79ce-4e4e-b34d-76c410cf22ed"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{categoria_trabalhador}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="459" y="273" width="96" height="12" uuid="baef3678-272e-4ff2-9a8e-189812cca8f0"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{liquido_rescisao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="539" width="212" height="12" uuid="8b07b524-de5f-452e-b022-d33dd16c2d92"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[151. Assinatura do Trabalhador]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="602" width="212" height="12" uuid="530f0dd2-5510-4630-9f81-47711298a4ed"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[153. Carimbo e Assinatura do Assistente ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="281" y="539" width="274" height="12" uuid="2c269615-fa0c-4237-87cd-c818da205947"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[152. Assinatura do Responsável Legal do Trabalhador]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="281" y="602" width="274" height="12" uuid="90371cb8-ecaa-44fd-a341-6865aa612c38"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[154. Nome e Orgão Homologador ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="297" width="555" height="32" uuid="c26d2d8e-1623-49eb-9621-52c990d98455"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[As partes assistidas no presente ato de rescisão contratual foram identificadas como legítimas conforme previsto na Instrução Normativaa/SRT n°15/2010.
+Fica ressalvado o direito de o trabalhador pleitar judicialmente os direitos informados no campo 155, abaixo.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="232" width="181" height="12" uuid="b6144d06-5132-4a22-8ab9-0fded12d3da2"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_sindical}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="116" y="184" width="125" height="12" uuid="df7c9911-4c28-458f-a334-3e9f7eda631d"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_aviso}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="241" y="184" width="95" height="12" uuid="de1141b9-4bbe-4fed-833c-6d3633cbe20c"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_afastamento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="433" y="184" width="122" height="12" uuid="1cec061c-f6e0-4cc6-93f4-243aa9643d3b"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pensao_alimenticia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="356" width="555" height="20" uuid="d7f2268d-c409-4ba2-bbd9-d3c45c058c63"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[________________________________________/ _________de_____________________________________de_______________.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="160" width="555" height="12" uuid="fbcbd620-f3fd-41fb-969f-d1d6de86b2a0"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{causa_afastamento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="285" width="555" height="12" uuid="2c302f8e-c688-484b-975e-5ecb05ea6ec9"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[, o qual, devidamente rubricado pelas partes, é parte integrante do presente Termo de Homologação.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="273" width="459" height="12" uuid="b92efc71-2b1c-4107-858a-557be33296c6"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[, sendo comprovado neste ato o efetivo pagamento das verbas rescisórias especificadas no corpo do TRCT, no valor Liquido de]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="336" y="172" width="97" height="12" uuid="b1eb0fde-8e28-49d0-8de2-0c8a5992c1ea"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[27.Código afastamento]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="336" y="184" width="97" height="12" uuid="53500040-1ccc-4cb8-a392-7f6e781fedb1"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_afastamento_cef}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="489" width="212" height="12" uuid="cf9e7dbd-c099-4d5e-b11f-5ebe8d34b394"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{razao_social}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="551" width="212" height="12" uuid="da4c0964-70ef-43f7-b826-2ccb511940a0"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cpf}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="562" width="212" height="34" uuid="473ccb34-bb50-4147-87c7-7e364aeb8405"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="500" width="212" height="12" uuid="c904c5ea-5157-44c0-9d78-a5fb94f6ca86"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="147">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="12" uuid="85a5c0d9-3669-4712-adc1-8f5c14557a80"/>
+				<box topPadding="0" leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[155. Ressalvas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="63" width="555" height="12" uuid="dc68e608-7574-4675-8c10-100fd1811d2f"/>
+				<box topPadding="0" leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[156. Informações à CAIXA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="108" width="555" height="13" backcolor="#CCCCCC" uuid="a9286213-a6f0-477a-84bd-65fb5e120628"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[A ASSISTÊNCIA NO ATO DE RESCISÃO É GRATUITA.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="121" width="555" height="26" backcolor="#CCCCCC" uuid="4017c848-949f-4222-b1a3-8b8021d87916"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pode o trabalhador iniciar ação judicial quanto aos créditos resultantes das relações de trabalho até o limite de dois anos após a extinção do contrato de trabalho ( Inc. XXIX, Art. 7º da Constituição Federal/1988).]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="12" width="555" height="51" uuid="4930cda5-92d9-4c2e-9adc-95a5d147d7e2"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="75" width="555" height="33" uuid="7c0dacf9-0c4a-4623-ae79-3979ea306d7b"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

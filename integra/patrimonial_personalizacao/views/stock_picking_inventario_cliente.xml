@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="stock_picking_inventario_cliente_tree">
+            <field name="name">stock.picking.inventario.cliente.tree</field>
+            <field name="model">stock.picking</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Inventários em Cliente">
+                    <field name="name"/>
+                    <field name="company_id"/>
+                    <field name="date" />
+                    <field name="finan_contrato_id" />
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="stock_picking_inventario_cliente_form">
+            <field name="name">stock.picking.inventario.cliente.form</field>
+            <field name="model">stock.picking</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Inventários em Cliente">
+                    <group colspan="4" col="4">
+                        <field name="type" invisible="1" />
+                        <field name="cnpj_cpf" invisible="1" readonly="1"/>
+                        <field name="name" readonly="1"/>
+                        <field name="origin" readonly="1" invisible="1" />
+                        <field name="finan_contrato_id" colspan="4" required="1" on_change="onchange_finan_contrato_id(finan_contrato_id)" />
+                        <field name="company_id" required="1" colspan="4" />
+                        <field name="partner_id" required="1" colspan="4" />
+                        <field name="address_id" invisible="1" on_change="onchange_partner_in(address_id)" context="{'contact_display':'partner'}" colspan="4"/>
+                        <field name="invoice_state" invisible="1" />
+                        <field name="backorder_id" readonly="1" invisible="1" groups="base.group_extended"/>
+                        <field name="date"/>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Inventário inicial">
+                            <group colspan="4">
+                                <separator string="Operação" colspan="4" />
+                                <field name="operacao_id" colspan="4" required="1" on_change="onchange_operacao_id(operacao_id, company_id)" domain="[('tipo', '=', 'V')]" />
+                                <field name="location_id" colspan="4" required="1" />
+                                <field name="location_dest_id" colspan="4" required="1" />
+                                <field name="romaneio" invisible="1" />
+                                <field name="familiatributaria_ids" invisible="1" />
+                                <newline />
+<!--                                 <button string="Imprimir Saldo" icon="gtk-print" name="imprime_saldo" type="object" colspan="2" /> -->
+<!--                                <button string="Imprimir Pedido de Transferência" icon="gtk-print" name="imprime_inventario_cliente" type="object" colspan="2" />
+                                <button string="Imprimir Romaneio de Entrega" icon="gtk-print" name="imprime_romaneio" type="object" colspan="2" context="{'saida': True}"/>
+                                <button string="Imprimir Romaneio de Pendência" icon="gtk-print" name="imprime_romaneio_zero" type="object" colspan="2" context="{'saida': True}"/>-->
+                            </group>
+
+                            <field name="date_padrao" invisible="1" />
+                            <field name="nota_origem_padrao" invisible="1" />
+                            <field name="nota_retorno_padrao" invisible="1" />
+                            <field name="cnpj_padrao" invisible="1"  />
+
+                            <field colspan="4" name="move_lines" nolabel="1" widget="one2many_list" context="{'address_out_id': address_id, 'picking_type': type, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id, 'default_familiatributaria_ids': familiatributaria_ids, 'default_company_id': company_id, 'default_operacao_id': operacao_id, 'default_finan_contrato_id': finan_contrato_id, 'default_cnpj': cnpj_cpf, 'default_location_readonly_id': location_id, 'default_location_dest_readonly_id': location_dest_id, 'default_company_readonly_id': company_id, 'default_operacao_readonly_id': operacao_id, 'default_date': date_padrao, 'default_nota_retorno': nota_retorno_padrao, 'default_nota_origem': nota_origem_padrao}" >
+                                <tree string="Itens">
+                                    <field name="familiatributaria_ids" invisible="1" />
+                                    <field name="finan_contrato_id" invisible="1" />
+                                    <field name="company_id" />
+                                    <field name="date" />
+                                    <field name="nota_origem" />
+                                    <field name="operacao_id" />
+                                    <field name="location_id" />
+                                    <field name="location_dest_id" />
+                                    <field name="product_id" />
+                                    <field name="product_qty" />
+                                    <field name="price_unit" />
+                                    <field name="valor_total" />
+                                    <field name="cnpj" />
+                                    <field name="nota_retorno" />
+                                    <field name="state" />
+                                    <field name="product_uom" invisible="1" />
+                                    <button name="action_cancel" states="assigned" string="Cancel" type="object" icon="gtk-cancel"/>
+                                    <button name="action_confirm" states="draft" string="Confirm" type="object" icon="gtk-apply"/>
+                                    <button name="force_assign" states="confirmed" string="Force Availability" type="object" icon="gtk-jump-to"/>
+                                    <button name="cancel_assign" states="assigned" string="Cancel Availability" type="object" icon="gtk-find"/>
+                                    <button name="%(stock.action_partial_move_server)d" string="Process" type="action" states="confirmed,assigned" icon="gtk-go-forward"/>
+                                    <field name="romaneio" invisible="1" />
+                                </tree>
+                                <form string="Itens">
+                                    <field name="name" invisible="1" colspan="4" />
+                                    <field name="familiatributaria_ids" invisible="1" />
+                                    <field name="finan_contrato_id" invisible="1" />
+                                    <field name="create_date" invisible="1"/>
+                                    <field name="product_uom" invisible="1" />
+                                    <group colspan="4" col="4">
+                                        <field name="company_id" required="1" colspan="4" invisible="0" />
+<!--                                         <field name="company_readonly_id" required="0" colspan="4" readonly="1" /> -->
+                                        <field name="operacao_id" colspan="4" on_change="onchange_operacao_id(operacao_id, company_id)" domain="[('tipo', '=', 'V')]" required="1" invisible="0" />
+<!--                                         <field name="operacao_readonly_id" colspan="4" on_change="onchange_operacao_id(operacao_id, company_id)" domain="[('tipo', '=', 'V')]" required="0" readonly="1" /> -->
+                                        <field name="location_id" colspan="4" required="1" invisible="0" />
+<!--                                         <field name="location_readonly_id" colspan="4" required="0" readonly="1" /> -->
+                                        <field name="location_dest_id" colspan="4" required="1" invisible="0" />
+<!--                                         <field name="location_dest_readonly_id" colspan="4" readonly="1" /> -->
+                                        <field name="date" required="1" />
+                                        <field name="nota_origem" />
+                                        <field name="product_id" required="1" on_change="onchange_product_id_inventario_cliente(product_id,location_id,location_dest_id, False, date, company_id, context)" colspan="4" />
+                                        <field name="orcamento_categoria_id" invisible="1" />
+                                        <field name="product_qty" required="1" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)"/>
+                                        <field name="product_uom" invisible="1" />
+                                        <field name="product_uos" invisible="1" />
+                                        <field name="product_uos_qty" invisible="1" />
+                                        <field name="price_unit" required="1" />
+                                        <field name="state" invisible="1" />
+                                        <group colspan="2" col="2">
+                                        </group>
+                                        <group colspan="2" col="2">
+                                            <field name="cnpj" on_change="onchange_cnpj(cnpj)" />
+                                            <field name="nota_retorno" />
+                                        </group>
+                                    </group>
+                                    <label string="" colspan="4"/>
+                                    <field name="state"/>
+                                    <group col="4" colspan="2">
+                                        <button name="action_cancel" states="assigned" string="Cancel" type="object" icon="gtk-cancel"/>
+                                        <button name="action_confirm" states="draft" string="Confirm" type="object" icon="gtk-apply"/>
+                                        <button name="force_assign" states="confirmed" string="Force Availability" type="object" icon="gtk-jump-to"/>
+                                        <button name="cancel_assign" states="assigned" string="Cancel Availability" type="object" icon="gtk-find"/>
+                                    </group>
+                                </form>
+                            </field>
+                            <group col="12" colspan="4">
+                                <field name="state" readonly="1" widget="statusbar" statusbar_visible="draft,confirmed,assigned,done" statusbar_colors='{"auto":"blue", "confirmed":"blue"}'/>
+                                <button name="button_cancel" states="assigned,confirmed,draft" string="_Cancel" icon="gtk-cancel"/>
+                                <button name="draft_force_assign" states="draft" string="Process Later" type="object" icon="gtk-ok"/>
+                                <button name="draft_validate" states="draft" string="Process Now" type="object" icon="gtk-yes"/>
+                                <button name="action_assign" states="confirmed" string="Check Availability" type="object" groups="base.group_extended" icon="gtk-find"/>
+                                <button name="force_assign" states="confirmed" string="Force Availability" type="object" icon="gtk-jump-to"/>
+                                <button name="action_process" states="assigned" string="Process" type="object" icon="gtk-go-forward"/>
+                                <button name="%(stock.act_stock_return_picking)d" string="Return Products" states="done" type="action" icon="gtk-execute"/>
+                                <button name="%(stock.action_stock_invoice_onshipping)d" string="Create Invoice" attrs="{'invisible': ['|','|',('state','&lt;&gt;','done'),('invoice_state','=','invoiced'),('invoice_state','=','none')]}"  type="action" icon="terp-gtk-go-back-rtl"/>
+                            </group>
+                        </page>
+                        <page string="Produtos movimentados pelo sistema">
+                            <field name="contrato_picking_ids" colspan="4" nolabel="1" domain="[('partner_id', '=', partner_id)]" context="{'tree_view_ref': 'patrimonial_personalizacao.stock_picking_out_tree', 'form_view_ref': 'patrimonial_personalizacao.stock_picking_out_form', 'search_view_ref': 'patrimonial_personalizacao.stock_picking_out_search'}"/>
+                        </page>
+                        <page string="Notas Fiscais">
+                            <newline />
+                            <separator string="Notas Fiscais emitidas" colspan="4" />
+                            <field name="contrato_nota_emitida_ids" nolabel="1" colspan="4" domain="[('emissao', '=', '0'), ('partner_id', '=', partner_id), ('modelo', '=', '55')]" context="{'tree_view_ref': 'sped.sped_nfe_emitida_tree', 'form_view_ref': 'sped.sped_nfe_emitida_form', 'search_view_ref': 'sped.sped_nfe_emitida_search'}">
+                                <tree>
+                                    <field name="stock_romaneio" />
+                                    <field name="company_id" />
+                                    <field name="modelo" />
+                                    <field name="data_emissao" />
+                                    <field name="serie" />
+                                    <field name="numero" />
+                                    <field name="partner_id" string="Destinatário" />
+                                    <field name="vr_nf" />
+                                </tree>
+                            </field>
+                            <separator string="Notas Fiscais recebidas" colspan="4" />
+                            <field name="contrato_nota_recebida_ids" nolabel="1" colspan="4" domain="[('emissao', '=', '1'), ('partner_id', '=', partner_id), ('modelo', '=', '55')]" context="{'tree_view_ref': 'sped.sped_nfe_recebida_tree', 'form_view_ref': 'sped.sped_nfe_recebida_form', 'search_view_ref': 'sped.sped_nfe_recebida_search'}">
+                                <tree>
+                                    <field name="company_id" />
+                                    <field name="modelo" />
+                                    <field name="data_emissao" />
+                                    <field name="serie" />
+                                    <field name="numero" />
+                                    <field name="partner_id" string="Remetente" />
+                                    <field name="vr_nf" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Inventário atualizado">
+                            <group col="4" colspan="4" string="Atualizar/Imprimir" >
+                                <button string="Atualiza inventário" type="object" name="gera_inventario_cliente" colspan="2" icon="gtk-go-forward" />
+                                <button string="Imprimir Inventário Atualizado" type="object" name="imprimir_inventario_atulizado" colspan="2" icon="gtk-print" />
+                            </group>
+                            <field name="contrato_inventario_ids" nolabel="1" colspan="4">
+                                <tree editable="top">
+                                    <field name="product_id" />
+                                    <field name="quantidade" />
+                                    <field name="vr_unitario" />
+                                    <field name="vr_total" />
+                                    <field name="vr_unitario_custo_atual" />
+                                    <field name="vr_custo_atual" />
+                                    <field name="data" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Additional info" attrs="{'invisible': True}">
+                            <field name="auto_picking" groups="base.group_extended"/>
+                            <field name="date_done" groups="base.group_extended"/>
+                            <field name="move_type" groups="base.group_extended"/>
+                        </page>
+                        <page string="Notes">
+                            <field colspan="4" name="note" nolabel="1"/>
+                            <group col="4" colspan="4" string="Reabrir/Fechar Inventário" >
+                                <button string="Reabre Inventario" icon="gtk-execute" name="forca_novo" type="object" colspan="2"/>
+                                <button string="Fecha Inventario" icon="gtk-execute" name="forca_concluido" type="object" colspan="2"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="stock_picking_inventario_cliente_search" model="ir.ui.view">
+            <field name="name">stock.picking.inventario.cliente.search</field>
+            <field name="model">stock.picking</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Inventários em Cliente">
+                    <field name="name"/>
+                    <field name="finan_contrato_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="stock_picking_inventario_cliente_acao">
+            <field name="name">Inventários em Cliente</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('type','=','invcli')]</field>
+            <field name="context">{'default_type': 'invcli', 'contact_display': 'partner_address'}</field>
+            <field name="search_view_id" ref="stock_picking_inventario_cliente_search"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="stock_picking_inventario_cliente_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="stock_picking_inventario_cliente_tree"/>
+            <field name="act_window_id" ref="stock_picking_inventario_cliente_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="stock_picking_inventario_cliente_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="stock_picking_inventario_cliente_form"/>
+            <field name="act_window_id" ref="stock_picking_inventario_cliente_acao"/>
+        </record>
+
+        <menuitem
+            id="menu_stock_picking_inventario_cliente"
+            action="stock_picking_inventario_cliente_acao"
+            parent="stock.menu_stock_warehouse_mgmt"
+            sequence="11"/>
+
+    </data>
+</openerp>

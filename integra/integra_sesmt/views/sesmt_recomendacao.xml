@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="sesmt_recomendacao_tree">
+            <field name="name">sesmt.recomendacao.tree</field>
+            <field name="model">sesmt.recomendacao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Recomendações">
+                    <field name="nome" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sesmt_recomendacao_form">
+            <field name="name">sesmt.recomendacao.form</field>
+            <field name="model">sesmt.recomendacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <field name="nome" required="1" colspan="4" />
+                    <field name="data_inicial" required="1" colspan="2" />
+                    <field name="data_final" colspan="2" />
+                    <separator string="Texto padrão" colspan="4" />
+                    <field name="texto" colspan="4" nolabel="1" required="1" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sesmt_recomendacao_search">
+            <field name="name">sesmt.recomendacao.search</field>
+            <field name="model">sesmt.recomendacao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Recomendações">
+                    <field name="nome" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sesmt_recomendacao_acao">
+            <field name="name">Recomendações</field>
+            <field name="res_model">sesmt.recomendacao</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="sesmt_recomendacao_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="sesmt_recomendacao_acao" id="menu_sesmt_recomendacao" name="Recomendações" parent="menu_sesmt_cadastro" sequence="10"/>
+
+        <record model="ir.actions.act_window.view" id="sesmt_recomendacao_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="sesmt_recomendacao_acao"/>
+            <field name="view_id" ref="sesmt_recomendacao_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sesmt_recomendacao_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="sesmt_recomendacao_acao"/>
+            <field name="view_id" ref="sesmt_recomendacao_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

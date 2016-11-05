@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_conta_tree">
+            <field name="name">finan.conta.tree</field>
+            <field name="model">finan.conta</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:sintetica and tipo == 'R';red:sintetica and (tipo == 'D' or tipo == 'C');cyan:sintetica and tipo == 'A';magenta:sintetica and tipo == 'P'">
+                    <field name="codigo_completo" />
+                    <field name="codigo" />
+                    <field name="nome" />
+                    <field name="nome_completo" />
+                    <field name="sintetica"  />
+                    <field name="tipo"/>
+                    <field name="parent_id" invisible="1" />
+                    <field name="create_uid"/>
+                    <field name="write_uid"/>
+                    <field name="write_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_conta_form">
+            <field name="name">finan.conta.form</field>
+            <field name="model">finan.conta</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Plano de Contas">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="tipo" required="1" />
+                        <field name="data" required="1" />
+                        <newline />
+                        <field name="nivel_conta" />
+                        <newline />
+                        <field name="sintetica" />
+                        <newline />
+                        <field name="codigo" required="1" />
+                        <newline />
+                        <field name="parent_id" colspan="4" attrs="{'domain': [('sintetica', '=', True)], 'required': [('sintetica', '!=', True)]}" />
+                        <newline />
+                        <field name="codigo_completo" required="1" colspan="4" />
+                        <newline />
+                        <field name="nome" required="1" colspan="4"/>
+                        <newline />
+                        <separator string="Custo e despesa complementares financeiro" colspan="4" />
+                        <field name="conta_complementar_despesa_id" domain="[('sintetica', '!=', True)]" />
+                        <field name="conta_complementar_custo_id" domain="[('sintetica', '!=', True)]" />
+                        <newline />
+                        <separator string="Custo de compra para Revenda/Ativo" colspan="4" />
+                        <field name="conta_custo_revenda_id" domain="[('sintetica', '!=', True)]" />
+                        <field name="conta_custo_ativo_id" domain="[('sintetica', '!=', True)]" />
+                        <newline />
+                        <separator string="Receita na venda de ativo" colspan="4" />
+                        <field name="conta_receita_ativo_id" domain="[('sintetica', '!=', True)]" />
+                        <newline />
+                        <separator string="Outras informações" colspan="4" />
+                        <field name="exige_centro_custo" />
+                        <newline />
+                        <field name="historico" string="Modelo de histórico" />
+                    </group>
+                    <notebook>
+                        <page string="Contas filhas">
+                            <group col="4" colspan="4">
+                                <separator string="Contas filhas" colspan="4"/>
+                                <field name="contas_filhas_ids" readonly="1" colspan="4" nolabel="1"/>
+                            </group>
+                            <button icon="gtk-execute" string="Ajusta ordem" name="recalcula_ordem_parent_left_parent_right" type="object" />
+                        </page>
+                        <page string="Inativar">
+                            <group col="6" colspan="4">
+                                <group col="2" colspan="2">
+                                    <field name="inativa" />
+                                    <newline />
+                                    <field name="data_inativacao"  attrs="{'required': [('inativa', '=', True)]}"/>
+                                </group>
+                                <group col="4" colspan="4">
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_conta_search">
+            <field name="name">finan.conta.search</field>
+            <field name="model">finan.conta</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Contas financeiras">
+                    <filter string="Sintética" domain="[('sintetica', '=', True)]" />
+                    <filter string="Analítica" domain="[('sintetica', '=', False)]" />
+                    <separator orientation="vertical" />
+                    <filter string="Ativo" domain="[('tipo', '=', 'A')]" />
+                    <filter string="Passivo" domain="[('tipo', '=', 'P')]" />
+                    <filter string="Receita" domain="[('tipo', '=', 'R')]" />
+                    <filter string="Custo" domain="[('tipo', '=', 'C')]" />
+                    <filter string="Despesa" domain="[('tipo', '=', 'D')]" />
+                    <filter string="Outras" domain="[('tipo', '=', 'O')]" />
+                    <separator orientation="vertical" />
+                    <field name="nome_completo" select="1" />
+                    <field name="codigo" select="1" />
+                    <newline />
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Conta" icon="terp-project" domain="[]" context="{'group_by': 'parent_id'}" />
+                        <filter string="Entrada/saída" icon="terp-project" domain="[]" context="{'group_by': 'tipo'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_conta_acao">
+            <field name="name">Contas financeiras</field>
+            <field name="res_model">finan.conta</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_conta_tree" />
+        </record>
+
+        <menuitem action="finan_conta_acao"
+            id="menu_finan_conta" name="Contas financeiras" parent="menu_finan_config" />
+
+    </data>
+</openerp>

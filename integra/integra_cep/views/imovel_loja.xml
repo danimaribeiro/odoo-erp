@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+       <record model="ir.ui.view" id="imovel_ponto_comercial_form">
+            <field name="name">imovel.ponto.comercial.form</field>
+            <field name="model">const.imovel</field>
+            <field name="type">form</field>
+            <field name="priority">3</field>
+            <field name="inherit_id" ref="construtora.imovel_ponto_comercial_form"/>
+            <field name="arch" type="xml">
+                <field name="cep" position="after">
+                    <button name="consulta_cep" string="Consultar CEP" type="object" colspan="2"/>
+                </field>
+            </field>
+        </record>
+
+</data>
+</openerp>

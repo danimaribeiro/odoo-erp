@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabecalho" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="0" uuid="df8d06c4-008a-44ae-94ea-15cfd72a6f65">
+	<property name="ireport.zoom" value="2.853116706110003"/>
+	<property name="ireport.x" value="873"/>
+	<property name="ireport.y" value="45"/>
+	<parameter name="INTEGRA_REPORT_TITLE" class="java.lang.String"/>
+	<parameter name="LOGO_DIR" class="java.lang.String"/>
+	<parameter name="COMPANY_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO_CLIENTE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+comp.name as empresa_nome,
+partcomp.endereco as empresa_endereco,
+partcomp.numero as empresa_numero,
+partcomp.complemento as empresa_complemento,
+partcomp.bairro as empresa_bairro,
+muncomp.nome as empresa_municipio,
+estcomp.uf as empresa_estado,
+partcomp.cep as empresa_cep,
+adrcomp.phone as empresa_fone,
+partcomp.cnpj_cpf as empresa_cnpj,
+partcomp.ie as empresa_ie
+
+
+
+from
+
+res_company comp
+join res_partner respartcomp on respartcomp.id = comp.partner_id
+join res_partner_address adrcomp on adrcomp.partner_id = respartcomp.id and
+adrcomp.type = 'default'
+left join sped_participante partcomp on partcomp.partner_id = comp.partner_id
+left join sped_municipio muncomp on muncomp.id = partcomp.municipio_id
+left join sped_estado estcomp on estcomp.id = muncomp.estado_id
+
+where comp.id = $P{COMPANY_ID}]]>
+	</queryString>
+	<field name="empresa_nome" class="java.lang.String"/>
+	<field name="empresa_endereco" class="java.lang.String"/>
+	<field name="empresa_numero" class="java.lang.String"/>
+	<field name="empresa_complemento" class="java.lang.String"/>
+	<field name="empresa_bairro" class="java.lang.String"/>
+	<field name="empresa_municipio" class="java.lang.String"/>
+	<field name="empresa_estado" class="java.lang.String"/>
+	<field name="empresa_cep" class="java.lang.String"/>
+	<field name="empresa_fone" class="java.lang.String"/>
+	<field name="empresa_cnpj" class="java.lang.String"/>
+	<field name="empresa_ie" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="149" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="97" width="555" height="43" uuid="4780c5f3-1253-40af-873f-6e4690680600"/>
+				<textElement textAlignment="Center">
+					<font size="30"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INTEGRA_REPORT_TITLE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="488" y="13" width="23" height="8" uuid="8ae77900-55bf-495a-ab3c-e8458d14242b"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="510" y="13" width="43" height="8" uuid="4efaaad8-a017-4004-842c-077d7db9895e"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="488" y="20" width="23" height="8" uuid="bfcad476-3c19-41a9-9adf-f6627a479656"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora:]]></text>
+			</staticText>
+			<textField pattern="HH:mm:ss">
+				<reportElement x="510" y="20" width="43" height="8" uuid="2a061cf7-a062-4ded-96ec-a8dc6d99ae9e"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="510" y="7" width="43" height="8" uuid="a0f3b789-8f14-4567-bc60-7ad3670a8a4d"/>
+			</textField>
+			<textField>
+				<reportElement x="510" y="6" width="43" height="8" uuid="a0f3b789-8f14-4567-bc60-7ad3670a8a4d"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="488" y="6" width="23" height="8" uuid="384c68e3-61fb-47a6-891d-df162b7d8ae1"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pág:]]></text>
+			</staticText>
+			<frame>
+				<reportElement x="0" y="6" width="150" height="85" uuid="e8d7229e-8e8a-4cfd-b561-8f0e6952d539"/>
+				<image scaleImage="RealSize">
+					<reportElement x="0" y="0" width="137" height="75" uuid="031f72f8-32e8-432b-a4f1-24c7f9908ade"/>
+					<imageExpression><![CDATA[$P{LOGO_CLIENTE}]]></imageExpression>
+				</image>
+			</frame>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="150" y="11" width="312" height="18" isPrintWhenDetailOverflows="true" uuid="610b2545-f67e-4e70-9d1e-95d79dbf703b"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_nome}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="-1" width="555" height="1" uuid="e9e76418-7d34-419b-b316-c19be34cbd73"/>
+			</line>
+			<frame>
+				<reportElement positionType="Float" x="150" y="29" width="312" height="53" uuid="1b7d08cb-dacc-45ff-8c36-35f0348bf401"/>
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="312" height="14" uuid="dd8c31ee-65ea-476c-b3ff-cc3ee2a96451"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_endereco} + ", " + $F{empresa_numero}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="13" width="312" height="14" uuid="12912f88-e94f-4df8-9996-9dea99750a8e"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_bairro} + " - " + $F{empresa_municipio} + "/" + $F{empresa_estado}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="35" y="26" width="133" height="14" uuid="7d2b8064-5cef-4b9a-bb5c-3db01f0705e3"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_cnpj}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="191" y="26" width="121" height="14" uuid="84242ffb-3acc-4587-92bb-58e8981797b5"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_ie}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="35" y="39" width="277" height="14" uuid="9a03b903-6d38-4ab3-9be1-dd6f81e1e405"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa_fone}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="26" width="36" height="14" uuid="1c7f98da-44da-4fb9-a33a-dd4d3f1cf436"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CNPJ:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="39" width="36" height="14" uuid="a404eb6a-c001-46f9-ba41-e5edc6b56dc2"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fone:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="168" y="26" width="23" height="14" uuid="e67ed7f4-e602-45e7-9ca0-fa71fd5b39cb"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[IE:]]></text>
+				</staticText>
+			</frame>
+			<line>
+				<reportElement x="0" y="146" width="555" height="1" uuid="6f18acc1-dfe2-48de-bb3d-0c52fc874106"/>
+			</line>
+		</band>
+	</columnHeader>
+</jasperReport>

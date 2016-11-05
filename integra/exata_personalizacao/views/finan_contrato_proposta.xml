@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="finan_contrato_proposta_imovel_form">
+            <field name="name">finan.contrato.proposta.imovel.form</field>
+            <field name="model">finan.contrato</field>
+            <field name="inherit_id" ref="construtora.finan_contrato_proposta_imovel_form"/>
+            <field name="type">form</field>  
+            <field name="arch" type="xml">
+                <field name="valor_comissao" position="before">
+                    <field name="data_comissao" colspan="2"/>
+                    <field name="vezes" colspan="2"/>
+                </field>                                               
+            </field>
+        </record>
+                 
+    </data>
+</openerp>

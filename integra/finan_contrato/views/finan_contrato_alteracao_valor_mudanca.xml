@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_valor_mudanca_tree">
+            <field name="name">finan.contrato.alteracao.valor.mudanca.tree</field>
+            <field name="model">finan.contrato.alteracao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+<!--                 <tree colors="red:aprovado != True and ((not retirada_equipamento_cliente) or (aprovado_area != True));green:aprovado != True and ((not retirada_equipamento_cliente) or (aprovado_area == True));magenta:aprovado == True and retirada_equipamento_cliente and aprovado_area != True"> -->
+<!--                 <tree colors="red:aprovado == False and ((not retirada_equipamento_cliente) or (aprovado_area == False));green:aprovado == False and ((not retirada_equipamento_cliente) or (aprovado_area == True));magenta:aprovado == True and retirada_equipamento_cliente and aprovado_area == False"> -->
+                <tree colors="red:aprovado == False and aprovado_area == False;green:aprovado == False and aprovado_area == True;magenta:aprovado == True and aprovado_area == False">
+                    <field name="eh_mudanca_endereco" invisible="1"/>
+                    <field name="aprovado" invisible="1"/>
+                    <field name="aprovado_area" invisible="1"/>
+                    <field name="conferido_area" invisible="1"/>
+<!--                     <field name="retirada_equipamento_cliente" invisible="1"/> -->
+                    <field name="tipo" invisible="1"/>
+                    <field name="company_id" />
+                    <field name="contrato_id" />
+                    <field name="valor_mensal_anterior" />
+                    <field name="valor_mensal_novo" />
+                    <field name="sale_order_id" />
+                    <field name="solicitante_id" />
+                    <field name="data_solicitacao" />
+                    <field name="aprovador_id" string="Aprovado fin." />
+                    <field name="data_aprovacao" string="Aprovação fin." />
+                    <field name="aprovador_area_id" string="Aprovado sup." />
+                    <field name="data_aprovacao_area" string="Aprovação sup." />
+                    <field name="conferidor_area_id" string="Conferido sup." />
+                    <field name="data_conferencia_area" string="Conferência sup." />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_valor_mudanca_form">
+            <field name="name">finan.contrato.alteracao.valor.mudanca.form</field>
+            <field name="model">finan.contrato.alteracao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Mudança de endereço">
+                    <field name="tipo" invisible="1" />
+                    <field name="eh_mudanca_endereco" invisible="1" />
+                    <separator string="Contrato e alteração" colspan="4" />
+                    <field name="contrato_id" colspan="4" required="1" on_change="onchange_contrato_id(contrato_id, tipo)" domain="[('natureza', '=', 'R'), ('data_distrato', '=', False)]" attrs="{'readonly': ['|', ('aprovado','!=',False), ('aprovado_area', '!=', False)]}" />
+                    <field name="company_id" colspan="4" readonly="1"  />
+                    <field name="partner_id" invisible="1" readonly="1" />
+                    <separator string="Informações anteriores" colspan="4" />
+                    <field name="valor_mensal_anterior" readonly="1" />
+                    <newline />
+                    <field name="contrato_produto_anterior_ids" colspan="4" readonly="1">
+                        <tree>
+                            <field name="product_id" />
+                            <field name="quantidade" />
+                            <field name="vr_unitario" />
+                            <field name="vr_total" sum="Valor" required="1" />
+                        </tree>
+                    </field>
+                    <separator string="Informações novas" colspan="4" />
+<!--                     <field name="retirada_equipamento_cliente" attrs="{'readonly': ['|', ('aprovado','!=',False), ('aprovado_area', '!=', False)]}" /> -->
+                    <newline />
+                    <field name="data_alteracao" string="Data de início da redução" required="1" on_change="onchange_data_alteracao(data_alteracao, data_proximo_vencimento_nao_faturado, True)" attrs="{'readonly': ['|', ('aprovado','!=',False), ('aprovado_area', '!=', False)]}" />
+                    <field name="data_proximo_vencimento_nao_faturado" required="1" readonly="1" on_change="onchange_data_alteracao(data_alteracao, data_proximo_vencimento_nao_faturado, True)" />
+                    <field name="pro_rata_novo_valor" invisible="1" on_change="onchange_valor_mensal_novo(valor_mensal_novo, valor_mensal_anterior, data_alteracao, pro_rata_novo_valor)" />
+                    <newline />
+                    <field name="sale_order_id" colspan="4" required="0" domain="[('partner_id', '=', partner_id), ('state', '=', 'done')]" on_change="onchange_sale_order_id(sale_order_id, contrato_id, valor_mensal_anterior)"  attrs="{'readonly': [('aprovado','!=',False)]}" />
+                    <field name="valor_mensal_novo" on_change="onchange_valor_mensal_novo(valor_mensal_novo, valor_mensal_anterior, data_alteracao, pro_rata_novo_valor)" attrs="{'readonly': ['|', ('aprovado','!=',False), ('aprovado_area', '!=', False)]}" />
+                    <field name="valor_pro_rata" attrs="{'readonly': ['|', ('aprovado','!=',False), ('aprovado_area', '!=', False)]}" />
+                    <newline />
+                    <field name="contrato_produto_novo_ids" colspan="4" domain="[('novo', '=', 'S')]" context="{'default_novo': 'S', 'default_contrato_id': contrato_id}" attrs="{'readonly': ['|', ('aprovado','!=',False), ('aprovado_area', '!=', False)]}" >
+                        <tree editable="top">
+                            <field name="novo" invisible="1" />
+                            <field name="contrato_id" invisible="1" />
+                            <field name="data" readonly="1" />
+                            <field name="product_id" />
+                            <field name="quantidade" />
+                            <field name="vr_unitario" />
+                            <field name="vr_total" sum="Valor" required="1" />
+                        </tree>
+                    </field>
+                    <newline />
+                    <separator string="Justificativa" colspan="4" />
+                    <field name="obs" nolabel="1" colspan="4" required="1" attrs="{'readonly': ['|', ('aprovado','!=',False), ('aprovado_area', '!=', False)]}" />
+                    <newline />
+                    <separator string="Solicitante" colspan="4" />
+                    <field name="solicitante_id" colspan="4" readonly="1" />
+                    <field name="data_solicitacao" readonly="1" />
+<!--                     <group colspan="4" col="4" attrs="{'invisible': [('retirada_equipamento_cliente', '!=', True)]}"> -->
+                    <group colspan="4" col="4">
+                        <separator string="Aprovador - Suprimentos" colspan="4" />
+                        <field name="aprovado_area" invisible="1" />
+                        <field name="aprovador_area_id" colspan="4" readonly="1" />
+                        <field name="data_aprovacao_area" readonly="1" />
+                        <button name="aprovar_area" colspan="4" type="object" string="Aprovar" groups="finan_contrato.group_finan_contrato_suprimentos" attrs="{'invisible': [('aprovado_area', '!=', False)]}" />
+                    </group>
+                    <group colspan="4" col="4">
+                        <field name="conferido_area" invisible="1" />
+                        <separator string="Conferência - Suprimentos" colspan="4" />
+                        <field name="conferidor_area_id" colspan="4" readonly="1" />
+                        <field name="data_conferencia_area" readonly="1" />
+                        <button name="conferir_area" colspan="4" type="object" string="Conferido" groups="finan_contrato.group_finan_contrato_suprimentos_conferencia" attrs="{'invisible': [('conferido_area', '!=', False)]}" />
+                    </group>
+                    <group colspan="4" col="4">
+                        <separator string="Aprovador" colspan="4" />
+                        <field name="aprovado" invisible="1" />
+                        <field name="aprovador_id" colspan="4" readonly="1" />
+                        <field name="data_aprovacao" readonly="1" />
+                        <button name="aprovar" colspan="4" type="object" string="Aprovar" groups="finan_contrato.group_finan_contract_manager" attrs="{'invisible': ['|', ('aprovado', '!=', False), ('aprovado_area', '=', False)]}" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_valor_mudanca_search">
+            <field name="name">finan.contrato.alteracao.valor.mudanca.search</field>
+            <field name="model">finan.contrato.alteracao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Mudança de endereço">
+                    <filter name="aprovado_fin" string="Aprovado fin." icon="terp-go-month" domain="[('aprovado', '!=', False)]" />
+                    <filter name="pendente_fin" string="Pendente fin." icon="terp-go-month" domain="[('aprovado', '=', False)]" />
+                    <filter name="aprovado_sup" string="Aprovado sup." icon="terp-go-month" domain="[('aprovado_area', '!=', False)]" />
+                    <filter name="pendente_sup" string="Pendente sup." icon="terp-go-month" domain="[('aprovado_area', '=', False)]" />
+                    <separator orientation="vertical" />
+                    <field name="contrato_id" />
+                    <field name="company_id" />
+                    <field name="data_alteracao" string="Data de início da redução" />
+                    <newline/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_contrato_alteracao_valor_mudanca_acao">
+            <field name="name">Mudança de endereço</field>
+            <field name="res_model">finan.contrato.alteracao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_contrato_alteracao_valor_mudanca_tree" />
+            <field name="domain">[('tipo', '=', 'V'), ('eh_mudanca_endereco', '=', True)]</field>
+            <field name="context">{'tipo': 'V', 'default_tipo': 'V', 'search_default_pendente_fin': True, 'search_default_pendente_sup': True, 'valida_data_alteracao': True, 'default_eh_mudanca_endereco': True}</field>
+            <field name="search_view_id" ref="finan_contrato_alteracao_valor_mudanca_search" />
+        </record>
+
+        <menuitem action="finan_contrato_alteracao_valor_mudanca_acao"
+                  id="menu_finan_contrato_alteracao_valor_mudanca" name="Mudança de endereço" parent="menu_finan_contratos_manutencao" />
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_alteracao_valor_mudanca_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_contrato_alteracao_valor_mudanca_form"/>
+            <field name="act_window_id" ref="finan_contrato_alteracao_valor_mudanca_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_alteracao_valor_mudanca_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_contrato_alteracao_valor_mudanca_tree"/>
+            <field name="act_window_id" ref="finan_contrato_alteracao_valor_mudanca_acao"/>
+        </record>
+
+    </data>
+</openerp>

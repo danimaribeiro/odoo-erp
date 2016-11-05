@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fluxo_caixa_sintetico_rateio" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="826" leftMargin="8" rightMargin="8" topMargin="20" bottomMargin="0" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="1.6500000000000041"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="COMPANY_ID" class="java.lang.Integer"/>
+	<parameter name="TIPO" class="java.lang.String"/>
+	<parameter name="TIPO_ANALISE" class="java.lang.String"/>
+	<parameter name="SQL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PROJETO" class="java.lang.String"/>
+	<parameter name="UID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+--Empresa
+rp.razao_social,
+rp.cnpj_cpf,
+rp.ie,
+rp.fantasia,
+rp.endereco as empresa_endereco,
+rp.numero as empresa_numero,
+rp.complemento as empresa_complemento,
+rp.bairro as empresa_bairro,
+rp.cidade as empresa_cidade,
+rp.estado as empresa_estado,
+rp.cep as empresa_cep,
+rp.fone,
+c.name,
+c.id
+
+from
+    res_company c
+    join res_partner rp on rp.id = c.partner_id
+    left join res_company cc on cc.id = c.parent_id
+    left join res_company ccc on ccc.id = cc.parent_id
+
+where
+    c.id = $P{COMPANY_ID}
+    or cc.id = $P{COMPANY_ID}
+    or ccc.id = $P{COMPANY_ID}]]>
+	</queryString>
+	<field name="razao_social" class="java.lang.String"/>
+	<field name="cnpj_cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[CNPJ/CPF]]></fieldDescription>
+	</field>
+	<field name="ie" class="java.lang.String"/>
+	<field name="fantasia" class="java.lang.String"/>
+	<field name="empresa_endereco" class="java.lang.String"/>
+	<field name="empresa_numero" class="java.lang.String"/>
+	<field name="empresa_complemento" class="java.lang.String"/>
+	<field name="empresa_bairro" class="java.lang.String"/>
+	<field name="empresa_cidade" class="java.lang.String"/>
+	<field name="empresa_estado" class="java.lang.String"/>
+	<field name="empresa_cep" class="java.lang.String"/>
+	<field name="fone" class="java.lang.String">
+		<fieldDescription><![CDATA[Fone]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String"/>
+	<field name="id" class="java.lang.Integer"/>
+	<pageHeader>
+		<band height="80">
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="52" height="12" isPrintWhenDetailOverflows="true" uuid="23c53fff-7df0-404a-b68b-094b47d92cab"/>
+				<box leftPadding="5" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empresa:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="12" width="52" height="12" uuid="00bdba32-953e-4b82-9f3d-3aab471dd9fa"/>
+				<box leftPadding="5" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CNPJ:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="48" width="52" height="12" uuid="76ca7224-10f0-415a-93d6-71a1c40d096a"/>
+				<box leftPadding="5" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="52" y="0" width="774" height="12" isPrintWhenDetailOverflows="true" uuid="2e0cd308-f12d-48b0-a630-fbb9f79cd255"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{razao_social}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="52" y="48" width="774" height="12" uuid="d36c9022-d5e3-416a-8f3b-2a78802eb639"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_endereco} + " " +$F{empresa_numero}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="52" y="12" width="90" height="12" uuid="7860f50e-a5d1-4629-8ebd-7b28b4dd4c55"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cnpj_cpf}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="24" width="52" height="12" uuid="3fd09bf7-548b-4ef1-bc6c-42427343c9bb"/>
+				<box leftPadding="5" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cep:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="52" y="24" width="698" height="12" uuid="61ce2502-e2e9-4ec2-8b6d-0467cff70c2b"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_cep} +" | "+ $F{empresa_bairro}+" | "+ $F{empresa_cidade}+
+" - " +$F{empresa_estado}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="161" y="12" width="589" height="12" uuid="19d49e8f-055a-4cbe-9c74-72d6c2d6647e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ie}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="142" y="12" width="19" height="12" uuid="6c7f8e88-f8bc-4bbb-a4c1-b6d384e6b6e1"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IE:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="52" y="36" width="698" height="12" uuid="dfab10d2-865e-4eb3-81d2-0271f4924635"/>
+				<box leftPadding="0">
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fone}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="36" width="52" height="12" uuid="17eb99a9-3bd1-43df-ab82-2bd4978172c3"/>
+				<box leftPadding="5" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fone:]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="0" y="60" width="826" height="20" uuid="385fc5b8-99af-49c7-86dc-557483328107"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["FLUXO DE CAIXA SINTÉTICO RATEIO POR CONTA FINANCEIRA"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="760" y="24" width="23" height="12" uuid="5b8aa598-692c-4af9-bc85-f95d2aca0a4e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="760" y="36" width="23" height="12" uuid="4fed4eb3-4bd9-466d-9744-d73256f403ce"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora:]]></text>
+			</staticText>
+			<textField pattern="HH:mm:ss">
+				<reportElement x="783" y="36" width="43" height="12" uuid="5fb17145-a1da-44fc-bfce-5e326aaf6773"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="783" y="12" width="43" height="12" uuid="16044917-1a23-4b02-9d2d-4146dd3871b2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="783" y="24" width="43" height="12" uuid="80d7de68-347f-4245-92e1-df56ea1be0f5"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="760" y="12" width="23" height="12" uuid="1058db3a-a543-4866-a2a8-75ec07e34bc2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pág:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="50">
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="558" y="0" width="45" height="14" uuid="0f031013-e99c-43ea-bfe4-9c55aaf1628f"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Periodo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="648" y="0" width="15" height="14" uuid="18045025-53c6-4632-ab6a-4a13274598da"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[a]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="28" width="85" height="14" uuid="a83f1829-7926-4783-a22c-546df06a30a1"/>
+				<box leftPadding="5" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Tipo de Análise:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="85" y="28" width="461" height="14" uuid="0946581a-a8c5-41b7-a8da-7a838d082a07"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO_ANALISE} == "1" ?
+"Realizado"
+: $P{TIPO_ANALISE} == "2" ?
+"Comprometido"
+:
+"A realizar"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="546" y="28" width="57" height="14" uuid="14017f6c-d7ea-4b00-9979-212f2bfc0588"/>
+				<box rightPadding="0">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Seleção por:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="603" y="28" width="223" height="14" uuid="0159de42-789a-49d1-a77a-3385c0238d5e"/>
+				<box leftPadding="4">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO} == "('Q')" ?
+"DATA DE QUITAÇÃO"
+: $P{TIPO} == "('V')" ?
+"DATA VENCIMENTO"
+:
+"QUITAÇÃO E VENCIMENTO"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="85" height="14" uuid="012203dd-ae67-4760-ae53-f8ee5c8009f3"/>
+				<box leftPadding="5" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fluxo de Caixa por:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="85" y="0" width="473" height="14" uuid="bebb4001-8202-41d6-9205-acd19faa9996"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="603" y="0" width="45" height="14" uuid="66d81e15-020a-4542-bf31-873d11dcca08"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse($P{DATA_INICIAL}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="663" y="0" width="163" height="14" uuid="604a09de-17ca-4a74-9b6b-9c0755404b3b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse($P{DATA_FINAL}))]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="14" width="85" height="14" isRemoveLineWhenBlank="true" uuid="0ae21de2-78d1-42a2-885f-6b51f8ec0f68">
+					<printWhenExpression><![CDATA[$P{PROJETO} != ""]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true" isUnderline="false" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Projeto:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="85" y="14" width="741" height="14" isRemoveLineWhenBlank="true" uuid="10b30cd6-5bce-49f0-98d2-da9217380497"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PROJETO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<pageFooter>
+		<band height="28">
+			<subreport>
+				<reportElement x="12" y="0" width="814" height="28" uuid="28e7faaa-f80e-4e8d-a4a4-fba2b4ddef2f"/>
+				<subreportParameter name="UID">
+					<subreportParameterExpression><![CDATA[$P{UID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rodape_paisagem_integra.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="41" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="826" height="41" uuid="de107aa0-22cf-417e-9d3b-1bac4db3a74f"/>
+				<subreportParameter name="SQL">
+					<subreportParameterExpression><![CDATA[$P{SQL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO">
+					<subreportParameterExpression><![CDATA[$P{TIPO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="COMPANY_ID">
+					<subreportParameterExpression><![CDATA[$P{COMPANY_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_INICIAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_INICIAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DATA_FINAL">
+					<subreportParameterExpression><![CDATA[$P{DATA_FINAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "fluxo_caixa_sintetico_lancamentos.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

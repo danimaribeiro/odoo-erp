@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_pagar_tree">
+            <field name="name">finan.pagar.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_pagar_tree"/>            
+            <field name="priority" eval="100"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="valor" position="replace">
+                    <field name="valor_pago" sum="Valor pago" />
+                    <field name="valor" sum="Valor" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_pagar_form">
+            <field name="name">finan.pagar.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="sped_finan.finan_pagar_form"/>
+            <field name="priority" eval="100"/>         
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="company_id" position="replace">
+                    <field name="company_id" colspan="4" attrs="{'readonly': ['|',('sped_documento_id', '!=', False),('purchase_order_id', '!=', False)]}" on_change="onchange_company_id(company_id)" />
+                </field>
+
+                <field name="documento_id" position="replace">
+                    <field name="purchase_order_id" invisible="1" />
+                    <field name="documento_id" required="1" attrs="{'readonly': ['|',('sped_documento_id', '!=', False),('purchase_order_id', '!=', False)]}" />
+                </field>
+
+                <field name="numero_documento" position="replace">
+                    <field name="numero_documento" required="1" attrs="{'readonly': ['|',('sped_documento_id', '!=', False),('purchase_order_id', '!=', False)]}" />
+                </field>
+
+                <field name="data_documento" position="replace">
+                    <field name="data_documento" required="1" attrs="{'readonly': ['|',('sped_documento_id', '!=', False),('purchase_order_id', '!=', False)]}" />
+                </field>
+
+                <field name="valor_documento" position="replace">
+                    <field name="valor_documento" required="1" attrs="{'readonly': ['|',('sped_documento_id', '!=', False),('purchase_order_id', '!=', False)]}" />
+                </field>
+
+                <field name="partner_id" position="replace">
+                    <field name="partner_id" required="1" string="Fornecedor" attrs="{'readonly': ['|',('sped_documento_id', '!=', False),('purchase_order_id', '!=', False)]}" />
+                </field>
+
+<!--                <field name="data_vencimento" position="replace">
+                    <field name="data_vencimento" required="1" attrs="{'readonly': ['|',('sped_documento_id', '!=', False),('purchase_order_id', '!=', False)]}" />
+                </field>-->
+
+                <field name="conta_id" position="replace">
+                    <field name="conta_id" position="replace">
+                        <field name="tipo_conta" required="0" />
+                        <field name="conta_id" required="1" domain="[('sintetica', '=', False), ('tipo', '=', tipo_conta)]" on_change="onchange_conta_id(conta_id, company_id, centrocusto_id, valor_documento, valor, partner_id, data_vencimento, data_documento)" attrs="{'readonly': ['|',('sped_documento_id', '!=', False),('purchase_order_id', '!=', False)]}" />
+                    </field>
+                </field>
+
+                <field name="situacao" position="after">
+                    <field name="lancamento_comissao_receber_id" invisible="1" />
+                    <field name="liberado_pagamento_comissao" invisible="1" />
+                    <group colspan="4" col="4" attrs="{'invisible': ['|', ('lancamento_comissao_receber_id', '=', False), ('liberado_pagamento_comissao', '!=', False)]}">
+                        <html>
+                        <p style="color:red; text-align:center;">Atenção!!! Pagamento de comissão ainda não liberado!!!</p>
+                        </html>
+                        <group colspan="4" col="4" groups="finan.group_finan_manager">
+                            <button type="object" name="liberar_pagamento_comissao" string="Liberar pagamento de comissão" colspan="4" />
+                        </group>
+                    </group>
+                    <field name="lancamento_recebimento_imovel_id" invisible="1" />
+                    <field name="liberado_pagamento_administracao" invisible="1" />
+                    <group colspan="4" col="4" attrs="{'invisible': ['|', ('lancamento_recebimento_imovel_id', '=', False), ('liberado_pagamento_administracao', '!=', False)]}">
+                        <html>
+                        <p style="color:red; text-align:center;">Atenção!!! Pagamento de administração da venda ainda não liberado!!!</p>
+                        </html>
+                        <group colspan="4" col="4" groups="finan.group_finan_manager">
+                            <button type="object" name="liberar_pagamento_administracao" string="Liberar pagamento de administração da venda" colspan="4" />
+                        </group>
+                    </group>
+                </field>
+
+                <xpath expr="//page[@string='Quitação']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', '&amp;', ('lancamento_comissao_receber_id', '!=', False), ('liberado_pagamento_comissao', '=', False), '&amp;', ('lancamento_recebimento_imovel_id', '!=', False), ('liberado_pagamento_administracao', '=', False)]}</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</openerp>

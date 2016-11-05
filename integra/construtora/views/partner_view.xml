@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="res_partner_form" >
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped.res_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="endereco" position="before">
+                    <field name="cep_id" on_change="onchange_cep_id(cep_id)" options="{'quick_create': False}" domain="[('municipio_id', '=', municipio_id)]" string="Pesquisa de ruas" colspan="4" />
+                </field>
+                <field name="pais_nacionalidade_id" position="after">
+                    <field name="data_nascimento" />
+                    <newline />
+                    <group colspan="4" col="4">
+                        <field name="creci_numero" />
+                        <field name="creci_data_expedicao" />
+                        <field name="cnai_numero" />
+                        <field name="cnai_data_expedicao" />
+                    </group>
+                </field>
+                <group string="Documentos" position="after" >
+                    <newline />
+                    <group string="Dados Cônjuge" colspan="2" col="4" attrs="{'invisible': [('estado_civil', '!=', '2')]}">
+                       <field name="conjuge_nome" />
+                       <field name="conjuge_data_nascimento" />
+                       <field name="conjuge_rg_numero" />
+                       <field name="conjuge_rg_orgao_emissor" />
+                       <field name="conjuge_rg_data_expedicao" />
+                       <field name="conjuge_cpf" on_change="onchange_cpf(conjuge_cpf)"/>
+                       <field name="conjuge_pais_nacionalidade_id" />
+                       <field name="conjuge_profissao" />
+                    </group>
+                </group>
+
+                <field name="eh_cooperativa" position="after" >
+                    <field name="eh_vendedor" />
+                    <field name="eh_comprador" />
+                    <field name="eh_comprador_investidor" />
+                    <field name="eh_comprador_socio" />
+                    <field name="eh_corretor" />
+                </field>
+                <field name="parent_id" position="after">
+                    <field name="corretor_usuario_id" />
+                </field>
+                <!--<xpath expr="/form/notebook/page/group/field[@name='fone']" position="attributes">
+                    <attribute name="required">True</attribute>
+                </xpath> -->
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="res_partner_search">
+            <field name="name">res.partner.search</field>
+            <field name="model">res.partner</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <field name="user_id" position="after">
+                    <newline />
+                    <filter name="eh_vendedor" string="Vendedor" icon="terp-go-month" domain="[('eh_vendedor','=', True)]" />
+                    <filter name="eh_comprador" string="Comprador" icon="terp-go-month" domain="[('eh_comprador','=', True)]" />
+                    <filter name="eh_comprador_investidor" string="Comprador/Investidor" icon="terp-go-month" domain="[('eh_comprador_investidor','=', True)]" />
+                    <filter name="eh_comprador_socio" string="Comprador/Sócio" icon="terp-go-month" domain="[('eh_comprador_socio','=', True)]"  />
+                    <filter name="eh_corretor" string="Corretor" icon="terp-go-month" domain="[('eh_corretor','=', True)]" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

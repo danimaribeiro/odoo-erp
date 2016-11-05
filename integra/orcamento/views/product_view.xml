@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="orcamento_product_form">
+            <field name="name">orcamento.product_form</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <field name="list_price" position="after">
+                    <field name="preco_minimo"/>
+                </field>
+                <page string="Descriptions" position="before">
+                <page string="Orçamento">
+                    <field name="orcamento_categoria_id" colspan="4"/>
+                    <newline />
+                    <field name="produto_faturamento_id" colspan="4"/>
+                    <newline />
+                    <field name="autoinsert" string="Calcula automaticamente baseado nos totais de outras categorias de orçamento"/>
+                    <newline />
+                    <field name="autocalc_orcamento_categoria_ids" colspan="10" nolabel="1" widget="one2many_list" attrs="{'invisible':[('autoinsert','=',False)]}">
+                        <tree string="Calcular valor no orçamento a partir das seguintes categorias de orçamento" editable="bottom">
+                            <field name="product_id" invisible="1" />
+                            <field name="orcamento_categoria_id" />
+                            <field name="percentual" required="1" />
+                        </tree>
+                    </field>
+                    <field name="relacionado_orcamento_ids" colspan="10" nolabel="1" widget="one2many_list" attrs="{'invisible':[('autoinsert','=',True)]}">
+                        <tree string="Produtos relacionados no orçamento" editable="bottom">
+                            <field name="product_id" invisible="1"/>
+                            <field name="produto_relacionado_id" domain="[('id','!=',parent.id)]" required="1" />
+                            <field name="quantidade" required="1" />
+                        </tree>
+                    </field>
+                </page>
+                </page>
+            </field>
+        </record>
+
+   </data>
+</openerp>

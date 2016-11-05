@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="analitico_folha_resumo_inss_maternidade" language="groovy" pageWidth="555" pageHeight="802" whenNoDataType="BlankPage" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="193a605c-82b2-4b8e-9890-a10ca82cc708">
+	<property name="ireport.zoom" value="1.4641000000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2014-01-01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_FINAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2014-01-31"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CNPJ" class="java.lang.String">
+		<defaultValueExpression><![CDATA["82.891.805/0001-37"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPOS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+sum(a.salario_familia) as salario_familia,
+sum(a.salario_maternidade) as salario_maternidade
+from
+(
+select
+case
+  when r.code = 'SALFAM' then sum(cast(hl.total as numeric(18,2)))
+  else 0.00
+end as salario_familia,
+
+case
+  when r.code = 'LICENCA_MATERNIDADE' then sum(cast(hl.total as numeric(18,2)))
+  else 0.00
+end as salario_maternidade
+
+from hr_payslip_line hl
+join hr_payslip h on h.id = hl.slip_id
+join res_company c on c.id = h.company_id
+join res_partner p on p.id = c.partner_id
+join hr_contract ct on ct.id = h.contract_id
+join hr_salary_rule r on r.id = hl.salary_rule_id
+join hr_payroll_structure s on s.id = h.struct_id
+
+where
+ h.tipo in $P!{TIPOS} and (h.simulacao = False or h.simulacao is null)
+ and (
+    (h.tipo in ('N', 'D') and h.date_from >= cast($P{DATA_INICIAL} as date) and h.date_to <= cast($P{DATA_FINAL} as date))
+     or (h.tipo = 'R' and h.data_afastamento between cast($P{DATA_INICIAL} as date) and cast($P{DATA_FINAL} as date))
+  )
+  and r.code in ('INSS_RAT', 'INSS_FAP_AJUSTADO', 'INSS_EMPRESA', 'INSS_OUTRAS_ENTIDADES', 'BASE_FGTS', 'FGTS', 'SALFAM', 'LICENCA_MATERNIDADE')  and h.date_from >= cast($P{DATA_INICIAL} as date)
+  and h.date_to <= cast($P{DATA_FINAL} as date)
+  and p.cnpj_cpf = $P{CNPJ}
+
+group by
+r.code, h.tipo, s.codigo_afastamento) as a]]>
+	</queryString>
+	<field name="salario_familia" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Recebe salário-família?]]></fieldDescription>
+	</field>
+	<field name="salario_maternidade" class="java.math.BigDecimal"/>
+	<variable name="SALARIO_MATERNIDADE" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{salario_maternidade}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="SALARIO_FAMILIA" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{salario_familia}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<detail>
+		<band/>
+	</detail>
+</jasperReport>

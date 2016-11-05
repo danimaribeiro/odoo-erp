@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="res_company_form_ecf">
+            <field name="name">res.company.form.ecf</field>
+            <field name="model">res.company</field>
+            <field name="type">form</field>
+            <field name="priority">30</field>
+            <field name="inherit_id" ref="sped.res_company_form_sped"/>
+            <field name="arch" type="xml">
+                <field name="serie_nfse" position="before">            
+                        <field name="caixa_ecf" />
+                        <newline/>                    
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

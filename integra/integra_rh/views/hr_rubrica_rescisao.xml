@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="hr_rubrica_rescisao_tree">
+            <field name="name">hr.rubrica.rescisao.tree</field>
+            <field name="model">hr.rubrica.rescisao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Rubricas Rescisórias">
+                    <field name="codigo" />
+                    <field name="descricao"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_rubrica_rescisao_form">
+            <field name="name">hr.rubrica.rescisao.form</field>
+            <field name="model">hr.rubrica.rescisao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <field name="codigo" required="1" colspan="2" />
+                     <newline/>
+                    <field name="descricao" required="1" colspan="2"/>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_rubrica_rescisao_search">
+            <field name="name">hr.rubrica.rescisao.search</field>
+            <field name="model">hr.rubrica.rescisao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Rubricas Rescisórias">
+                    <field name="codigo"/>
+                    <field name="descricao" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_rubrica_rescisao_acao">
+            <field name="name">Rubrica Rescisorias</field>
+            <field name="res_model">hr.rubrica.rescisao</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_rubrica_rescisao_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="hr_rubrica_rescisao_acao" id="menu_hr_rubrica_rescisao" name="Rubrica de Rescisão" parent="hr_payroll.payroll_configure" sequence="10"/>
+
+        <record model="ir.actions.act_window.view" id="hr_rubrica_rescisao_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_rubrica_rescisao_acao"/>
+            <field name="view_id" ref="hr_rubrica_rescisao_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_rubrica_rescisao_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_rubrica_rescisao_acao"/>
+            <field name="view_id" ref="hr_rubrica_rescisao_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_pagar_form">
+            <field name="name">finan.pagar.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_pagar_form"/>
+            <field name="arch" type="xml">
+                 <page string="Baixa" position="after">
+                     <page string="Quitação com Cheques" attrs="{'invisible': [('situacao', '=', 'Baixado')]}" groups="finan.group_finan_treasury_manager,finan.group_finan_treasury_staff,finan.group_finan_manager">
+                        <group colspan="4">
+                            <field name="data_quitacao_cheque" required="1" />
+                        </group>
+                        <newline />
+                        <button icon="gtk-execute" string="Lançar registro de quitação com a soma dos cheques" name="quitar_titulo" type="object" attrs="{'invisible': [('data_quitacao_cheque', '=', False )]}" colspan="4" />
+                        <field name="cheque_pagar_ids" domain="[('raiz_cnpj', '=', raiz_cnpj), ('situacao', '!=', 'DP')]" context="{'form_view_ref': 'finan_cheque.finan_cheque_pagar_form', 'tree_view_ref': 'finan_cheque.finan_cheque_tree'}" />
+                    </page>
+                 </page>
+            </field>
+        </record>
+    </data>
+</openerp>

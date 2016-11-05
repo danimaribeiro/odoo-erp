@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finan_notas_emitidas_analitico" language="groovy" pageWidth="555" pageHeight="230" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6fff61ce-1432-40fb-830b-18bbe5149856">
+	<property name="ireport.zoom" value="1.6105100000000019"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="COMPANY_ID" class="java.lang.Integer"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="MODELO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CNPJ_CPF" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSAO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NATUREZA_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+       rp.name,
+       sd.vr_nf
+
+from sped_documento as sd
+join res_company c on c.id = sd.company_id
+join res_partner rp on rp.id = sd.partner_id
+left join sped_naturezaoperacao snp on snp.id = sd.naturezaoperacao_id
+
+where
+    sd.emissao = $P{EMISSAO}
+and sd.situacao in ('02','03')
+and sd.modelo like $P{MODELO}
+                and (
+                    (sd.emissao = '0' and sd.modelo in ('55','SE'))
+                    or
+                    (sd.emissao = '1')
+                    or
+                    (sd.modelo not in ('55','SE'))
+                )
+and c.cnpj_cpf = $P{CNPJ_CPF}
+and ( snp.id is null
+     or cast(snp.id as varchar) like $P{NATUREZA_ID}
+    )
+and (
+    (sd.emissao = '0' and to_char(sd.data_emissao_brasilia, 'YYYY-MM-DD') between $P{DATA_INICIAL} and $P{DATA_FINAL})
+    or
+    (sd.emissao = '1' and to_char(sd.data_entrada_saida_brasilia, 'YYYY-MM-DD') between $P{DATA_INICIAL} and $P{DATA_FINAL})
+)
+order by
+c.name,
+sd.serie,
+sd.numero]]>
+	</queryString>
+	<field name="name" class="java.lang.String"/>
+	<field name="vr_nf" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da NF]]></fieldDescription>
+	</field>
+	<variable name="vr_nf_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_nf}]]></variableExpression>
+	</variable>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<summary>
+		<band height="16">
+			<staticText>
+				<reportElement x="0" y="0" width="485" height="16" uuid="b2bfc837-deec-42d9-926e-1dc535a89187"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Geral:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="485" y="0" width="70" height="16" uuid="59fc8493-c0dd-4e6f-bc7b-33dfbe0094f9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_nf_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

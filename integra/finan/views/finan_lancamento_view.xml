@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_receber_tree">
+            <field name="name">finan.receber.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id" />
+                    <field name="documento_id" />
+                    <field name="numero_documento" />
+                    <field name="data_documento" />
+                    <field name="data_vencimento" />
+                    <field name="valor_documento" sum="Valor documento" />
+                    <field name="situacao" />
+                    <field name="data_quitacao" />
+                    <field name="valor" sum="Valor" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_form">
+            <field name="name">finan.receber.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Conta a receber">
+                    <field name="company_id" invisible="1" />
+                    <field name="tipo" invisible="1" />
+                    <field name="provisionado" invisible="1" />
+                    <field name="situacao" invisible="1" />
+                    <notebook>
+                        <page string="Dados básicos">
+                            <group colspan="2" col="2">
+                                <separator string="Dados do documento" colspan="2" />
+                                <field name="documento_id" required="1" />
+                                <field name="numero_documento" required="1" />
+                                <field name="data_documento" required="1" />
+                                <field name="valor_documento" required="1" />
+                                <field name="valor" invisible="1" />
+                                <field name="partner_id" required="1" />
+                                <field name="data_vencimento" required="1" />
+                            </group>
+                            <group colspan="2" col="2">
+                                <separator string="Classificação" colspan="2" />
+                                <field name="conta_id" required="1" domain="[('tipo', '=', 'R'), ('sintetica', '=', False)]" />
+                            </group>
+                        </page>
+                        <page string="Rateio por centros de custo">
+                            <field name="centrocusto_id" string="Centro de custo/Modelo de rateio" domain="['|', ('tipo', '=', 'R'), '&amp;', ('tipo', '=', 'C'), ('sintetico', '=', False)]"
+                                   on_change="onchange_centrocusto_id(centrocusto_id, valor_documento, valor)"/>
+                            <newline/>
+                            <field name="rateio_ids" widget="many2one_list">
+                                <tree editable="top">
+                                    <field name="centrocusto_id" required="1" domain="[('tipo', '=', 'C'), ('sintetico', '=', False)]"/>
+                                    <field name="porcentagem" required="1" on_change="onchange_porcentagem(porcentagem, parent.valor_documento, parent.valor)"/>
+                                    <field name="valor_documento" />
+                                    <field name="valor" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Cobrança">
+                            <group colspan="2" col="2">
+                                <group attrs="{'invisible': [('tipo', '=', 'R')]}" colspan="2" col="2">
+                                    <separator string="Juros e descontos" colspan="2" />
+                                </group>
+                                <group attrs="{'invisible': [('tipo', '!=', 'R')]}" colspan="2" col="2">
+                                    <separator string="Cobrança" colspan="2" />
+                                    <field name="carteira_id" />
+                                    <field name="nosso_numero" />
+                                </group>
+                                <separator string="Juros" colspan="2" />
+                                <field name="data_juros" />
+                                <newline />
+                                <field name="porcentagem_juros" />
+                                <newline />
+                                <field name="valor_juros_previsto" attrs="{'invisible': [('situacao', 'in', ['Quitado', 'Baixado', 'Sem informação de vencimento'])]}" />
+                                <field name="valor_juros" attrs="{'invisible': [('situacao', 'not in', ['Quitado', 'Baixado', 'Sem informação de vencimento'])]}" />
+                                <separator string="Multa" colspan="2" />
+                                <field name="data_multa" />
+                                <newline />
+                                <field name="porcentagem_multa" />
+                                <newline />
+                                <field name="valor_multa_prevista" attrs="{'invisible': [('situacao', 'in', ['Quitado', 'Baixado', 'Sem informação de vencimento'])]}" />
+                                <field name="valor_multa" attrs="{'invisible': [('situacao', 'not in', ['Quitado', 'Baixado', 'Sem informação de vencimento'])]}" />
+                                <separator string="Desconto" colspan="2" />
+                                <field name="data_desconto" />
+                                <newline />
+                                <field name="porcentagem_desconto" />
+                                <newline />
+                                <field name="valor_desconto_previsto" attrs="{'invisible': [('situacao', 'in', ['Quitado', 'Baixado', 'Sem informação de vencimento'])]}" />
+                                <field name="valor_desconto" attrs="{'invisible': [('situacao', 'not in', ['Quitado', 'Baixado', 'Sem informação de vencimento'])]}" />
+                            </group>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_receber_acao">
+            <field name="name">Contas a receber</field>
+            <field name="res_model">finan.lancamento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo', '=', 'R'), ('provisionado', '=', False)]</field>
+            <field name="context">{'tipo': 'R', 'default_tipo': 'R', 'provisionado': False, 'default_provisionado': False}</field>
+            <field name="view_id" ref="finan_receber_tree" />
+        </record>
+
+        <menuitem action="finan_receber_acao"
+            id="menu_finan_receber" name="Contas a receber" parent="menu_finan" />
+
+        <record model="ir.actions.act_window.view" id="finan_receber_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_receber_form"/>
+            <field name="act_window_id" ref="finan_receber_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_receber_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_receber_tree"/>
+            <field name="act_window_id" ref="finan_receber_acao"/>
+        </record>
+
+<!--
+        <record model="ir.ui.view" id="finan_rateio_form">
+            <field name="name">finan.rateio.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Rateios por centro de custo">
+                    <field name="nome" />
+                    <field name="tipo" invisible="1" />
+                    <newline />
+                    <field name="rateio_ids" widget="many2one_list">
+                        <tree editable="top">
+                            <field name="lancamento_id" required="1" domain="[('tipo', '=', 'C')]"/>
+                            <field name="porcentagem" required="1" />
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_rateio_acao">
+            <field name="name">Rateios por Centros de custo</field>
+            <field name="res_model">finan.lancamento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo', '=', 'R')]</field>
+            <field name="context">{'tipo': 'R', 'default_tipo': 'R'}</field>
+            <field name="view_id" ref="finan_lancamento_tree" />
+        </record>
+
+        <menuitem action="finan_rateio_acao"
+            id="menu_finan_rateio" name="Rateios por Centros de custo" parent="menu_finan" />
+
+        <record model="ir.actions.act_window.view" id="finan_rateio_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_rateio_form"/>
+            <field name="act_window_id" ref="finan_rateio_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_rateio_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_lancamento_tree"/>
+            <field name="act_window_id" ref="finan_rateio_acao"/>
+        </record>-->
+
+    </data>
+</openerp>

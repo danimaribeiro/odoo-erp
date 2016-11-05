@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.actions.act_window" id="sped_nf_emitida_acao">
+            <field name="name">sped_nf_emitida</field>
+            <field name="domain">[('modelo','=','01'),('emissao','=','0')]</field>
+            <field name="context">{'modelo': '01', 'emissao': '0', 'default_modelo': '01', 'default_emissao': '0'}</field>
+            <field name="res_model">sped.documento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="sped_documento_nfe_emitida_tree"/>
+        </record>
+
+        <menuitem id="menu_sped_documento_nf" name="NF - modelo 01"
+            parent="menu_sped_fiscal_documento_emitido"
+            sequence="13"
+            action="sped_nf_emitida_acao" />
+
+        <record model="ir.actions.act_window" id="sped_nf_recebida_acao">
+            <field name="name">sped_nf_recebida</field>
+            <field name="domain">[('modelo','=','01'),('emissao','=','1')]</field>
+            <field name="context">{'modelo': '01', 'emissao': '1', 'entrada_saida': '0', 'default_modelo': '01', 'default_emissao': '1', 'default_entrada_saida': '0'}</field>
+            <field name="res_model">sped.documento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_documento_nf_recebida" name="NF - modelo 01"
+            parent="menu_sped_fiscal_documento_recebido"
+            sequence="13"
+            action="sped_nf_recebida_acao" />
+
+        <record model="ir.actions.act_window" id="sped_nfs_recebida_acao">
+            <field name="name">sped_nfs_recebida</field>
+            <field name="domain">[('modelo','in',['SC','SE']),('emissao','=','1')]</field>
+            <field name="context">{'modelo': 'SE', 'emissao': '1', 'entrada_saida': '0'}</field>
+            <field name="res_model">sped.documento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_documento_nfs_recebida" name="NFS - modelo SC/SE"
+            parent="menu_sped_fiscal_documento_recebido"
+            sequence="13"
+            action="sped_nfs_recebida_acao" />
+
+        <record model="ir.actions.act_window" id="sped_cf_emitida_acao">
+            <field name="name">sped_cf_emitida</field>
+            <field name="domain">[('modelo','=','2D'),('emissao','=','0')]</field>
+            <field name="context">{'modelo': '2D', 'emissao': '0', 'entrada_saida': '1'}</field>
+            <field name="res_model">sped.documento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="sped_documento_nfe_emitida_tree"/>
+        </record>
+
+        <menuitem id="menu_sped_documento_cf" name="Cupom Fiscal - modelo 2D"
+            parent="menu_sped_fiscal_documento_emitido"
+            sequence="13"
+            action="sped_cf_emitida_acao" />
+
+        <record model="ir.actions.act_window" id="sped_ct_emitida_acao">
+            <field name="name">sped_ct_emitida</field>
+            <field name="domain">[('modelo','in',('08','57')),('emissao','=','0')]</field>
+            <field name="context">{'modelo': '08', 'emissao': '0', 'entrada_saida': '1'}</field>
+            <field name="res_model">sped.documento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="sped_documento_nfe_emitida_tree"/>
+        </record>
+
+        <menuitem id="menu_sped_documento_ct" name="Conhecimento de transporte - modelo 08"
+            parent="menu_sped_fiscal_documento_emitido"
+            sequence="13"
+            action="sped_ct_emitida_acao" />
+
+        <record model="ir.actions.act_window" id="sped_ct_recebida_acao">
+            <field name="name">sped_ct_recebida</field>
+            <field name="domain">[('modelo','in',('08','57')),('emissao','=','1')]</field>
+            <field name="context">{'modelo': '08', 'emissao': '1', 'entrada_saida': '0'}</field>
+            <field name="res_model">sped.documento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_documento_ct_recebida" name="Conhecimento de transporte - modelo 08"
+            parent="menu_sped_fiscal_documento_recebido"
+            sequence="13"
+            action="sped_ct_recebida_acao" />
+        <record model="ir.actions.act_window" id="sped_conta_agua_energia_gas_recebida_acao">
+            <field name="name">sped_conta_agua_energia_gas_recebida</field>
+            <field name="domain">[('modelo','in',('06','28','29')),('emissao','=','1')]</field>
+            <field name="context">{'emissao': '1', 'entrada_saida': '0'}</field>
+            <field name="res_model">sped.documento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_documento_conta_agua_energia_gas_recebida" name="Contas de água, energia, gás - modelos 06/28/29"
+            parent="menu_sped_fiscal_documento_recebido"
+            sequence="13"
+            action="sped_conta_agua_energia_gas_recebida_acao" />
+
+        <record model="ir.actions.act_window" id="sped_conta_telefone_internet_recebida_acao">
+            <field name="name">sped_conta_telefone_internet_recebida</field>
+            <field name="domain">[('modelo','in',('21','22')),('emissao','=','1')]</field>
+            <field name="context">{'emissao': '1', 'entrada_saida': '0'}</field>
+            <field name="res_model">sped.documento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_documento_conta_telefone_internet_recebida" name="Contas de telefone, internet - modelos 21/22"
+            parent="menu_sped_fiscal_documento_recebido"
+            sequence="13"
+            action="sped_conta_telefone_internet_recebida_acao" />
+
+    </data>
+</openerp>

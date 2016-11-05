@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="analitico_folha_fgts_totais" language="groovy" pageWidth="240" pageHeight="802" columnWidth="240" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="193a605c-82b2-4b8e-9890-a10ca82cc708">
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2014-01-01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_FINAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2014-01-31"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CNPJ" class="java.lang.String">
+		<defaultValueExpression><![CDATA["82.891.805/0001-37"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPOS" class="java.lang.String"/>
+	<parameter name="COMPLEMENTAR" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[False]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+coalesce((select ll.rate from hr_payslip_line ll where ll.code = 'FGTS' and ll.slip_id = hl.slip_id), 8) as aliquota_fgt,
+sum(cast(hl.amount as numeric(18,2))) as base_fgts,
+sum(cast(hl.amount as numeric(18,2))) * coalesce((select ll.rate from hr_payslip_line ll where ll.code = 'FGTS' and ll.slip_id = hl.slip_id), 8) / 100.00 as valor_fgts
+
+from hr_payslip_line hl
+join hr_payslip h on h.id = hl.slip_id
+join res_company c on c.id = h.company_id
+join res_partner p on p.id = c.partner_id
+join hr_contract ct on ct.id = h.contract_id
+join hr_salary_rule r on r.id = hl.salary_rule_id
+join hr_payroll_structure s on s.id = h.struct_id
+
+where
+(h.tipo in $P!{TIPOS} or (
+$P{TIPOS} = '(''N'', ''R'')' and substr($P{DATA_INICIAL}, 5, 6) = '-12-01' and h.tipo in ('N', 'R', 'D')
+
+))
+and (h.simulacao = False or h.simulacao is null)
+  and h.complementar = $P{COMPLEMENTAR}
+  and (((
+      (h.complementar is null or h.complementar = False)
+      and (
+          (h.tipo in ('N', 'D') and h.date_from >= cast($P{DATA_INICIAL} as date) and h.date_to <= cast($P{DATA_FINAL} as date))
+       or (h.tipo = 'R' and h.data_afastamento between cast($P{DATA_INICIAL} as date) and cast($P{DATA_FINAL} as date)
+ and s.codigo_afastamento in ('J', 'L', 'S2'))
+)
+      ))
+    or (
+      h.complementar = True
+      and h.data_complementar between cast($P{DATA_INICIAL} as date) and cast($P{DATA_FINAL} as date)
+    ))
+--and r.code in ('FGTS', 'BASE_FGTS_13', 'BASE_INSS_13')
+and r.code = 'FGTS'
+and p.cnpj_cpf = $P{CNPJ}
+
+group by
+1]]>
+	</queryString>
+	<field name="base_fgts" class="java.math.BigDecimal"/>
+	<field name="aliquota_fgt" class="java.math.BigDecimal"/>
+	<field name="valor_fgts" class="java.math.BigDecimal"/>
+	<columnHeader>
+		<band height="14">
+			<staticText>
+				<reportElement x="0" y="0" width="80" height="14" uuid="1092ac44-eaa9-4c0e-8006-79c1bb1a6a23"/>
+				<box leftPadding="0" rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Base FGTS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="0" width="80" height="14" uuid="be96df72-e9ee-4564-a809-4b1162ab985a"/>
+				<box leftPadding="0" rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aliquota %]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="0" width="76" height="14" uuid="a4c5482b-e695-46b9-902e-96e83acdbb7c"/>
+				<box leftPadding="0" rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="0" y="0" width="80" height="14" uuid="0676f44a-b6fd-4a2a-beea-a642d0da593a"/>
+				<box leftPadding="0" rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_fgts}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="160" y="0" width="76" height="14" uuid="37fa091a-5496-4772-a983-c5d6f1d8d92a"/>
+				<box leftPadding="0" rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_fgts} * $F{aliquota_fgt} / 100.00]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00">
+				<reportElement x="80" y="0" width="80" height="14" uuid="ffdb3398-31ef-4c22-bdc2-8dd79d572dce"/>
+				<box leftPadding="0" rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{aliquota_fgt}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

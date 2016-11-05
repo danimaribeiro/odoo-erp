@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_grupo_economico_tree">
+            <field name="name">finan.grupo.economico.tree</field>
+            <field name="model">finan.grupo.economico</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome" />
+                    <field name="vendedor_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_grupo_economico_form">
+            <field name="name">finan.grupo.economico.form</field>
+            <field name="model">finan.grupo.economico</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Grupo econômico">
+                    <field name="nome" colspan="4" />
+                    <field name="vendedor_id" colspan="4" required="1" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_grupo_economico_acao">
+            <field name="name">Grupo econômico</field>
+            <field name="res_model">finan.grupo.economico</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_grupo_economico_tree" />
+        </record>
+
+        <menuitem action="finan_grupo_economico_acao"
+            id="menu_finan_grupo_economico" name="Grupo econômico"
+            parent="finan.menu_finan_config" />
+
+    </data>
+</openerp>

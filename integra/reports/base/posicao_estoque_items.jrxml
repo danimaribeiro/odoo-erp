@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="movimento_estoque_items" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="fe8afa79-6bf1-46d1-86c1-b13d8fd27bba">
+	<property name="ireport.zoom" value="1.610510000000007"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LOCATION_ID" class="java.lang.Integer"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="CATEGORIA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+sm.entrada,
+sm.saida,
+sm.vr_unitario_custo,
+sm.vr_total,
+sm.quantidade,
+sm.data,
+sl.name as local_esoque,
+pdc.name as categoria,
+pd.name_template as produto
+
+from
+    resumo_custo_medio($P{DATA_FINAL}) as sm
+    join stock_location as sl on sl.id = sm.location_id
+    join product_product as pd on pd.id = sm.product_id
+    join product_template as pdt on pdt.id = pd.product_tmpl_id
+    join product_category as pdc on pdc.id = pdt.categ_id
+    left join sped_documentoitem as sdi on sdi.produto_id = sm.product_id
+where
+    pdc.name = $P{CATEGORIA}
+    and sm.location_id = $P{LOCATION_ID}]]>
+	</queryString>
+	<field name="entrada" class="java.math.BigDecimal"/>
+	<field name="saida" class="java.math.BigDecimal"/>
+	<field name="vr_unitario_custo" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Unitário de custo]]></fieldDescription>
+	</field>
+	<field name="vr_total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor total]]></fieldDescription>
+	</field>
+	<field name="quantidade" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Quantidade]]></fieldDescription>
+	</field>
+	<field name="data" class="java.sql.Date"/>
+	<field name="local_esoque" class="java.lang.String"/>
+	<field name="categoria" class="java.lang.String"/>
+	<field name="produto" class="java.lang.String"/>
+	<pageHeader>
+		<band height="14">
+			<staticText>
+				<reportElement x="0" y="0" width="142" height="14" uuid="dcdf6e54-6423-4c59-a47a-924abe2e2dfd"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Categoria]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="142" y="0" width="148" height="14" uuid="fb90b360-f75e-4d75-9adf-b82c2f5fc851"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Produto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="290" y="0" width="85" height="14" uuid="3d43cbad-eb3a-4c06-abe8-10e6f7aeaf64"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Local de estoque]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="375" y="0" width="60" height="14" uuid="803addd5-2f53-42d0-96f0-6b58e25156be"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Quantidade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="435" y="0" width="60" height="14" uuid="04bc7157-e593-4167-bd8a-61cbd2065af3"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Custo Médio ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="495" y="0" width="60" height="14" uuid="e0a62f0f-cad9-449f-8d6e-4c7988e3b1f4"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="0" width="142" height="14" uuid="dc7a7c26-575c-4eb0-bef9-8ba190af3d55"/>
+				<box leftPadding="0">
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{categoria}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="142" y="0" width="148" height="14" uuid="c053c8f4-f6f5-4fe1-acbb-a6faccb94c9a"/>
+				<box leftPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{produto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="290" y="0" width="85" height="14" uuid="86904cab-5828-4b20-a901-d570629dae58"/>
+				<box leftPadding="0" rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{local_esoque}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="375" y="0" width="60" height="14" uuid="c18aa99b-77c4-4eb8-a0a5-af1afb04e006"/>
+				<box leftPadding="0" rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantidade}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.000000">
+				<reportElement x="435" y="0" width="60" height="14" uuid="8acaa770-4d18-4c5c-9ddc-f86077668bcb"/>
+				<box leftPadding="0" rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_unitario_custo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="495" y="0" width="60" height="14" uuid="42e94803-6e80-4a81-aac9-d73e40b76fb8"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="10">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="10" uuid="aecb7ead-8a81-456d-beaa-3ed4a6c8e94c"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Static text]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="econo_conferencia_tree">
+            <field name="name">econo.conferencia.tree</field>
+            <field name="model">finan.rateio.economico.bi</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="green:repetido and repetido > 1,blue:tipo in ['R', 'E'],red:tipo in ['S', 'P']">
+                    <field name="grupo_id" />
+                    <field name="company_id" />
+                    <field name="conta_individual_id" />
+                    <field name="conta_id" />
+                    <field name="centrocusto_id" />
+                    <field name="hr_contract_id" />
+                    <field name="lancamento_id" />
+                    <field name="partner_bank_id" />
+                    <field name="tipo" />
+                    <field name="data_quitacao" />
+                    <field name="porcentagem" />
+                    <field name="valor_documento" sum="Valor documento" />
+                    <field name="valor_desconto_recebido" sum="Desconto recebido" string="Desconto recebido" />
+                    <field name="valor_juros_multa_recebido" sum="Juros/Multa recebido" string="Juros/Multa recebido" />
+                    <field name="valor_desconto_pago" sum="Desconto pago" string="Desconto pago" />
+                    <field name="valor_juros_multa_pago" sum="Juros/Multa pago" string="Juros/Multa pago" />
+                    <field name="valor" sum="Valor líquido" />
+                    <field name="valor_usado" sum="Valor usado" />
+                    <field name="econo_conta_id" />
+                    <field name="repetido" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="econo_conferencia_search">
+            <field name="name">econo.conferencia.search</field>
+            <field name="model">finan.rateio.economico.bi</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Análise econômica">
+                    <filter name="ativar" string="Ativar" domain="[('controle', '=', True)]"/>
+                    <filter name="desativar" string="Desativar" domain="[('controle', '=', False)]"/>
+
+                    <field name="lancamento_id" />
+                    <field name="tipo" />
+                    <field name="data_quitacao_from" string="De quitação" filter_domain="[('data_quitacao','&gt;=',self)]" widget="calendar" />
+                    <field name="data_quitacao_to" string="A quitação" filter_domain="[('data_quitacao','&lt;=',self)]" widget="calendar" />
+                    <newline />
+                    <field name="grupo_id" />
+                    <field name="company_id" />
+                    <field name="conta_id" />
+                    <field name="centrocusto_id" />
+                    <field name="conta_individual_id" />
+                    <newline />
+                    <field name="hr_contract_id" />
+                    <field name="econo_conta_id" />
+                    <field name="partner_bank_id" />
+                    <filter name="repetido" string="Repetidos?" domain="[('repetido', '&gt;', 1)]"/>
+                    <newline />
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Grupo" icon="terp-project" context="{'group_by': 'grupo_id'}" />
+                        <filter string="Unidade" icon="terp-project" context="{'group_by': 'company_id'}" />
+                        <filter string="Conta" icon="terp-project" context="{'group_by': 'conta_id'}" />
+                        <filter string="Conta individual" icon="terp-project" context="{'group_by': 'conta_individual_id'}" />
+                        <filter string="Centro de custo" icon="terp-project" context="{'group_by': 'centrocusto_id'}" />
+                        <filter string="Funcionário" icon="terp-project" context="{'group_by': 'hr_contract_id'}" />
+                        <filter string="Tipo" icon="terp-project" context="{'group_by': 'tipo'}"/>
+                        <filter string="Lançamento" icon="terp-project" context="{'group_by': 'lancamento_id'}"/>
+                        <filter string="Conta econômica" icon="terp-project" context="{'group_by': 'econo_conta_id'}"/>
+                        <filter string="Conta bancária" icon="terp-project" context="{'group_by': 'partner_bank_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="econo_conferencia_acao">
+            <field name="name">Contas econômicas</field>
+            <field name="res_model">finan.rateio.economico.bi</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="limit">10</field>
+            <field name="view_id" ref="econo_conferencia_tree" />
+            <field name="context">{'search_default_data_quitacao_from': '2000-01-01','search_default_data_quitacao_to': '2000-01-01','search_default_desativar':True}</field>
+        </record>
+
+        <menuitem action="econo_conferencia_acao"
+            id="menu_econo_conferencia"
+            name="Conferência econômica"
+            parent="menu_finan_analise_economica" />
+
+    </data>
+</openerp>

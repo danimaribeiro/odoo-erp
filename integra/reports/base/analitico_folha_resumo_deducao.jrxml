@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="analitico_folha_resumo_deducao" language="groovy" pageWidth="179" pageHeight="280" columnWidth="179" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="5a6ddf3f-9183-41de-a7c1-63e2b0b0ac5f">
+	<property name="ireport.zoom" value="5.559917313492239"/>
+	<property name="ireport.x" value="36"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2013-12-01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA_FINAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2013-12-31"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CNPJ" class="java.lang.String">
+		<defaultValueExpression><![CDATA["82.891.802/0001-37"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TOTAL_DEDUCAO" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[$V{TOTAL_DEDUCAO}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPOS" class="java.lang.String">
+		<defaultValueExpression><![CDATA["('N', 'R')"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPLEMENTAR" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[False]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+  '[' || r.codigo || ']' || ' '|| hi.name as nome,
+  count(hi.id) as ids,
+  sum(coalesce(cast(hi.total as numeric(18,2)), 0)) as valor,
+  sum(coalesce(cast(hi.quantity as numeric(18,2)), 0)) as quantidade
+
+from
+  hr_payslip h
+  join hr_contract c on c.id = h.contract_id
+  join res_company cp on cp.id = c.company_id
+  join res_partner p on p.id = cp.partner_id
+  join hr_payslip_line hi on hi.slip_id = h.id
+  join hr_salary_rule r on r.id = hi.salary_rule_id
+  join hr_salary_rule_category rc on rc.id = r.category_id
+
+where
+  h.tipo in $P!{TIPOS} and (h.simulacao = False or h.simulacao is null)
+  and h.complementar = $P{COMPLEMENTAR}
+  and ((
+      (h.complementar is null or h.complementar = False)
+      and (
+          (h.tipo in ('N', 'D') and h.date_from >= cast($P{DATA_INICIAL} as date) and h.date_to <= cast($P{DATA_FINAL} as date))
+       or (h.tipo = 'R' and h.data_afastamento between cast($P{DATA_INICIAL} as date) and cast($P{DATA_FINAL} as date))
+      ))
+    or (
+      h.complementar = True
+      and h.data_complementar between cast($P{DATA_INICIAL} as date) and cast($P{DATA_FINAL} as date)
+    ))
+  and p.cnpj_cpf = $P{CNPJ}
+  and rc.sinal = '-'
+
+group by
+  hi.name,
+  r.codigo
+
+order by
+  hi.name]]>
+	</queryString>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[Descrição]]></fieldDescription>
+	</field>
+	<field name="valor" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor total]]></fieldDescription>
+	</field>
+	<field name="quantidade" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Quantidade]]></fieldDescription>
+	</field>
+	<field name="ids" class="java.lang.Integer"/>
+	<variable name="TOTAL_DEDUCAO" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="84" height="14" uuid="d5ff64e9-11d1-4460-80a2-b92a61e86aae"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="135" y="0" width="44" height="14" uuid="07b4cfd1-4bf9-49ec-86f9-bfcdcfd79ca0"/>
+				<box rightPadding="2">
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="99" y="0" width="36" height="14" uuid="2b734bec-d9ac-4a67-a106-35dc43578ca5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantidade}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="0" width="15" height="14" uuid="2b010086-526f-4dc3-94a0-413227c95adf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ids}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="ecd_menu_ecd_arquivo"
+            action="ecd_periodo_acao" 
+            name="ECD"
+            parent="menu_sped_ecd_arquivo"
+            sequence="01" />
+    </data>
+</openerp>

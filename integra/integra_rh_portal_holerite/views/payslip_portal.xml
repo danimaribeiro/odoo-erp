@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <record id="hr_payslip_portal_tree" model="ir.ui.view">
+            <field name="name">hr.payslip.portal.tree</field>
+            <field name="model">hr.payslip.portal</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Meus holerites">
+                    <field name="descricao"/>
+                    <field name="company_id"/>
+<!--                     <field name="nome_arquivo" invisible="1" /> -->
+<!--                     <field name="arquivo" filename="nome_arquivo" string="Recibo" /> -->
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_payslip_portal_form" model="ir.ui.view">
+            <field name="name">hr.payslip.portal.form</field>
+            <field name="model">hr.payslip.portal</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <form string="Meus holerites">
+                    <field name="descricao" readonly="1" colspan="4" />
+                    <field name="company_id" readonly="1" colspan="4" />
+                    <field name="nome_arquivo" invisible="1" />
+                    <field name="arquivo" filename="nome_arquivo" colspan="4" string="Recibo" readonly="1" />
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="hr_payslip_portal_search">
+            <field name="name">hr.payslip.portal.search</field>
+            <field name="model">hr.payslip.portal</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Meus holerites">
+                    <field name="descricao" string="Holerite" />
+                </search>
+            </field>
+        </record>
+        
+        <record id="hr_payslip_portal_acao" model="ir.actions.act_window">
+            <field name="name">Meus holerites</field>
+            <field name="res_model">hr.payslip.portal</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="hr_payslip_portal_tree"/>
+            <field name="search_view_id" ref="hr_payslip_portal_search"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_payslip_portal_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_payslip_portal_form"/>
+            <field name="act_window_id" ref="hr_payslip_portal_acao"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="hr_payslip_portal_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="hr_payslip_portal_tree"/>
+            <field name="act_window_id" ref="hr_payslip_portal_acao"/>
+        </record>
+        
+        <menuitem
+            action="hr_payslip_portal_acao"
+            id="hr_payslip_portal_meus_holerites_menu"
+            string="Meus holerites"
+            />
+                                
+    </data>
+</openerp>
+        

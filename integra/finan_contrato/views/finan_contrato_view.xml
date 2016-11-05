@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+      <menuitem id="menu_finan_contratos"
+        name="Contratos"
+        groups="finan.group_finan_manager,finan.group_finan_treasury_manager,finan_contrato.group_finan_contract_staff,finan_contrato.group_finan_contract_manager"
+        parent="finan.menu_finan"
+        sequence = "60" />
+
+      <menuitem id="menu_finan_contratos_manutencao"
+                name="Manutenções contratuais"
+                groups="finan.group_finan_manager,finan.group_finan_treasury_manager,finan_contrato.group_finan_contract_staff,finan_contrato.group_finan_contract_manager"
+                parent="finan.menu_finan"
+                sequence = "61" />
+
+    </data>
+</openerp>

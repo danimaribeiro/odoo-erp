@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fluxo_caixa_saldo_anterior" language="groovy" pageWidth="100" pageHeight="100" columnWidth="100" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="24874b41-2a3b-48ec-a873-7f8bfa6b1acb">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="COMPANY_ID" class="java.lang.Integer"/>
+	<parameter name="PROV" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+ sum(f.valor_entrada) - sum(f.valor_saida) as diferenca
+ from
+ finan_fluxo_mensal_diario f
+ where
+ f.data < cast($P{DATA_INICIAL} as date)
+ and f.tipo in ('Q','V')
+ and
+ f.company_id = $P{COMPANY_ID}
+ $P!{PROV}]]>
+	</queryString>
+	<field name="diferenca" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Diferença]]></fieldDescription>
+	</field>
+	<variable name="SALDO_ANTERIOR" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{diferenca}]]></variableExpression>
+	</variable>
+</jasperReport>

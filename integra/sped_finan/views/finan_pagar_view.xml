@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_pagar_form">
+            <field name="name">finan.pagar.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_pagar_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@string='Dados básicos']/group[1]" position="before">
+                    <field name="sped_documento_id" readonly="1" colspan="4" />
+                </xpath>
+                <field name="company_id" position="replace">
+                    <field name="company_id" colspan="4" attrs="{'readonly': [('sped_documento_id', '!=', False)]}"  on_change="onchange_company_id(company_id)" domain="[('cnpj_cpf', '!=', False)]" />
+                </field>
+
+                <field name="documento_id" position="replace">
+                    <field name="documento_id" required="1" attrs="{'readonly': [('sped_documento_id', '!=', False)]}" />
+                </field>
+
+                <field name="numero_documento" position="replace">
+                    <field name="numero_documento" required="1" attrs="{'readonly': [('sped_documento_id', '!=', False)]}" />
+                </field>
+
+                <field name="data_documento" position="replace">
+                    <field name="data_documento" required="1" attrs="{'readonly': [('sped_documento_id', '!=', False)]}" />
+                </field>
+
+                <field name="valor_documento" position="replace">
+                    <field name="valor_documento" required="1" attrs="{'readonly': [('sped_documento_id', '!=', False)]}" />
+                </field>
+
+                <field name="partner_id" position="replace">
+                    <field name="partner_id" required="1" string="Fornecedor" attrs="{'readonly': [('sped_documento_id', '!=', False)]}" />
+                </field>
+
+                <field name="data_vencimento" position="replace">
+                    <field name="data_vencimento" required="1" attrs="{'readonly': [('sped_documento_id', '!=', False)]}" />
+                </field>
+
+                <field name="conta_id" position="replace">
+                    <field name="conta_id" required="1" domain="[('sintetica', '=', False)]" on_change="onchange_conta_id(conta_id, company_id, centrocusto_id, valor_documento, valor, partner_id, data_vencimento, data_documento)" attrs="{'readonly': [('sped_documento_id', '!=', False)]}" />
+                </field>
+
+            </field>
+        </record>
+
+    </data>
+</openerp>

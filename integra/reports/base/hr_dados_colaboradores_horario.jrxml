@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hr_dados_colaboradores_jornada_escala" language="groovy" pageWidth="300" pageHeight="572" orientation="Landscape" columnWidth="300" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e682c547-b37a-4963-90ae-ad31f90f4102">
+	<property name="ireport.zoom" value="1.6105100000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="CONTRACT_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+    CASE
+        when upper(etiqueta.cargo) like '%VOLAN%' then null
+        when etiqueta.jornada_escala_id is not null then double_to_time(je.hora_entrada)
+        else double_to_time(jss.hora_entrada)
+    end as hora_entrada,
+
+    CASE
+        when upper(etiqueta.cargo) like '%VOLAN%' then null
+        when etiqueta.jornada_escala_id is not null then double_to_time(je.hora_saida)
+        else double_to_time(jss.hora_saida)
+    end as hora_saida,
+
+    CASE
+        when upper(etiqueta.cargo) like '%VOLAN%' then null
+        when etiqueta.jornada_escala_id is not null then double_to_time(je.hora_saida_intervalo_1)
+        else double_to_time(jss.hora_saida_intervalo_1)
+    end as hora_saida_intervalo,
+
+    CASE
+        when upper(etiqueta.cargo) like '%VOLAN%' then null
+        when etiqueta.jornada_escala_id is not null then double_to_time(je.hora_retorno_intervalo_1)
+        else double_to_time(jss.hora_retorno_intervalo_1)
+    end as hora_retorno_intervalo,
+    double_to_time(je.hora_entrada) as hora_entrada_escala,
+    double_to_time(je.hora_saida) as hora_saida_escala,
+    double_to_time(jss.hora_entrada) as hora_entrada_normal,
+    double_to_time(jss.hora_saida) as hora_saida_normal
+
+from
+    (
+        select
+
+
+            -- Cargo de acordo com a data de competencia
+            (select
+                j.name
+            from
+                hr_job j
+                left join hr_contract_alteracao cac on cac.job_id = j.id and cac.tipo_alteracao = 'C' and cac.contract_id = c.id and cac.data_alteracao <= '2015-10-01'
+
+            where
+                (j.id = c.job_id) or cac.id is not null
+
+            order by
+                cac.data_alteracao desc nulls last
+
+            limit 1
+            ) as cargo,
+
+            -- Jornada de acordo com a data de competencia
+            (select
+                j.id
+
+            from
+                hr_jornada j
+                left join hr_contract_alteracao cajss on (cajss.jornada_escala_id = j.id or cajss.jornada_segunda_a_sexta_id = j.id) and cajss.tipo_alteracao = 'J' and cajss.contract_id = c.id and cajss.data_alteracao <= '2015-10-01'
+
+            where
+                (j.id = c.jornada_escala_id) or (j.id = c.jornada_segunda_a_sexta_id) or (cajss.id is not null)
+
+            order by
+                cajss.data_alteracao desc nulls last
+
+            limit 1) as jornada_escala_id,
+
+            (select
+                j.id
+
+            from
+                hr_jornada j
+                left join hr_contract_alteracao cajss on cajss.jornada_segunda_a_sexta_id = j.id and cajss.tipo_alteracao = 'J' and cajss.contract_id = c.id and cajss.data_alteracao <= '2015-10-01'
+
+            where
+                (j.id = c.jornada_segunda_a_sexta_id) or cajss.id is not null
+
+            order by
+                cajss.data_alteracao desc nulls last
+
+            limit 1) as jornada_segunda_a_sexta_id
+
+
+        from
+            hr_contract as c
+            join hr_employee e on e.id = c.employee_id
+            join res_company co on co.id = c.company_id
+            join res_partner rp on rp.id = co.partner_id
+
+        where
+            c.id = $P{CONTRACT_ID}
+        order by
+            e.nome
+    ) as etiqueta
+    left join hr_jornada je on je.id = etiqueta.jornada_escala_id
+    left join hr_jornada jss on jss.id = etiqueta.jornada_segunda_a_sexta_id]]>
+	</queryString>
+	<field name="hora_entrada" class="java.sql.Time">
+		<fieldDescription><![CDATA[Hora de entrada]]></fieldDescription>
+	</field>
+	<field name="hora_saida" class="java.sql.Time">
+		<fieldDescription><![CDATA[Hora de saída]]></fieldDescription>
+	</field>
+	<field name="hora_saida_intervalo" class="java.sql.Time"/>
+	<field name="hora_retorno_intervalo" class="java.sql.Time"/>
+	<field name="hora_entrada_escala" class="java.sql.Time"/>
+	<field name="hora_saida_escala" class="java.sql.Time"/>
+	<field name="hora_entrada_normal" class="java.sql.Time"/>
+	<field name="hora_saida_normal" class="java.sql.Time"/>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="50" height="20" uuid="1572a326-06d1-43d9-a09e-7764c5038ac7"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora_entrada_normal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement x="50" y="0" width="50" height="20" uuid="d5663de4-91b1-4a78-8f29-4e52fb7c4195"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora_saida_normal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement x="100" y="0" width="50" height="20" uuid="9e2b1eec-f9b7-4cde-bb52-61ab1470881f"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora_entrada_escala}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement x="150" y="0" width="50" height="20" uuid="755b9402-dbbc-4ba9-9b29-89cc9859e16f"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora_saida_escala}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement x="250" y="0" width="50" height="20" uuid="4abc4e71-3c1d-4d34-8b73-04f67cfaadbd"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora_retorno_intervalo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement x="200" y="0" width="50" height="20" uuid="4ca1f5a0-19f3-415e-9a12-7dd4d4cbbba1"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora_saida_intervalo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

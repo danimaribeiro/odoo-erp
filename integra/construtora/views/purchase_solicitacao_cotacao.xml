@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="purchase_solicitacao_cotacao_tree">
+            <field name="name">purchase.solicitacao.cotacao.tree</field>
+            <field name="model">purchase.solicitacao.cotacao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Solicitação de materiais">
+                    <field name="codigo"/>
+                    <field name="data" />
+                    <field name="company_id" />
+                    <!--<field name="centrocusto_id" /> -->
+                    <field name="solicitante_id" />
+                    <field name="data_hora_aprovacao" />
+                    <field name="aprovador_id" />
+                    <field name="cotacao_aprovada_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="purchase_solicitacao_cotacao_form">
+            <field name="name">purchase.solicitacao.cotacao.form</field>
+            <field name="model">purchase.solicitacao.cotacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Solicitação de materiais">
+                    <group col="4" colspan="4">
+                        <field name="codigo" />
+                        <field name="company_id" colspan="4" />
+<!--                         <field name="centrocusto_id" colspan="4" domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]"/> -->
+                        <field name="data" />
+                    </group>
+                    <group colspan="4" groups="purchase.group_purchase_manager">
+                        <separator string="Aprovação" colspan="4" />
+                        <field name="solicitante_id" colspan="4" readonly="1" />
+                        <field name="aprovador_id" colspan="4" readonly="1" />
+                        <field name="data_hora_aprovacao" readonly="1" />
+                        <button name="aprovar" string="Aprovar solicitação" colspan="4" type="object" />
+                    </group>
+                    <notebook>
+<!--                        <page string="Itens da solicitação" >
+                            <field name="item_ids" colspan="4" nolabel="1" context="{'default_ordem': 9999}" domain="[('situacao', '=', 'A')]">
+                                <tree>
+                                    <field name="project_id" required="1" />
+                                    <field name="orcamento_id" required="1" domain="[('project_id', '=', project_id)]" />
+                                    <field name="etapa_id" required="1" domain="[('orcamento_id', '=', orcamento_id)]" />
+                                    <field name="codigo_completo" invisible="1" />
+                                    <field name="ordem" invisible="1" />
+                                    <field name="product_id" required="1" on_change="onchange_product_id(product_id)" />
+                                    <field name="uom_id" readonly="1" />
+                                    <field name="quantidade" required="1" />
+                                    <field name="data_compra_solicitacao" />
+                                </tree>
+                                <form>
+                                    <group col="4" colspan="4">
+                                        <field name="project_id" colspan="4" required="1" />
+                                        <field name="orcamento_id" colspan="4" required="1" domain="[('project_id', '=', project_id)]" />
+                                        <field name="etapa_id" colspan="4" required="1" domain="[('orcamento_id', '=', orcamento_id), ('sintetica', '=', False)]" />
+                                        <field name="ordem" colspan="2" invisible="1" />
+                                        <field name="codigo_completo" colspan="2" invisible="1" />
+                                        <field name="product_id" colspan="4" required="1" on_change="onchange_product_id(product_id)" />
+                                        <field name="quantidade" required="1" />
+                                        <field name="uom_id" colspan="2" readonly="1" />
+                                        <field name="data_compra_solicitacao" required="1" />
+                                        <newline />
+                                        <field name="centrocusto_id" colspan="4" string="Centro de custo/Modelo de rateio" domain="['|', ('tipo', '=', 'R'), '&amp;', ('tipo', '=', 'C'), ('sintetico', '=', False)]" />
+                                    </group>
+                                </form>
+                            </field>
+                        </page>-->
+                        <page string="Itens planejados" >
+                            <button type="object" name="alimenta_solicitacao" string="Gera solicitações a partir dos planejamentos" colspan="4" />
+                            <field name="planejamento_ids" colspan="4" nolabel="1" />
+                        </page>
+                        <page string="Itens orçados" >
+                            <button type="object" name="alimenta_solicitacao" string="Gera solicitações a partir dos itens orçados" colspan="4" />
+                            <field name="item_ids" colspan="4" nolabel="1" context="{'form_view_ref': 'construtora.purchase_orcamento_item_form', 'tree_view_ref': 'construtora.purchase_orcamento_item_tree', 'search_view_ref': 'construtora.purchase_orcamento_item_search'}" />
+                        </page>
+                        <page string="Itens da solicitação (pré-orçados)" >
+                            <field name="item_pre_orcado_ids" colspan="4" nolabel="1">
+                                <tree>
+                                    <field name="project_id" readonly="1" />
+                                    <field name="orcamento_id" readonly="1" />
+                                    <field name="etapa_id" readonly="1" />
+                                    <field name="codigo_completo" readonly="1" />
+                                    <field name="produto_orcado_id" readonly="1" string="Produto/serviço orçado" />
+                                    <field name="quantidade_orcada" readonly="1" string="Quantidade orçada" />
+                                    <field name="product_id" />
+                                    <field name="quantidade" />
+                                    <field name="data_compra_solicitacao" />
+                                    <field name="centrocusto_id" />
+                                    <field name="cotacao_aprovada_id" readonly="1"/>
+                                </tree>
+                                <form>
+                                    <group col="4" colspan="4">
+                                        <field name="project_id" colspan="4" required="1" />
+                                        <field name="item_id" colspan="4" required="1" on_change="onchange_item_id(item_id)" domain="[('project_id', '=', project_id), ('solicitacao_id', '=', False)]" />
+                                        <field name="orcamento_id" colspan="4" readonly="1" />
+                                        <field name="etapa_id" colspan="4" readonly="1" />
+                                        <field name="codigo_completo" colspan="2" readonly="1" />
+                                        <field name="produto_orcado_id" colspan="4" readonly="1" />
+                                        <field name="quantidade_orcada" readonly="1" />
+                                        <newline />
+                                        <field name="planejamento_id" colspan="4" domain="[('item_id', '=', item_id)]" />
+                                        <field name="product_id" colspan="4" required="1" />
+                                        <field name="quantidade" required="1" />
+                                        <field name="data_compra_solicitacao" required="1" />
+                                        <field name="centrocusto_id" colspan="4" />
+                                        <field name="cotacao_aprovada_id" readonly="1"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Observação">
+                            <separator string="Observação" colspan="4" />
+                            <field name="obs" nolabel="1" />
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="purchase_solicitacao_cotacao_search">
+            <field name="name">purchase.solicitacao.cotacao.search</field>
+            <field name="model">purchase.solicitacao.cotacao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Solicitação de materiais">
+                    <field name="codigo" />
+                    <field name="solicitante_id" />
+                    <field name="data" />
+                    <field name="company_id" />
+                    <field name="centrocusto_id" />
+                    <newline />
+
+                    <field name="data_from" string="De data" filter_domain="[('data','&gt;=',self)]" widget="calendar" />
+                    <field name="data_to" string="A data" filter_domain="[('data','&lt;=',self)]" widget="calendar" />
+
+                    <newline />
+
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="purchase_solicitacao_cotacao_acao">
+            <field name="name">Solicitação de materiais</field>
+            <field name="res_model">purchase.solicitacao.cotacao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="purchase_solicitacao_cotacao_acao"
+            id="menu_purchase_solicitacao_cotacao"
+            name="Solicitação de materiais"
+            parent="menu_purchase_cotacao" />
+
+    </data>
+</openerp>

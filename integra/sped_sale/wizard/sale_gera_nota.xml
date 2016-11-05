@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_gera_nota_wizard" >
+            <field name="name">sale.gera.nota.wizard</field>
+            <field name="model">sale.gera_nota</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Gerar faturamento das vendas">
+                    <group colspan="4">
+                        <separator string="Confirmar período" colspan="4"/>
+                        <newline/>
+                        <field name="company_id" colspan="4" on_change="onchange_company_id(company_id)" required="1"/>
+<!--                        <field name="operacao_produto_id" colspan="4" domain="[('emissao', '=', '0'), ('modelo', 'in', ('55', '2D'))]"/>
+                        <field name="operacao_servico_id" colspan="4" domain="[('emissao', '=', '0'), ('modelo', '=', 'SE')]"/>-->
+                        <field name="data_inicial" required="1"/>
+                        <field name="data_final" required="1"/>
+                        <field name="partner_id" colspan="4"/>
+                        <field name="pedido_id" colspan="4" domain="[('partner_id', '=', partner_id), ('state', '=', 'done')]"/>
+                        <newline/>
+                        <button icon="gtk-execute" name="busca_pedidos" context="{'data_inicial': data_inicial, 'data_final': data_final, 'company_id': company_id, 'partner_id': partner_id, 'pedido_id': pedido_id}" string="Buscar pedidos" type="object" colspan="2"/>
+                        <button icon="gtk-execute" name="gera_notas" context="{'data_inicial': data_inicial, 'data_final': data_final, 'company_id': company_id, 'partner_id': partner_id, 'pedido_id': pedido_id, 'pedido_ids': pedido_ids}" string="Gerar notas" type="object" colspan="2"/>
+                        <separator string="Orçamentos" colspan="4"/>
+                        <field name="pedido_ids" colspan="4" nolabel="1" readonly="1">
+                            <tree editable="top">
+                                <field name="company_id"/>
+                                <field name="name" string="Número" />
+                                <field name="date_order" />
+<!--                                 <field name="orcamento_aprovado" /> -->
+                                <field name="partner_id"/>
+                                <field name="operacao_fiscal_produto_id"/>
+                                <field name="operacao_fiscal_servico_id"/>
+<!--                                 <field name="vr_total_venda_impostos" sum="Valor"/> -->
+                                <field name="amount_total" sum="Valor"/>
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sale_gera_nota_wizard_acao">
+            <field name="name">Gerar notas dos Pedidos</field>
+            <field name="res_model">sale.gera_nota</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+<!--             <field name="form_view_id">sale_gera_nota_wizard</field> -->
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sale_gera_nota_wizard_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_gera_nota_wizard"/>
+            <field name="act_window_id" ref="sale_gera_nota_wizard_acao"/>
+        </record>
+
+        <menuitem action="sale_gera_nota_wizard_acao"
+            id="menu_sale_gera_nota_wizard" name="Gerar faturamento das vendas" parent="sped.menu_sped_fiscal_documento_emitido" />
+
+    </data>
+</openerp>

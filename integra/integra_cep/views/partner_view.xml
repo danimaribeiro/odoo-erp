@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="res_partner_form_integra_cep" model="ir.ui.view">
+            <field name="name">res.partner.form.integra.cep</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="priority">3</field>
+            <field name="inherit_id" ref="sped_base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="cep" position="after">
+                    <button name="consulta_cep" string="Consultar CEP" type="object" />
+                </field>
+            </field>
+        </record>
+
+        <record id="res_partner_address_form1_integra_cep" model="ir.ui.view">
+            <field name="name">res.partner.address.form1.integra.cep</field>
+            <field name="model">res.partner.address</field>
+            <field name="type">form</field>
+            <field eval="11" name="priority"/>
+            <field name="inherit_id" ref="sped_base.view_partner_address_form1"/>
+            <field name="arch" type="xml">
+                <field name="cep" position="replace">
+                    <field name="cep" />
+                    <button name="consulta_cep" string="Consultar CEP" type="object" />
+                </field>
+            </field>
+        </record>
+
+        <record id="res_partner_address_form2_integra_cep" model="ir.ui.view">
+            <field name="name">res.partner.address.form2.integra</field>
+            <field name="model">res.partner.address</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped_base.view_partner_address_form2"/>
+            <field eval="16" name="priority"/>
+            <field name="arch" type="xml">
+                <field name="cep" position="replace">
+                    <newline />
+                    <field name="cep" />
+                    <button name="consulta_cep" string="Consultar CEP" type="object" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

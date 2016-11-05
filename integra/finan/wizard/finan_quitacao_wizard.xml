@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+<!--                             <button icon="terp-camera_test" string="Confirmar" name="quitar_confirm" -->
+
+        <record model="ir.ui.view" id="finan_quitacao_form" >
+            <field name="name">finan.quitacao.form</field>
+            <field name="model">finan.liquidacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Quitar lançamentos">
+                    <group colspan="2" col="4">
+                        <separator string="Confirmar data de pagamento" colspan="4" />
+                        <field name="data_quitacao" string="Data do pagamento" required="1" />
+                        <separator string="Informações bancárias" colspan="4" />
+                        <field name="res_partner_bank_id" required="1" colspan="4" on_change="onchange_company_banco(res_partner_bank_id)"/>
+                        <field name="company_id" required="1" colspan="4" />
+<!--                         <field name="data" string="Data de movimentação efetiva da conta" /> -->
+                        <separator string="Valores e confirmação" colspan="4" />
+                        <field name="valor_total" />
+                        <group colspan="4">
+                            <button icon="gtk-execute" string="Validar e calcular" name="prepara_liquidacao" type="object" context="{'res_partner_bank_id': res_partner_bank_id}" colspan="1"/>
+                            <button icon="gtk-execute" string="Quitar em definitivo" name="quita_lancamentos" type="object" context="{'res_partner_bank_id': res_partner_bank_id, 'pagamento_ids': pagamento_ids, 'pago_ids': pago_ids, 'data_quitacao': data_quitacao}" colspan="1"/>
+                            <button icon="gtk-cancel" special="cancel" string="Fechar" colspan="1" />
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Lançamentos liquidantes">
+                                <field name="pagamento_ids" nolabel="1" colspan="4" context="{'default_valor_documento': valor_total, 'tree_view_ref': 'finan.finan_pagamento_tree', 'default_data_quitacao': data_quitacao, 'default_data_juros': data_quitacao, 'default_data_multa': data_quitacao, 'default_data_desconto': data_quitacao, 'default_res_partner_bank_id': res_partner_bank_id, 'default_tipo': 'PR', 'default_company_id': company_id}" mode="tree" />
+                            </page>
+                            <page string="Lançamentos a liquidar">
+                                <field name="pago_ids" nolabel="1" mode="tree" domain="[('company_id', '=', company_id)]">
+                                    <tree string="Lançamento a liquidar" editable="top">
+                                        <field name="company_id" readonly="1" />
+                                        <field name="partner_id" readonly="1" />
+                                        <field name="situacao" readonly="1" />
+                                        <field name="documento_id" readonly="1" />
+                                        <field name="data_documento" readonly="1" />
+                                        <field name="numero_documento" readonly="1" />
+                                        <field name="data_vencimento" readonly="1" />
+                                        <field name="valor_saldo" sum="Valor" readonly="1" />
+                                        <field name="valor_multa" sum="Valor multa" />
+                                        <field name="valor_juros" sum="Valor juros" />
+                                        <field name="valor_desconto" sum="Valor desconto" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_quitacao_quitar" multi="True" key2="client_action_multi" name="Quitação em lote" res_model="finan.liquidacao" src_model="finan.lancamento" view_mode="form" target="new" view_type="form" groups="group_finan_lote" />
+
+    </data>
+</openerp>

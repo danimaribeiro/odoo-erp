@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_pagamento_tree">
+            <field name="name">finan.pagamento.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_pagamento_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="valor_documento" position="before">
+                    <field name="currency_id" on_change="onchange_valor_documento_moeda(currency_id, valor_documento_moeda, data_documento)" />
+                    <field name="valor_documento_moeda" on_change="onchange_valor_documento_moeda(currency_id, valor_documento_moeda, data_documento)" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

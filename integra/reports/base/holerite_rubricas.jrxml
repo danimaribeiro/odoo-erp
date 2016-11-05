@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="holerite_rubricas" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="80fa415d-0ed1-449c-9e0d-0754dc98be82">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[31]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+case
+  when hl.code in ('INSS', 'INSS_anterior', 'IRPF') then hl.name || ' (' || formata_valor(hl.rate) || '%)'
+  else hl.name
+end as rubrica,
+hl.quantity as quantidade, hl.total as valor,
+case
+when sr.sinal = '+' then
+hl.total
+else
+null
+end as provento,
+case
+when sr.sinal = '-' then
+hl.total
+else
+null
+end as desconto
+FROM hr_payslip_line as hl inner join hr_salary_rule as sr on
+hl.salary_rule_id = sr.id
+where sr.sinal in ('+','-') and hl.slip_id = $P{ID} and hl.total > 0
+and hl.appears_on_payslip = True
+order by hl.slip_id, sr.sinal desc, sr.sequence]]>
+	</queryString>
+	<field name="rubrica" class="java.lang.String"/>
+	<field name="quantidade" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Quantidade]]></fieldDescription>
+	</field>
+	<field name="valor" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor total]]></fieldDescription>
+	</field>
+	<field name="provento" class="java.math.BigDecimal"/>
+	<field name="desconto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Desconto (%)]]></fieldDescription>
+	</field>
+	<variable name="desconto_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{desconto}]]></variableExpression>
+	</variable>
+	<variable name="provento_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{provento}]]></variableExpression>
+	</variable>
+	<variable name="variable1" class="java.lang.String">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="liquido" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{provento_1}.subtract($V{desconto_1})]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="230" height="20" uuid="c35ec2f5-c29e-4c55-b8f9-d60c597007b5"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[EVENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="0" width="84" height="20" uuid="b85d1d6a-003f-4ab5-9bb3-6a4a125fc6bb"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[QTDE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="432" y="0" width="123" height="20" uuid="8012a309-8e65-4780-9084-4e6029083821"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[DESCONTOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="314" y="0" width="118" height="20" uuid="3ef5dc1e-a491-49d9-985e-a9aa8cef691d"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[PROVENTOS]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="230" height="20" uuid="609add83-916d-4f83-a353-a323cfd9f185"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rubrica}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="230" y="0" width="84" height="20" uuid="587f5315-b33d-4d10-be17-9f44bcf8ebe4"/>
+				<box rightPadding="10">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantidade}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="432" y="0" width="123" height="20" uuid="96452b31-6f46-4908-a2cf-d4b2624522b9"/>
+				<box rightPadding="10">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desconto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="314" y="0" width="118" height="20" uuid="41289305-3401-4f37-b89f-930a99f4322d"/>
+				<box rightPadding="10">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{provento}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="50">
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="432" y="0" width="123" height="20" uuid="eb3868b0-4ad4-48e4-9131-c6d743a7ae93"/>
+				<box rightPadding="10">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{desconto_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="314" height="20" uuid="52d6105e-7682-4249-bb3a-bdf75b36e420"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[SUBTOTAIS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="20" width="432" height="20" uuid="2cc65c4e-76d7-4b92-81cd-b91dee224605"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL LÍQUIDO]]></text>
+			</staticText>
+			<textField evaluationTime="Report" pattern="#,##0.00;-#,##0.00">
+				<reportElement x="432" y="20" width="123" height="20" uuid="3bf0a056-633b-43ba-9589-6ab119c9aed6"/>
+				<box rightPadding="10">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{liquido}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="314" y="0" width="118" height="20" uuid="5ef70d58-82ba-477c-b0de-f7a9bae9a1b8"/>
+				<box rightPadding="10">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{provento_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

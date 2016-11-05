@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_salary_rule_form" model="ir.ui.view">
+            <field name="name">hr.salary.rule.form</field>
+            <field name="model">hr.salary.rule</field>
+            <field name="inherit_id" ref="hr_payroll.hr_salary_rule_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Description" position="after">
+                    <page string="Vale">
+                        <group col="8" colspan="4" >
+                            <group col="2" colspan="4" >                                                
+                                <field name="tipo_beneficio" />
+                                <field name="tipo_beneficio_periodo" />
+                            </group>
+                            <group col="6" colspan="4" >
+                            </group>
+                        </group>                
+                        <separator string="Valores" colspan="4"/> 
+                        <field name="rule_valor_ids" colspan="4" mode="tree" nolabel="1" >
+                            <tree editable="top">
+                                <field name="valor" required="1" />
+                                <field name="data_inicial"  required="1"/>
+                                <field name="data_inicial"  />                                                                                                   
+                            </tree>
+                        </field>  
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

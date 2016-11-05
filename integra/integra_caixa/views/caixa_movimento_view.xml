@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="caixa_movimento_tree">
+            <field name="name">caixa.movimento.tree</field>
+            <field name="model">caixa.movimento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="caixa_id" />
+                    <field name="company_id" />
+                    <field name="data_hora_abertura" />
+                    <field name="data_hora_fechamento" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="caixa_movimento_form">
+            <field name="name">caixa.movimento.form</field>
+            <field name="model">caixa.movimento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Caixas">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="caixa_id" colspan="4" required="1" />
+                        <newline />
+                        <field name="user_id" colspan="4" required="1" />
+                        <newline />
+                        <field name="data_hora_abertura" colspan="2" required="1" />
+                        <field name="data_hora_fechamento" colspan="2" readonly="1" />
+                    </group>
+                    <group col="10" colspan="4">
+                        <separator string="Abertura" colspan="2" />
+                        <separator string="Recebido" colspan="2" />
+                        <separator string="Troco" colspan="2" />
+                        <separator string="Fechamento" colspan="2" />
+                        <separator string="Diferença" colspan="2" />
+                        <newline />
+                        <field name="vr_abertura" nolabel="1" colspan="2" widget="priceformat" />
+                        <field name="vr_recebido" nolabel="1" colspan="2" />
+                        <field name="vr_troco" nolabel="1" colspan="2" />
+                        <field name="vr_fechamento" nolabel="1" colspan="2" />
+                        <field name="vr_diferenca" nolabel="1" colspan="2" />
+                    </group>
+                    <newline/>
+                    <field name="vr_liquido" colspan="2" />
+                    <newline/>
+                    <field name="pagamento_resumo_ids" readonly="1" colspan="4" nolabel="1">
+                        <tree>
+                            <field name="formapagamento_id" />
+                            <field name="valor" sum="Valor" />
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="caixa_movimento_search">
+            <field name="name">caixa.movimento.search</field>
+            <field name="model">caixa.movimento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Caixa">
+                    <field name="caixa_id" />
+                    <field name="data_abertura" />
+                    <field name="data_fechamento" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="caixa_movimento_acao">
+            <field name="name">Caixa</field>
+            <field name="res_model">caixa.movimento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="caixa_movimento_tree" />
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem action="caixa_movimento_acao"
+            id="menu_caixa_movimento" name="Aberturas/Fechamentos" parent="menu_caixa" />
+
+    </data>
+</openerp>

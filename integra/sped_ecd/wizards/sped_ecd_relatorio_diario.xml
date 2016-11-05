@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>   
+        
+       <record model="ir.ui.view" id="sped_ecd_relatorio_diario_form" >
+            <field name="name">sped.ecd.relatorio.diario</field>
+            <field name="model">sped.ecd.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Diário" >
+                    <group colspan="4" >
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="company_id" required="1" domain="[('cnpj_cpf', '!=', False)]"  colspan="4"/>
+                        <field name="somente_cnpj" />                    
+                        <newline/>
+                        <field name="conta_id" domain="[('sintetica', '=', False)]"  context="{'conta_simples': True}" colspan="4"/>                        
+                        <newline/>
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />
+                        <newline/>                        
+                        <field name="formato" required="1"/>                      
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>                     
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_diario" type="object" context="{'company_id' : company_id, 'data_inicial': data_inicial, 'data_final': data_final, 'conta_simples': True }" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>                     
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_ecd_relatorio_diario_acao">
+            <field name="name">Diário</field>
+            <field name="res_model">sped.ecd.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_ecd_relatorio_diario_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_ecd_relatorio_diario_form"/>
+            <field name="act_window_id" ref="sped_ecd_relatorio_diario_acao"/>
+        </record>
+           
+
+        <menuitem action="sped_ecd_relatorio_diario_acao"
+                  id="menu_sped_ecd_relatorio_diario" 
+                  name="Diário" 
+                  parent="menu_sped_ecd_relatorio" 
+                  sequence="1"/>
+
+    </data>
+</openerp>

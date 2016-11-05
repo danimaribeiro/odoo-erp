@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="frota_custo_imobilizado_servico" language="groovy" printOrder="Horizontal" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="9" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="0.6997610703146054"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NOME_EMPRESA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SQL" class="java.lang.String"/>
+	<parameter name="UID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[$P!{SQL}]]>
+	</queryString>
+	<field name="tipo" class="java.lang.String">
+		<fieldDescription><![CDATA[unknown]]></fieldDescription>
+	</field>
+	<field name="veiculo" class="java.lang.String"/>
+	<field name="servico" class="java.lang.String"/>
+	<field name="mes" class="java.sql.Date">
+		<fieldDescription><![CDATA[Mês]]></fieldDescription>
+	</field>
+	<field name="valor" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor]]></fieldDescription>
+	</field>
+	<variable name="valor_1" class="java.lang.Double" resetType="Group" resetGroup="report" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor}]]></variableExpression>
+	</variable>
+	<group name="report" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{mes}]]></groupExpression>
+	</group>
+	<pageHeader>
+		<band height="69">
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="53" uuid="3c01e601-d088-4642-8d72-363df2a0277e"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Gráfico Custo de Ativo Imobilizado]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="53" width="802" height="16" uuid="bebb4001-8202-41d6-9205-acd19faa9996"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOME_EMPRESA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<pageFooter>
+		<band height="28">
+			<subreport>
+				<reportElement x="0" y="0" width="802" height="28" uuid="8aba8ca9-2334-40a5-98d7-8240fe1ce4bc"/>
+				<subreportParameter name="UID">
+					<subreportParameterExpression><![CDATA[$P{UID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rodape_paisagem_integra.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="351">
+			<barChart>
+				<chart>
+					<reportElement x="0" y="0" width="802" height="351" uuid="9cc8121c-f377-4339-8af5-0f422d9d9593"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<chartTitle>
+						<font size="8"/>
+					</chartTitle>
+					<chartSubtitle>
+						<font size="8"/>
+					</chartSubtitle>
+					<chartLegend>
+						<font size="8"/>
+					</chartLegend>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{tipo}]]></seriesExpression>
+						<categoryExpression><![CDATA[new SimpleDateFormat("MM/yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse($F{mes}.toString()))]]></categoryExpression>
+						<valueExpression><![CDATA[$V{valor_1}]]></valueExpression>
+						<labelExpression><![CDATA[new java.text.DecimalFormat("#,##0.00;-#,##0.00").format(BigDecimal.valueOf($V{valor_1}))]]></labelExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot isShowLabels="true">
+					<plot/>
+					<itemLabel>
+						<font size="8" isStrikeThrough="true"/>
+					</itemLabel>
+					<categoryAxisFormat>
+						<axisFormat>
+							<labelFont>
+								<font size="8"/>
+							</labelFont>
+							<tickLabelFont>
+								<font size="8"/>
+							</tickLabelFont>
+						</axisFormat>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat>
+							<labelFont>
+								<font size="8"/>
+							</labelFont>
+							<tickLabelFont>
+								<font size="8"/>
+							</tickLabelFont>
+						</axisFormat>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+		</band>
+	</summary>
+</jasperReport>

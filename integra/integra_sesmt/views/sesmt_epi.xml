@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="sesmt_epi_tree">
+            <field name="name">sesmt.epi.tree</field>
+            <field name="model">sesmt.epi</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="EPI">
+                    <field name="nome" />
+                    <field name="ca" />
+                    <field name="marca" />
+                    <field name="data_validade_ca" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sesmt_epi_form">
+            <field name="name">sesmt.epi.form</field>
+            <field name="model">sesmt.epi</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <field name="ca" required="1" colspan="2" />
+                    <field name="data_validade_ca" required="1" colspan="2" />
+                    <field name="nome" required="1" colspan="4" />
+                    <field name="marca" colspan="4" />
+                    <field name="data_inicial" required="1" colspan="2" />
+                    <field name="data_final" colspan="2" />
+                    <field name="tipo_vida_util" colspan="2" required="1" />
+                    <field name="tempo_vida_util" colspan="2" required="1" />
+                    <field name="descartavel" colspan="2" required="1" />
+                    <newline />
+                    <field name="auditivo" colspan="2" required="1" />
+                    <newline />
+                    <field name="nrr" colspan="2" />
+                    <field name="nrr_sf" colspan="2" />
+                    <separator string="Treinamentos" colspan="4" />
+                    <field name="treinamento_ids" nolabel="1" colspan="4" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sesmt_epi_search">
+            <field name="name">sesmt.epi.search</field>
+            <field name="model">sesmt.epi</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="EPI">
+                    <field name="nome" />
+                    <field name="marca" />
+                    <field name="ca" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sesmt_epi_acao">
+            <field name="name">EPI</field>
+            <field name="res_model">sesmt.epi</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="sesmt_epi_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="sesmt_epi_acao" id="menu_sesmt_epi" name="EPI" parent="menu_sesmt_cadastro" sequence="10"/>
+
+        <record model="ir.actions.act_window.view" id="sesmt_epi_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="sesmt_epi_acao"/>
+            <field name="view_id" ref="sesmt_epi_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sesmt_epi_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="sesmt_epi_acao"/>
+            <field name="view_id" ref="sesmt_epi_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

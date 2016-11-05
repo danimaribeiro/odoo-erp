@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="stock_operacao_form">
+            <field name="name">stock.operacao.form</field>
+            <field name="model">stock.operacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Operação de estoque" >
+                    <group colspan="4" string="Operacao">
+<!--                         <field name="company_id" colspan="4" required="1" /> -->
+                        <field name="tipo" />
+                        <field name="nome" colspan="4" />
+                        <field name="location_id" colspan="4" required="0" />
+                        <field name="location_dest_id" colspan="4" required="0" />
+                        <newline/>
+                        <field name="traz_custo_medio" />
+                        <newline/>
+                        <notebook colspan="4">
+                            <page string="Observações">
+                                <field name="obs" nolabel="1" colspan="4" />
+                            </page>
+                            <page string="Empresas permitidas">
+                                <separator string="Empresa única com permissão de usar esta operação" colspan="4" />
+                                <field name="company_id" nolabel="1" colspan="4" />
+                                <newline/>
+                                <separator string="Empresas com permissão de usar esta operação" colspan="4" />
+                                <field name="company_ids" colspan="4" nolabel="1" />
+                            </page>
+                            <page string="Locais para custo médio" attrs="{'invisible': [('traz_custo_medio', '!=', True)]}">
+                                <field name="local_custo_ids" nolabel="1" colspan="4">
+                                    <tree editable="top">
+                                        <field name="ordem" />
+                                        <field name="stock_location_id" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Configuração para baixas de produtos em locação">
+                                <field name="nota_locacao_ids" nolabel="1" colspan="1">
+                                    <tree editable="top">
+                                        <field name="location_id" />
+                                        <field name="familiatributaria_id" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model='ir.ui.view' id='stock_operacao_tree'>
+            <field name="name">stock.operacao.tree</field>
+            <field name="model">stock.operacao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Operações de estoque">
+                    <field name="tipo" />
+                    <field name="company_id" />
+                    <field name="nome" />
+                    <field name="location_id"/>
+                    <field name="location_dest_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="stock_operacao_search">
+            <field name="name">stock.operacao.search</field>
+            <field name="model">stock.operacao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Operações de estoque">
+                    <field name="company_id" select="1" />
+                    <field name="nome" />
+                    <field name="location_id" select="1" />
+                    <field name="location_dest_id" select="1" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="stock_operacao_acao">
+            <field name="name">Operações</field>
+            <field name="res_model">stock.operacao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain"></field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="stock_operacao_tree" />
+            <field name="search_view_id" ref="stock_operacao_search" />
+        </record>
+
+        <menuitem action="stock_operacao_acao"
+            id="menu_stock_operacao" name="Operações" parent="stock.menu_warehouse_config" />
+
+        <record model="ir.actions.act_window.view" id="stock_operacao_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="stock_operacao_form"/>
+            <field name="act_window_id" ref="stock_operacao_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="stock_operacao_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="stock_operacao_tree"/>
+            <field name="act_window_id" ref="stock_operacao_acao"/>
+        </record>
+
+    </data>
+</openerp>

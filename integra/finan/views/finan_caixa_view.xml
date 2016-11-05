@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_caixa_tree">
+            <field name="name">finan.caixa.tree</field>
+            <field name="model">finan.saldo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="res_partner_bank_id" />
+                    <field name="data" />
+                    <field name="fechado" />
+                    <field name="assinado" />
+                    <field name="abertos_antes" />
+<!--                     <field name="conciliado" /> -->
+<!--                     <field name="quantidade_geral" /> -->
+<!--                     <field name="quantidade_geral_conciliado" /> -->
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_caixa_form">
+            <field name="name">finan.caixa.form</field>
+            <field name="model">finan.saldo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Fechamento de caixa e banco">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="res_partner_bank_id" colspan="4" required="1" on_change="onchange_res_partner_bank_id(res_partner_bank_id, data)"/>
+                        <newline />
+                        <field name="data" required="1" />
+                        <field name="fechado" readonly="1" />
+                        <newline />
+                        <button icon="gtk-print" name="imprime_movimento" string="Imprimir" type="object" context="{'res_partner_bank_id': res_partner_bank_id, 'data': data}"/>
+                        <newline />
+                        <notebook colspan="4">
+                            <page string="Resumo">
+                                <group string="Saldo anterior" colspan="4">
+                                    <field name="saldo_anterior" nolabel="1" />
+                                </group>
+                                <group string="Créditos" colspan="2">
+                                    <field name="quantidade_geral_credito" />
+                                    <newline/>
+                                    <field name="total_geral_credito" />
+                                    <newline/>
+<!--                                    <field name="saldo_credito_anterior" />
+                                    <newline/>-->
+                                    <field name="saldo_credito_final" />
+                                </group>
+                                <group string="Débitos" colspan="2">
+                                    <field name="quantidade_geral_debito" />
+                                    <newline/>
+                                    <field name="total_geral_debito" />
+                                    <newline/>
+<!--                                    <field name="saldo_debito_anterior"/>
+                                    <newline/>-->
+                                    <field name="saldo_debito_final"/>
+                                </group>
+                                <group string="Saldo final" colspan="4">
+                                    <field name="saldo_final" nolabel="1" />
+                                </group>
+                            </page>
+                            <page string="Fechamento e assinaturas">
+                                <field name="pode_fechar" invisible="1" />
+                                <field name="abertos_antes" invisible="1" />
+                                <button icon="gtk-execute" name="gera_assinatura" string="Assinar fechamento" type="object" groups="finan.group_finan_manager,fina.group_finan_treasury_manager" />
+                                <button icon="gtk-execute" name="fecha_movimento" string="Fechar movimento" type="object" groups="finan.group_finan_manager,fina.group_finan_treasury_manager" attrs="{'invisible': [('pode_fechar', '!=', True)]}" />
+                                <newline />
+                                <separator string="Assinaturas e aprovações" colspan="4"/>
+                                <field name="assinatura_ids" mode="tree" readonly="1" colspan="4" nolabel="1">
+                                    <tree>
+                                        <field name="user_id"/>
+                                        <field name="data"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <newline />
+                        <separator string="Detalhamento" colspan="4"/>
+                        <newline />
+                        <notebook colspan="4">
+                            <page string="Créditos">
+                                <notebook>
+                                    <page string="Pagamentos">
+                                        <group string="Resumo" colspan="4">
+                                            <field name="quantidade_pagamento_credito"/>
+                                            <field name="total_pagamento_credito"/>
+                                        </group>
+                                        <newline />
+                                        <notebook>
+                                            <page string="Pagamentos a crédito">
+                                                <field name="pagamento_credito_ids" nolabel="1" colspan="4" readonly="1" widget="one2many_list">
+                                                    <tree editable="top">
+                                                        <field name='res_partner_bank_id' invisible="1"/>
+                                                        <field name='tipo' invisible="1"/>
+                                                        <field name='create_uid' readonly="1"/>
+                                                        <field name='lancamento_partner_id' readonly="1"/>
+                                                        <field name="formapagamento_id" readonly="1" />
+                                                        <field name="data_quitacao" readonly="1" />
+                                                        <field name="numero_documento" string="Nº cheque/cartão/doc." readonly="1" />
+                                                        <field name="valor_documento" sum="Valor do documento" readonly="1" />
+                                                        <field name="valor_juros" sum="Valor dos juros" readonly="1" />
+                                                        <field name="valor_multa" sum="Valor da multa" readonly="1" />
+                                                        <field name="valor_desconto" sum="Valor desconto" readonly="1" />
+                                                        <field name="valor" sum="Valor" string="Valor final" readonly="1" />
+                                                        <field name="conciliado" on_change="concilia_lancamento(conciliado, parent.data)"/>
+                                                        <field name="data" string="Data de crédito na conta" />
+                                                    </tree>
+                                                </field>
+                                            </page>
+                                            <page string="Resumo por forma de pagamento">
+                                                <field name="resumo_credito_ids" nolabel="1" colspan="4" readonly="1" widget="one2many_list">
+                                                    <tree>
+                                                        <field name='res_partner_bank_id' invisible="1"/>
+                                                        <field name='data_quitacao' invisible="1"/>
+                                                        <field name="formapagamento_id" readonly="1" />
+                                                        <field name="valor" sum="Valor" string="Valor" readonly="1" />
+                                                    </tree>
+                                                </field>
+                                            </page>
+                                        </notebook>
+                                    </page>
+                                    <page string="Transferências">
+                                        <group string="Resumo" colspan="4">
+                                            <field name="quantidade_transferencia_credito"/>
+                                            <field name="total_transferencia_credito"/>
+                                        </group>
+                                        <newline />
+                                        <separator string="Transferências a crédito" colspan="4"/>
+                                        <field name="transferencia_credito_ids" nolabel="1" colspan="4" readonly="1" widget="one2many_list">
+                                            <tree editable="top">
+                                                <field name='res_partner_bank_id' string="Banco debitado"/>
+                                                <field name="conta_id" />
+                                                <field name="valor" sum="Valor" string="Valor" />
+                                            </tree>
+                                        </field>
+                                    </page>
+                                    <page string="Outras transações">
+                                        <group string="Resumo" colspan="4">
+                                            <field name="quantidade_transacao_credito"/>
+                                            <field name="total_transacao_credito"/>
+                                        </group>
+                                        <newline />
+                                        <separator string="Transações a crédito" colspan="4"/>
+                                        <field name="transacao_credito_ids" nolabel="1" colspan="4" readonly="1" widget="one2many_list">
+                                            <tree editable="top">
+                                                <field name="partner_id" string="Pagador"/>
+                                                <field name="complemento"/>
+                                                <field name="conta_id" />
+                                                <field name="valor" sum="Valor" string="Valor" />
+                                            </tree>
+                                        </field>
+                                    </page>
+                                </notebook>
+                            </page>
+                            <page string="Débitos">
+                                <notebook>
+                                    <page string="Pagamentos">
+                                        <group string="Resumo" colspan="4">
+                                            <field name="quantidade_pagamento_debito"/>
+                                            <field name="total_pagamento_debito"/>
+                                        </group>
+                                        <newline />
+                                        <separator string="Pagamentos a débito" colspan="4"/>
+                                        <field name="pagamento_debito_ids" nolabel="1" colspan="4" readonly="1">
+                                            <tree editable="top">
+                                                <field name='create_uid' readonly="1"/>
+                                                <field name='lancamento_partner_id' readonly="1"/>
+                                                <field name="formapagamento_id" readonly="1" />
+                                                <field name="data_quitacao" readonly="1" />
+                                                <field name="numero_documento" string="Nº cheque/cartão/doc." readonly="1" />
+                                                <field name="valor_documento" sum="Valor do documento" readonly="1" />
+                                                <field name="valor_juros" sum="Valor dos juros" readonly="1" />
+                                                <field name="valor_multa" sum="Valor da multa" readonly="1" />
+                                                <field name="valor_desconto" sum="Valor desconto" readonly="1" />
+                                                <field name="valor" sum="Valor" string="Valor final" readonly="1" />
+                                                <field name="conciliado" on_change="concilia_lancamento(conciliado, parent.data)" />
+                                                <field name="data" string="Data de crédito na conta" />
+                                            </tree>
+                                        </field>
+                                    </page>
+                                    <page string="Transferências">
+                                        <group string="Resumo" colspan="4">
+                                            <field name="quantidade_transferencia_debito"/>
+                                            <field name="total_transferencia_debito"/>
+                                        </group>
+                                        <newline />
+                                        <separator string="Transferências a débito" colspan="4"/>
+                                        <field name="transferencia_debito_ids" nolabel="1" colspan="4" readonly="1" widget="one2many_list">
+                                            <tree editable="top">
+                                                <field name='res_partner_bank_creditar_id' string="Banco creditado"/>
+                                                <field name="conta_id" />
+                                                <field name="valor" sum="Valor" string="Valor" />
+                                            </tree>
+                                        </field>
+                                    </page>
+                                    <page string="Outras transações">
+                                        <group string="Resumo" colspan="4">
+                                            <field name="quantidade_transacao_debito"/>
+                                            <field name="total_transacao_debito"/>
+                                        </group>
+                                        <newline />
+                                        <separator string="Transações a débito" colspan="4"/>
+                                        <field name="transacao_debito_ids" nolabel="1" colspan="4" readonly="1" widget="one2many_list">
+                                            <tree editable="top">
+                                                <field name="partner_id" string="Recebedor"/>
+                                                <field name="complemento"/>
+                                                <field name="conta_id" />
+                                                <field name="valor" sum="Valor" string="Valor" />
+                                            </tree>
+                                        </field>
+                                    </page>
+                                </notebook>
+                            </page>
+                            <page string="Todos">
+                                <separator string="Extrato" colspan="4" />
+                                <field name="extrato_ids" nolabel="1" colspan="4" readonly="1">
+                                    <tree>
+                                        <field name="tipo" />
+                                        <field name="valor_compensado_credito" sum="Crédito" />
+                                        <field name="valor_compensado_debito" sum="Débito" />
+<!--                                         <field name="complemento"/> -->
+                                    </tree>
+                                </field>
+                                <button string="Todos" type="object" name="cria_fechamentos_gerais" />
+                            </page>
+                        </notebook>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_caixa_search">
+            <field name="name">finan.caixa.search</field>
+            <field name="model">finan.saldo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Fechamento de caixa e banco">
+                    <filter name="aberto" string="Aberto" icon="terp-go-month" domain="[('fechado','=', False)]" />
+                    <filter name="fechado" string="Fechado" icon="terp-go-month" domain="[('fechado','=', True)]" />
+                    <separator orientation="vertical" />
+                    <field name="res_partner_bank_id" select="1" />
+                    <field name="data_from" string="Data de" filter_domain="[('data','&gt;=',self)]" widget="calendar" />
+                    <field name="data_to" string="ate" filter_domain="[('data','&lt;=',self)]" widget="calendar" />
+<!--                     <field name="data" select="1" /> -->
+                    <newline />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_caixa_acao">
+            <field name="name">Fechamento de caixa e banco</field>
+            <field name="res_model">finan.saldo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_aberto':True}</field>
+            <field name="view_id" ref="finan_caixa_tree" />
+        </record>
+
+        <menuitem action="finan_caixa_acao"
+            id="menu_finan_caixa" name="Fechamento de caixa e banco" parent="menu_finan_tesouraria" />
+
+    </data>
+</openerp>

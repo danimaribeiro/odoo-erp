@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+<!--        <record forcecreate="True" model="ir.cron" id="sped_nfse_envia_cron">
+            <field name="name">Envio automatico de NFS-e</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field eval="True" name="active" />
+            <field eval="False" name="doall" />
+            <field eval="'sped.documento'" name="model" />
+            <field eval="'envio_nfse_automatico'" name="function" />
+            <field eval="'()'" name="args" />
+        </record>-->
+
+        <record forcecreate="True" model="ir.actions.server" id="sped_nfse_envia_server_action">
+            <field name="name">Envio automatico de NFS-e</field>
+            <field name="model_id" ref="model_sped_documento"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.marca_envio_nfse_automatico(context=context)</field>
+        </record>
+
+        <record model="ir.values" id="sped_nfse_envia_values" >
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'sped.documento'" name="model"/>
+            <field name="name">Valores lote NFS-e</field>
+            <field eval="'ir.actions.server,%d'%sped_nfse_envia_server_action" name="value"/>
+            <field eval="True" name="object"/>
+        </record>
+
+<!--        <record forcecreate="True" model="ir.cron" id="sped_nfse_consulta_cron">
+            <field name="name">Consulta automatica de NFS-e</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field eval="True" name="active" />
+            <field eval="False" name="doall" />
+            <field eval="'sped.documento'" name="model" />
+            <field eval="'consulta_nfse_automatico'" name="function" />
+            <field eval="'()'" name="args" />
+        </record>-->
+
+    </data>
+</openerp>
+

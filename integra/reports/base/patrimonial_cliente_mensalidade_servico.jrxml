@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="patrimonial_mensalidade_cliente" language="groovy" columnCount="2" printOrder="Horizontal" pageWidth="550" pageHeight="842" columnWidth="275" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="63af8119-2e4f-4b79-9b88-9dbfc5ce8d5a">
+	<property name="ireport.zoom" value="1.464100000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<parameter name="ORDEM_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+orcat.nome,
+ol.meses_retorno_investimento,
+ol.vr_mensal,
+ol.vr_comissao_locacao
+
+from orcamento_orcamento_locacao as ol
+join sale_order orc on orc.id = ol.sale_order_id
+join orcamento_categoria orcat on orcat.id = ol.orcamento_categoria_id
+
+where orc.id = $P{ORDEM_ID} and orcat.considera_venda = True
+and ol.vr_mensal > 0
+order by
+orcat.ordem]]>
+	</queryString>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[Descrição]]></fieldDescription>
+	</field>
+	<field name="meses_retorno_investimento" class="java.lang.Double">
+		<fieldDescription><![CDATA[Meses para retorno do investimento]]></fieldDescription>
+	</field>
+	<field name="vr_mensal" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor mensal]]></fieldDescription>
+	</field>
+	<field name="vr_comissao_locacao" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor comissão locação]]></fieldDescription>
+	</field>
+	<variable name="meses_retorno_investimento_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{meses_retorno_investimento}]]></variableExpression>
+	</variable>
+	<variable name="vr_mensal_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_mensal}]]></variableExpression>
+	</variable>
+	<variable name="vr_comissao_locacao_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_comissao_locacao}]]></variableExpression>
+	</variable>
+	<group name="Group1">
+		<groupExpression><![CDATA[(int)($V{REPORT_COUNT}/15)]]></groupExpression>
+	</group>
+	<group name="Group2">
+		<groupExpression><![CDATA[(int)($V{REPORT_COUNT}/5)]]></groupExpression>
+	</group>
+	<columnHeader>
+		<band height="12">
+			<staticText>
+				<reportElement x="124" y="0" width="51" height="12" uuid="d7443f1f-b076-4913-9b3a-2c296a7cf758"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Per/Recup]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="175" y="0" width="47" height="12" uuid="78067b76-b035-4602-974c-67943c14cf24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[M.Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="222" y="0" width="52" height="12" uuid="1aae854f-6a8a-4ffa-917e-3ed59c192c11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[M.Comissão]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12">
+			<textField>
+				<reportElement x="0" y="0" width="124" height="12" uuid="7303b5f9-3eac-4bba-9a89-209840ab32ed"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="124" y="0" width="51" height="12" uuid="3fc3b4f8-2804-4690-b323-b99362519788"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{meses_retorno_investimento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="175" y="0" width="47" height="12" uuid="ab8ea989-f4ab-46b7-a780-fddef0896250"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_mensal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="222" y="0" width="52" height="12" uuid="ce53feae-2b3e-4264-a6ca-7028adb84f63"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_comissao_locacao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="20">
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="454" y="0" width="96" height="20" uuid="5b383086-e6b7-4ec9-8079-ddec9d41067a"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_mensal_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-1" y="0" width="455" height="20" uuid="78bfbaca-0ef2-402e-9309-8cfde70aaacc"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Total Mensalidade de Locação:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

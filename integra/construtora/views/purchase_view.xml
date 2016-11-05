@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_purchase_cotacao"
+        name="Cotações"
+        parent="base.menu_purchase_root"
+        sequence="0"/>
+
+    </data>
+</openerp>

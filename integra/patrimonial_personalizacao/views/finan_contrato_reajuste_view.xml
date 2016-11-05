@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+
+        <record model="ir.ui.view" id="finan_contrato_reajuste_form">
+            <field name="name">finan.contrato.reajuste.form</field>
+            <field name="model">finan.contrato.reajuste</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_reajuste_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="data_confirmacao" position="after" >                       
+                    <button string="Reajustar Todos Contratos desta Data" colspan="2" type="object" name="reajuste_automatico_contratos"/>
+               </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

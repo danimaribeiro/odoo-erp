@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_recibos_form" >
+            <field name="name">finan.recibos.form</field>
+            <field name="model">finan.recibos</field>
+            <field name="type">form</field>
+             <field name="inherit_id" ref="finan.finan_recibos_form"/>
+            <field name="arch" type="xml">
+                <button name="gerar_recibos" position="replace">                    
+                    <button icon="gtk-execute" string="Gerar recibos" name="gerar_recibos_exata" type="object" />
+                </button>                       
+            </field>
+        </record>
+    </data>
+</openerp>

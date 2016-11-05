@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="patrimonial_movimento_almoxarifado_epi.jrxml" language="groovy" pageWidth="555" pageHeight="348" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="5ae49c7a-2e69-4dc1-8871-84bd56b1db9e">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="QTD_ITENS" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[12]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT  1 as numero
+FROM generate_series(1, 38 - $P{QTD_ITENS})]]>
+	</queryString>
+	<field name="numero" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Número]]></fieldDescription>
+	</field>
+	<columnHeader>
+		<band height="28">
+			<staticText>
+				<reportElement x="299" y="12" width="100" height="16" uuid="aa95701a-9546-4c50-851e-ff159a8caebd"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Assinatura usuário]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="243" y="12" width="56" height="16" uuid="019f11a1-415d-44c6-8541-5cfe1b2f9e15"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Data entrega]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="12" width="100" height="16" uuid="ad2369bc-bd6e-42bc-8775-7f79df57f846"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Assinatura resp. setor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="399" y="12" width="56" height="16" uuid="2b0952e8-bb06-40b6-a74e-bb3c1f8dd4e6"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Data devol.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="12" width="36" height="16" uuid="9e33c3f2-1ddc-4710-a66c-0a2c083bf46d"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="210" y="12" width="33" height="16" uuid="d3e40fd5-593e-42c1-9b27-60852be8dbc7"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Qtd.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="12" width="174" height="16" uuid="bec681ed-bc14-4045-99ea-e6e9838e2ca7"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="0" width="555" height="12" uuid="9e02bcf8-52f6-467b-9aa3-7d5e523117ad"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["E.P.C. (Equipamento de Proteção Coletiva)"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<staticText>
+				<reportElement x="299" y="0" width="100" height="10" uuid="8cdc0d58-a386-4890-9f25-43a01cbb9c5d"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="36" height="10" uuid="c712250e-00d4-4bfc-8432-06ae45b26580"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="100" height="10" uuid="c2df02ad-e4e4-4556-bf98-4172c4faa018"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="0" width="174" height="10" uuid="bff041a6-3773-4335-854b-55c4cc0a292a"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="210" y="0" width="33" height="10" uuid="102498dc-a3b1-4f30-8c32-b2b7599440a0"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="243" y="0" width="56" height="10" uuid="4c1cd91f-4d6c-46ea-b037-8f926e2ef8fa"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="399" y="0" width="56" height="10" uuid="fe52034b-ede0-4eab-bdf1-18e0022b3a36"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <menuitem id="menu_finan_analise_economica"
+            name="Análise Econômica"
+            groups="finan.group_finan_manager"
+            parent="finan.menu_finan"
+            sequence="100"/>
+
+    </data>
+</openerp>

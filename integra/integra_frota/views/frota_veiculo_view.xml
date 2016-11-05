@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="frota_veiculo_form">
+            <field name="name">frota.veiculo.form</field>
+            <field name="model">frota.veiculo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Veículo" >
+                    <group col="6" colspan="4" string="Veículo">
+                        <field name="ativo" />
+                        <newline />
+                        <field name="modelo_id" string="Marca/Modelo" required="1" />
+                        <field name="placa" string="Placa" />
+                        <field name="sped_estado_id" />
+                        <field name="res_company_id" colspan="6" />
+                        <field name="proprietario_id" colspan="6" />
+                    </group>
+                    <newline/>
+                    <group col="6" colspan="4" string="Propriedades gerais">
+                        <field name="ano" />
+                        <field name="cor" string="Cor" />
+                        <field name="combustivel" />
+                        <newline/>
+                        <field name="data_aquisicao"/>
+                        <field name="valor" />
+                        <newline/>
+                        <field name="renavam" />
+                        <field name="chassis" />
+                        <newline/>
+                        <field name="vencimento_ipva" />
+                        <field name="vencimento_licenciamento" />
+                        <newline/>
+                        <field name="res_partner_id" />
+                        <field name="vencimento_seguro" />
+                    </group>
+                    <group colspan="4" string="Fornecedores padrão">
+                        <field name="servico_ids" nolabel="1" colspan="4">
+                            <tree editable="top">
+                                <field name="servico_id" required="1" />
+                                <field name="partner_id" required="1" />
+                                <field name="valor_unitario" />
+                                <button name="replica_valor_unitario" type="object" string="Replica valor para outros veículos" />
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model='ir.ui.view' id='frota_veiculo_tree'>
+            <field name="name">frota.veiculo.tree</field>
+            <field name="model">frota.veiculo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Veículos">
+                    <field name="res_company_id" />
+                    <field name="placa" />
+                    <field name="proprietario_id" />
+                    <field name="sped_estado_id"/>
+                    <field name="modelo_id" />
+                    <field name="vencimento_ipva" string="IPVA" />
+                    <field name="vencimento_licenciamento" string="Licenciamento" />
+                    <field name="vencimento_seguro" string="Seguro" />
+                    <field name="ativo" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="frota_veiculo_search">
+            <field name="name">frota.veiculo.search</field>
+            <field name="model">frota.veiculo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Veículos">
+                    <filter name="ativo" string="Ativo" icon="terp-project" domain="[('ativo', '!=', False)]" />
+                    <filter name="inativo" string="Inativo" icon="terp-project" domain="[('ativo', '=', False)]" />
+                    <field name="res_company_id" select="1" />
+                    <field name="proprietario_id" select="1" />
+                    <field name="modelo_id" select="1" />
+                    <field name="placa" />
+                    <newline />
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'res_company_id'}" />
+                        <filter string="Proprietário" icon="terp-project" domain="[]" context="{'group_by': 'proprietario_id'}" />
+                        <filter string="Modelo" icon="terp-project" domain="[]" context="{'group_by': 'modelo_id'}"/>
+                        <filter string="IPVA" icon="terp-project" domain="[]" context="{'group_by': 'vencimento_ipva'}" />
+                        <filter string="Licenciamento" icon="terp-project" domain="[]" context="{'group_by': 'vencimento_licenciamento'}" />
+                        <filter string="Seguro" icon="terp-project" domain="[]" context="{'group_by': 'vencimento_seguro'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="frota_veiculo_acao">
+            <field name="name">Veículos</field>
+            <field name="res_model">frota.veiculo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain"></field>
+            <field name="context">{'search_default_ativo': True}</field>
+            <field name="view_id" ref="frota_veiculo_tree" />
+            <field name="search_view_id" ref="frota_veiculo_search" />
+        </record>
+
+        <menuitem action="frota_veiculo_acao"
+            id="menu_frota_veiculo" name="Veículos" parent="menu_frota_veiculos" />
+
+        <record model="ir.actions.act_window.view" id="frota_veiculo_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="frota_veiculo_form"/>
+            <field name="act_window_id" ref="frota_veiculo_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="frota_veiculo_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="frota_veiculo_tree"/>
+            <field name="act_window_id" ref="frota_veiculo_acao"/>
+        </record>
+
+    </data>
+</openerp>

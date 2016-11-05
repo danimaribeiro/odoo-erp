@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="purchase_order_abastecimento_tree" model="ir.ui.view">
+            <field name="name">purchase.order.abastecimento.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="grey:state=='cancel';blue:verifica_email==True;red:state in ('except_invoice','except_picking')" string="Solicitação de Abastecimento">
+                    <field name="verifica_email" invisible="1"/>
+                    <field name="name" string="Reference"/>
+                    <field name="date_order" />
+                    <field name="partner_id"/>
+                    <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                    <field name="amount_total" sum="Total amount"/>
+                    <field name="state"/>
+                    <field name="create_uid" string="Solicitado" />
+                    <field name="validator" string="Validado"/>
+                    <field name="aprovado_uid"/>
+                </tree>
+            </field>
+        </record>
+
+          <record id="purchase_order_abastecimento_form" model="ir.ui.view">
+            <field name="name">purchase.order.abastecimento.form</field>
+            <field name="model">purchase.order</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <form string="Solicitação de Abastecimento">
+                    <field name="company_id" colspan="4" required="1" />
+                    <group col="6" colspan="4">
+                        <field name="eh_abastecimento" invisible="1" />
+                        <field name="name"/>
+                        <field name="date_order"/>
+                        <field name="invoiced" invisible="1" />
+                        <newline/>
+                        <field name="warehouse_id" on_change="onchange_warehouse_id(warehouse_id)" invisible="1" />
+                        <field name="partner_ref"/>
+                        <field name="shipped"/>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Purchase Order">
+                            <field name="partner_id" on_change="onchange_partner_id(partner_id)" domain="[('supplier', '=', True)]" context="{'search_default_supplier':1,'default_supplier':1,'default_customer':0}"  options='{"quick_create": false}'/>
+                            <field name="partner_address_id" options='{"quick_create": false}'/>
+                            <field domain="[('type','=','purchase')]" name="pricelist_id" groups="base.group_extended"/>
+                            <field name="origin" groups="base.group_extended"/>
+                            <newline/>
+                            <field name="veiculo_id" required="1" on_change="onchange_veiculo_id(veiculo_id)" />
+                            <newline/>
+                            <field name="proprietario_id" readonly="1" />
+                            <newline/>
+                            <field colspan="4" name="order_line" nolabel="1" mode="tree,form" context="{'default_company_id': company_id, 'form_view_ref': 'purchase.purchase_order_line_form', 'tree_view_ref' : 'purchase.purchase_order_line_tree'}" />
+                            <group col="4" colspan="4">
+                                <group colspan="2">
+                                    <field name="formapagamento_id" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                    <newline />
+                                    <field name="payment_term_id" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                    <newline/>
+                                    <field name="partner_bank_id" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                    <newline />
+                                    <field name="operacao_id" required="True" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                    <newline />
+                                    <field name="centrocusto_id" on_change="onchange_centrocusto_id(centrocusto_id, amount_total, 0, company_id, False, partner_id)" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                    <newline />
+                                    <field name="modalidade_frete" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                    <newline/>
+                                    <field name="transportadora_id" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                </group>
+                                <group colspan="2" col="4">
+                                    <field name="amount_untaxed" string="Total dos produtos" colspan="4" />
+                                    <newline/>
+                                    <field name="amount_tax" invisible="1" colspan="4"/>
+                                    <field name="vr_ipi" colspan="4" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                    <field name="vr_st" colspan="4" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                    <newline/>
+                                    <field name="vr_frete" colspan="4" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                    <newline/>
+                                    <field name="vr_desconto" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                    <field name="al_desconto" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                    <newline/>
+                                    <button name="button_dummy" states="draft" string="Compute" type="object" icon="gtk-execute" colspan="4" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                    <newline/>
+                                    <field name="amount_total" sum="Total amount" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                    <newline/>
+                                </group>
+                            </group>
+                            <group col="11" colspan="4">
+                                <newline />
+                                <separator string="Itens do rateio" colspan="8" />
+                                <field name="rateio_ids" widget="many2one_list" nolabel="1" colspan="8" context="{'tree_view_ref': 'finan.finan_rateio_item_tree'}" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                                <newline />
+                                <field name="state" widget="statusbar" statusbar_visible="draft,approved,done" statusbar_colors='{"except_picking":"red","except_invoice":"red","confirmed":"blue","wait":"blue"}' readonly="1"/>
+                                <button name="purchase_cancel" states="draft,confirmed,wait_auth" string="Cancel" icon="gtk-cancel"/>
+                                <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+                                <button name="action_cancel" states="approved,except_picking,except_invoice,wait" string="Cancel Purchase Order" type="object" icon="gtk-cancel"/>
+                                <button name="picking_ok" states="except_picking" string="Manually Corrected" icon="gtk-convert"/>
+                                <button name="invoice_ok" states="except_invoice" string="Manually Corrected" icon="gtk-convert"/>
+                                <group groups="purchase.group_purchase_manager">
+                                    <button name="purchase_confirm" states="draft" string="Aprovar pedido" icon="gtk-go-forward"/>
+                                </group>
+                                <button name="purchase_appbuyer" states="wait_auth" string="Approve Purchase" icon="gtk-ok"/>
+                                <group groups="purchase.group_purchase_manager">
+                                    <button name="wkf_approve_order" string="Confirmar pedido" type="object" states="confirmed" icon="gtk-go-forward" />
+                                </group>
+                                <button name="imprime_ordem_compra" string="Print" states="approved" type="object" icon="gtk-print"/>
+                            </group>
+                        </page>
+                        <page string="Delivery &amp; Invoicing" groups="base.group_extended">
+                            <group colspan="2" col="2">
+                                <separator string="Delivery" colspan="2"/>
+                                <field name="dest_address_id" on_change="onchange_dest_address_id(dest_address_id)"/>
+                                <field name="minimum_planned_date"/>
+                                <field name="location_id"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <separator string="Invoice Control" colspan="2"/>
+                                <field name="invoice_method"/>
+                                <field name="fiscal_position" widget="selection"/>
+                            </group>
+                            <newline/>
+                            <separator string="Purchase Control" colspan="4"/>
+                            <field name="validator"/>
+                            <field name="date_approve"/>
+                            <separator string="Invoices" colspan="4"/>
+                            <newline/>
+                            <field name="invoice_ids" groups="base.group_extended" nolabel="1" colspan="4" context="{'type':'in_invoice', 'journal_type':'purchase'}"/>
+                        </page>
+                        <page string="Observações">
+                            <separator string="Observação internas" colspan="4" />
+                            <field name="notes" nolabel="1" colspan="4" />
+                            <separator string="Observações para o fornecedor" colspan="4" />
+                            <field name="obs_fornecedor" nolabel="1" colspan="4" />
+                        </page>
+                        <page string="Comunicação e histórico">
+                            <separator string="Emails trocados e anotações" colspan="4" />
+                            <field name="mail_message_ids" colspan="4" nolabel="1" mode="tree" readonly="1">
+                                <tree string="Histórico">
+                                    <field name="date" string="Data" />
+                                    <field name="display_text" string="Texto"/>
+                                    <field name="email_to" invisible="1"/>
+                                    <field name="email_from" invisible="1"/>
+                                    <button
+                                        string="Reply" attrs="{'invisible': [('email_from', '=', False)]}"
+                                        name="%(mail.action_email_compose_message_wizard)d"
+                                        context="{'mail.compose.message.mode':'reply', 'message_id':active_id}"
+                                        icon="terp-mail-replied" type="action" />
+                                </tree>
+                            </field>
+                            <button string="Incluir anotação"
+                                    name="incluir_anotacao"
+                                    type="object"
+                                    icon="terp-document-new" />
+                            <button string="Enviar e-mail"
+                                    name="%(mail.action_email_compose_message_wizard)d"
+                                    icon="terp-mail-message-new" type="action"/>
+                            <newline/>
+                            <field name="partner_fone" invisible="1" />
+                            <field name="partner_celular" invisible="1" />
+                            <separator string="Ligações telefônicas" colspan="4" />
+                            <field name="crm_phonecall_ids" colspan="4" nolabel="1" mode="tree" context="{'default_partner_id': partner_id, 'default_phone': partner_fone, 'default_mobile': partner_celular}">
+                                <tree colors="gray:state in ('cancel','done');blue:state in ('pending',)" string="Phone Calls">
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="partner_contact"/>
+                                    <field name="partner_phone"/>
+                                    <field name="user_id"/>
+                                    <field name="categ_id" invisible="1"/>
+                                    <field name="create_date" invisible="1"/>
+                                    <field name="opportunity_id" invisible="1"/>
+                                    <button string="Meeting"
+                                            states="open,pending" icon="gtk-redo"
+                                            name="action_make_meeting" type="object" />
+                                    <field name="state"/>
+                                    <button name="case_cancel" string="Cancel" states="open,pending" type="object" icon="gtk-cancel"/>
+                                    <button name="case_open" string="Todo" states="pending" type="object" icon="gtk-go-forward"/>
+                                    <button name="case_close" string="Held" states="open,pending" type="object" icon="gtk-jump-to"/>
+                                    <button name="case_pending" string="Not Held" states="open" type="object" icon="gtk-media-pause"/>
+                                </tree>
+                                <form string="Phone Call">
+                                    <group colspan="6" col="7">
+                                        <field name="name" required="1"/>
+                                        <field name="partner_phone"/>
+                                        <field name="duration" widget="float_time"/>
+                                        <button string="Schedule a Meeting" name="action_make_meeting" icon="gtk-redo" type="object"/>
+
+                                        <field name="date"/>
+                                        <field name="user_id"/>
+                                        <field name="section_id" colspan="1" widget="selection" />
+                                        <button string="Schedule Other Call"
+                                                icon="terp-call-start"
+                                                name="%(crm.phonecall_to_phonecall_act)d"
+                                                type="action"  />
+                                    </group>
+
+                                    <group col="3" colspan="2">
+                                        <separator colspan="3" string="Contacts" />
+                                        <field name="partner_id"
+                                                on_change="onchange_partner_id(partner_id)" />
+                                        <button string="Create a Partner"
+                                                icon="terp-partner"
+                                                name="%(crm.action_crm_phonecall2partner)d"
+                                                type="action"
+                                                attrs="{'invisible':[('partner_id','!=',False)]}"
+                                                groups="base.group_partner_manager"/>
+                                        <newline/>
+                                        <field name="partner_address_id"
+                                                on_change="onchange_partner_address_id(partner_address_id)" />
+                                        <newline/>
+                                        <field name="partner_mobile" />
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <separator colspan="2" string="Categorization" />
+                                        <field name="categ_id" widget="selection"
+                                                domain="[('object_id.model', '=', 'crm.phonecall')]"/>
+                                        <field name="priority"/>
+                                        <field name="purchase_order_id"/>
+                                    </group>
+                                    <separator string="Description" colspan="4" />
+                                    <field name="description" nolabel="1" colspan="4" />
+                                    <separator colspan="4" />
+                                    <group col="8" colspan="4">
+                                        <field name="state" widget="statusbar" statusbar_visible="open,done" statusbar_colors='{"pending":"red"}' select="1"/>
+                                        <button name="case_cancel" string="Cancel"
+                                                states="open,pending" type="object"
+                                                icon="gtk-cancel" />
+                                        <button name="case_open" string="Todo"
+                                                states="pending" type="object"
+                                                icon="gtk-go-forward" />
+                                        <button name="case_pending" string="Not Held"
+                                                states="open" type="object" icon="gtk-media-pause" />
+                                        <button name="case_close" string="Held"
+                                                states="open,pending" type="object"
+                                                icon="gtk-jump-to" />
+                                        <button name="case_reset" string="Reset to Todo"
+                                                states="cancel" type="object"
+                                                icon="gtk-convert" />
+                                    </group>
+                                </form>
+                            </field>
+                            <newline/>
+                            <button string="Agendar/Registrar Ligação"
+                                    name="%(compras.purchaseorder2phonecall_act)d" icon="terp-call-start"
+                                    type="action"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="purchase_order_abastecimento_search" model="ir.ui.view">
+            <field name="name">purchase.order.abastecimento.search</field>
+            <field name="model">purchase.order</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Solicitações de Abastecimento">
+                    <group>
+                        <filter icon="terp-document-new" name="draft" string="Quotations" domain="[('state','=','draft')]"  help="Purchase order which are in draft state"/>
+                        <filter icon="terp-check" name="approved" string="Approved" domain="[('state','in',('approved','done'))]"  help="Approved purchase order"/>
+                        <separator orientation="vertical"/>
+                        <filter icon="terp-emblem-important" name="exception" string="Exception" domain="[('state','in',('except_invoice','except_picking'))]"  help="Purchase order which are in the exception state"/>
+                        <separator orientation="vertical"/>
+                        <filter icon="terp-gtk-go-back-rtl" name="not_invoiced" string="Not invoiced" domain="[('invoice_ids','=', False)]"  help="Purchase orders that include lines not invoiced." groups="base.group_extended"/>
+                        <separator orientation="vertical"/>
+                        <field name="name" string="Reference"/>
+                        <field name="partner_id"/>
+                        <field name="product_id"/>
+                        <field name="create_uid"/>
+                    </group>
+                    <newline/>
+                    <group expand="0" string="Group By..." groups="base.group_extended">
+                        <filter string="Supplier" icon="terp-partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <separator orientation="vertical"/>
+                        <filter string="Origin" icon="terp-gtk-jump-to-rtl" domain="[]" context="{'group_by':'origin'}"/>
+                        <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                        <separator orientation="vertical"/>
+                        <filter string="Order Date" icon="terp-go-month" domain="[]" context="{'group_by':'date_order'}"/>
+                        <filter string="Expected Date" icon="terp-go-month" domain="[]" context="{'group_by':'minimum_planned_date'}"/>
+
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="purchase_order_abastecimento_acao">
+            <field name="name">Solicitação de Abastecimento</field>
+            <field name="res_model">purchase.order</field>
+            <field name="domain">[('eh_abastecimento', '=', True)]</field>
+            <field name="context">{'default_eh_abastecimento': True}</field>
+            <field name="search_view_id" ref="purchase_order_abastecimento_search"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="purchase_order_abastecimento_acao"
+                  id="menu_solicitacao_abastecimento"
+                  name="Solicitação de Abastecimento"
+                  parent="construtora.menu_purchase_cotacao"
+                  sequence="30" />
+
+        <record model="ir.actions.act_window.view" id="purchase_order_abastecimento_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="purchase_order_abastecimento_form"/>
+            <field name="act_window_id" ref="purchase_order_abastecimento_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="purchase_order_abastecimento_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="purchase_order_abastecimento_tree"/>
+            <field name="act_window_id" ref="purchase_order_abastecimento_acao"/>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_documentoitem_entrada_form">
+            <field name="name">sped.documentoitem.entrada.form</field>
+            <field name="model">sped.documentoitem</field>
+            <field name="inherit_id" ref="sped.sped_documentoitem_entrada_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <page string="Custo" position="after">
+                    <page string="Assistência Técnica">
+                        <field name="os_id" />
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

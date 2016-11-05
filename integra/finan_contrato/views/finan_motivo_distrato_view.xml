@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_motivo_distrato_tree">
+            <field name="name">finan.motivo_distrato.tree</field>
+            <field name="model">finan.motivo_distrato</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_motivo_distrato_form">
+            <field name="name">finan.motivo_distrato.form</field>
+            <field name="model">finan.motivo_distrato</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Motivos de distrato">
+                    <field name="nome" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_motivo_distrato_acao">
+            <field name="name">Motivos de distrato</field>
+            <field name="res_model">finan.motivo_distrato</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_motivo_distrato_tree" />
+        </record>
+
+        <menuitem action="finan_motivo_distrato_acao"
+            id="menu_finan_motivo_distrato" name="Motivos de distrato" parent="finan.menu_finan_config" />
+
+    </data>
+</openerp>

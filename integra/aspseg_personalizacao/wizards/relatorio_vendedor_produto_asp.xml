@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="relatorio_vendedor_produto_form" >
+            <field name="name">relatorio.vendedor.produto.form</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório Vendedor x Produto">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />                
+                        <field name="company_id" required="1" colspan="4" />
+                        <newline/>                        
+                        <field name="data_inicial" required="1" colspan="2" string="Data" />
+                        <field name="data_final" required="1" colspan="2" string="Data" />
+                        <field name="user_id" string="Vendedor" />
+                        <field name="category_id" />
+                        
+                        <newline/>                      
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_vendedor_produto" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="relatorio_vendedor_produto_acao">
+            <field name="name">Relatório Vendedor x Produto</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="relatorio_vendedor_produto_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="relatorio_vendedor_produto_form"/>
+            <field name="act_window_id" ref="relatorio_vendedor_produto_acao"/>
+        </record>
+
+        <menuitem action="relatorio_vendedor_produto_acao" id="menu_relatorio_vendedor_produto"
+                  name="Relatório Vendedor x Produto"
+                  parent="sped_sale.menu_sale_relatorio" 
+                  sequence="2" />
+
+    </data>
+</openerp>

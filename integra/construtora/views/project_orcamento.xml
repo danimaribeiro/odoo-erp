@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="project_orcamento_tree">
+            <field name="name">project.orcamento.tree</field>
+            <field name="model">project.orcamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="project_id"/>
+                    <field name="versao" />
+                    <field name="vr_produto" />
+                    <field name="situacao" />
+                    <field name="mes" />
+                    <field name="ano" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="project_orcamento_form">
+            <field name="name">project.orcamento.form</field>
+            <field name="model">project.orcamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Orçamento">
+                    <group col="4" colspan="4">
+                        <field name="codigo" invisible="1" />
+                        <field name="project_id" colspan="4" required="1" />
+                        <field name="versao" colspan="4" />
+                        <field name="mes" required="1" />
+                        <field name="ano" required="1" />
+                        <field name="vr_produto" />
+                        <field name="situacao" invisible="1" />
+<!--                    <field name="formato" required="1" />
+                        <newline />
+                        <button name="imprime_orcamento_projeto" string="Imprimir Orçamento" icon="gtk-print" type="object" colspan="4"/>
+                        <html>
+                        <h1>Teste</h1>
+                        <iframe src="http://en.wikipedia.org/"></iframe>
+                        <h1>Teste2</h1>
+                        </html>-->
+                    </group>
+                    <notebook>
+                        <page string="Itens do orçamento" attrs="{'invisible': [('etapa_ids','=', False)]}">
+                            <field name="item_ids" colspan="4" nolabel="1" context="{'default_project_id': project_id, 'default_solicitacao_id': False, 'form_view_ref': 'construtora.purchase_orcamento_item_form', 'tree_view_ref' : 'construtora.purchase_orcamento_item_tree', 'ordem': 90}" mode="tree,form" />
+<!--                                <tree colors="red: percentual_planejado != 100.00">
+                                    <field name="project_id" invisible="1" />
+                                    <field name="solicitacao_id" invisible="1" />
+                                    <field name="orcamento_id" invisible="1" />
+                                    <field name="etapa_id" domain="[('orcamento_id', '=', parent.id)]" />
+                                    <field name="codigo_completo" />
+                                    <field name="ordem" />
+                                    <field name="product_id" on_change="onchange_product_id(product_id,project_id)" />
+                                    <field name="uom_id" readonly="1" />
+                                    <field name="quantidade" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario, risco)" />
+                                    <field name="vr_unitario" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario, risco)" />
+                                    <field name="vr_produto" sum="vr_produto" />
+                                    <field name="risco" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario, risco)" />
+                                    <field name="quantidade_risco" />
+                                    <field name="vr_risco" sum="vr_risco" />
+                                    <field name="percentual_planejado" />
+                                    <field name="data_inicial_execucao" />
+                                    <field name="data_final_execucao" />
+                                    <field name="dias_execucao" />
+                                </tree>
+                                <form>
+                                    <group col="4" colspan="4">
+                                        <field name="project_id" colspan="4" invisible="1" />
+                                        <field name="orcamento_id" colspan="4" invisible="1" />
+                                        <field name="etapa_id" colspan="4" domain="[('orcamento_id', '=', parent.codigo), ('parent_id', '!=', False)]" />
+                                        <field name="ordem" colspan="2" />
+                                        <field name="codigo_completo" colspan="2" />
+                                        <field name="product_id" colspan="4" on_change="onchange_product_id(product_id, project_id)" />
+                                        <field name="quantidade" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario, risco)" />
+                                        <field name="uom_id" colspan="2" readonly="1" />
+                                        <field name="vr_unitario" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario, risco)" />
+                                        <field name="vr_produto" colspan="2" />
+                                        <field name="risco" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario, risco)" />
+                                        <newline />
+                                        <field name="quantidade_risco" />
+                                        <newline />
+                                        <field name="vr_risco" />
+                                        <newline />
+                                        <field name="centrocusto_id" colspan="4" string="Centro de custo/Modelo de rateio" domain="['|', ('tipo', '=', 'R'), '&amp;', ('tipo', '=', 'C'), ('sintetico', '=', False)]" />
+                                    </group>
+                                    <newline />
+                                    <separator string="Planejamento" colspan="4" />
+                                    <field name="planejamento_ids" colspan="4" nolabel="1"  >
+                                        <tree editable="top">
+                                            <field name="data_inicial_execucao" required="1" />
+                                            <field name="data_final_execucao" required="1" />
+                                            <field name="dias_execucao" readonly="1" />
+                                            <field name="percentual" sum="percentual" on_change="onchange_percentual_quantidade_vr_produto(parent.quantidade, parent.vr_produto, percentual, 0, 0, context)" />
+                                            <field name="quantidade" sum="quantidade" on_change="onchange_percentual_quantidade_vr_produto(parent.quantidade, parent.vr_produto, 0, quantidade, 0, context)"/>
+                                            <field name="vr_produto" sum="vr_produto" on_change="onchange_percentual_quantidade_vr_produto(parent.quantidade, parent.vr_produto, 0, 0, vr_produto, context)" />
+                                        </tree>
+                                    </field>
+                                </form>
+                            </field>-->
+                        </page>
+                        <page string="Etapas do orçamento">
+                            <field name="etapa_ids" colspan="4" nolabel="1" >
+                                <tree editable="bottom">
+                                    <field name="parent_id" domain="[('orcamento_id', '=', parent.codigo)]" />
+<!--                                     <field name="nome" /> -->
+                                    <field name="etapa_id" />
+                                    <field name="codigo" />
+                                    <field name="codigo_completo" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Situação do orçamento" groups="project.group_project_manager">
+                            <button string="Aprovar orçamento" type="object" name="aprova_orcamento" attrs="{'invisible': [('situacao', 'in', ('A', 'C'))]}" />
+                            <group colspan="4" attrs="{'invisible': [('situacao', 'in', ('A', 'C'))]}">
+                                <separator string="Cancelamento" colspan="4" />
+                                <button string="Cancelar orçamento" type="object" name="cancela_orcamento"  />
+                            </group>
+                            <group colspan="4" attrs="{'invisible': [('situacao', '!=', 'C')]}">
+                                <separator string="Reabertura" colspan="4" />
+                                <button string="Reabrir orçamento" type="object" name="reabre_orcamento"  />
+                            </group>
+                        </page>
+                        <page string="Observação" groups="project.group_project_manager">
+                            <separator string="Observações"/>
+                            <field name="obs" nolabel="1" colspan="4"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="project_orcamento_search">
+            <field name="name">project.orcamento.search</field>
+            <field name="model">project.orcamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Orçamentos">
+                    <filter name="aprovado" string="Aprovado" icon="terp-go-month" domain="[('situacao','=','A')]" />
+                    <filter name="pendente" string="Pendente" icon="terp-go-month" domain="[('situacao','!=','A')]" />
+                    <field name="project_id" />
+                    <field name="versao" />
+                    <newline />
+                    <field name="mes" />
+                    <field name="ano" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="project_orcamento_acao">
+            <field name="name">Orçamentos</field>
+            <field name="res_model">project.orcamento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="project_orcamento_acao"
+            id="menu_project_orcamento" name="Orçamento" parent="project.menu_project_management" />
+
+    </data>
+</openerp>

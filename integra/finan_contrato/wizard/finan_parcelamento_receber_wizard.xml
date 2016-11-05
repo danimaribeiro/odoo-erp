@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_parcelamento_receber_wizard">
+            <field name="name">finan.parcelamento.receber.wizard</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Parcelamento a receber">
+                    <group colspan="4">
+                        <separator string="Características e período" colspan="10" />
+                        <field name="data_inicio" />
+                        <field name="pro_rata" required="1" />
+                        <field name="dia_vencimento" required="1" />
+                        <group colspan="2" attrs="{'invisible': [('pro_rata', '=', False)]}">
+                            <field name="data_encerramento" attrs="{'required': [('pro_rata', '=', True)]}" />
+                        </group>
+                        <field name="duracao" required="1" />
+                        <field name="carencia" invisible="1" />
+                        <newline/>
+                        <field name="tipo_valor_base" required="1" />
+                        <group colspan="2">
+                            <field name="valor_mensal" attrs="{'invisible': [('tipo_valor_base', '=', 'T')]}" />
+                            <field name="valor" attrs="{'invisible': [('tipo_valor_base', '=', 'M')]}" />
+                        </group>
+                    </group>
+                    <group colspan="4">
+                        <separator string="Observações" colspan="10" />
+                        <field name="obs" colspan="4" nolabel="1"/>
+                    </group>
+                    <button icon="gtk-execute" string="Gerar parcelamento" name="gera_provisao_wizard" type="object" />
+                    <button icon="gtk-save" string="Salvar" name="nada" type="object" />
+                    <group colspan="4">
+                        <separator string="Lançamentos financeiros" colspan="10" />
+                        <field name="lancamento_ids" readonly="0" nolabel="1" widget="many2one_list">
+                            <tree editable="top">
+                                <field name="provisionado" />
+                                <field name="documento_id" />
+                                <field name="numero_documento" />
+                                <field name="data_documento" />
+                                <field name="data_vencimento" />
+                                <field name="valor_documento" sum="Valor documento" />
+                                <field name="situacao" />
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

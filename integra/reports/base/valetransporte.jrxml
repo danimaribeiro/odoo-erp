@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="valetransporte" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ff48df3d-8b28-4ad2-b4fc-5b7ea4fcfd9d">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="392"/>
+	<style name="Title" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<parameter name="UID" class="java.lang.Integer"/>
+	<parameter name="LOGO_CLIENTE" class="java.lang.String"/>
+	<parameter name="LOGO_DIR" class="java.lang.String"/>
+	<parameter name="BASE_DIR" class="java.lang.String"/>
+	<parameter name="IDS_PLAIN" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	distinct(hr_contract.id),
+	resource_resource.name as resource_name,
+	hr_employee.carteira_trabalho_numero AS hr_employee_carteira_trabalho_numero,
+	hr_employee.carteira_trabalho_serie AS hr_employee_carteira_trabalho_serie,
+	adremp.endereco AS res_partner_address_endereco,
+	adremp.numero AS res_partner_address_numero,
+	adremp.bairro AS res_partner_address_bairro,
+	adremp.city AS res_partner_address_cidade,
+	partcomp.endereco as empresa_endereco,
+	partcomp.numero as empresa_numero,
+	partcomp.complemento as empresa_complemento,
+	partcomp.bairro as empresa_bairro,
+	muncomp.nome as empresa_municipio,
+	estcomp.uf as empresa_estado,
+	partcomp.cep as empresa_cep,
+	adrcomp.phone as empresa_fone,
+	partcomp.cnpj_cpf as empresa_cnpj,
+	partcomp.ie as empresa_ie
+FROM
+     public.hr_employee hr_employee INNER JOIN public.hr_contract hr_contract ON hr_employee.id = hr_contract.employee_id
+     INNER JOIN public.hr_job hr_job ON hr_contract.job_id = hr_job.id
+     INNER JOIN public.resource_resource resource_resource ON hr_employee.resource_id = resource_resource.id
+     INNER JOIN res_partner_address adremp on adremp.id = hr_employee.address_home_id and
+	adremp.type = 'contact'
+     INNER JOIN public.hr_department hr_department ON hr_job.department_id = hr_department.id
+     INNER JOIN public.res_company res_company ON res_company.id = hr_department.company_id
+     INNER JOIN res_partner respartcomp on respartcomp.id = res_company.partner_id
+     INNER JOIN res_partner_address adrcomp on adrcomp.partner_id = respartcomp.id and
+	adrcomp.type = 'default'
+     left join sped_participante partcomp on partcomp.partner_id = res_company.partner_id
+     left join sped_municipio muncomp on muncomp.id = partcomp.municipio_id
+     left join sped_estado estcomp on estcomp.id = muncomp.estado_id]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="resource_name" class="java.lang.String"/>
+	<field name="hr_employee_carteira_trabalho_numero" class="java.lang.String"/>
+	<field name="hr_employee_carteira_trabalho_serie" class="java.lang.String"/>
+	<field name="res_partner_address_endereco" class="java.lang.String"/>
+	<field name="res_partner_address_numero" class="java.lang.String"/>
+	<field name="res_partner_address_bairro" class="java.lang.String"/>
+	<field name="res_partner_address_cidade" class="java.lang.String"/>
+	<field name="empresa_endereco" class="java.lang.String"/>
+	<field name="empresa_numero" class="java.lang.String"/>
+	<field name="empresa_complemento" class="java.lang.String"/>
+	<field name="empresa_bairro" class="java.lang.String"/>
+	<field name="empresa_municipio" class="java.lang.String"/>
+	<field name="empresa_estado" class="java.lang.String"/>
+	<field name="empresa_cep" class="java.lang.String"/>
+	<field name="empresa_fone" class="java.lang.String"/>
+	<field name="empresa_cnpj" class="java.lang.String"/>
+	<field name="empresa_ie" class="java.lang.String"/>
+	<group name="Group1">
+		<groupExpression><![CDATA[(int)($V{REPORT_COUNT}/15)]]></groupExpression>
+	</group>
+	<group name="Group2">
+		<groupExpression><![CDATA[(int)($V{REPORT_COUNT}/5)]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="27" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="1fd41a6d-bde1-4219-a959-9ad8dcbfe48f" x="-20" y="-21" width="596" height="48"/>
+				<subreportParameter name="INTEGRA_REPORT_TITLE">
+					<subreportParameterExpression><![CDATA["VALE TRANSPORTE / DECLARAÇÃO / TERMO DE COMPROMISSO"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO_DIR">
+					<subreportParameterExpression><![CDATA[$P{LOGO_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="COMPANY_ID">
+					<subreportParameterExpression><![CDATA[$P{UID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO_CLIENTE">
+					<subreportParameterExpression><![CDATA[$P{LOGO_CLIENTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cabecalho.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="266" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="315ba8f6-ef30-49bd-99fc-3d6b36687574" x="0" y="6" width="555" height="87"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[1.O Vale Transporte será pago pelo beneficiário até o limite de 6% ( seis por cento ) de seu salário ( excluídos quaisquer adicionais ou vantagens ) e pelo empregador, no que exceder a esse limite.
+
+2. No caso em que o valor total dos vales recebidos for inferior a 6% ( seis por cento ) do salário,o descontado por ocasião do pagamento do respectivo salário.
+
+3. Não é permitido substituir o fornecimento do Vale Transporte por antecipação em dinheiro de qualquer outra forma de pagamento, salvo no caso de falta ou insuficiência de estoque do Vale Transporte.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="e844bb41-2594-48a2-9e17-9615e6a7e8c8" x="0" y="116" width="555" height="36"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nome: " + ($F{resource_name} != null ? $F{resource_name} : "")  + "\n" +
+"CTPS N.º: " + ($F{hr_employee_carteira_trabalho_numero} != null ? $F{hr_employee_carteira_trabalho_numero} : "")  + " / " + ($F{hr_employee_carteira_trabalho_serie} != null ? $F{hr_employee_carteira_trabalho_serie} : "")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="da284835-51b7-4605-81e3-7d4c66345307" x="-1" y="146" width="555" height="84"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[				<style isBold='true' isUnderline='true' fontSize='10'>OPÇÃO PELO SISTEMA DO VALE TRANSPORTE</style>
+
+
+O Vale Transporte é um direito do trabalhador, faça sua opção por recebê-lo ou não, assinalando um dos quadros abaixo:
+
+
+
+						<style isBold='true' isUnderline='true'>DECLARAÇÃO</style>
+
+Para fazer uso do sistema do Vale Transporte, declaro:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="ab41e320-80cd-495f-b3e3-63c2af0c2e65" x="0" y="238" width="555" height="26"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Residir na: " + ($F{res_partner_address_endereco} != null ? $F{res_partner_address_endereco} : "") + " " +
+($F{res_partner_address_numero} != null ? $F{res_partner_address_numero} : "") + " - " +
+($F{res_partner_address_bairro} != null ? $F{res_partner_address_bairro} : "") + "\n" +
+"Cidade: " + ($F{res_partner_address_cidade} != null ? $F{res_partner_address_cidade} : "")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2a28ff0f-004d-41f6-8b88-8db46588fe2b" x="196" y="97" width="135" height="15"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" isBold="true" isItalic="false" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[DADOS DO EMPREGADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="77a148fd-53a9-4508-954f-95ff36461623" x="170" y="196" width="100" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[(   ) SIM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="df15d4a0-e451-4db8-b16a-79a7b5132aab" x="328" y="194" width="100" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[(   ) NÃO]]></text>
+			</staticText>
+		</band>
+		<band height="322">
+			<staticText>
+				<reportElement uuid="ebb9ecdb-6deb-4184-884f-35052020e62f" x="1" y="0" width="553" height="230"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[2. Utilizar o(s) meio(s) de transporte de minha residência ao trabalho e vice-versa:
+
+( )Ônibus            ( )Metrô            ( )Trem            ( )Ônibus/Metrô            ( )Trem/Ônibus            ( )Outros(especificar):
+
+
+
+2.1. No perímetro:
+
+( ) Municipal                                       ( ) Intermunicipal                                       ( )Interestadual
+
+2.2. Através da(s) seguinte(s) empresa(s) operadora(s). (Somente nos casos intermunicipais e interestaduais):
+
+2.3. Utilizando diariamente _________ ( nº de conduções/dia ) conduções para locomover-se de minha residência ao trabalho e vice-versa.
+
+3. Para informações complementares, utilize o espaço abaixo:
+
+
+
+4. Fico ciente que se alterar opção acima, comunicarei a empresa em 48 horas de antecedência.
+
+5. Fico ciente que devo comunicar a empresa de qualquer alteração de endereço caso houver.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="c6aa12f0-1b63-4940-bef8-b674176beadb" x="0" y="255" width="470" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empresa_municipio} != null ? $F{empresa_municipio} : "") + " " + new SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="095cdcc1-eafb-425d-a391-b28615cf4aad" x="1" y="299" width="272" height="14"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{resource_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="34" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="e3f71ac9-dbe8-4090-a700-b5da46ca76af" x="-20" y="0" width="596" height="34"/>
+				<subreportParameter name="UID">
+					<subreportParameterExpression><![CDATA[$P{UID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rodape.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

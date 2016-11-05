@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="orcamento_categoria_tree" model="ir.ui.view">
+            <field name="name">orcamento.categoria_tree</field>
+            <field name="model">orcamento.categoria</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Categorias de orçamento">
+                    <field name="ordem"/>
+                    <field name="nome"/>
+                    <field name="margem"/>
+                    <field name="meses_retorno_investimento"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="orcamento_categoria_form" model="ir.ui.view">
+            <field name="name">orcamento.categoria_form</field>
+            <field name="model">orcamento.categoria</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Categorias de orçamento">
+                    <field name="nome"/>
+                    <newline/>
+                    <field name="ordem"/>
+                    <newline/>
+                    <field name="valida_preco_minimo"/>
+                    <newline/>
+                    <field name="margem"/>
+                    <newline/>
+                    <field name="meses_retorno_investimento"/>
+                    <newline/>
+                    <field name="abate_custo_comissao" />
+                    <newline />
+                    <field name="abate_impostos_comissao" />
+                    <newline />
+                    <field name="considera_venda" />
+                    <newline />
+                    <field name="comissao_venda_id" domain="[('tipo', '=', 'V')]" />
+                    <newline />
+                    <field name="comissao_locacao_id" domain="[('tipo', '=', 'L')]" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="orcamento_categoria_action">
+            <field name="name">orcamento.categoria_action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">orcamento.categoria</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="orcamento_categoria_tree"/>
+        </record>
+
+        <menuitem name="Categorias de orçamento" parent="base.menu_base_config"  id="orcamento_categoria_menu" action="orcamento_categoria_action" />
+
+   </data>
+</openerp>

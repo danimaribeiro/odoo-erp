@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="purchase_order_line_tree" model="ir.ui.view">
+            <field name="name">purchase.order.line.tree</field>
+            <field name="model">purchase.order.line</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="purchase.purchase_order_line_tree"/>
+            <field name="arch" type="xml">
+                <field name="product_qty" position="after">
+                    <field name="quantidade_atendida" readonly="1" sum="Atendida" />
+                    <field name="saldo_a_atender" readonly="1" sum="Saldo" />
+                </field>
+<!--                <xpath expr="/tree[@string='Purchase Order Lines']" position="attributes">
+                    <attribute name="colors">green:saldo_a_atender and saldo_a_atender &lt; product_qty;blue:not saldo_a_atender</attribute>
+                </xpath>-->
+            </field>
+        </record>
+
+    </data>
+</openerp>

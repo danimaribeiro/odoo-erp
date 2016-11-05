@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_segurado_form" >
+            <field name="name">finan.contratos.segurado</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Contratos Segurados">
+                    <group colspan="4">
+                        <field name="project_id" required="1" colspan="4"/>
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-print" string="Gerar relatório" name="gera_relatorio_segurado" type="object" colspan="5" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_contrato_segurado_acao">
+            <field name="name">Contratos Segurados</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_segurado_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_contrato_segurado_form"/>
+            <field name="act_window_id" ref="finan_contrato_segurado_acao"/>
+        </record>
+
+        <menuitem action="finan_contrato_segurado_acao"
+                  id="menu_finan_contrato_segurado" 
+                  name="Contratos Segurados" 
+                  parent="finan.menu_finan_relatorios" 
+                  sequence="10" />
+
+    </data>
+</openerp>

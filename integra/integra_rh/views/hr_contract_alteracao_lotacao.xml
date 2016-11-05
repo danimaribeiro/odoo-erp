@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_contract_alteracao_lotacao_tree">
+            <field name="name">hr.contract.alteracao.tree</field>
+            <field name="model">hr.contract_alteracao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Alteracão de Lotação/Local de trabalho">
+                    <field name="company_id" />
+                    <field name="contract_id" />
+                    <field name="job_id" />
+                    <field name="data_alteracao"  />
+                    <field name="department_id" />
+                    <field name="lotacao_id" />
+                    <field name="motivo_id" />
+                    <field name="obs" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="hr_contract_alteracao_lotacao_form" >
+            <field name="name">hr.contract.alteracao.form</field>
+            <field name="model">hr.contract_alteracao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Contrato de Lotação/Local de trabalho">
+                    <separator string="Alteração de Lotação/Local de trabalho" colspan="4"/>
+                    <newline />
+                    <field name="contract_id" required="1" on_change="onchange_contract_id(contract_id)" />
+                    <newline />
+                    <field name="tipo_alteracao" invisible="1" />
+                    <field name="data_alteracao" required="1" on_change="onchange_data_alteracao(data_alteracao, contract_id)" />
+                    <newline />
+                    <field name="department_id" />
+                    <newline />
+                    <field name="lotacao_id" />
+                    <newline />
+                    <field name="motivo_id" required="1" colspan="4" />
+                    <newline />
+                    <field name="obs" colspan="4" />
+                    <newline />
+                    <notebook colspan="4">
+                        <page string="Alterações de Lotação/Local de trabalho">
+                            <field name="alteracao_ids" colspan="4" mode="tree" readonly="1" nolabel="1">
+                                <tree>
+                                   <field name="tipo_alteracao" invisible="1" />
+                                        <field name="contract_id" invisible="1" />
+                                        <field name="data_alteracao" required="1" />
+                                        <field name="department_id" />
+                                        <field name="lotacao_id" />
+                                        <field name="motivo_id" />
+                                        <field name="obs" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_contract_alteracao_lotacao_search">
+            <field name="name">hr.contract.alteracao.search</field>
+            <field name="model">hr.contract_alteracao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Alteração de Lotação/Local de trabalho">
+                    <field name="company_id" />
+                    <field name="contract_id" />
+                    <field name="job_id" />
+                    <field name="data_alteracao" required="1" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_contract_alteracao_lotacao_acao">
+            <field name="name">Alteração de Lotação/Local de trabalho</field>
+            <field name="res_model">hr.contract_alteracao</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_contract_alteracao_lotacao_tree"/>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo_alteracao', '=', 'L')]</field>
+            <field name="context">{'tipo_alteracao':'L','default_tipo_alteracao':'L' }</field>
+        </record>
+
+        <menuitem action="hr_contract_alteracao_lotacao_acao" id="menu_hr_contract_alteracao_lotacao" name="Lotação/Local de trabalho" parent="menu_hr_alteracao_contratuais" sequence="05"/>
+
+        <record model="ir.actions.act_window.view" id="hr_contract_alteracao_lotacao_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_contract_alteracao_lotacao_acao"/>
+            <field name="view_id" ref="hr_contract_alteracao_lotacao_form"/>
+        </record>
+
+         <record model="ir.actions.act_window.view" id="hr_contract_alteracao_lotacao_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_contract_alteracao_lotacao_acao"/>
+            <field name="view_id" ref="hr_contract_alteracao_lotacao_tree"/>
+        </record>
+    </data>
+</openerp>

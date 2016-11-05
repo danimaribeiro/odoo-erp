@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="sped_nfe_recebida_manual_form" model="ir.ui.view">
+            <field name="name">sped.nfe.recebida.manual.form</field>
+            <field name="model">sped.documento</field>
+            <field name="inherit_id" ref="sped_finan.sped_nfe_recebida_manual_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="duplicata_ids" position="after">
+                    <newline />
+                    <separator string="Itens do rateio" colspan="4" />
+                    <field name="rateio_ids" widget="many2one_list" nolabel="1" colspan="4" context="{'tree_view_ref': 'finan.finan_rateio_item_tree'}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

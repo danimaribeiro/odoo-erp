@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_altera_vencimento_form" >
+            <field name="name">finan.altera.vencimento.form</field>
+            <field name="model">finan.altera.vencimento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Alterar vencimento do lançamento">
+                    <group colspan="4">
+                        <separator string="Confirmar carteira" colspan="4" />
+                        <field name="lancamento_id" colspan="4" readonly="1" />
+                        <field name="data_vencimento_anterior" readonly="1" />
+                        <newline />
+                        <field name="data_vencimento" required="1" />
+                        <newline />
+                        <field name="justificativa" colspan="4" required="1" />
+                        <newline/>
+                        <button icon="gtk-execute" string="Registrar alteração" name="confirmar" type="object" colspan="4" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

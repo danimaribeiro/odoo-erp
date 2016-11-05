@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_tabela_venda_tree">
+            <field name="name">finan.tabela.venda.tree</field>
+            <field name="model">finan.tabela.venda</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_tabela_venda_form">
+            <field name="name">finan.tabela.venda.form</field>
+            <field name="model">finan.tabela.venda</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Tabela de venda">
+                    <field name="nome" colspan="4" />
+                    <separator string="Condições de pagamento" colspan="4" />
+                    <field name="condicao_ids" nolabel="1" colspan="4">
+                        <tree>
+                            <field name="ordem" required="1" />
+                            <field name="payment_term_id" required="1" />
+                            <field name="vezes" />
+                            <field name="carteira_id" />
+<!--                            <field name="valor_principal" sum="Valor" required="1" />
+                            <field name="valor_entrada" sum="Valor" />
+                            <field name="data_inicio" required="1" />-->
+                        </tree>
+                        <form>
+                            <field name="ordem" required="1" />
+                            <field name="payment_term_id" colspan="4" required="1" />
+                            <field name="vezes" />
+                            <newline />
+                            <field name="carteira_id" colspan="4" />
+<!--                            <field name="valor_principal" required="1" />
+                            <field name="valor_entrada" />
+                            <field name="data_inicio" required="1" />-->
+<!--                            <button name="gera_parcelas" string="Gerar parcelas" type="object" colspan="1" />
+                            <separator string="Parcelas" colspan="4" />
+                            <field name="parcela_ids" nolabel="1" colspan="4">
+                                <tree>
+                                    <field name="parcela" />
+                                    <field name="data_vencimento" />
+                                    <field name="valor" sum="valor" />
+                                    <field name="juros" sum="juros" />
+                                    <field name="amortizacao" />
+                                    <field name="divida_amortizada" />
+                                    <field name="saldo_devedor" />
+                                </tree>
+                            </field>-->
+                        </form>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_tabela_venda_search">
+            <field name="name">finan.tabela.venda.search</field>
+            <field name="model">finan.tabela.venda</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Tabelas de venda">
+                    <field name="nome" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_tabela_venda_acao">
+            <field name="name">Tabela de venda</field>
+            <field name="res_model">finan.tabela.venda</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_tabela_venda_tree" />
+            <field name="search_view_id" ref="finan_tabela_venda_search" />
+        </record>
+
+        <menuitem action="finan_tabela_venda_acao"
+            id="menu_finan_tabela_venda" name="Tabelas de venda" parent="finan_contrato.menu_finan_contratos" />
+
+        <record model="ir.actions.act_window.view" id="finan_tabela_venda_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_tabela_venda_form"/>
+            <field name="act_window_id" ref="finan_tabela_venda_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_tabela_venda_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_tabela_venda_tree"/>
+            <field name="act_window_id" ref="finan_tabela_venda_acao"/>
+        </record>
+
+    </data>
+</openerp>

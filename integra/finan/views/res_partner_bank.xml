@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="view_partner_bank_form" model="ir.ui.view">
+            <field name="name">res.partner.bank.form</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="company_id" position="replace">
+                    <field name="company_id" on_change="onchange_company_id(company_id)" widget="selection"/>
+                    <field name="cnpj_cpf" invisible="1"  readonly="1"/>
+                    <field name="raiz_cnpj" invisible="1" />
+                </field>
+                <field name="acc_number" position="replace">
+                    <group colspan="4" col="4">
+                        <field name="agencia" colspan="2" required="1" />
+                        <field name="agencia_digito" colspan="2" />
+                        <field name="acc_number" string="Conta" colspan="2" />
+                        <field name="conta_digito" colspan="2"/>
+                        <field name="saldo_inicial"/>
+                        <field name="data_saldo_inicial"/>
+                        <newline/>
+                        <field name="conta_id" domain="[('sintetica', '=', False)]" />
+                    </group>
+                </field>
+                <field name="bank_bic" position="after">                    
+                    <field name="codigo_convenio" />
+                </field>                
+            </field>
+        </record>
+
+        <record id="view_partner_bank_tree" model="ir.ui.view">
+            <field name="name">res.partner.bank.tree</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="acc_number" position="replace">
+                    <field name="tipo"/>
+                    <field name="agencia" />
+                    <field name="acc_number"/>
+                    <field name="owner_name" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_partner_bank_search" model="ir.ui.view">
+            <field name="name">res.partner.bank.search</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_search"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <field name="bank_name" position="after">
+                    <field name="tipo" />
+                    <newline />
+                    <group string="Agrupado por">
+                        <filter string="Empresa" name="Empresa" icon="terp-partner" domain = "[]" context="{'group_by':'company_id'}"/>
+                        <filter string="Titular" name="Titular" icon="terp-partner" domain = "[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Nome Titular" name="Nome Titular"  icon="terp-personal" domain = "[]" context="{'group_by':'owner_name'}"/>                         
+                        <filter string="Tipo" name="Tipo"  icon="terp-personal" domain = "[]" context="{'group_by':'state'}"/>
+                    </group>                 
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

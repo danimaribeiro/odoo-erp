@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!--             groups="group_finan_manager,group_finan_staff" -->
+        <menuitem id="menu_caixa"
+            name="Caixa"
+            web_icon="images/finance_grey.png"
+            web_icon_hover="images/finance.png" />
+
+    </data>
+</openerp>

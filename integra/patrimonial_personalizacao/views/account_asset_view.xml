@@ -1,0 +1,43 @@
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="asset_asset_form">
+        <field name="name">asset.asset.form</field>
+        <field name="model">account.asset.asset</field>
+        <field name="type">form</field>
+        <field name="priority">2</field>
+        <field name="inherit_id" ref="integra_patrimonio.asset_asset_form"/>
+        <field name="arch" type="xml">
+            <field name="hr_department_id" position="before">
+                <field name="setor_id" />
+            </field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="asset_asset_tree">
+        <field name="name">asset.asset.tree</field>
+        <field name="model">account.asset.asset</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="integra_patrimonio.asset_asset_tree"/>
+        <field name="arch" type="xml">
+            <field name="hr_department_id" position="before">
+                <field name="setor_id" />
+            </field>
+        </field>
+    </record>
+
+    <record id="asset_asset_search" model="ir.ui.view">
+        <field name="name">asset.asset.search</field>
+        <field name="model">account.asset.asset</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="integra_patrimonio.asset_asset_search"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="setor_id" />
+            </field>
+        </field>
+    </record>
+
+
+</data>
+</openerp>

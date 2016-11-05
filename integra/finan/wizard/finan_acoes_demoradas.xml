@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record forcecreate="True" model="ir.cron" id="finan_acao_demorada_recalcula_situacao_juros_cron">
+            <field name="name">Recalculo automatico de Juros e Situacao</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field eval="True" name="active" />
+            <field eval="False" name="doall" />
+            <field eval="'finan.lancamento'" name="model" />
+            <field eval="'acao_demorada_ajusta_situacao_juros'" name="function" />
+            <field eval="'()'" name="args" />
+        </record>
+
+        <record forcecreate="True" model="ir.actions.server" id="finan_acao_demorada_recalcula_situacao_juros_server_action">
+            <field name="name">Recalculo automatico de Juros e Situacao</field>
+            <field name="model_id" ref="model_finan_lancamento"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.acao_demorada_ajusta_situacao_juros(context=context)</field>
+        </record>
+
+<!--        <record model="ir.values" id="finan_acao_demorada_recalcula_situacao_juros_values" >
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'finan.lancamento'" name="model"/>
+            <field name="name">Recalcula situação e juros</field>
+            <field eval="'ir.actions.server,%d'%finan_acao_demorada_recalcula_situacao_juros_server_action" name="value"/>
+            <field eval="True" name="object"/>
+        </record>-->
+
+        <record forcecreate="True" model="ir.cron" id="finan_acao_demorada_abre_caixas_cron">
+            <field name="name">Abertura de caixas para fechamento</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field eval="True" name="active" />
+            <field eval="False" name="doall" />
+            <field eval="'finan.saldo'" name="model" />
+            <field eval="'cria_fechamentos_gerais'" name="function" />
+            <field eval="'()'" name="args" />
+        </record>
+
+        <record forcecreate="True" model="ir.actions.server" id="finan_acao_demorada_abre_caixas_server_action">
+            <field name="name">Abertura de caixas para fechamento</field>
+            <field name="model_id" ref="model_finan_lancamento"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.cria_fechamentos_gerais(context=context)</field>
+        </record>
+
+    </data>
+</openerp>
+

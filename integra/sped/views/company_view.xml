@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="res_company_form_sped">
+            <field name="name">res.company.form.sped</field>
+            <field name="model">res.company</field>
+            <field name="type">form</field>
+            <field name="priority">200</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <page string="Bank Accounts" position="after">
+                    <page string="SPED">
+                        <field name="matriz_id" on_change="onchange_matriz_id(matriz_id)" colspan="4" />
+                        <field name="regime_tributario" />
+                        <field name="natureza_juridica" />
+                        <newline/>
+                        <separator string="Geral" colspan="4" />
+                        <field name="familiatributaria_id" colspan="4" />
+                        <field name="simples_anexo" attrs="{'invisible': [('regime_tributario', '!=', '1')]}" />
+                        <field name="simples_teto" attrs="{'invisible': [('regime_tributario', '!=', '1')]}" />
+                        <field name="al_icms_sn_id" attrs="{'invisible': [('regime_tributario', '!=', '1')]}" colspan="4"/>
+                        <field name="al_pis_cofins_id" colspan="4"/>
+                        <separator string="NF-e/produtos" colspan="4" />
+                        <field name="ambiente_nfe" />
+                        <field name="tipo_emissao_nfe" />
+                        <newline/>
+                        <field name="serie_producao" />
+                        <field name="serie_homologacao" />
+                        <newline/>
+                        <field name="serie_scan_producao" />
+                        <field name="serie_scan_homologacao" />
+                        <newline/>
+                        <field name="operacao_id" domain="[('modelo', '=', '55'), ('emissao', '=', '0')]" colspan="4" />
+                        <field name="operacao_pessoa_fisica_id" domain="[('modelo', 'in', ('55', '2D')), ('emissao', '=', '0')]" colspan="4" />
+                        <field name="operacao_ativo_id" domain="[('modelo', '=', '55'), ('emissao', '=', '0')]" colspan="4" />
+                        <field name="operacao_faturamento_antecipado_id" domain="[('modelo', '=', '55'), ('emissao', '=', '0')]" colspan="4" />
+                        <separator string="NFS-e/serviços" colspan="4" />
+                        <newline />
+                        <field name="company_servico_id" colspan="4" />
+                        <newline />
+                        <field name="ambiente_nfse" />
+                        <field name="provedor_nfse" />
+                        <newline />
+                        <field name="serie_rps" />
+                        <field name="serie_nfse" />
+                        <field name="ultimo_lote_nfse" />
+                        <field name="ultimo_rps" />
+                        <field name="operacao_servico_id" domain="[('modelo', '=', 'SE')]" colspan="4" />
+                    </page>
+                </page>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="res_company_search">
+            <field name="name">res.company.search</field>
+            <field name="model">res.company</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Empresas: Grupos e unidades">
+                    <field name="name" />
+                    <field name="parent_id" select="1" />
+                    <newline />
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Grupo" icon="terp-project" context="{'group_by': 'parent_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="res_company_tree_sped">
+            <field name="name">res.company.tree.sped</field>
+            <field name="model">res.company</field>
+            <field name="type">tree</field>
+            <field name="priority">200</field>
+            <field name="inherit_id" ref="base.view_company_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="before">
+                    <field name="parent_id" invisible="1" />
+                </field>
+                <field name="partner_id" position="after">
+                    <field name="matriz_id" string="Matriz fiscal" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

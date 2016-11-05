@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_payment_term_line_tree" model="ir.ui.view">
+            <field name="name">account.payment.term.line.tree</field>
+            <field name="model">account.payment.term.line</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="account.view_payment_term_line_tree"/>
+            <field name="arch" type="xml">
+                <field name="value_amount" position="after">
+                    <field name="multiplica"/>
+                    <field name="divide"/>
+                </field>
+            </field>
+        </record>
+
+
+        <record id="view_payment_term_line_form" model="ir.ui.view">
+            <field name="name">account.payment.term.line.form</field>
+            <field name="model">account.payment.term.line</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_payment_term_line_form"/>
+            <field name="arch" type="xml">
+                <field name="value_amount" position="after">
+                    <field name="multiplica" colspan="4" attrs="{'readonly':[('value','=','balance')], 'required': [('value','=','divisao')]}"/>
+                    <field name="divide" colspan="4" attrs="{'readonly':[('value','=','balance')], 'required': [('value','=','divisao')]}"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="account.view_payment_term_form" model="ir.ui.view">
+            <field name="name">account.payment.term.form</field>
+            <field name="model">account.payment.term</field>
+            <field name="type">form</field>
+<!--             <field name="inherit_id" ref="account.view_payment_term_form"/> -->
+            <field name="arch" type="xml">
+                <form string="Payment Term">
+                    <separator colspan="4" string="Descrição"/>
+                    <field name="name" string="Descrição" />
+                    <field name="active" />
+                    <field name="valor_minimo" />
+                    <newline />
+                    <field name="tipo_mes" />
+                    <button name="gerar_meses" type="object" string="Gerar meses/dias" colspan="2" />
+
+                    <separator string="Tarifas e taxas para financiamento" colspan="4" />
+                    <field name="taxa_juros" colspan="2" digits="(18, 5)"/>
+                    <field name="tipo_taxa" colspan="2" />
+<!--                    <field name="juros_composto" colspan="2" />
+                    <field name="juros_montante" colspan="2" />-->
+                    <newline />
+                    <field name="taxa_administracao" colspan="2" />
+                    <newline />
+                    <field name="taxa_abertura_credito" colspan="2" />
+                    <newline />
+                    <field name="taxa_iof" colspan="2" />
+
+                    <separator colspan="4" string="Parcelas"/>
+<!--                     <button type="object" name="gera_parcelas" string="Gera parcelas (baseado na 1ª parcela informada)" colspan="2" /> -->
+                    <field colspan="4" name="line_ids" nolabel="1">
+                        <tree string="Condição de pagamento">
+                            <field name="sequence" string="Ordem" />
+                            <field name="name" string="Nome" />
+                            <field name="value" string="Valor determinado por" />
+                            <field name="value_amount" string="Valor a pagar (%% ou fixo)" />
+                            <field name="multiplica"/>
+                            <field name="divide"/>
+                            <field name="meses"/>
+                            <field name="days" string="Dias da data" />
+                            <field name="days2" string="Dia fixo" />
+                        </tree>
+                        <form string="Condição de pagamento">
+                            <group>
+                                <group colspan="2" col="4">
+                                    <field name="name" string="Nome" />
+                                    <field name="sequence" string="Ordem" />
+                                    <separator string="Cálculo da parcela" colspan="4"/>
+                                    <field name="value" colspan="4" string="Valor determinado por" />
+                                    <field name="value_amount" colspan="4" attrs="{'readonly':[('value','=','balance')]}" string="Valor a pagar (%% ou fixo)" />
+                                    <field name="multiplica" colspan="4" attrs="{'readonly':[('value','=','balance')], 'required': [('value','=','divisao')]}"/>
+                                    <field name="divide" colspan="4" attrs="{'readonly':[('value','=','balance')], 'required': [('value','=','divisao')]}"/>
+                                </group>
+                                <group colspan="2" col="4">
+                                    <separator string="Cálculo da data de vencimento" colspan="4"/>
+                                    <field name="meses" colspan="4" />
+                                    <field name="days" colspan="4" string="Dias da data" />
+                                    <field name="days2" colspan="4" string="Dia fixo" />
+                                </group>
+                            </group>
+                        </form>
+                    </field>
+
+<!--                    <separator colspan="4" string="Exemplo de aplicação"/>
+                    <button type="object" name="gera_exemplo" string="Gera exemplo" colspan="2" />
+                    <field colspan="4" name="note" nolabel="1"/>-->
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

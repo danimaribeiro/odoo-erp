@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="frota_relatorio_listagem_odometro" >
+            <field name="name">frota.relatorio.listagem.odometro</field>
+            <field name="model">frota.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório OS por Veículo">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="company_id" required="1" colspan="4" />
+                        <newline/>
+                        <field name="data_hora_inicial" required="1" colspan="2"/>
+                        <field name="data_hora_final" required="1" colspan="2"/>
+                        <newline/>
+                        <field name="veiculo_id" colspan="2"/>
+                        <field name="servico_id"  colspan="2"/>
+                        <newline/>
+                        <field name="tipo_id"  colspan="2"/>
+<!--                         <field name="formato"  colspan="2"/> -->
+<!--                         <field name="sintetico"  colspan="2"/> -->
+                        <newline/>
+                        <field name="nome" invisible="1" />
+                        <field name="nome_csv" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_listagem_odometro" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                        <newline/>
+                        <field name="arquivo_csv" nolabel="1" readonly="1" filename="nome_csv" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="frota_relatorio_listagem_odometro_acao">
+            <field name="name">Listagem de odômetros</field>
+            <field name="res_model">frota.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="frota_relatorio_listagem_odometro_form_acao">
+            <field eval="10" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="frota_relatorio_listagem_odometro"/>
+            <field name="act_window_id" ref="frota_relatorio_listagem_odometro_acao"/>
+        </record>
+
+        <menuitem action="frota_relatorio_listagem_odometro_acao"
+                  id="menu_frota_relatorio_listagem_odometro" name="Listagem de odômetros" parent="menu_frota_relatorio" sequence="20"  />
+
+    </data>
+</openerp>

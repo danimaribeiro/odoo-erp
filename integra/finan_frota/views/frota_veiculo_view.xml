@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="frota_veiculo_form">
+            <field name="name">frota.veiculo.form</field>
+            <field name="model">frota.veiculo</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_frota.frota_veiculo_form" />
+            <field name="arch" type="xml">
+                <field name="res_company_id" position="after">
+                    <field name="centrocusto_id" colspan="6" required="0" />
+                </field>
+                <group string="Propriedades gerais" position="after">
+                    <group name="frota" attrs="{'invisible': [('res_company_id', '=', False)]}" colspan="4">
+                        <separator string="IPVA" colspan="4" />
+                        <field name="ipva_ids" nolabel="1" colspan="4" context="{'eh_ipva': True, 'default_eh_ipva': True, 'default_tipo': 'P'}">
+                            <tree editable="top">
+                                <field name="data_vencimento" required="1" />
+                                <field name="valor_documento" required="1" />
+                                <field name="numero_documento" readonly="1" />
+                                <field name="situacao" readonly="1" />
+                                <field name="tipo" invisible="1" />
+                                <field name="eh_ipva" invisible="1" />
+                            </tree>
+                        </field>
+                        <separator string="DPVAT" colspan="4" />
+                        <field name="dpvat_ids" nolabel="1" colspan="4" context="{'eh_dpvat': True, 'default_eh_dpvat': True, 'default_tipo': 'P'}">
+                            <tree editable="top">
+                                <field name="data_vencimento" required="1" />
+                                <field name="valor_documento" required="1" />
+                                <field name="numero_documento" readonly="1" />
+                                <field name="situacao" readonly="1" />
+                                <field name="tipo" invisible="1" />
+                                <field name="eh_dpvat" invisible="1" />
+                            </tree>
+                        </field>
+                        <separator string="Licenciamento" colspan="4" />
+                        <field name="licenciamento_ids" nolabel="1" colspan="4" context="{'eh_licenciamento': True, 'default_eh_licenciamento': True, 'default_tipo': 'P'}">
+                            <tree editable="top">
+                                <field name="data_vencimento" required="1" />
+                                <field name="valor_documento" required="1" />
+                                <field name="numero_documento" readonly="1" />
+                                <field name="situacao" readonly="1" />
+                                <field name="tipo" invisible="1" />
+                                <field name="eh_licenciamento" invisible="1" />
+                            </tree>
+                        </field>
+                </group>
+<!--                    <group col="6" colspan="4" string="Rateios alocados">
+                        <field name="rateio_ids" readonly="1" />
+                    </group>-->
+                </group>
+            </field>
+        </record>
+
+    </data>
+</openerp>

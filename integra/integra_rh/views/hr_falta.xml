@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="hr_falta_tree">
+            <field name="name">hr.falta.tree</field>
+            <field name="model">hr.falta</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Faltas">
+                    <field name="company_id" />
+                    <field name="employee_id"/>
+                    <field name="data" />
+                    <field name="tipo" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_falta_form">
+            <field name="name">hr.falta.form</field>
+            <field name="model">hr.falta</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <field name="tipo" required="1"/>
+                    <newline />
+                    <field name="employee_id" required="1" on_change="onchange_employee_id(employee_id)" colspan="4" />
+                    <field name="contract_id" invisible="1" />
+                    <field name="data" required="1"/>
+                    <newline />
+                    <separator string="Observações" colspan="4" />
+                    <field name="obs" colspan="4" nolabel="1" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_falta_search">
+            <field name="name">hr.falta.search</field>
+            <field name="model">hr.falta</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Faltas">
+                    <field name="tipo" />
+                    <field name="company_id" />
+                    <field name="employee_id" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_falta_acao">
+            <field name="name">Falta</field>
+            <field name="res_model">hr.falta</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_falta_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="hr_falta_acao" id="menu_hr_falta" name="Faltas" parent="hr_payroll.menu_hr_root_payroll" sequence="10"/>
+
+        <record model="ir.actions.act_window.view" id="hr_falta_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_falta_acao"/>
+            <field name="view_id" ref="hr_falta_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_falta_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_falta_acao"/>
+            <field name="view_id" ref="hr_falta_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

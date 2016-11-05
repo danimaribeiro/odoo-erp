@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!--
+        Para a criação de um dashboard com uma lista de informações,
+        primeiro criamos a tree view, exibindo apenas os campos
+        necessários (esta aqui foi copiada do sale_ordem_servico_view.xml, e
+        os campos foram tornados invisíveis, mas mantidos para filtragem
+        e agrupamento)
+        -->
+
+        <record model="ir.ui.view" id="sale_ordem_servico_dashboard_por_etapa_tree">
+            <field name="name">sale.ordem_servico.dashboard.por.etapa.tree</field>
+            <field name="model">sale.order</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Ordens de Serviço">
+                    <field name="etapa_id" />
+                    <field name="name" string="Código" />
+                    <field name="partner_id" />
+                    <field name="pricelist_id" />
+                    <field name="user_id" />
+                    <field name="company_id" />
+                    <field name="amount_total" string="Valor total" />
+                    <field name="tempo_etapa" />
+                </tree>
+            </field>
+        </record>
+
+        <!--
+        Criamos o action view, ativando os filtros padrão (domain) e o agrupamento
+        padrão (group by no context)
+        -->
+
+        <record model="ir.actions.act_window" id="sale_ordem_servico_dashboard_por_etapa_acao">
+            <field name="name">Ordens de Serviço</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('etapa_id.tipo', '=', 'O')]</field>
+            <field name="context">{'group_by': 'etapa_id'}</field>
+            <field name="view_id" ref="sale_ordem_servico_dashboard_por_etapa_tree" />
+        </record>
+
+        <!--
+        Vinculamos o tree view ao action, para que esse tree view não seja
+        usado por engano em outras áreas
+        -->
+
+        <record model="ir.actions.act_window.view" id="sale_ordem_servico_dashboard_por_etapa_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sale_ordem_servico_dashboard_por_etapa_tree"/>
+            <field name="act_window_id" ref="sale_ordem_servico_dashboard_por_etapa_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sale_ordem_servico_dashboard_por_etapa_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_order_seguranca_ordem_servico_form"/>
+            <field name="act_window_id" ref="sale_ordem_servico_dashboard_por_etapa_acao"/>
+        </record>
+
+        <!--
+        Por fim, inserimos no dashboard o action view para a chamada do tree view,
+        que é o painel que queremos mostrar
+        -->
+
+        <record model="ir.ui.view" id="sale_ordem_servico_dashboard_por_etapa_form">
+            <field name="name">sale.ordem_servico.dashboard.por.etapa.form</field>
+            <field name="model">board.board</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="operacional_dashboard_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/board/column[1]" position="inside">
+                 <action name="%(sale_ordem_servico_dashboard_por_etapa_acao)d" string="Ordens de Serviço"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

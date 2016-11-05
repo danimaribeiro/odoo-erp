@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="sped_nfse_emitida_form" model="ir.ui.view">
+            <field name="name">sped.nfe.emitida.form</field>
+            <field name="model">sped.documento</field>
+            <field name="inherit_id" ref="sped.sped_nfse_emitida_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Totais" position="after">
+                    <page string="Frota - OS">
+                        <field name="frota_os_ids" domain="[('res_partner_id', '=', partner_id), ('sped_documento_ids', '=', False)]" nolabel="1" />
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

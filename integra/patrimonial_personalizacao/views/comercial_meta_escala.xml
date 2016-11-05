@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="comercial_meta_escala_search">
+            <field name="name">comercial.meta.escala.search</field>
+            <field name="model">comercial.meta.escala</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Escalas de atingimento">
+                    <field name="indicador" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="comercial_meta_escala_tree">
+            <field name="name">comercial.meta.escala.tree</field>
+            <field name="model">comercial.meta.escala</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Escalas de atingimento" editable="top">
+                    <field name="indicador" />
+                    <field name="percentual_inicial" />
+                    <field name="percentual_final" />
+                    <field name="percentual_variavel" />
+                    <field name="percentual_total" />
+                </tree>
+            </field>
+        </record>
+<!--
+        <record model="ir.ui.view" id="comercial_meta_escala_form">
+            <field name="name">comercial.meta.escala.form</field>
+            <field name="model">comercial.meta.escala</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Escalas de atingimento para remuneração variável">
+                    <field name="name" colspan="4" required="1" />
+                    <field name="vendedor_ids" colspan="4" />
+                    <separator string="Faixas" colspan="4" />
+                    <field name="escala_ids" nolabel="1" colspan="4">
+                        <tree editable="top">
+                            <field name="valor_inicial" />
+                            <field name="valor_final" />
+                            <field name="base" />
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>-->
+
+        <record model="ir.actions.act_window" id="comercial_meta_escala_acao">
+            <field name="name">Escalas de atingimento</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">comercial.meta.escala</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <menuitem id="menu_comercial_meta_escala"
+            name="Escalas de atingimento"
+            parent="menu_comercial_plano" sequence="40" action="comercial_meta_escala_acao" />
+
+    </data>
+</openerp>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_pagar_form">
+            <field name="name">finan.pagar.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_pagar_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">               
+                <field name="valor_documento" position="before">
+                    <field name="modelo_id" on_change="onchange_modelo(modelo_id,company_id,valor_documento)" domain="[('tipo', '=', 'MP')]" attrs="{'readonly': ['|',('contrato_id', '!=', False),('sped_documento_id', '!=', False)], 'invisible': [('valor_documento', '=', False)]}"/>
+                </field>                
+            </field>
+        </record>
+
+    </data>
+</openerp>

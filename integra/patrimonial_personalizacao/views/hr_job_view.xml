@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_job_form_patrimonial" model="ir.ui.view">
+            <field name="name">hr.job.form.patrimonial</field>
+            <field name="model">hr.job</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr.view_hr_job_form"/>
+            <field name="arch" type="xml">
+                <page string="Employees" position="after">
+                    <page string="Orçamento">
+                        <separator string="Orçamento do cargo por unidade" colspan="4" />
+                        <field name="orcamento_ids" colspan="4" nolabel="1">
+                            <tree editable="top" string="Orçamentos">
+                                <field name="company_id" domain="[('cnpj_cpf', '!=', False)]"/>
+                                <field name="quantidade" />
+                            </tree>
+                        </field>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>
+

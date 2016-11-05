@@ -1,0 +1,5 @@
+#
+# Sempre verdadeiro
+#
+result = True
+ 

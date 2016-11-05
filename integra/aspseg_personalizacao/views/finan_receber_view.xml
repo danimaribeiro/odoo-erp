@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_receber_tree">
+            <field name="name">finan.receber.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">tree</field>
+            <field name="priority">64</field>
+            <field name="inherit_id" ref="finan.finan_receber_tree"/>
+            <field name="arch" type="xml">
+                <field name="parent_company_id" position="replace">
+                    <field name="parent_company_id" string="Empresa" groups="finan.group_finan_manager,finan.group_finan_treasury_manager" invisible="1" />
+                </field>
+                <field name="conta_id" position="replace">
+                    <field name="conta_id" invisible="1" />
+                </field>
+                <field name="provisionado" position="replace">
+                    <field name="provisionado" invisible="1" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

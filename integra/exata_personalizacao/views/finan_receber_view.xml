@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_receber_form">
+            <field name="name">finan.receber.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_form"/>
+            <field name="type">form</field>
+            <field name="priority" eval="100"/>
+            <field name="arch" type="xml">
+                <field name="res_partner_bank_id" position="replace">
+                    <field name="res_partner_bank_id" invisible="1" />
+                </field>
+                <!--<field name="sugestao_bank_id" position="replace">
+                    <field name="sugestao_bank_id" string="Previsão de crédito na conta" domain="['|', ('cnpj_cpf', '=', cnpj_cpf),('cnpj_cpf', '=', False)]" required="1" />
+                </field>-->
+                <field name="conta_id" position="replace">
+                    <field name="tipo_conta" required="0" />
+                    <field name="conta_id" required="1" domain="[('sintetica', '=', False), ('tipo', '=', tipo_conta)]" on_change="onchange_conta_id(conta_id, company_id, centrocusto_id, valor_documento, valor, partner_id, data_vencimento, data_documento)"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

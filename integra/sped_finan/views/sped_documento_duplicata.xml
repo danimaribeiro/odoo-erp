@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_documentoduplicata_form_view">
+            <field name="name">sped.documentoduplicata.form</field>
+            <field name="model">sped.documentoduplicata</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Duplicatas/Vencimentos">
+                    <field name="numero" required="1" />
+                    <newline/>
+                    <field name="data_vencimento" required="1" />
+                    <newline/>
+                    <field name="valor" required="1" />
+                    <newline/>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_documentoduplicata_tree_view">
+            <field name="name">sped.documentoduplicata.tree</field>
+            <field name="model">sped.documentoduplicata</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="numero" />
+                    <field name="data_vencimento"/>
+                    <field name="valor"/>
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</openerp>

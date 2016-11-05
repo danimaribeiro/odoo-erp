@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sped_ecd_razao_saldo_anterior" language="groovy" pageWidth="110" pageHeight="250" columnWidth="110" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="338c7889-3cf5-4cca-b4f6-ada70d75f7ad">
+	<property name="ireport.zoom" value="2.853116706110003"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="COMPANY_CNPJ" class="java.lang.String"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="CONTA_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+coalesce(sum(es.saldo),0)  as saldo_anterior
+from ecd_saldo es
+where
+es.conta_id = $P{CONTA_ID}
+and es.data = cast($P{DATA_INICIAL} as date) + interval '-1 day'
+and $P!{COMPANY_CNPJ}]]>
+	</queryString>
+	<field name="saldo_anterior" class="java.lang.Double">
+		<fieldDescription><![CDATA[Saldo anterior]]></fieldDescription>
+	</field>
+	<variable name="saldo_anterior_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{saldo_anterior}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+</jasperReport>

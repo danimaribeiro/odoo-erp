@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="res_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="sped_base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <page string="General" position="after">
+                    <page string="Financeiro">
+                        <field colspan="4" name="finan_formapagamento_id"/>
+                        <field colspan="4" name="account_payment_term_id"/>                        
+                        <field colspan="4" name="restricao"/>                        
+                      <separator string="Lançamentos" colspan="6"/>
+                        <field name="account_payment_term_ids" colspan="6" nolabel="1" >                            
+                            <tree>
+                                <field name="name"/> 
+                            </tree>
+                        </field>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+        <record id="view_partner_property_form" model="ir.ui.view">
+            <field name="name">res.partner.property.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+                <field name="bank_ids" position="replace">
+                    <field colspan="4" context="{'address': address}" name="bank_ids" nolabel="1">
+                        <form string="Bank account">
+                            <field name="state"/>
+                            <newline/>
+                            <group colspan="4" col="4">
+                                <field name="agencia" colspan="2" required="1" />
+                                <field name="agencia_digito" colspan="2" />
+                                <field name="acc_number" string="Conta" colspan="2" />
+                                <field name="conta_digito" colspan="2"/>
+                            </group>
+                            <newline/>
+                            <group name="owner" colspan="2" col="2">
+                                <separator colspan="4" string="Bank Account Owner"/>
+                                <field name="partner_id" on_change="onchange_partner_id(partner_id)"/>
+                                <field name="owner_name"/>
+                                <field name="street"/>
+                                <field name="city"/>
+                                <field name="zip"/>
+                                <field name="state_id"/>
+                                <field name="country_id"/>
+                            </group>
+                            <group name="bank" colspan="2" col="2">
+                                <separator colspan="2" string="Information About the Bank"/>
+                                <field name="bank" on_change="onchange_bank_id(bank)" groups="base.group_extended"/>
+                                <field name="bank_name"/>
+                                <field name="bank_bic"/>
+                            </group>
+                        </form>
+                        <tree string="Bank Details">
+                            <field name="sequence" invisible="1"/>
+                            <field name="agencia" />
+                            <field name="acc_number"/>
+                            <field name="bank_name"/>
+                            <field name="owner_name"/>
+                        </tree>
+                    </field>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

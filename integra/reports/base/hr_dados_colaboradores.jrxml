@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hr_dados_colaboradores" language="groovy" pageWidth="1142" pageHeight="555" orientation="Landscape" columnWidth="1142" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="59655758-8271-4e94-a466-56119cf8bf5d">
+	<property name="ireport.zoom" value="3.4522712143931114"/>
+	<property name="ireport.x" value="3204"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="COMPANY_ID" class="java.lang.Integer"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+rp.name as empresa,
+rp.cnpj_cpf,
+d.name as departamento,
+c.name as matricula,
+e.nome,
+(cbo.codigo || ' - ' || j.name) as funcao,
+c.date_start as data_admissao,
+c.wage as salario_base,
+
+coalesce((SELECT sum(hl.total)
+FROM hr_payslip_line as hl
+where hl.code in ('REMUNERACAO_VARIAVEL','DSR_REMUNERACAO_VARIAVEL','DSR_REMUNERACAO_VENDAS') and hl.slip_id = h.id), 0) as remuneracao_variavel,
+
+coalesce((SELECT sum(hl.total)
+FROM hr_payslip_line as hl
+where hl.code in ('DSR_REMUNERACAO_VARIAVEL') and hl.slip_id = h.id), 0) as dsr_remuneracao_variavel,
+
+coalesce((SELECT sum(hl.total)
+FROM hr_payslip_line as hl
+where hl.code in ('GRAT_FUNC_10','GRAT_FUNC_40','GRAT_HORA_10') and hl.slip_id = h.id), 0) as gratificacao,
+
+coalesce((SELECT sum(hl.total)
+FROM hr_payslip_line as hl
+where hl.code = 'INSALUBRIDADE' and hl.slip_id = h.id), 0) as insalubridade,
+
+coalesce((SELECT sum(hl.total)
+FROM hr_payslip_line as hl
+where hl.code in ('PERICULOSIDADE','PERICULOSIDADE_ANTERIOR','PERICULOSIDADE_VALOR') and hl.slip_id = h.id), 0) as periculosidade,
+
+coalesce((SELECT sum(hl.total)
+FROM hr_payslip_line as hl
+where hl.code in ('ADTO_COMISSAO','COMISSAO','COMP_COMISSOES','DSR_COMIS') and hl.slip_id = h.id), 0) as comissao,
+
+coalesce((SELECT sum(hl.total)
+FROM hr_payslip_line as hl
+where hl.code = 'ajuda_custo' and hl.slip_id = h.id), 0) as ajuda_custo,
+
+
+coalesce((SELECT sum(hl.total)
+FROM hr_payslip_line as hl
+where hl.code = 'PREMIO_ASSIDUIDADE' and hl.slip_id = h.id), 0) as premio_assiduidade,
+
+coalesce((SELECT sum(hl.total)
+FROM hr_payslip_line as hl
+where hl.code = 'H_SOBREAVISO' and hl.slip_id = h.id), 0) as hora_aviso,
+h.tipo,
+c.id as contract_id,
+coalesce(lot.name, '') || ' ' || coalesce(lot.cnpj_cpf) as tomador
+
+from hr_payslip h
+join hr_employee e on e.id = h.employee_id
+join hr_contract c on c.id = h.contract_id
+
+join res_company co on co.id = c.company_id
+join res_partner rp on rp.id = co.partner_id
+
+left join res_company cc on cc.id = co.parent_id
+left join res_company ccc on ccc.id = cc.parent_id
+
+join hr_job j on j.id = c.job_id
+join hr_cbo cbo on cbo.id = j.cbo_id
+left join hr_department d on d.id = c.department_id
+
+left join res_partner lot on lot.id = c.lotacao_id
+
+where
+  (
+    co.id = $P{COMPANY_ID}
+    or co.parent_id = $P{COMPANY_ID}
+    or cc.parent_id = $P{COMPANY_ID}
+  )
+and h.simulacao = false
+and to_char(h.date_from, 'YYYY-MM-DD') >= $P{DATA_INICIAL} and to_char(h.date_to, 'YYYY-MM-DD') <= $P{DATA_FINAL}
+
+order by
+  rp.name,
+  e.nome]]>
+	</queryString>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="cnpj_cpf" class="java.lang.String"/>
+	<field name="departamento" class="java.lang.String"/>
+	<field name="matricula" class="java.lang.String"/>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[unknown]]></fieldDescription>
+	</field>
+	<field name="funcao" class="java.lang.String"/>
+	<field name="data_admissao" class="java.sql.Date"/>
+	<field name="salario_base" class="java.math.BigDecimal"/>
+	<field name="remuneracao_variavel" class="java.math.BigDecimal"/>
+	<field name="dsr_remuneracao_variavel" class="java.math.BigDecimal"/>
+	<field name="gratificacao" class="java.math.BigDecimal"/>
+	<field name="insalubridade" class="java.math.BigDecimal"/>
+	<field name="periculosidade" class="java.math.BigDecimal"/>
+	<field name="comissao" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Comissão (%) para preço venda/sugerido]]></fieldDescription>
+	</field>
+	<field name="ajuda_custo" class="java.math.BigDecimal"/>
+	<field name="premio_assiduidade" class="java.math.BigDecimal"/>
+	<field name="hora_aviso" class="java.math.BigDecimal"/>
+	<field name="tipo" class="java.lang.String">
+		<fieldDescription><![CDATA[unknown]]></fieldDescription>
+	</field>
+	<field name="contract_id" class="java.lang.Integer"/>
+	<field name="tomador" class="java.lang.String"/>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="36" height="20" uuid="06704b43-c4f4-4802-b7fe-feae6a47d805"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empresa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="0" width="31" height="20" uuid="4f997ecb-edcc-4ec1-9d91-da74f636b936"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[departamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="109" y="0" width="40" height="20" uuid="3e2ca939-73fe-4b5b-8d0d-a88b61945624"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="169" y="0" width="41" height="20" uuid="a46f10cb-ca6a-4c23-b7f6-637db6c51e0c"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cargo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="210" y="0" width="42" height="20" uuid="a138cb6e-e04f-4de1-ab59-5062d129131e"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data Admissao]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="252" y="0" width="50" height="20" uuid="9fb9621d-2692-41d1-aa77-e019ab843cd0"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Salário Base]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="0" width="50" height="20" uuid="256d7cfd-ebd3-497f-abcc-a10a9bee9a53"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Gratificacao]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="452" y="0" width="50" height="20" uuid="dd8895fd-97d8-4609-b2e8-c5d511eeb373"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Insalubridade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="502" y="0" width="50" height="20" uuid="49addd8d-79ba-43ce-9b18-a404e375302b"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Periculosidade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="552" y="0" width="50" height="20" uuid="251ad761-1453-4a61-956d-4a7afab4563e"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Comissão (%) para preço venda/sugerido]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="652" y="0" width="50" height="20" uuid="17f04708-5b51-4d9d-9687-661ad6a74026"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Premio Assiduidade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="752" y="0" width="50" height="20" uuid="b2962b27-bb00-47a8-8499-b8a15a16979e"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="67" y="0" width="42" height="20" uuid="c151bdab-e9cc-48f0-8886-208f104b3eab"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Matricula]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="149" y="0" width="20" height="20" uuid="dd83cb0e-1a9d-4874-975d-9646f2e53162"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="602" y="0" width="50" height="20" uuid="908885f3-aa27-4ab4-960e-2e8b0efbc349"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ajuda de Custo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="702" y="0" width="50" height="20" uuid="bee98246-8995-4ec3-8453-8a329f040878"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora sob Aviso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="352" y="0" width="50" height="20" uuid="f92591ef-6b89-4a79-833f-b1c39f175d5a"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remunerção Variavel]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="302" y="0" width="50" height="20" uuid="d0278d5a-d925-480e-be77-46526422407e"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DSR Remu. Variavel]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="802" y="0" width="50" height="20" uuid="d45faa45-c79b-4f0e-915a-22b0ff0d3057"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora Entrada ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="852" y="0" width="50" height="20" uuid="992fc27c-f409-41f6-a0e8-c16adb588b44"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora Saída]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="902" y="0" width="50" height="20" uuid="ae156624-ffe6-4909-8093-b9204493f51a"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora Entrada Escala]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="952" y="0" width="50" height="20" uuid="ac459528-6d41-4ef0-9fd7-e25eb3b06010"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora Saída Escala]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1052" y="0" width="50" height="20" uuid="1a480fbd-cfdf-4a39-ba72-238e8589f12d"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora Retorno Intervalo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1002" y="0" width="50" height="20" uuid="c748442c-6104-465d-acae-0a6b49395e85"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora Saída Intervalo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1102" y="0" width="40" height="20" uuid="5818a134-6023-425c-b824-f59f16c552b7"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tomador]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="36" height="20" uuid="d2a78ef4-562a-48f4-ad08-9afff0eb5424"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa} + " - " + $F{cnpj_cpf}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="36" y="0" width="31" height="20" uuid="130945c7-01ce-49e5-accb-cc24cb7f45ee"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{departamento}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="67" y="0" width="42" height="20" uuid="f0a0577c-8ee1-4367-b9a7-79967aa9bdf1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{matricula}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="109" y="0" width="40" height="20" uuid="52783875-81cb-441d-ab2f-07d7cc688dfc"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="169" y="0" width="41" height="20" uuid="2480d374-52a6-4c1e-aec3-a7eb1940b509"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{funcao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToBandHeight" x="210" y="0" width="42" height="20" uuid="8b2d06d4-4718-4086-8585-f0f433111605"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_admissao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="252" y="0" width="50" height="20" uuid="973e4a7a-b913-49fb-b357-c50700024c27"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salario_base}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="402" y="0" width="50" height="20" uuid="0698d868-3b9a-4c09-9e49-1f13ea4952a2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gratificacao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="452" y="0" width="50" height="20" uuid="397569c6-b5ce-4130-a2c7-94c61ab92062"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{insalubridade}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="502" y="0" width="50" height="20" uuid="cd040f5e-9207-4d8c-ba63-4276ab61b99f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{periculosidade}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="552" y="0" width="50" height="20" uuid="9a1c122a-1603-4845-b056-a145d9fa9ef0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comissao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="652" y="0" width="50" height="20" uuid="96a1dcdf-7b5c-4535-a4c9-a838edc7579c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{premio_assiduidade}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="20" uuid="bcddaff4-24b8-499e-819b-039b7a9b7b74"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salario_base} + $F{gratificacao} + $F{insalubridade} +
+$F{periculosidade} + $F{comissao} + $F{premio_assiduidade}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="149" y="0" width="20" height="20" uuid="6bad8329-d4cc-4c17-870c-3dbd073e8bae"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="602" y="0" width="50" height="20" uuid="4f1b0c4c-8c46-408e-bb79-369c1f28561c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ajuda_custo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="702" y="0" width="50" height="20" uuid="6c30c257-0bf8-44e2-9d30-9fe61795892d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora_aviso}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="302" y="0" width="50" height="20" uuid="08f4a25d-5fa5-44de-856a-e247d82fd270"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dsr_remuneracao_variavel}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="352" y="0" width="50" height="20" uuid="543d46d3-0604-45a2-a3ee-ac27b6fa0941"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{remuneracao_variavel}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement stretchType="RelativeToBandHeight" x="802" y="0" width="300" height="20" uuid="7624ed78-bc56-4b0c-9c14-44937c29bb67"/>
+				<subreportParameter name="CONTRACT_ID">
+					<subreportParameterExpression><![CDATA[$F{contract_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "hr_dados_colaboradores_horario.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="1102" y="0" width="40" height="20" uuid="93e99533-5576-4316-822d-c0b24da16612"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tomador}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

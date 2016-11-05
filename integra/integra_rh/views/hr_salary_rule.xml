@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_payroll.hr_salary_rule_form" model="ir.ui.view">
+            <field name="name">hr.salary.rule.form</field>
+            <field name="model">hr.salary.rule</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Rubricas">
+                    <group col="6" colspan="6">
+                       <field name="name"/>
+                       <field name="code" select="1"/>
+                       <field name="category_id" on_change="onchange_category_id(category_id)" />
+                       <field name="sinal" invisible="1" />
+                       <field name="sequence" />
+                       <field name="active"/>
+<!--                        <field name="appears_on_payslip"/> -->
+                       <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                        <newline />
+                        <field name="manual"/>
+                        <field name="exige_valor" attrs="{'invisible': [('manual', '=', False)]}"/>
+                        <field name="manual_horas" attrs="{'invisible': [('manual', '=', False)]}"/>
+                        <field name="afastamento"/>
+                        <field name="codigo_afastamento"/>
+                        <field name="estrutura_afastamento_id" />
+                        <field name="tipo_media" />
+                        <field name="ignora_media_13" />
+                        <field name="regra_holerite_anterior_id" />
+                        <field name="regra_saldo_devedor_id" />
+                        <field name="rubrica_rescisao_id" />
+                    </group>
+                    <notebook colspan="6">
+                        <page string="General">
+                            <group col="4" colspan="6">
+                                <field name="calculo_padrao" on_change="onchange_calculo_padrao(calculo_padrao, code)" />
+                                <field name="data_alteracao_padrao" />
+                                <separator colspan="4" string="Conditions"/>
+                                <field name="condition_select"/><newline/>
+                                <field name="condition_python" attrs="{'invisible':[('condition_select','&lt;&gt;','python')], 'required': [('condition_select','=','python')]}" colspan="4"/> <newline/>
+                                <field name="condition_range" attrs="{'invisible':[('condition_select','&lt;&gt;','range')], 'required':[('condition_select','=','range')]}"/><newline/>
+                                <field name="condition_range_min" colspan="2" attrs="{'invisible':[('condition_select','&lt;&gt;','range')], 'required':[('condition_select','=','range')]}"/><newline/>
+                                <field name="condition_range_max" colspan="2" attrs="{'invisible':[('condition_select','&lt;&gt;','range')], 'required':[('condition_select','=','range')]}"/><newline/>
+                                <separator colspan="4" string="Computation"/>
+                                <field name="amount_select"/><newline/>
+                                <field name="amount_percentage_base" attrs="{'invisible':[('amount_select','&lt;&gt;','percentage')], 'required': [('amount_select','=','percentage')]}"/><newline/>
+                                <field name="quantity" attrs="{'invisible':[('amount_select','=','code')], 'required':[('amount_select','!=','code')]}"/><newline/>
+                                <field name="amount_fix"  attrs="{'invisible':[('amount_select','&lt;&gt;','fix')], 'required':[('amount_select','=','fix')]}"/><newline/>
+                                <field name="amount_percentage" attrs="{'invisible':[('amount_select','&lt;&gt;','percentage')], 'required':[('amount_select','=','percentage')]}"/>
+                                <field colspan="4" name="amount_python_compute" attrs="{'invisible':[('amount_select','&lt;&gt;','code')], 'required':[('amount_select','=','code')]}"/>
+<!--                                <separator colspan="4" string="Company contribution"/>-->
+                                <field name="register_id" invisible = "1"/>
+                            </group>
+                        </page>
+                        <page string="Estruturas de salário e folha">
+                            <field name="struct_ids" nolabel="1" colspan="4" />
+                        </page>
+
+                        <page string="Child Rules" attrs="{'invisible':1}" >
+                           <field name="parent_rule_id"/>
+                           <separator colspan="4" string="Children definition"/>
+                           <field colspan="4" name="child_ids" nolabel="1"/>
+                        </page>
+                           <page string="Inputs" attrs="{'invisible':1}">
+                                <field name="input_ids" colspan="4" nolabel="1" mode="tree, form">
+                                    <tree string="Input Data" editable="bottom">
+                                        <field name="name"/>
+                                        <field name="code"/>
+                                    </tree>
+                                </field>
+                           </page>
+                        <page string="Description" attrs="{'invisible':1}">
+                            <field name="note" colspan="4" nolabel="1"/>
+                        </page>
+                     </notebook>
+<!--                    <button string="Exporta" name="exporta_json" type="object"/>
+                    <button string="Importa" name="importa_json" type="object"/>-->
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_payroll.view_hr_rule_filter" model="ir.ui.view">
+            <field name="name">hr.salary.rule.select</field>
+            <field name="model">hr.salary.rule</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Rubricas">
+                    <group col="8" colspan="4">
+                        <field name="codigo"/>
+                        <field name="name"/>
+                        <field name="code" select="1"/>
+                        <field name="category_id"/>
+                        <field name="condition_range_min" invisible="1"/>
+                    </group>
+                    <newline/>
+                    <group col="8" colspan="4" expand="0" string="Group By...">
+                        <filter string="Category" icon="terp-folder-yellow" name="head" context="{'group_by':'category_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_payroll.hr_salary_rule_tree">
+            <field name="name">hr.salary.rule.tree</field>
+            <field name="model">hr.salary.rule</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="hr_payroll.hr_salary_rule_list"/>
+            <field name="arch" type="xml">
+                <field name="name" position="before">
+                    <field name="codigo"/>
+                    <field name="calculo_padrao"/>
+                </field>
+                <field name="category_id" position="after">
+                    <field name="rubrica_rescisao_id" />
+                    <field name="sinal"/>
+                    <field name="manual"/>
+                    <field name="tipo_media" />
+                    <field name="afastamento"/>
+                    <field name="estrutura_afastamento_id" />
+                </field>
+                <field name="register_id" position="replace" />
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_payroll.action_salary_rule_form" >
+            <field name="name">Rubricas</field>
+            <field name="res_model">hr.salary.rule</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_payroll.hr_salary_rule_list"/>
+            <field name="domain">[('parent_rule_id','=',False)]</field>
+            <field name="search_view_id" ref="hr_payroll.view_hr_rule_filter"/>
+        </record>
+
+        <menuitem id="hr_payroll.menu_action_hr_salary_rule_form"
+            action="hr_payroll.action_salary_rule_form"
+            parent="hr_payroll.payroll_configure"
+            string="Rubricas"
+            sequence="10"
+            />
+        
+         <record model="ir.actions.act_window.view" id="hr_salary_rule_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_payroll.action_salary_rule_form"/>
+            <field name="view_id" ref="hr_payroll.hr_salary_rule_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="salary_rule_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_payroll.action_salary_rule_form"/>
+            <field name="view_id" ref="hr_payroll.hr_salary_rule_tree"/>
+        </record>
+                
+    </data>
+</openerp>

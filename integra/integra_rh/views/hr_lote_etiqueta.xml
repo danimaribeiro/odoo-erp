@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="hr_lote_etiqueta_tree">
+            <field name="name">hr.lote_etiqueta.tree</field>
+            <field name="model">hr.lote_etiqueta</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Lote de Etiquetas">
+                    <field name="ano" />
+                    <field name="mes" />
+                    <field name="company_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_lote_etiqueta_form">
+            <field name="name">hr.lote_etiqueta.form</field>
+            <field name="model">hr.lote_etiqueta</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <field name="mes" required="1" />
+                    <field name="ano" required="1" />
+                    <field name="company_id" required="1" colspan="4" />
+<!--                     <button string="Atualizar informações" icon="gtk-execute" name="atualizar_dados" type="object" /> -->
+                    <button string="Gerar etiquetas" colspan="4" icon="gtk-execute" name="gerar_etiquetas" type="object" />
+                    <field name="nome" invisible="1"/>
+                    <newline/>
+                    <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    <notebook colspan="4">
+                        <page string="Contratos a gerar">
+                            <field name="contract_ids" colspan="4" mode="tree" readonly="0" nolabel="1" domain="['|', ('company_id', '=', company_id), ('company_id.parent_id', '=', company_id)]">
+                                <tree>
+                                    <field name="name" string="Matrícula" />
+                                    <field name="company_id" />
+                                    <field name="employee_id" />
+                                    <field name="job_id" />
+                                    <field name="department_id" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_lote_etiqueta_search">
+            <field name="name">hr.lote_etiqueta.search</field>
+            <field name="model">hr.lote_etiqueta</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Lotes de etiquetas">
+                    <field name="company_id" />
+                    <field name="mes" />
+                    <field name="ano" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_lote_etiqueta_acao">
+            <field name="name">Lotes de etiquetas</field>
+            <field name="res_model">hr.lote_etiqueta</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_lote_etiqueta_tree"/>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_mes': str(mes_passado.month), 'search_default_ano': str(mes_passado.year)}</field>
+        </record>
+
+        <menuitem action="hr_lote_etiqueta_acao" id="menu_hr_lote_etiqueta" name="Lotes de etiquetas" parent="hr_payroll.menu_hr_root_payroll" sequence="0"/>
+
+        <record model="ir.actions.act_window.view" id="hr_lote_etiqueta_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_lote_etiqueta_acao"/>
+            <field name="view_id" ref="hr_lote_etiqueta_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_lote_etiqueta_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_lote_etiqueta_acao"/>
+            <field name="view_id" ref="hr_lote_etiqueta_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

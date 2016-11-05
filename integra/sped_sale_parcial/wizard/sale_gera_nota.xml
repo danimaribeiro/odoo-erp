@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_gera_nota_wizard" >
+            <field name="name">sale.gera.nota.wizard</field>
+            <field name="model">sale.gera_nota</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped_sale.sale_gera_nota_wizard"/>
+            <field name="arch" type="xml">
+                <field name="pedido_id" position="after">
+                    <field name="stock_picking_id" required="1" domain="[('sale_id', '=', pedido_id), ('state', '=', 'done'), ('sped_documento_id', '=', False)]" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,116 @@
+select
+  'I' as tipo,
+  'INSS contribuintes individuais                               ' as nome,
+  sum(coalesce(hi.amount, 0)) as base,
+  case
+     when sum(coalesce(hi.amount, 0)) = 0 then 0
+     else sum(coalesce(hi.total, 0)) / sum(coalesce(hi.amount, 0)) * 100.00
+  end as aliquota,
+  sum(coalesce(hi.total, 0)) as valor
+
+from
+  hr_payslip h
+  join hr_contract c on c.id = h.contract_id
+  join res_company cp on cp.id = c.company_id
+  join res_partner p on p.id = cp.partner_id
+  join hr_payslip_line hi on hi.slip_id = h.id
+  join hr_salary_rule r on r.id = hi.salary_rule_id
+  join hr_salary_rule_category rc on rc.id = r.category_id
+
+where
+  h.tipo in ('N', 'R')
+  and h.date_from >= cast($P{DATA_INICIAL} as date)
+  and h.date_to <= cast($P{DATA_FINAL} as date)
+  and p.cnpj_cpf = $P{CNPJ}
+  and r.code in ('INSS', 'INSS_anterior')
+  and c.categoria_trabalhador between '700' and '799'
+
+union
+
+select
+  'I' as tipo,
+  'INSS segurados/funcionários' as nome,
+  sum(coalesce(hi.amount, 0)) as base,
+  case
+     when sum(coalesce(hi.amount, 0)) = 0 then 0
+     else sum(coalesce(hi.total, 0)) / sum(coalesce(hi.amount, 0)) * 100.00
+  end as aliquota,
+  sum(coalesce(hi.total, 0)) as valor
+
+from
+  hr_payslip h
+  join hr_contract c on c.id = h.contract_id
+  join res_company cp on cp.id = c.company_id
+  join res_partner p on p.id = cp.partner_id
+  join hr_payslip_line hi on hi.slip_id = h.id
+  join hr_salary_rule r on r.id = hi.salary_rule_id
+  join hr_salary_rule_category rc on rc.id = r.category_id
+
+where
+  h.tipo in ('N', 'R')
+  and h.date_from >= cast($P{DATA_INICIAL} as date)
+  and h.date_to <= cast($P{DATA_FINAL} as date)
+  and p.cnpj_cpf = $P{CNPJ}
+  and r.code in ('INSS', 'INSS_anterior')
+  and c.categoria_trabalhador not between '700' and '799'
+
+union
+
+select
+  'E' as tipo,
+  'INSS Empresa contribuintes individuais' as nome,
+  sum(coalesce(hi.amount, 0)) as base,
+  case
+     when sum(coalesce(hi.amount, 0)) = 0 then 0
+     else sum(coalesce(hi.total, 0)) / sum(coalesce(hi.amount, 0)) * 100.00
+  end as aliquota,
+  sum(coalesce(hi.total, 0)) as valor
+
+from
+  hr_payslip h
+  join hr_contract c on c.id = h.contract_id
+  join res_company cp on cp.id = c.company_id
+  join res_partner p on p.id = cp.partner_id
+  join hr_payslip_line hi on hi.slip_id = h.id
+  join hr_salary_rule r on r.id = hi.salary_rule_id
+  join hr_salary_rule_category rc on rc.id = r.category_id
+
+where
+  h.tipo in ('N', 'R')
+  and h.date_from >= cast($P{DATA_INICIAL} as date)
+  and h.date_to <= cast($P{DATA_FINAL} as date)
+  and p.cnpj_cpf = $P{CNPJ}
+  and r.code in ('INSS_EMPRESA_TOTAL')
+  and c.categoria_trabalhador between '700' and '799'
+
+union
+
+select
+  'E' as tipo,
+  'INSS Empresa segurados/funcionários' as nome,
+  sum(coalesce(hi.amount, 0)) as base,
+  case
+     when sum(coalesce(hi.amount, 0)) = 0 then 0
+     else sum(coalesce(hi.total, 0)) / sum(coalesce(hi.amount, 0)) * 100.00
+  end as aliquota,
+  sum(coalesce(hi.total, 0)) as valor
+
+from
+  hr_payslip h
+  join hr_contract c on c.id = h.contract_id
+  join res_company cp on cp.id = c.company_id
+  join res_partner p on p.id = cp.partner_id
+  join hr_payslip_line hi on hi.slip_id = h.id
+  join hr_salary_rule r on r.id = hi.salary_rule_id
+  join hr_salary_rule_category rc on rc.id = r.category_id
+
+where
+  h.tipo in ('N', 'R')
+  and h.date_from >= cast($P{DATA_INICIAL} as date)
+  and h.date_to <= cast($P{DATA_FINAL} as date)
+  and p.cnpj_cpf = $P{CNPJ}
+  and r.code in ('INSS_EMPRESA_TOTAL')
+  and c.categoria_trabalhador not between '700' and '799'
+
+
+order by 1, 2

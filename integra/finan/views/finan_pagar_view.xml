@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_pagar_tree">
+            <field name="name">finan.pagar.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="grey:provisionado;red:situacao=='Vencido';black:situacao=='A vencer';magenta:situacao=='Vence hoje';blue:situacao=='Quitado';green:situacao=='Baixado'">
+                    <field name="parent_company_id" string="Empresa" groups="finan.group_finan_manager,finan.group_finan_treasury_manager"/>
+                    <field name="company_id" string="Unidade de negócio" />
+                    <field name="partner_id" string="Fornecedor"/>
+                    <field name="conta_id" />
+                    <field name="documento_id" />
+                    <field name="numero_documento" />
+                    <field name="data_documento" />
+                    <field name="data_vencimento" />
+                    <field name="ano_mes_vencimento" invisible="1"/>
+                    <field name="ano_vencimento" invisible="1"/>
+                    <field name="parcial" invisible="1"/>
+                    <field name="motivo_baixa_id" invisible="1"/>
+                    <field name="valor_documento" sum="Valor documento" />
+                    <field name="situacao" />
+                    <field name="data_quitacao" />
+                    <field name="sugestao_bank_id" string="Previsão de débito na conta" />
+                    <field name="res_partner_bank_id" />
+                    <field name="valor" sum="Valor" />
+                    <field name="valor_saldo" sum="Valor" />
+                    <field name="provisionado" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_pagar_rateio_tree">
+            <field name="name">finan.pagar.rateio.tree</field>
+            <field name="model">finan.lancamento.rateio</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree editable="top">
+                    <field name="company_id" required="1" />
+                    <field name="conta_id" required="1" domain="[('sintetica', '=', False)]" />
+                    <field name="centrocusto_id" required="0" domain="['|', ('tipo', '=', 'R'), '&amp;', '&amp;', ('tipo', '=', 'C'), ('sintetico', '=', False), '|', ('company_id', '=', False), ('company_id', '=', company_id)]"/>
+                    <field name="porcentagem" required="1" on_change="onchange_porcentagem(porcentagem, parent.valor_documento, parent.valor)" sum="porcentagem" />
+                    <field name="valor_documento" sum="Valor" />
+                    <field name="valor" sum="Valor" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_pagar_form">
+            <field name="name">finan.pagar.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Conta a pagar">
+                    <group col="4" colspan="4">
+                        <field name="company_id" colspan="4"  on_change="onchange_company_id(company_id)" domain="[('cnpj_cpf', '!=', False)]" />
+                        <field name="cnpj_cpf" invisible="1"  readonly="1" />
+                        <field name="raiz_cnpj" invisible="1" />
+                        <newline />
+                        <field name="tipo" invisible="1" />
+                        <field name="provisionado" />
+                        <field name="situacao" readonly="1" />
+                    </group>
+                    <notebook>
+                        <page string="Dados básicos">
+                            <group colspan="2" col="2">
+                                <separator string="Dados do documento" colspan="2" />
+                                <field name="documento_id" required="1" />
+                                <field name="numero_documento" required="1" />
+                                <field name="data_documento" required="1" />
+                                <field name="valor_documento" required="1" />
+                                <field name="valor" invisible="1" />
+                                <field name="partner_id" required="1" string="Fornecedor" />
+                                <field name="data_vencimento" required="1" />
+                                <button icon="terp-calendar" string="Alterar vencimento" name="solicita_alteracao_vencimento" type="object" colspan="2" />
+                            </group>
+                            <group colspan="2" col="2">
+                                <separator string="Classificação" colspan="2" />
+                                <field name="conta_id" required="1" domain="[('sintetica', '=', False)]" on_change="onchange_conta_id(conta_id, company_id, centrocusto_id, valor_documento, valor, partner_id, data_vencimento, data_documento)" />
+                                <field name="exige_centro_custo" invisible="1" />
+                                <field name="historico" />
+                            </group>
+                            <group colspan="4">
+                                <separator string="Rateio por centros de custo" colspan="4" />
+                                <newline/>
+                                <field name="centrocusto_id" string="Centro de custo/Modelo de rateio" domain="['|', ('tipo', '=', 'R'), '&amp;', ('tipo', '=', 'C'), ('sintetico', '=', False)]"
+                                    on_change="onchange_centrocusto_id(centrocusto_id, valor_documento, valor, company_id, conta_id, partner_id, data_vencimento, data_documento)" attrs="{'required': [('exige_centro_custo', '=', True)]}" />
+                                <separator string="Itens de rateio" colspan="4" />
+                                <newline/>
+                                <field name="rateio_ids" widget="many2one_list" nolabel="1" colspan="4" context="{'default_company_id': company_id, 'default_conta_id': conta_id, 'tree_view_ref': 'finan.finan_pagar_rateio_tree'}"/>
+                            </group>
+                        </page>
+                        <page string="Quitação" attrs="{'invisible': [('situacao', 'in', ['Baixado'])]}">
+                            <field name="sugestao_bank_id" string="Previsão de débito na conta" domain="['|', ('raiz_cnpj', '=', raiz_cnpj),('cnpj_cpf', '=', False)]" />
+                            <field name="lancamento_id" invisible="1" string="Lote de pagamento" />
+                            <group colspan="4" attrs="{'invisible': [('lancamento_id', '!=', False)]}">
+                                <field name="valor_saldo" />
+                                <field name="valor" readonly="1" />
+                                <separator string="Pagamentos efetuados" colspan="4" />
+                                <field name="pagamento_ids" nolabel="1" colspan="4" context="{'default_tipo': 'PP', 'default_valor_documento': valor_saldo, 'tree_view_ref': 'finan.finan_pagamento_tree', 'default_data_quitacao': time.strftime(b'%%Y-%%m-%%d'), 'default_data_juros': time.strftime(b'%%Y-%%m-%%d'), 'default_data_multa': time.strftime(b'%%Y-%%m-%%d'), 'default_data_desconto': time.strftime(b'%%Y-%%m-%%d'), 'default_company_id': company_id, 'default_cnpj_cpf': cnpj_cpf, 'default_raiz_cnpj': raiz_cnpj, 'company_id': company_id, 'cnpj_cpf': cnpj_cpf, 'raiz_cnpj': raiz_cnpj, 'default_res_partner_bank_id': sugestao_bank_id}" domain="[('tipo', '=', 'PP')]" mode="tree"/>
+                            </group>
+                            <group colspan="4" attrs="{'invisible': [('lancamento_id', '=', False)]}">
+                                <separator string="Pagamentos efetuados" colspan="4" />
+                                <field name="valor_juros" readonly="1"/>
+                                <field name="valor_multa" readonly="1"/>
+                                <field name="valor_desconto" readonly="1"/>
+                                <field name="outros_acrescimos" />
+                                <field name="valor" readonly="1" string="Valor final"/>
+                                <separator string="Lote de Pagamento" colspan="4" />
+                                <field name="lote_pagamento_ids" nolabel="1" colspan="4" readonly="1" domain="[('tipo', '=', 'PP')]" context="{'tree_view_ref': 'finan.finan_pagamento_tree'}" mode="tree" />
+                            </group>
+                        </page>
+                        <page string="Baixa" attrs="{'invisible': ['|',('situacao', 'in', ['Quitado', 'Sem informação de vencimento']),('valor', '=', True)]}"
+                              groups="finan.group_finan_treasury_manager,finan.group_finan_treasury_staff,finan.group_finan_manager">
+                            <separator string="Confirmar data de baixa" colspan="2" />
+                            <separator string="Motivo da baixa" colspan="2" />
+                            <field name="data_baixa" string="Data da baixa"/>
+                            <field name="motivo_baixa_id" nolabel="1" attrs="{'required': [('data_baixa', '!=', False)]}"/>
+                        </page>
+                        <page string="Comunicação e histórico">
+                            <separator string="Emails trocados e anotações" colspan="4" />
+                            <field name="mail_message_ids" colspan="4" nolabel="1" mode="tree" readonly="1">
+                                <tree string="Histórico">
+                                    <field name="date" string="Data" />
+                                    <field name="display_text" string="Texto"/>
+                                    <field name="email_to" invisible="1"/>
+                                    <field name="email_from" invisible="1"/>
+                                    <button
+                                        string="Reply" attrs="{'invisible': [('email_from', '=', False)]}"
+                                        name="%(mail.action_email_compose_message_wizard)d"
+                                        context="{'mail.compose.message.mode':'reply', 'message_id':active_id}"
+                                        icon="terp-mail-replied" type="action" />
+                                </tree>
+                            </field>
+                            <button string="Incluir anotação"
+                                name="incluir_anotacao"
+                                type="object"
+                                icon="terp-document-new" />
+                            <button string="Enviar e-mail"
+                                name="%(mail.action_email_compose_message_wizard)d"
+                                icon="terp-mail-message-new" type="action"/>
+                            <group col="6" colspan="6">
+                                <group col="2" colspan="2">
+                                    <separator colspan="2" string="Histórico de Alterações"/>
+                                    <field colspan="2" name="create_uid" readonly="1" string="Criado por"/>
+                                    <newline />
+                                    <field colspan="2" name="write_uid" readonly="1"/>
+                                    <newline />
+                                    <field colspan="2" name="write_date" readonly="1"/>
+                                </group>
+                                <group col="4" colspan="4">
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_pagar_search">
+            <field name="name">finan.pagar.search</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Contas a pagar">
+                    <filter name="vencido" string="Vencido" icon="terp-go-month" domain="[('situacao','=','Vencido')]" />
+                    <filter name="vence_hoje" string="Vence Hoje" icon="terp-go-month" domain="[('situacao','=','Vence hoje')]" />
+                    <filter name="a_vencer" string="A Vencer" icon="terp-go-month" domain="[('situacao','=','A vencer')]" />
+                    <filter name="quitado" string="Quitado" icon="terp-go-month" domain="['|', '|', ('situacao','=','Quitado'), ('situacao', '=', 'Conciliado'), ('parcial', '=', True)]"/>
+                    <filter name="conciliado" string="Conciliado" icon="terp-go-month" domain="[('situacao','=','Conciliado')]" />
+                    <filter name="baixado" string="Baixado" icon="terp-go-month" domain="['|', ('situacao','=','Baixado'), ('situacao','=','Baixado parcial')]" />
+                    <separator orientation="vertical" />
+                    <filter name="efetivo" string="Efetivo" domain="[('provisionado', '=', False)]" />
+                    <filter name="provisionado" string="Provisionado" domain="[('provisionado', '=', True)]" />
+                    <separator orientation="vertical" />
+                    <newline />
+                    <field name="company_id" />
+                    <field name="conta_id" />
+                    <field name="res_partner_bank_id"  />
+                    <field name="sugestao_bank_id"  />
+                    <field name="carteira_id"  />
+                    <field name="partner_id"  />
+                    <newline />
+                    <field name="documento_id"  />
+                    <field name="numero_documento" />
+                    <field name="valor_documento_from" filter_domain="[('valor_documento', '&gt;=', self)]" />
+                    <field name="valor_documento_to" filter_domain="[('valor_documento', '&lt;=', self)]" />
+                    <newline />
+
+                    <field name="data_vencimento_from" string="De vencimento" filter_domain="[('data_vencimento','&gt;=',self)]" widget="calendar" />
+                    <field name="data_vencimento_to" string="A vencimento" filter_domain="[('data_vencimento','&lt;=',self)]" widget="calendar" />
+
+                    <field name="data_documento_from" string="De documento" filter_domain="[('data_documento','&gt;=',self)]" widget="calendar" />
+                    <field name="data_documento_to" string="A documento" filter_domain="[('data_documento','&lt;=',self)]" widget="calendar" />
+                    <newline />
+
+                    <group expand="0" string="Outras datas...">
+                        <field name="data_quitacao_from" string="De quitação" filter_domain="[('data_quitacao','&gt;=',self)]" widget="calendar" />
+                        <field name="data_quitacao_to" string="A quitação" filter_domain="[('data_quitacao','&lt;=',self)]" widget="calendar" />
+
+                        <field name="data_from" string="De conciliação" filter_domain="['|', '&amp;', ('conciliado', '=', False), ('data_quitacao', '&gt;=', self), ('data','&gt;=',self)]" widget="calendar"/>
+                        <field name="data_to" string="A conciliação" filter_domain="['|', '&amp;', ('conciliado', '=', False), ('data_quitacao', '&lt;=', self), ('data','&lt;=',self)]" widget="calendar"/>
+
+                        <field name="data_baixa_from" string="De baixa" filter_domain="[('data_baixa','&gt;=',self)]" widget="calendar" />
+                        <field name="data_baixa_to" string="A baixa" filter_domain="[('data_baixa','&lt;=',self)]" widget="calendar" />
+                    </group>
+                    <newline />
+
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'parent_company_id'}" groups="finan.group_finan_manager,finan.group_finan_treasury_manager"/>
+                        <filter string="Unidade de negócio" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Fornecedor" icon="terp-project" domain="[]" context="{'group_by': 'partner_id'}" />
+                        <filter string="Conta" icon="terp-project" domain="[]" context="{'group_by': 'conta_id'}" />
+                        <filter string="Situação" icon="terp-project" domain="[]" context="{'group_by': 'situacao'}" />
+                        <filter string="Motivo da baixa" icon="terp-project" domain="[]" context="{'group_by': 'motivo_baixa_id'}" />
+
+                        <separator orientation="vertical" />
+                        <filter string="Data de vencimento" icon="terp-calendar" domain="[]" context="{'group_by': 'data_vencimento'}" />
+                        <filter string="Mês de vencimento" icon="terp-calendar" domain="[]" context="{'group_by': 'ano_mes_vencimento'}" />
+                        <filter string="Ano de vencimento" icon="terp-calendar" domain="[]" context="{'group_by': 'ano_vencimento'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_pagar_calendar" >
+            <field name="name">finan.pagar.calendar</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">calendar</field>
+            <field name="arch" type="xml">
+            <calendar color="partner_id" date_start="data_vencimento" date_stop="data_vencimento" day_length="24">
+                    <field name="valor_documento" />
+                    <field name="company_id" />
+                    <field name="partner_id" />
+                    <field name="documento_id" />
+                    <field name="valor_documento" />
+                    <field name="numero_documento" />
+                </calendar>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_pagar_acao">
+            <field name="name">Contas a pagar</field>
+            <field name="res_model">finan.lancamento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="domain">[('tipo', '=', 'P')]</field>
+            <field name="context">{'tipo':'P','default_tipo':'P','provisionado':False,'default_provisionado':False,'search_default_efetivo':True,'search_default_vencido':True,'search_default_vence_hoje':True}</field>
+            <field name="view_id" ref="finan_pagar_tree" />
+            <field name="search_view_id" ref="finan_pagar_search" />
+            <field name="calendar_view_id" ref="finan_pagar_calendar" />
+        </record>
+
+        <menuitem action="finan_pagar_acao"
+            id="menu_finan_pagar" name="Contas a pagar" parent="menu_finan_conta_pagar" />
+
+        <record model="ir.actions.act_window.view" id="finan_pagar_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_pagar_form"/>
+            <field name="act_window_id" ref="finan_pagar_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_pagar_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_pagar_tree"/>
+            <field name="act_window_id" ref="finan_pagar_acao"/>
+        </record>
+
+    </data>
+</openerp>

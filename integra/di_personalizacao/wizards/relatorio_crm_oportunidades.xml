@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="relatorio_crm_oportunidade_form" >
+            <field name="name">relatorio.crm.oportunidade.form</field>
+            <field name="model">orcamento.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório de Oportunidades">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />                
+                        <field name="company_id" colspan="4" />
+                        <newline/>                        
+                        <field name="oportunidade_id" string="NAL" colspan="4" />
+                        <newline/>
+                        <field name="user_id" string="Representante" colspan="4" />
+                        <field name="formato" required="1" colspan="4" />
+                        <newline/>                        
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_oportunidades" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="relatorio_crm_oportunidade_acao">
+            <field name="name">Relatório de Oportunidades</field>
+            <field name="res_model">orcamento.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="relatorio_crm_oportunidade_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="relatorio_crm_oportunidade_form"/>
+            <field name="act_window_id" ref="relatorio_crm_oportunidade_acao"/>
+        </record>
+
+        <menuitem action="relatorio_crm_oportunidade_acao" id="menu_relatorio_crm_oportunidade"
+                  name="Oportunidades"
+                  parent="sped_sale.menu_sale_relatorio" 
+                  sequence="1" />
+
+    </data>
+</openerp>

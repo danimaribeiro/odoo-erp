@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="product_pricelist_item_form_view" model="ir.ui.view">
+            <field name="name">product.pricelist.item.form</field>
+            <field name="model">product.pricelist.item</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="before">
+                    <field name="currency_id" />
+                </field>
+                <field name="price_max_margin" position="after">
+                    <newline/>
+                    <separator string="Regras" colspan="6" />
+                    <field name="subitem_ids" nolabel="1" colspan="6">
+                        <tree editable="bottom">
+                            <field name="nome" required="1" />
+                            <field name="multiplica" />
+                            <field name="divide" />
+                        </tree>
+                    </field>
+                </field>
+            </field>
+        </record>
+
+        <record id="product_pricelist_view" model="ir.ui.view">
+            <field name="name">product.pricelist.form</field>
+            <field name="model">product.pricelist</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_pricelist_view"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <newline />
+                    <field name="desconto_maximo" />
+                    <field name="ignora_impostos" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

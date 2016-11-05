@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="sped_modelo_partida_dobrada_form_view" model="ir.ui.view">
+            <field name="name">sped.modelo_partida_dobrada.form</field>
+            <field name="model">sped.modelo_partida_dobrada</field>
+            <field name="inherit_id" ref="sped_contabilidade.sped_modelo_partida_dobrada_form_view"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="item_ids" position="after">
+                    <group name="folha_pagamento" colspan="4" attrs="{'invisible': [('tabela', '!=', 'FP')]}">
+                        <separator string="Folha de pagamento" colspan="4" />
+                        <notebook>
+                            <page string="Contas de Custo">                                                   
+                                <separator string="Normal" colspan="4" />
+                                <field name="modelo_custo_ids" colspan="4" nolabel="1" readonly="1" model="form,tree" domain="[('tabela', '=', 'FP')]"/>                        
+                                <separator string="Férias" colspan="4" />
+                                <field name="modelo_custo_ferias_ids" colspan="4" nolabel="1" readonly="1" model="form,tree" domain="[('tabela', '=', 'FP')]"/>                        
+                                <separator string="Rescisão" colspan="4" />
+                                <field name="modelo_custo_rescisao_ids" colspan="4" nolabel="1" readonly="1" model="form,tree" domain="[('tabela', '=', 'FP')]"/>                        
+                                <separator string="13º Salário" colspan="4" />
+                                <field name="modelo_custo_13_ids" colspan="4" nolabel="1" readonly="1" model="form,tree" domain="[('tabela', '=', 'FP')]"/>               
+                            </page>
+                            <page string="Contas de Despesa">                                                   
+                                <separator string="Normal" colspan="4" />
+                                <field name="modelo_folha_despesa_ids" colspan="4" nolabel="1" model="form,tree" domain="[('tabela', '=', 'FP')]"/>                        
+                                <separator string="Férias" colspan="4" />
+                                <field name="modelo_despesa_ferias_ids" colspan="4" readonly="1" nolabel="1" model="form,tree" domain="[('tabela', '=', 'FP')]"/>                        
+                                <separator string="Rescisão" colspan="4" />
+                                <field name="modelo_despesa_rescisao_ids" colspan="4" readonly="1" nolabel="1" model="form,tree" domain="[('tabela', '=', 'FP')]"/>                        
+                                <separator string="13º Salário" colspan="4" />
+                                <field name="modelo_despesa_13_ids" colspan="4" readonly="1" nolabel="1" model="form,tree" domain="[('tabela', '=', 'FP')]"/>                                              
+                            </page>
+                        </notebook>                     
+                    </group>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

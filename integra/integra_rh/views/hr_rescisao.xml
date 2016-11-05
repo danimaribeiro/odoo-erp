@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record  model="ir.ui.view" id="hr_rescisao_tree">
+            <field name="name">hr.rescisao.tree</field>
+            <field name="model">hr.payslip</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:state in ('confirm','hr_check','accont_check');black:state == 'new';gray:state == 'cancel'" string="Payslips">
+                    <field name="company_id" />
+                    <field name="number"/>
+                    <field name="employee_id"/>
+                    <field name="struct_id" />
+                    <field name="data_aviso_previo" />
+                    <field name="date_to" string="Data do afastamento"/>
+                    <field name="state"/>
+                    <field name="payslip_run_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_rescisao_form">
+            <field name="name">hr.rescisao.form</field>
+            <field name="model">hr.payslip</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <group colspan="4">
+                        <group colspan="2">
+                            <field name="tipo" invisible="1"/>
+                            <field name="simulacao" invisible="1"/>
+                            <field name="provisao" invisible="1"/>
+                            <field name="complementar" />
+                            <field name="employee_id" on_change="onchange_employee_id(tipo, employee_id, date_from, date_to, contract_id, simulacao, provisao, context)" domain="[('afastado', '=', False)]" colspan="4" />
+                            <field name="escolhe_contrato" invisible="1" />
+                            <newline/>
+                            <field name="contract_id" on_change="onchange_employee_id(tipo, employee_id, date_from, date_to, contract_id, simulacao, provisao, context)" attrs="{'invisible': [('escolhe_contrato', '=', False)]}" colspan="4" domain="[('employee_id', '=', employee_id)]"  />
+                            <newline/>
+                            <field name="data_admissao" readonly="1" />
+                            <field name="salario" readonly="1" />
+                        </group>
+                        <group string="Aviso prévio" attrs="{'invisible': [('afastamento_imediato', '=', True)]}" colspan="1">
+                            <field name="data_aviso_previo" nolabel="1" on_change="onchange_datas(tipo, employee_id, contract_id, date_from, date_to, None, None, data_aviso_previo, aviso_previo_indenizado, afastamento_imediato, dispensa_empregador, simulacao, aviso_previo_trabalhado_parcial, struct_id)" attrs="{'required': [('afastamento_imediato', '=', False)]}"/>
+                        </group>
+                        <group string="Afastamento" colspan="1">
+                            <group colspan="2">
+                                <field name="date_to" string="Projetado" required="1" on_change="onchange_datas(tipo, employee_id, contract_id, date_from, date_to, None, None, data_aviso_previo, aviso_previo_indenizado, afastamento_imediato, dispensa_empregador, simulacao, aviso_previo_trabalhado_parcial)" />
+                                <field name="data_afastamento" string="Real" required="1" />
+                            </group>
+                        </group>
+                        <field name="data_complementar" attrs="{'invisible': [('complementar', '=', False)]}" />
+                    </group>
+                    <newline/>
+                    <group colspan="4">
+                        <field name="struct_id" required="1" colspan="4" domain="[('tipo', '=', 'R')]" on_change="onchange_struct_id(struct_id)"/>
+                        <field name="aviso_previo_indenizado" on_change="onchange_datas(tipo, employee_id, contract_id, date_from, date_to, None, None, data_aviso_previo, aviso_previo_indenizado, afastamento_imediato, dispensa_empregador, simulacao, aviso_previo_trabalhado_parcial)" attrs="{'invisible': [('afastamento_imediato', '=', True)]}" />
+                        <field name="afastamento_imediato" readonly="0" />
+                        <field name="aviso_previo_trabalhado_parcial" readonly="0" />
+                        <field name="dispensa_empregador" readonly="0" />
+                        <field name="codigo_afastamento" readonly="0" />
+                        <field name="codigo_saque" readonly="0" />
+                        <field name="saldo_fgts" colspan="2" attrs="{'invisible': [('dispensa_empregador', '=', False)]}" />
+                        <field name="multa_fgts" colspan="2" attrs="{'invisible': [('dispensa_empregador', '=', False)]}" />
+                        <field name="dias_saldo_salario" colspan="2" />
+                        <field name="dias_ferias" colspan="2" />
+                        <field name="dias_aviso_previo" colspan="2" />
+                        <field name="data_homologacao" colspan="2" />
+                        <field name="data_pagamento" colspan="2" required="1" string="Data de pagamento GRRF" />
+                        <newline />
+                        <group colspan="4" col="10">
+                            <button string="Imprimir Rescisão" icon="gtk-print" name="imprime_recisao" type="object" />
+                            <button string="Imprimir Seguro Desemprego" icon="gtk-print" name="imprime_seguro" type="object" />
+                            <button icon="gtk-print" name="gera_ficha_registro" string="Imprimir Ficha Registro" type="object"/>
+                            <button string="Imprimir Médias" icon="gtk-print" name="gera_relatorio_media_2" type="object" />
+                            <button string="Imprimir Análise" icon="gtk-print" name="imprime_analise_rescisao" type="object" />
+                        </group>
+                    </group>
+                    <newline/>
+                    <field name="holerite_anterior_id" colspan="4" domain="[('contract_id', '=', contract_id), ('tipo', '=', 'F')]" />
+                    <field name="date_from" nolabel="1" invisible="1" required="0" />
+                    <notebook colspan="4">
+                        <page string="Cálculo da Rescisão" >
+                            <field name="line_ids" colspan="4" nolabel="1">
+                                <tree string="Cálculo da Rescisão" editable="top" colors="orange:total == 0;red:holerite_anterior_line_id == False and deducao &gt; 0;blue:holerite_anterior_line_id == False  and provento &gt; 0;green:holerite_anterior_line_id != False and provento &gt; 0;magenta:holerite_anterior_line_id != False and deducao &gt; 0">
+                                    <field name="name" string="Rubrica" />
+                                    <field name="code" groups="base.group_rh_valida_calculo" />
+                                    <field name="simulacao_id" context="{'form_view_ref' : 'integra_rh.hr_ferias_form', 'tree_view_ref' : 'integra_rh.hr_ferias_tree'}" />
+                                    <field name="rubrica_rescisao_id"  />
+                                    <field name="category_id" groups="base.group_rh_valida_calculo" />
+                                    <field name="sequence" groups="base.group_rh_valida_calculo" />
+                                    <field name="quantity"/>
+                                    <field name="rate" digits="(21, 3)" groups="base.group_rh_valida_calculo" />
+                                    <field name="amount" digits="(21, 3)" groups="base.group_rh_valida_calculo"/>
+                                    <field name="total"/>
+                                    <field name="digitado"/>
+                                    <field name="holerite_anterior_line_id" invisible="1" />
+                                    <field name="provento" sum="Proventos" readonly="1"/>
+                                    <field name="deducao" sum="Deduções" readonly="1"/>
+                                </tree>
+                                <form string="Payslip Line">
+                                    <group>
+                                        <field name="name" select="1"/>
+                                        <field name="code" select="1"/>
+                                        <field name="category_id"/>
+                                        <field name="simulacao_id" context="{'form_view_ref' : 'integra_rh.hr_ferias_form', 'tree_view_ref' : 'integra_rh.hr_ferias_tree'}" />
+                                        <field name="sequence" groups="base.group_extended"/>
+                                        <field name="quantity"/>
+                                        <field name="rate"/>
+                                        <field name="amount"/>
+                                        <field name="total"/>
+                                        <field name="salary_rule_id" groups="base.group_extended"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Rubricas variáveis">
+                            <field name="input_line_ids" colspan="4" nolabel="1" context="{'default_employee_id':
+                                employee_id, 'default_data_inicial': date_from, 'default_data_final': date_to, 'default_contract_id': contract_id}">
+                                <tree string="Rubricas variáveis" editable="bottom">
+                                    <field name="rule_id" domain="['|', ('manual', '=', True), ('tipo_media', '!=', False)]"/>
+                                    <field name="amount"/>
+                                    <field name="employee_id" invisible="1" />
+                                    <field name="contract_id" invisible="1" />
+                                    <field name="data_inicial" invisible="1" />
+                                    <field name="data_final" invisible="1" />
+                                </tree>
+                            </field>
+                        </page>
+<!--                        <page string="Médias">
+                            <field name="media_inclui_mes" />
+                            <newline />
+                            <button string="Calcula médias" icon="terp-camera_test" name="calcula_medias" states="draft" type="object"/>
+                            <field name="media_ids" colspan="4" nolabel="1">
+                                <tree string="Médias" editable="bottom">
+                                    <field name="titulo" invisible="1" />
+                                    <field name="rule_id" invisible="1" />
+                                    <field name="nome" readonly="1" />
+                                    <field name="tipo_media" readonly="1" />
+                                    <field name="digitado" />
+                                    <field name="mes_01" />
+                                    <field name="mes_02" />
+                                    <field name="mes_03" />
+                                    <field name="mes_04" />
+                                    <field name="mes_05" />
+                                    <field name="mes_06" />
+                                    <field name="mes_07" />
+                                    <field name="mes_08" />
+                                    <field name="mes_09" />
+                                    <field name="mes_10" />
+                                    <field name="mes_11" />
+                                    <field name="mes_12" />
+                                    <field name="total_texto" />
+                                    <field name="meses" />
+                                    <field name="proporcao" />
+                                    <field name="media_texto" />
+                                </tree>
+                            </field>
+                        </page>-->
+                        <page string="Fechamento" attrs="{'invisible': [('simulacao', '=', True)]}">
+                            <separator string="Fechar cálculo" colspan="4" />
+                            <button string="Fechar o cálculo e não permitir mais alterações" icon="terp-camera_test" name="fecha_holerite" states="draft" type="object"/>
+                            <button string="Reabrir o cálculo para permitir mais alterações" icon="terp-camera_test" name="abre_holerite" states="done" type="object"/>
+                            <separator colspan="4" string="Other Information"/>
+                            <group col="5" colspan="2">
+                                <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                                <field name="payslip_run_id" domain="[('state','=','draft')]" invisible="1" />
+                                <field name="paid" readonly="1" invisible="1"/>
+                            </group>
+                            <newline/>
+                            <separator colspan="4" string="Observações"/>
+                            <field name="note" colspan="4" nolabel="1"/>
+<!--                             <button string="Ajustar INSS" icon="terp-stock_format-scientific" name="ajusta_inss" type="object" /> -->
+                        </page>
+                        <page string="Efetivação" attrs="{'invisible': ['|', ('provisao', '=', True), ('simulacao', '!=', True)]}">
+                            <separator string="Efetivar simulação" colspan="4" />
+                            <button string="Efetivar a simulação do cálculo" icon="terp-camera_test" name="efetivar_simulacao" states="draft" type="object"/>
+                        </page>
+                    </notebook>
+                    <group col="10" colspan="4">
+                        <field name="state"/>
+<!--                         <button string="Cancel" icon="terp-dialog-close" name="cancel_sheet" states="draft,hr_check,confirm,verify"/> -->
+                        <button string="Compute Sheet" icon="terp-stock_format-scientific" name="compute_sheet" type="object" states="draft"/>
+<!--                        <button string="Set to Draft" icon="terp-stock_effects-object-colorize" name="draft" states="cancel"/>
+                        <button string="Refund" icon="gtk-execute" name="refund_sheet" states="confirm,done" type='object'/>
+                        <button string="Confirm" icon="terp-camera_test" name="hr_verify_sheet" states="draft"/>-->
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_rescisao_search" model="ir.ui.view">
+            <field name="name">hr.rescisao.search</field>
+            <field name="model">hr.payslip</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Rescisões">
+                    <group>
+                        <filter icon="terp-document-new" string="Aberto" domain="[('state','=','draft')]"/>
+                        <filter icon="terp-camera_test" string="Fechado" domain="[('state','=','done')]" />
+                        <separator orientation="vertical"/>
+                        <field name="company_id"/>
+                        <field name="employee_id" />
+                        <field name="contract_id" />
+                        <field name="struct_id" />
+                        <newline />
+                        <field name="data_afastamento"/>
+                        <field name="mes"/>
+                        <field name="ano"/>
+                    </group>
+                    <newline/>
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-personal" name="company_id" context="{'group_by': 'company_id'}"/>
+                        <filter string="Funcionário" icon="terp-personal" name="employee_id" context="{'group_by': 'employee_id'}"/>
+                        <filter string="Estrutura" icon="terp-personal" name="struct_id" context="{'group_by': 'struct_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_rescisao_acao">
+            <field name="name">Rescisão</field>
+            <field name="res_model">hr.payslip</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_rescisao_tree"/>
+            <field name="search_view_id" ref="hr_rescisao_search"/>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo', '=', 'R'),('simulacao', '=', False )]</field>
+            <field name="context">{'tipo':'R','default_tipo':'R', 'default_date_from': None, 'default_date_to': None, 'default_simulacao': False }</field>
+        </record>
+
+        <menuitem action="hr_rescisao_acao" id="menu_hr_rescisao" name="Rescisão" parent="hr_payroll.menu_hr_root_payroll" sequence="20"/>
+
+        <record model="ir.actions.act_window.view" id="hr_rescisao_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_rescisao_acao"/>
+            <field name="view_id" ref="hr_rescisao_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_rescisao_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_rescisao_acao"/>
+            <field name="view_id" ref="hr_rescisao_tree"/>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_rescisao_simulacao_acao">
+            <field name="name">Rescisão</field>
+            <field name="res_model">hr.payslip</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_rescisao_tree"/>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo', '=', 'R'),('simulacao', '=', True),('provisao', '=', False)]</field>
+            <field name="context">{'tipo':'R','default_tipo':'R', 'default_date_from': None, 'default_date_to': None, 'default_simulacao': True, 'default_provisao': False}</field>
+        </record>
+
+        <menuitem action="hr_rescisao_simulacao_acao" id="menu_hr_rescisao_simulacao" name="Rescisão" parent="menu_hr_simulacao" sequence="21"/>
+
+        <record model="ir.actions.act_window.view" id="hr_rescisao_simulacao_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_rescisao_simulacao_acao"/>
+            <field name="view_id" ref="hr_rescisao_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_rescisao_simulacao_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_rescisao_simulacao_acao"/>
+            <field name="view_id" ref="hr_rescisao_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

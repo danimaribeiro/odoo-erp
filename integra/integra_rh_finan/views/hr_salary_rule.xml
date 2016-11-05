@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_salary_rule_form" model="ir.ui.view">
+            <field name="name">hr.salary.rule.form</field>
+            <field name="model">hr.salary.rule</field>
+            <field name="inherit_id" ref="hr_payroll.hr_salary_rule_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Description" position="after">
+                    <page string="Financeiro">
+                        <field name="finan_agrupamento" colspan="4" />
+                        <separator string="Contas de despesa" colspan="4" />
+                        <field name="finan_conta_despesa_id" colspan="4" domain="[('sintetica', '=', False), ('tipo', 'in', ['D', 'P'])]"/>
+                        <field name="finan_conta_despesa_ferias_id" colspan="4" domain="[('sintetica', '=', False), ('tipo', 'in', ['D', 'P'])]"/>
+                        <field name="finan_conta_despesa_rescisao_id" colspan="4" domain="[('sintetica', '=', False), ('tipo', 'in', ['D', 'P'])]"/>
+                        <field name="finan_conta_despesa_13_id" colspan="4" domain="[('sintetica', '=', False), ('tipo', 'in', ['D', 'P'])]"/>
+                        <separator string="Contas de custo" colspan="4" />
+                        <field name="finan_conta_custo_id" colspan="4" domain="[('sintetica', '=', False), ('tipo', 'in', ['C', 'P'])]"/>
+                        <field name="finan_conta_custo_ferias_id" colspan="4" domain="[('sintetica', '=', False), ('tipo', 'in', ['C', 'P'])]"/>
+                        <field name="finan_conta_custo_rescisao_id" colspan="4" domain="[('sintetica', '=', False), ('tipo', 'in', ['C', 'P'])]"/>
+                        <field name="finan_conta_custo_13_id" colspan="4" domain="[('sintetica', '=', False), ('tipo', 'in', ['C', 'P'])]"/>
+                        <separator string="Convênio/destinatário do recurso" colspan="4" />
+                        <field name="partner_id" colspan="4" domain="[('cnpj_cpf', '!=', False)]"/>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

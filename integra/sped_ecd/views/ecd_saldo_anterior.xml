@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="ecd_saldo_anterior_search">
+            <field name="name">ecd.saldo.anterior.search</field>
+            <field name="model">ecd.lancamento.contabil</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Lançamentos">
+                    <field name="codigo" />
+                    <field name="data" />                    
+                    <field name="company_id" />                   
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ecd_saldo_anterior_tree">
+            <field name="name">ecd.saldo.anterior.tree</field>
+            <field name="model">ecd.lancamento.contabil</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Saldo Inicial" colors="green:vr_diferenca==0;red:vr_diferenca!=0">                    
+                    <field name="codigo" />
+                    <field name="data" />                    
+                    <field name="vr_debito" sum="Total"/>
+                    <field name="vr_credito" sum="Total"/>
+                    <field name="vr_diferenca" sum="Total"/>
+                    <field name="company_id" />
+                    <field name="create_uid" />                    
+                    <field name="write_uid" />                    
+                    <field name="write_date" />                   
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ecd_saldo_anterior_form">
+            <field name="name">ecd.saldo.anterior.form</field>
+            <field name="model">ecd.lancamento.contabil</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Lançamentos">
+                    <field name="saldo_inicial" invisible="1" />
+                    <field name="exlusao_manual" invisible="1" />
+                    <group col="8" colspan="4">                        
+                        <group col="2" colspan="1">
+                            <field name="codigo" readonly="1" />                                              
+                            <field name="data" required="1" />                            
+                        </group>                           
+                        <group col="4" colspan="2">
+                            <field name="company_id" on_change="on_change_plano(company_id)" domain="[('cnpj_cpf', '!=', False)]"  />
+                            <field name="cnpj_cpf" invisible="1" colspan="4"/>                         
+                            <field name="user_id" readonly="1" colspan="4"/>
+                            <field name="plano_id" invisible="1" colspan="4"/>
+                        </group>               
+                    </group>                                   
+                    <group col="8" colspan="2" string="Diferenças" >
+                        <field name="vr_debito" readonly="1"/>                   
+                        <field name="vr_credito" readonly="1"/>                   
+                        <field name="vr_diferenca" readonly="1"/>                   
+                    </group>               
+                    <notebook colspan="8">                   
+                        <page string="Partidas do Lançamento">                            
+                            <field name="partida_ids" colspan="8" nolabel="1" context="{'conta_simples': True, 'default_plano_id': plano_id,'default_saldo_inicial': saldo_inicial, 'default_saldo_inicial_cnpj': cnpj_cpf }" >                                
+                                <tree editable="bottom">
+                                    <field name="tipo" invisible="1" />                                    
+                                    <field name="tipo_conta" invisible="1" />
+                                    <field name="plano_id" invisible="1" />
+                                    <field name="saldo_inicial" invisible="1" />
+                                    <field name="saldo_inicial_cnpj" invisible="1" />
+                                    <field name="conta_id" required="1" on_change="tipo_conta(conta_id, context)"  domain="[('sintetica','=',False),('plano_id','=',plano_id), ]" context="{'conta_simples': True}" />                                                                        
+                                    <field name="numero_documento" />
+                                    <field name="vr_debito" sum="Total débito" on_change="debito_credito_block(vr_debito, vr_credito)" attrs="{'readonly':[('vr_credito','!=', '0')], 'required':[('vr_credito','!=','0')]}" />
+                                    <field name="vr_credito" sum="Total crédito" on_change="debito_credito_block(vr_debito, vr_credito)" attrs="{'readonly':[('vr_debito','!=', '0')], 'required':[('vr_debito','!=', '0')]}" />
+                                    <field name="centrocusto_id" attrs="{'readonly':['|',('tipo_conta','in', ('A','P','T','O')),('conta_id','=', False)]}" />
+                                    <field name="historico_id" on_change="get_historico(historico_id)"/>
+                                    <field name="historico" required="1" />
+                                </tree>
+                            </field>
+                        </page>                        
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="ecd_saldo_anterior_acao">
+            <field name="name">Saldo Inicial</field>
+            <field name="res_model">ecd.lancamento.contabil</field>
+            <field name="search_view_id" ref="ecd_saldo_anterior_search" />
+            <field name="view_type">form</field>
+            <field name="domain">[('saldo_inicial', '=', True)]</field>
+            <field name="context">{'saldo_inicial': True, 'default_saldo_inicial': True,'exlusao_manual': True, 'default_exlusao_manual': True}</field>  
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_ecd_saldo_anterior"
+            action="ecd_saldo_anterior_acao" 
+            name="Implantar Saldo Inicial"
+            parent="menu_sped_ecd_config"
+            sequence="02"/>
+        
+        <record model="ir.actions.act_window.view" id="ecd_saldo_anterior_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="ecd_saldo_anterior_form"/>
+            <field name="act_window_id" ref="ecd_saldo_anterior_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="ecd_saldo_anterior_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="ecd_saldo_anterior_tree"/>
+            <field name="act_window_id" ref="ecd_saldo_anterior_acao"/>
+        </record>
+        
+    </data>
+</openerp>

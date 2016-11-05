@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="project_etapa_tree">
+            <field name="name">project.etapa.tree</field>
+            <field name="model">project.etapa</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:sintetica">
+                    <field name="nome" />
+                    <field name="nome_completo" />
+                    <field name="parent_id" invisible="1" />
+                    <field name="sintetica" invisible="1" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="project_etapa_form">
+            <field name="name">project.etapa.form</field>
+            <field name="model">project.etapa</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Etapas dos projetos">
+                    <group col="4" colspan="4">
+                        <separator string="Etapa" colspan="4" />
+                        <field name="sintetica" />
+                        <newline />
+                        <field name="parent_id" colspan="4" domain="[('sintetica', '=', True)]" />
+                        <newline />
+                        <field name="nome"  colspan="4"/>
+                        <newline />
+                    </group>
+                    <group col="4" colspan="4">
+                        <separator string="Etapas filhas" colspan="4"/>
+                        <field name="etapas_filhas_ids" readonly="1" colspan="4" nolabel="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="project_etapa_search">
+            <field name="name">project.etapa.search</field>
+            <field name="model">project.etapa</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Etapas dos projetos">
+                    <filter string="Sintética" domain="[('sintetica', '=', True)]" />
+                    <filter string="Analítica" domain="[('sintetica', '=', False)]" />
+                    <separator orientation="vertical" />
+                    <field name="nome_completo" select="1" />
+                    <newline />
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Etapa" icon="terp-project" domain="[]" context="{'group_by': 'parent_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="project_etapa_acao">
+            <field name="name">Etapas</field>
+            <field name="res_model">project.etapa</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="project_etapa_tree" />
+        </record>
+
+        <menuitem action="project_etapa_acao"
+            id="menu_project_etapa" name="Etapas" parent="project.menu_project_management" />
+
+    </data>
+</openerp>

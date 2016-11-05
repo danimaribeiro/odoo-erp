@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="res_partner_form" >
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="priority">20</field>
+            <field name="inherit_id" ref="sped_base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <page string="General" position="before">
+                    <page string="Sociedade">
+                        <field  name="sociedade_ids" nolabel="1" colspan="4">
+                            <tree editable="bottom" >                                
+                                <field name="socio_id" required="1" />
+                                <field name="percentual" required="1" sum="total" />
+                            </tree>
+                        </field>
+                    </page>
+                </page>                
+            </field>
+        </record>
+
+    </data>
+</openerp>

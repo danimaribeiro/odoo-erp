@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabecalho" language="groovy" pageWidth="785" pageHeight="149" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="785" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="df8d06c4-008a-44ae-94ea-15cfd72a6f65">
+	<property name="ireport.zoom" value="1.464100000000007"/>
+	<property name="ireport.x" value="367"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="INTEGRA_REPORT_TITLE" class="java.lang.String"/>
+	<parameter name="LOGO_DIR" class="java.lang.String"/>
+	<parameter name="COMPANY_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO_CLIENTE" class="java.lang.String"/>
+	<parameter name="NUMERO_PAGINA" class="java.lang.Integer"/>
+	<parameter name="TOTAL_PAGINAS" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+comp.name as empresa_nome,
+comp.endereco as empresa_endereco,
+comp.numero as empresa_numero,
+comp.complemento as empresa_complemento,
+comp.bairro as empresa_bairro,
+muncomp.nome as empresa_municipio,
+estcomp.uf as empresa_estado,
+comp.cep as empresa_cep,
+comp.fone as empresa_fone,
+comp.cnpj_cpf as empresa_cnpj,
+comp.ie as empresa_ie,
+cast(c.photo as varchar) as photo
+
+from
+
+res_company c
+join res_partner comp on comp.id = c.partner_id
+left join sped_municipio muncomp on muncomp.id = comp.municipio_id
+left join sped_estado estcomp on estcomp.id = muncomp.estado_id
+
+where c.id = $P{COMPANY_ID}]]>
+	</queryString>
+	<field name="empresa_nome" class="java.lang.String"/>
+	<field name="empresa_endereco" class="java.lang.String"/>
+	<field name="empresa_numero" class="java.lang.String"/>
+	<field name="empresa_complemento" class="java.lang.String"/>
+	<field name="empresa_bairro" class="java.lang.String"/>
+	<field name="empresa_municipio" class="java.lang.String"/>
+	<field name="empresa_estado" class="java.lang.String"/>
+	<field name="empresa_cep" class="java.lang.String"/>
+	<field name="empresa_fone" class="java.lang.String"/>
+	<field name="empresa_cnpj" class="java.lang.String"/>
+	<field name="empresa_ie" class="java.lang.String"/>
+	<field name="photo" class="java.lang.String">
+		<fieldDescription><![CDATA[Photo]]></fieldDescription>
+	</field>
+	<pageHeader>
+		<band height="100">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="73" width="786" height="27" uuid="4780c5f3-1253-40af-873f-6e4690680600"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{INTEGRA_REPORT_TITLE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="721" y="14" width="23" height="8" uuid="8ae77900-55bf-495a-ab3c-e8458d14242b"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="743" y="14" width="43" height="8" uuid="4efaaad8-a017-4004-842c-077d7db9895e"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="721" y="21" width="23" height="8" uuid="bfcad476-3c19-41a9-9adf-f6627a479656"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora:]]></text>
+			</staticText>
+			<textField pattern="HH:mm:ss">
+				<reportElement x="743" y="21" width="43" height="8" uuid="2a061cf7-a062-4ded-96ec-a8dc6d99ae9e"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="743" y="7" width="43" height="8" uuid="a0f3b789-8f14-4567-bc60-7ad3670a8a4d"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NUMERO_PAGINA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="721" y="7" width="23" height="8" uuid="384c68e3-61fb-47a6-891d-df162b7d8ae1"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pág:]]></text>
+			</staticText>
+			<frame>
+				<reportElement x="0" y="7" width="132" height="62" uuid="e8d7229e-8e8a-4cfd-b561-8f0e6952d539"/>
+				<image scaleImage="RetainShape" hAlign="Center">
+					<reportElement x="0" y="0" width="127" height="62" uuid="031f72f8-32e8-432b-a4f1-24c7f9908ade"/>
+					<imageExpression><![CDATA[new java.io.StringBufferInputStream(new org.w3c.tools.codec.Base64Decoder($F{photo}).processString())]]></imageExpression>
+				</image>
+			</frame>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="132" y="7" width="570" height="14" isPrintWhenDetailOverflows="true" uuid="610b2545-f67e-4e70-9d1e-95d79dbf703b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_nome}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="785" height="1" uuid="e9e76418-7d34-419b-b316-c19be34cbd73"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="132" y="21" width="312" height="12" uuid="dd8c31ee-65ea-476c-b3ff-cc3ee2a96451"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_endereco} + ", " + $F{empresa_numero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="132" y="33" width="312" height="12" uuid="12912f88-e94f-4df8-9996-9dea99750a8e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_bairro} + " - " + $F{empresa_municipio} + " - " + $F{empresa_estado}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="167" y="45" width="133" height="12" uuid="7d2b8064-5cef-4b9a-bb5c-3db01f0705e3"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_cnpj}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="323" y="45" width="121" height="12" uuid="84242ffb-3acc-4587-92bb-58e8981797b5"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_ie}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="167" y="57" width="277" height="12" uuid="9a03b903-6d38-4ab3-9be1-dd6f81e1e405"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_fone}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="132" y="45" width="36" height="12" uuid="1c7f98da-44da-4fb9-a33a-dd4d3f1cf436"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CNPJ:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="132" y="57" width="36" height="12" uuid="a404eb6a-c001-46f9-ba41-e5edc6b56dc2"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fone:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="45" width="23" height="12" uuid="e67ed7f4-e602-45e7-9ca0-fa71fd5b39cb"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IE:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+</jasperReport>

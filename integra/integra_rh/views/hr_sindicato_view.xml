@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="hr_sindicato_tree">
+            <field name="name">hr.sindicato.tree</field>
+            <field name="model">hr.sindicato</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Sindicato">
+                    <field name="sigla" />
+                    <field name="tipo_sindicato" />
+                    <field name="tipo_entidade"  />
+                    <field name="mes" />
+                    <field name="ano" invisible="1" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_sindicato_form">
+            <field name="name">hr.sindicato.form</field>
+            <field name="model">hr.sindicato</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Sindicato">
+                    <group colspan="2" >
+                        <field name="mes" required="1" string="Mês do dissídio" />
+                        <field name="ano" required="0" invisible="1" />
+                    </group>
+                    <newline />
+                    <group col="6" colspan="4" string="Cadastro Sindicato">
+                        <field name="partner_id" required="1" domain="[('ref', '=', 'SINDICATO')]" on_change="busca_sindicato(partner_id)" colspan="4"/>
+                        <newline />
+                        <group col="4" colspan="4" >
+                            <field name="sigla" readonly="1" />
+                            <newline />
+                            <field name="codigo_trct" readonly="1"/>
+                            <newline />
+                            <field name="nome_trct" readonly="1" />
+                            <newline />
+                        </group>
+                        <group col="2" colspan="2" >
+                            <field name="tipo_sindicato" required="1" />
+                            <field name="tipo_entidade" required="1" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Conveçôes coletivas" >
+                            <separator string="Conveçôes Coletivas" colspan="4" />
+                            <field name="cct_ids" nolabel="1" colspan="4">
+                                <tree editable="top">
+                                    <field name="ano" required="1" />
+                                    <field name="data_acordo" required="1" />
+                                    <field name="numero_processo" required="1" />
+                                    <field name="vara" required="1" />
+                                    <field name="tipo_acordo" required="1" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Cargos e pisos" >
+                            <separator string="Cargos e Pisos" colspan="4" />
+                            <field name="cargo_piso_ids" nolabel="1" colspan="4">
+                                <tree editable="top">
+                                    <field name="job_id" required="1" />
+                                    <field name="data_inicio" required="1" />
+                                    <field name="carga_horaria_preferencial" required="1" />
+                                    <field name="piso_salarial_mes" required="1" />
+                                    <field name="piso_salarial_hora" required="1" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Rubrica fixas por cargo" >
+                            <separator string="Rubrica Fixas por Cargo" colspan="4" />
+                            <field name="rubrica_cargo_ids" nolabel="1" colspan="4">
+                                <tree editable="top">
+                                    <field name="rule_id" required="1" />
+                                    <field name="job_id" required="1" />
+                                    <field name="data_inicio" required="1" />
+                                    <field name="data_fim" required="1" />
+                                    <field name="referencia_rule_id" required="1" />
+                                    <field name="quantidade" required="1" />
+                                    <field name="porcentagem" required="1" />
+                                    <field name="valor" required="1" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Rubrica fixas por faixa salarial" >
+                            <separator string="Rubrica Fixas por Faixa Salarial" colspan="4" />
+                            <field name="rubrica_faixa_ids" nolabel="1" colspan="4">
+                                <tree editable="top">
+                                    <field name="rule_id" required="1" />
+                                    <field name="mensalista_horista" required="1" />
+                                    <field name="salario_inicial" required="1" />
+                                    <field name="salario_final" required="1" />
+                                    <field name="data_inicio" required="1" />
+                                    <field name="data_fim" required="1" />
+                                    <field name="referencia_rule_id" required="1" />
+                                    <field name="quantidade" required="1" />
+                                    <field name="porcentagem" required="1" />
+                                    <field name="valor" required="1" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Rubrica fixas por anos de contrato" >
+                            <separator string="Rubrica Fixas por Anos de Contrato" colspan="4" />
+                            <field name="rubrica_anos_contrato_ids" nolabel="1" colspan="4">
+                                <tree editable="top">
+                                    <field name="rule_id" required="1" />
+                                    <field name="ano" required="1" />
+                                    <field name="data_inicio" required="1" />
+                                    <field name="data_fim" required="1" />
+                                    <field name="referencia_rule_id" required="1" />
+                                    <field name="quantidade" required="1" />
+                                    <field name="porcentagem" required="1" />
+                                    <field name="valor" required="1" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Contribuição patronal sindical" >
+                            <separator string="Contribuição Patronal Sindical" colspan="4" />
+                            <field name="contribuicao_patronal_ids" nolabel="1" colspan="4">
+                                <tree editable="top">
+                                    <field name="classe_capital_social" required="1" />
+                                    <field name="aliquota" />
+                                    <field name="parcela_adicional" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_sindicato_search">
+            <field name="name">hr.sindicato.search</field>
+            <field name="model">hr.sindicato</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Sincato">
+                    <field name="sigla" />
+                    <field name="tipo_sindicato" />
+                    <field name="tipo_entidade"  />
+                    <field name="mes" />
+                    <field name="ano" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_sindicato_acao">
+            <field name="name">Sindicato</field>
+            <field name="res_model">hr.sindicato</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_sindicato_tree"/>
+            <field name="search_view_id" ref="hr_sindicato_search" />
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="hr_sindicato_acao" id="menu_hr_sindicato_tela" name="Sindicato" parent="menu_hr_sindicato" sequence="1"/>
+
+        <record model="ir.actions.act_window.view" id="hr_sindicato_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_sindicato_acao"/>
+            <field name="view_id" ref="hr_sindicato_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_sindicato_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_sindicato_acao"/>
+            <field name="view_id" ref="hr_sindicato_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

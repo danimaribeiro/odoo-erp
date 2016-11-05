@@ -1,0 +1,991 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report8" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05a7678d-6397-4816-97ba-742668ea4f5f">
+	<property name="ireport.zoom" value="1.461537825000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="96"/>
+	<property name="ireport.callouts" value="##Thu Feb 20 16:53:50 BRT 2014"/>
+	<property name="ireport.background.image.properties" value="true,true,0.25,-8,-8,0,0,1296,1292"/>
+	<subDataset name="dataset1" uuid="52e75bee-e59d-49bd-b575-87869ab237f0"/>
+	<parameter name="REGISTRO_IDS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+up.razao_social as razao_social,
+up.cnpj_cpf,
+up.endereco as empresa_endereco,
+up.numero as empresa_numero,
+up.complemento as empresa_complemento,
+up.bairro as empresa_bairro,
+up.cidade as empresa_cidade,
+up.estado as empresa_estado,
+up.cep as empresa_cep,
+h.data_inicio_periodo_aquisitivo,
+h.data_fim_periodo_aquisitivo,
+h.date_from as data_inicio_gozo,
+h.date_to as data_fim_gozo,
+h.data_aviso_ferias,
+c.name as matricula,
+e.nome as nome,
+a.endereco,
+a.numero,
+a.complemento,
+a.bairro,
+m.nome as cidade,
+me.uf as estado,
+a.cep,
+a.phone as fone,
+a.mobile as celular,
+a.email as email,
+e.cpf,
+e.nis,
+e.sexo,
+case
+   when e.raca_cor = '1' then 'INDÍGENA'
+   when e.raca_cor = '2' then 'BRANCA'
+   when e.raca_cor = '4' then 'NEGRA'
+   when e.raca_cor = '6' then 'AMARELA'
+   when e.raca_cor = '8' then 'PARDA'
+   when e.raca_cor = '9' then 'NÃO INFORMADA'
+end as raca_cor,
+case
+   when e.estado_civil = '1' then 'SOLTEIRO(A)'
+   when e.estado_civil = '2' then 'CASADO(A)'
+   when e.estado_civil = '3' then 'DIVORCIADO(A)'
+   when e.estado_civil = '4' then 'VIÚVO(A)'
+   when e.estado_civil = '5' then 'EM UNIÃO ESTÁVEL'
+   when e.estado_civil = '6' then 'OUTROS'
+end as estado_civil,
+case
+   when e.grau_instrucao = '01' then 'Analfabeto'
+   when e.grau_instrucao = '02' then 'Até o 5º ano incompleto do Ensino
+Fundamental (4ª série, 1º grau ou primário) ou alfabetizado sem ter
+frequentado escola regular'
+   when e.grau_instrucao = '03' then '5º ano completo do Ensino Fundamental
+(4ª série, 1º grau ou primário)'
+   when e.grau_instrucao = '04' then 'Do 6º ao 9º ano incompletos do Ensino
+Fundamental (5ª a 8ª série, 1º grau ou ginásio)'
+   when e.grau_instrucao = '05' then 'Ensino Fundamental completo (1ª a 8ª
+série, 1º grau ou primário e ginásio)'
+   when e.grau_instrucao = '06' then 'Ensino Médio incompleto (2º grau,
+secundário ou colegial)'
+   when e.grau_instrucao = '07' then 'Ensino Médio completo (2º grau,
+secundário ou colegial)'
+   when e.grau_instrucao = '08' then 'Educação Superior incompleta'
+   when e.grau_instrucao = '09' then 'Educação Superior completa'
+   when e.grau_instrucao = '10' then 'Pós-graduação'
+   when e.grau_instrucao = '11' then 'Mestrado'
+   when e.grau_instrucao = '12' then 'Doutorado'
+end as grau_instrucao,
+e.tipo_sanguineo,
+e.data_nascimento,
+mn.nome as municipio_nascimento,
+en.uf as estado_nascimento,
+e.nome_mae,
+e.nome_pai,
+e.carteira_trabalho_numero,
+e.carteira_trabalho_serie,
+e.carteira_trabalho_estado,
+e.rg_numero,
+e.rg_orgao_emissor,
+e.rg_data_expedicao,
+p.nome as nacionalidade,
+e.cnh_numero,
+('' ||
+case when e.cnh_categoria_a then 'A' else '' end ||
+case when e.cnh_categoria_b then 'B' else '' end ||
+case when e.cnh_categoria_c then 'C' else '' end ||
+case when e.cnh_categoria_d then 'D' else '' end ||
+case when e.cnh_categoria_e then 'E' else '' end) as cnh_categoria,
+e.cnh_orgao_emissor,
+e.cnh_data_expedicao,
+e.cnh_data_validade,
+e.roc_numero,
+e.roc_orgao_emissor,
+e.roc_data_expedicao,
+e.roc_data_validade,
+e.casa_propria,
+e.casa_propria_fgts,
+e.deficiente_motor,
+e.deficiente_visual,
+e.deficiente_auditivo,
+e.deficiente_reabilitado,
+e.deficiente_obs,
+(b.bic || ' - ' || b.name) as banco,
+case
+  when e.banco_tipo_conta = '1' then 'CORRENTE'
+  else 'POUPANÇA'
+end as banco_tipo_conta,
+e.banco_agencia,
+e.banco_conta,
+c.date_start as data_admissao,
+j.name as cargo,
+cbo.codigo as cbo_codigo,
+cbo.ocupacao as cbo_descricao,
+case
+  when c.tipo_admissao = '1' then 'Admissão'
+  when c.tipo_admissao = '2' then 'Transferência de empresa no mesmo grupo
+econômico'
+  when c.tipo_admissao = '3' then 'Admissão por sucessão, incorporação ou
+fusão'
+  when c.tipo_admissao = '4' then 'Trabalhador cedido'
+end as tipo_admissao,
+case
+  when c.regime_trabalhista = '1' then 'CLT'
+  when c.regime_trabalhista = '2' then 'RJU'
+  when c.regime_trabalhista = '3' then 'RJP'
+end as regime_trabalhista,
+case
+  when c.regime_previdenciario = '1' then 'RGPS'
+  when c.regime_previdenciario = '2' then 'RPPS'
+  when c.regime_previdenciario = '3' then 'RPPE'
+end as regime_previdenciario,
+case
+  when c.natureza_atividade = '1' then 'Trabalhador urbano'
+  else 'Trabalhador rural'
+end as natureza_atividade,
+case
+  when c.tipo_contrato = '1' then 'Prazo indeterminado'
+  else 'Prazo determinado'
+end as tipo_contrato,
+c.wage as salario,
+case
+  when c.unidade_salario = '1' then 'Por hora'
+  else 'Por mês'
+end as unidade_salario,
+(c.tempo_primeira_experiencia || ' + ' || c.tempo_segunda_experiencia) as
+tempo_experiencia,
+c.data_opcao_fgts,
+c.optante_fgts,
+c.horas_mensalista as horas_mes,
+d.name as departamento,
+s.name as sindicato,
+s.cnpj_cpf as sindicato_cnpj,
+h.date_from - 2 as data_pagamento,
+up.cidade || ', ' || data_por_extenso(cast(h.data_aviso_ferias as date)) as data_cabecalho
+
+
+from hr_employee e
+join hr_contract c on c.employee_id = e.id
+join hr_job j on j.id = c.job_id
+left join hr_cbo cbo on cbo.id = j.cbo_id
+join res_company u on u.id = c.company_id
+join res_partner up on up.id = u.partner_id
+join hr_payslip h on h.employee_id = e.id
+left join res_partner_address a on a.id = e.address_home_id
+left join sped_municipio m on m.id = a.municipio_id
+left join sped_estado me on me.id = m.estado_id
+left join sped_municipio mn on mn.id = e.municipio_nascimento_id
+left join sped_estado en on en.id = mn.estado_id
+left join sped_pais p on p.id = e.pais_nacionalidade_id
+left join res_bank b on b.id = e.bank_id
+left join hr_department d on d.id = c.department_id
+left join res_partner s on s.id = c.sindicato_id
+
+where
+h.tipo = 'F' and h.id in $P!{REGISTRO_IDS}
+
+order by
+u.name,
+e.nome]]>
+	</queryString>
+	<field name="razao_social" class="java.lang.String"/>
+	<field name="cnpj_cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[CNPJ/CPF]]></fieldDescription>
+	</field>
+	<field name="empresa_endereco" class="java.lang.String"/>
+	<field name="empresa_numero" class="java.lang.String"/>
+	<field name="empresa_complemento" class="java.lang.String"/>
+	<field name="empresa_bairro" class="java.lang.String"/>
+	<field name="empresa_cidade" class="java.lang.String"/>
+	<field name="empresa_estado" class="java.lang.String"/>
+	<field name="empresa_cep" class="java.lang.String"/>
+	<field name="data_inicio_periodo_aquisitivo" class="java.sql.Date">
+		<fieldDescription><![CDATA[Início do período aquisitivo]]></fieldDescription>
+	</field>
+	<field name="data_fim_periodo_aquisitivo" class="java.sql.Date">
+		<fieldDescription><![CDATA[Fim do período aquisitivo]]></fieldDescription>
+	</field>
+	<field name="data_inicio_gozo" class="java.sql.Date"/>
+	<field name="data_fim_gozo" class="java.sql.Date"/>
+	<field name="data_aviso_ferias" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data do aviso de férias]]></fieldDescription>
+	</field>
+	<field name="matricula" class="java.lang.String"/>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[Descrição]]></fieldDescription>
+	</field>
+	<field name="endereco" class="java.lang.String">
+		<fieldDescription><![CDATA[Endereço]]></fieldDescription>
+	</field>
+	<field name="numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Número]]></fieldDescription>
+	</field>
+	<field name="complemento" class="java.lang.String">
+		<fieldDescription><![CDATA[Complemento]]></fieldDescription>
+	</field>
+	<field name="bairro" class="java.lang.String">
+		<fieldDescription><![CDATA[Bairro]]></fieldDescription>
+	</field>
+	<field name="cidade" class="java.lang.String">
+		<fieldDescription><![CDATA[Município]]></fieldDescription>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<fieldDescription><![CDATA[Estado]]></fieldDescription>
+	</field>
+	<field name="cep" class="java.lang.String">
+		<fieldDescription><![CDATA[CEP]]></fieldDescription>
+	</field>
+	<field name="fone" class="java.lang.String">
+		<fieldDescription><![CDATA[Fone]]></fieldDescription>
+	</field>
+	<field name="celular" class="java.lang.String">
+		<fieldDescription><![CDATA[Celular]]></fieldDescription>
+	</field>
+	<field name="email" class="java.lang.String">
+		<fieldDescription><![CDATA[Email]]></fieldDescription>
+	</field>
+	<field name="cpf" class="java.lang.String"/>
+	<field name="nis" class="java.lang.String">
+		<fieldDescription><![CDATA[NIS (PIS, PASEP, NIT)]]></fieldDescription>
+	</field>
+	<field name="sexo" class="java.lang.String">
+		<fieldDescription><![CDATA[Sexo]]></fieldDescription>
+	</field>
+	<field name="raca_cor" class="java.lang.String">
+		<fieldDescription><![CDATA[Raça/cor]]></fieldDescription>
+	</field>
+	<field name="estado_civil" class="java.lang.String">
+		<fieldDescription><![CDATA[Estado civil]]></fieldDescription>
+	</field>
+	<field name="grau_instrucao" class="java.lang.String">
+		<fieldDescription><![CDATA[Grau de instrução]]></fieldDescription>
+	</field>
+	<field name="tipo_sanguineo" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo sanguíneo]]></fieldDescription>
+	</field>
+	<field name="data_nascimento" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de nascimento]]></fieldDescription>
+	</field>
+	<field name="municipio_nascimento" class="java.lang.String"/>
+	<field name="estado_nascimento" class="java.lang.String"/>
+	<field name="nome_mae" class="java.lang.String">
+		<fieldDescription><![CDATA[Nome da mãe]]></fieldDescription>
+	</field>
+	<field name="nome_pai" class="java.lang.String">
+		<fieldDescription><![CDATA[Nome do pai]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Nº da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_serie" class="java.lang.String">
+		<fieldDescription><![CDATA[Série da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="carteira_trabalho_estado" class="java.lang.String">
+		<fieldDescription><![CDATA[Estado da carteira de trabalho]]></fieldDescription>
+	</field>
+	<field name="rg_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[RG]]></fieldDescription>
+	</field>
+	<field name="rg_orgao_emissor" class="java.lang.String">
+		<fieldDescription><![CDATA[Órgão emisssor do RG]]></fieldDescription>
+	</field>
+	<field name="rg_data_expedicao" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de expedição do RG]]></fieldDescription>
+	</field>
+	<field name="nacionalidade" class="java.lang.String"/>
+	<field name="cnh_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[CNH]]></fieldDescription>
+	</field>
+	<field name="cnh_categoria" class="java.lang.String"/>
+	<field name="cnh_orgao_emissor" class="java.lang.String">
+		<fieldDescription><![CDATA[Órgão emisssor da CNH]]></fieldDescription>
+	</field>
+	<field name="cnh_data_expedicao" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de expedição da CNH]]></fieldDescription>
+	</field>
+	<field name="cnh_data_validade" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de validade da CNH]]></fieldDescription>
+	</field>
+	<field name="roc_numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Registro no órgão de classe]]></fieldDescription>
+	</field>
+	<field name="roc_orgao_emissor" class="java.lang.String">
+		<fieldDescription><![CDATA[Órgão emisssor do ROC]]></fieldDescription>
+	</field>
+	<field name="roc_data_expedicao" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de expedição do ROC]]></fieldDescription>
+	</field>
+	<field name="roc_data_validade" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de validade do ROC]]></fieldDescription>
+	</field>
+	<field name="casa_propria" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Possui casa própria?]]></fieldDescription>
+	</field>
+	<field name="casa_propria_fgts" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Casa própria adquirida com recursos do FGTS?]]></fieldDescription>
+	</field>
+	<field name="deficiente_motor" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Deficiente motor?]]></fieldDescription>
+	</field>
+	<field name="deficiente_visual" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Deficiente visual?]]></fieldDescription>
+	</field>
+	<field name="deficiente_auditivo" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Deficiente auditivo?]]></fieldDescription>
+	</field>
+	<field name="deficiente_reabilitado" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Deficiente reabilitado?]]></fieldDescription>
+	</field>
+	<field name="deficiente_obs" class="java.lang.String">
+		<fieldDescription><![CDATA[Deficiente - observações]]></fieldDescription>
+	</field>
+	<field name="banco" class="java.lang.String"/>
+	<field name="banco_tipo_conta" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo da conta]]></fieldDescription>
+	</field>
+	<field name="banco_agencia" class="java.lang.String">
+		<fieldDescription><![CDATA[Agência]]></fieldDescription>
+	</field>
+	<field name="banco_conta" class="java.lang.String">
+		<fieldDescription><![CDATA[Conta]]></fieldDescription>
+	</field>
+	<field name="data_admissao" class="java.sql.Date"/>
+	<field name="cargo" class="java.lang.String"/>
+	<field name="cbo_codigo" class="java.lang.String"/>
+	<field name="cbo_descricao" class="java.lang.String"/>
+	<field name="tipo_admissao" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo de admissão]]></fieldDescription>
+	</field>
+	<field name="regime_trabalhista" class="java.lang.String">
+		<fieldDescription><![CDATA[Regime trabalhista]]></fieldDescription>
+	</field>
+	<field name="regime_previdenciario" class="java.lang.String">
+		<fieldDescription><![CDATA[Regime previdenciário]]></fieldDescription>
+	</field>
+	<field name="natureza_atividade" class="java.lang.String">
+		<fieldDescription><![CDATA[Natureza da atividade]]></fieldDescription>
+	</field>
+	<field name="tipo_contrato" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo do contrato]]></fieldDescription>
+	</field>
+	<field name="salario" class="java.math.BigDecimal"/>
+	<field name="unidade_salario" class="java.lang.String">
+		<fieldDescription><![CDATA[Unidade do salário]]></fieldDescription>
+	</field>
+	<field name="tempo_experiencia" class="java.lang.String"/>
+	<field name="data_opcao_fgts" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de opção pelo FGTS]]></fieldDescription>
+	</field>
+	<field name="optante_fgts" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Optante pelo FGTS?]]></fieldDescription>
+	</field>
+	<field name="horas_mes" class="java.lang.Double"/>
+	<field name="departamento" class="java.lang.String"/>
+	<field name="sindicato" class="java.lang.String"/>
+	<field name="sindicato_cnpj" class="java.lang.String"/>
+	<field name="data_pagamento" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de pagamento]]></fieldDescription>
+	</field>
+	<field name="data_cabecalho" class="java.lang.String"/>
+	<variable name="cidade_data" class="java.lang.String">
+		<variableExpression><![CDATA[new java.util.Date()]]></variableExpression>
+	</variable>
+	<variable name="data_retorno" class="java.util.Date">
+		<variableExpression><![CDATA[$F{data_fim_gozo}+1]]></variableExpression>
+	</variable>
+	<group name="categoria" isResetPageNumber="true">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="752" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="592" width="279" height="81" uuid="9952927c-5edb-4b13-9327-2262bb5881d4"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="26" y="640" width="220" height="20" uuid="ecafa5e5-df62-4997-8272-e81823a74246"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[EMPREGADOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="279" y="592" width="276" height="81" uuid="0549c9f7-7aa0-4955-b1a0-906e79d3eab1"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="305" y="640" width="220" height="20" uuid="d4e44bba-00ca-446b-a958-e844fe869c5a"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[EMPREGADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="71" y="694" width="484" height="43" uuid="5725cab0-a04b-4d8e-abba-44f6c3f4973f"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[O Aviso de Férias, será participado por escrito pela EMPRESA, com antecedência mínima de 30 (trinta) dias.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="489" width="375" height="20" uuid="fdd02032-55f3-4fb6-8702-7812d7381505"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[A remuneração correspondente as férias, encontra-se-á a disposição em:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="385" y="489" width="71" height="20" uuid="0279dac0-456f-47eb-8a02-716a96c6b36f"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_pagamento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="517" width="533" height="42" uuid="9a10b865-a6f1-4bb1-82f0-e4258f52c494"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Favor apresentar a sua Carteira de Trabalho e Previdência Social ao departamento pessoal, para que nela seja anotada a respectiva concessão.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="210" width="555" height="382" uuid="deb16478-9d89-4164-b7ef-66ab23a1a2f2"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="398" width="171" height="20" uuid="1891d7b7-a36b-499c-b579-a0295216ec2e"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[PERÍODO AQUISITIVO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="191" y="398" width="171" height="20" uuid="405c6430-f470-4b4f-8244-cad318ec3b95"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[PERÍODO DE GOZO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="372" y="398" width="171" height="20" uuid="37500ae4-90fe-4d41-9ee1-56fcd233f69f"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[DATA DE RETORNO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="181" y="305" width="90" height="20" uuid="9634762a-d100-4d18-b29b-a1bf39b9f2b3"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[REGISTRO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="271" y="305" width="86" height="20" uuid="11fcf325-cf11-41fe-88a1-b20ddaa38d60"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[FILIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="357" y="305" width="104" height="20" uuid="013f60e7-6059-4b32-9f10-1bfc565e5b26"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[DATA ADMISSÃO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="461" y="305" width="82" height="20" uuid="22a2fdd5-b847-4644-a5a5-d34e62dadeec"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[LOCALIZAÇÃO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="305" width="81" height="20" uuid="c6cf737f-966a-4ce9-a3c5-8250751402b1"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[SERIE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="305" width="90" height="20" uuid="6e1b3c07-11bd-442a-a6b6-54260ee29e54"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[CTPS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="358" width="533" height="26" uuid="032f5f5f-c6a5-47c0-a265-4e7dfea321a1"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Nos termos das disposições legais vigentes, suas férias serão concedidas conforme demonstrativo abaixo:
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="90" width="421" height="20" uuid="f8f2d898-b90b-45fe-acb6-66da8ef92a0f"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{razao_social}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="130" width="305" height="21" uuid="7209f200-8ada-4fb4-8bb6-ded8ac0890c5"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_endereco}+ (" ,")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="305" y="130" width="116" height="21" uuid="342a9f15-03dc-46ba-829e-f0ac32a0e260"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_numero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="421" y="130" width="134" height="21" uuid="0bfb40f0-49a3-476f-850d-5c2ba7c9b397"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_bairro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="421" y="90" width="134" height="20" uuid="3a369eba-6e71-4dda-bca6-81f4f0a2dc3f"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cnpj_cpf}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="258" width="60" height="20" uuid="c2b90736-cd5b-4b0c-ad1e-19eb285c40dd"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[Sr. (a)]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Transparent" x="421" y="171" width="134" height="20" uuid="a6fb4c08-aeb4-42c1-93f3-7fb7d4710823"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_cep}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" mode="Transparent" x="8" y="224" width="535" height="20" uuid="b49a5e9f-d966-46a7-8e3d-91ff2ee3d6f1"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_cabecalho}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="11" y="277" width="351" height="20" uuid="36552eb2-d48f-4779-9a9f-6177ab082796"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="325" width="90" height="20" uuid="df92a6ad-81d6-4ad3-9c90-6b8d5462c49e"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_trabalho_numero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="325" width="81" height="20" uuid="e4557dea-4c04-4656-bf63-e6b4b505c171"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_trabalho_serie}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="357" y="325" width="104" height="20" uuid="d9fc21ae-9f88-4888-bdda-b0562fbe0b1e"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_admissao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="70" width="421" height="21" uuid="e7381895-18db-4727-9526-6014c085fecc"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[EMPREGADOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="421" y="70" width="134" height="21" uuid="510beece-802a-4e13-b785-eaee73580a91"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[CNPJ / CEI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="110" width="305" height="21" uuid="9948a187-1274-42ae-8b47-86050b3a0109"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[ENDEREÇO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="421" y="110" width="134" height="21" uuid="b1ea20db-6a89-4c08-b2e2-3de51b0c1f7d"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[BAIRRO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="305" y="151" width="117" height="20" uuid="dbf22295-c65d-4f22-b55b-a1144c322b7b"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[ESTADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="151" width="305" height="20" uuid="b646775d-97cd-4dd8-b0de-06a88b4c8c7f"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[MUNICÍPIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="421" y="151" width="134" height="20" uuid="67709e1a-89e5-486f-a756-f2acaec270e4"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[CEP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="34" backcolor="#CCCCCC" uuid="bb1ad948-cd34-4b31-b61a-bd99f55f7284"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="24" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[AVISO DE FÉRIAS]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="181" y="325" width="90" height="20" uuid="08fbdf91-a7b5-4a23-b84a-f4a828e4a992"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{matricula}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="694" width="71" height="43" uuid="848d55be-8092-4c44-b3b4-aed01aa9a670"/>
+				<box topPadding="10" leftPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOTA: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="305" y="171" width="116" height="20" uuid="a157250f-6529-4b1b-9906-fbe734335650"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{empresa_estado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="171" width="305" height="20" uuid="bfe3c2f1-36f4-4c25-9c85-46eda5665687"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{empresa_cidade}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="271" y="325" width="86" height="20" uuid="24fd615f-c542-4642-be11-f70baedb00b1"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="461" y="325" width="82" height="20" uuid="9398bd52-2991-4ea6-88f5-baae2a698612"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+			</textField>
+			<staticText>
+				<reportElement x="305" y="110" width="116" height="20" uuid="3dbe49cf-84ad-4828-a743-f38a0a5353a6"/>
+				<box leftPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[NUMERO]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="10" y="418" width="67" height="20" uuid="8c7eea6a-3cef-4286-9bac-ed3127b5ba28"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{data_inicio_periodo_aquisitivo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="87" y="418" width="94" height="20" uuid="b1466846-0d61-44d8-a26d-25d41e558c27"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{data_fim_periodo_aquisitivo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="191" y="418" width="67" height="20" uuid="e48e8e71-9eb0-4de8-a6fa-c196dd9a5ff1"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{data_inicio_gozo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="271" y="418" width="91" height="20" uuid="db932668-8503-4992-ac55-e36f9d48c68f"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{data_fim_gozo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="372" y="418" width="171" height="20" uuid="aaf015d1-fe77-4632-a26f-6f62aabe9281"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{data_retorno}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="77" y="418" width="10" height="20" uuid="cf111276-8ae2-450a-a7dd-66aff31d74de"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[a]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="258" y="418" width="13" height="20" uuid="6b9c9d07-e7e4-46b3-afe0-6929c8530dec"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[a]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="50" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

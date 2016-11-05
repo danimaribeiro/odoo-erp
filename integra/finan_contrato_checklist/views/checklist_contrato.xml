@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="checklist_contrato_tree">
+            <field name="name">checklist.contrato.tree</field>
+            <field name="model">checklist.contrato</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="data" />                                       
+                    <field name="nome" />                                                                              
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="checklist_contrato_form">
+            <field name="name">checklist.contrato.form</field>
+            <field name="model">checklist.contrato</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Cadastro de Checklist">
+                    <group col="6" colspan="4">
+                        <group col="2" >
+                            <field name="data" required="1" colspan="2"/>                                                                                                                                 
+                        </group>   
+                        <group col="4" colspan="4">
+                            <field name="nome" required="1"/>
+                        </group>
+                    </group>
+                    <separator string="Itens" colspan="4" />
+                    <field name="item_ids" nolabel="1" colspan="4" />                                                                                                                                                                                                                                                                                                                                                                                                                         
+                </form>             
+            </field>
+        </record>
+        
+         <record id="checklist_contrato_search" model="ir.ui.view">
+            <field name="name">checklist.contrato.search</field>
+            <field name="model">checklist.contrato</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Cadastro de Checklist">
+                    <field name="data" />                                   
+                    <field name="nome" />                                       
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="checklist_contrato_acao">
+            <field name="name">Cadastro de Check-list</field>
+            <field name="res_model">checklist.contrato</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="checklist_contrato_tree" />            
+            <field name="search_view_id" ref="checklist_contrato_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>       
+        
+        <menuitem action="checklist_contrato_acao"
+            id="menu_checklist_contrato" 
+            name="Cadastro de Check-list" 
+            parent="base.menu_sale_config_sales"
+            sequence="31" />
+
+        <record model="ir.actions.act_window.view" id="checklist_contratoform_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="checklist_contrato_form"/>
+            <field name="act_window_id" ref="checklist_contrato_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="checklist_contrato_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="checklist_contrato_tree"/>
+            <field name="act_window_id" ref="checklist_contrato_acao"/>
+        </record>
+
+    </data>
+</openerp>

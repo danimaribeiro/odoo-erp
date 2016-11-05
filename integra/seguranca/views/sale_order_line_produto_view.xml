@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record model="ir.ui.view" id="sale_order_line_produto_form">
+        <field name="name">sale.order.line.produto.form</field>
+        <field name="model">sale.order.line</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Produto">
+                <field name="tipo_item" invisible="1" />
+                <group colspan="4">
+                    <field colspan="4"
+                        string="Produto"
+                        name="product_id" required="1" domain="[('type', '!=', 'service')]"
+                        context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'shop': parent.shop_id, 'uom': product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id}"
+                        on_change="product_id_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name,parent.partner_id, False, True, parent.date_order, product_packaging, parent.fiscal_position, False, context)"
+                    />
+                    <newline />
+                    <field name="name" colspan="4"/>
+
+                    <group colspan="2" col="4">
+                        <separator string="Valores" colspan="2" />
+                        <newline />
+                        <field
+                            name="product_uom_qty"
+                            context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'shop': parent.shop_id, 'uom': product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id, 'vr_frete': vr_frete, 'vr_outras': vr_outras, 'vr_unitario_base': vr_unitario_base, 'price_unit_original': price_unit_original}"
+                            on_change="product_id_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name, parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, True, context)"/>
+                        <newline />
+                        <field name="product_uom"
+                            on_change="product_uom_change(parent.pricelist_id, product_id, product_uom_qty, product_uom,product_uos_qty, product_uos,name, parent.partner_id, False, False, parent.date_order, context)"
+                            nolabel="1" invisible="1" />
+                        <newline />
+                        <group colspan="2" col="2" groups="base.group_sale_manager,base.group_sale_salesman,base.group_sale_salesman_all">
+                            <field
+                                name="price_unit"
+                                context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'shop': parent.shop_id, 'uom': product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id, 'vr_frete': vr_frete, 'vr_outras': vr_outras, 'price_unit': price_unit, 'price_unit_original': price_unit_original, 'vr_unitario_base': vr_unitario_base}"
+                                on_change="product_id_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name, parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, True, context)" />
+                            <newline />
+<!--                            <field name="abaixo_minimo" invisible="1" />
+                            <group colspan="2" col="2" attrs="{'invisible': [('abaixo_minimo','=', False)]}">
+
+                            </group>-->
+                            <newline />
+                            <field
+                                name="vr_frete"
+                                context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'shop': parent.shop_id, 'uom': product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id, 'vr_frete': vr_frete, 'vr_outras': vr_outras, 'price_unit': price_unit, 'price_unit_original': price_unit_original, 'vr_unitario_base': vr_unitario_base}"
+                                on_change="product_id_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name, parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, True, context)" />
+                            <newline />
+                            <field
+                                name="vr_outras"
+                                context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'shop': parent.shop_id, 'uom': product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id, 'vr_frete': vr_frete, 'vr_outras': vr_outras, 'price_unit': price_unit, 'price_unit_original': price_unit_original, 'vr_unitario_base': vr_unitario_base}"
+                                on_change="product_id_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name, parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, True, context)" />
+                            <newline />
+                            <field name="vr_unitario_venda_impostos" invisible="1" />
+                            <field name="vr_unitario_venda_impostos_readonly" />
+                            <newline />
+                            <field name="vr_icms_st" invisible="1" />
+                            <field name="vr_icms_st_readonly" invisible="1" />
+                            <newline />
+                            <field name="vr_total_venda_impostos" invisible="1" />
+                            <field name="vr_total_venda_impostos_readonly" />
+                            <newline />
+
+                            <field groups="product.group_uos" name="product_uos_qty" invisible="1" />
+                            <field groups="product.group_uos" name="product_uos" nolabel="1" invisible="1" />
+                            <newline/>
+                            <field name="product_packaging"
+                                context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'shop': parent.shop_id, 'uom': product_uom}" on_change="product_packaging_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, parent.partner_id, product_packaging, True, context)"
+                                domain="[('product_id', '=', product_id)]" groups="base.group_extended"
+                                colspan="3" invisible="1" />
+                            <field name="discount" invisible="1" />
+        <!--                         <separator colspan="5" string="Notes"/> -->
+                            <field colspan="4" name="notes" nolabel="1" invisible="1" />
+                        </group>
+                    </group>
+                    <group colspan="2" col="4" groups="base.group_sale_manager">
+                        <separator string="Análise da margem de contribuição" colspan="2" />
+                        <newline/>
+                        <field name="price_unit_original" invisible="1" />
+                        <field name="vr_unitario_base" invisible="1" />
+                        <field name="vr_produto_original" string="Valor original da venda" invisible="1" />
+                        <newline/>
+                        <field name="vr_taxa_juros" colspan="2" invisible="1" />
+                        <field name="discount" colspan="2" string="(-) Desconto" invisible="1" />
+                        <newline/>
+                        <field name="vr_produtos" invisible="1" />
+                        <field name="vr_produtos_readonly" colspan="2" string="= Valor da venda" />
+                        <newline/>
+                        <field name="vr_simples" invisible="1" />
+                        <field name="vr_simples_readonly" colspan="2" string="(-) SIMPLES" attrs="{'invisible': [('regime_tributario', '!=', '1')]}" />
+                        <newline/>
+                        <field name="vr_icms_proprio" invisible="1" />
+                        <field name="vr_icms_proprio_readonly" colspan="2" string="(-) ICMS" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                        <newline/>
+                        <field name="vr_diferencial_aliquota" invisible="1" />
+                        <field name="vr_diferencial_aliquota_readonly" colspan="2" string="(-) DIFA" />
+                        <newline/>
+                        <field name="vr_ipi" invisible="1" />
+                        <field name="vr_ipi_readonly" colspan="2" string="(-) IPI" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                        <newline/>
+                        <field name="vr_iss" invisible="1" />
+                        <field name="vr_iss_readonly" colspan="2" string="(-) ISS" invisible="1" />
+                        <newline/>
+                        <field name="vr_pis_proprio" invisible="1" />
+                        <field name="vr_pis_proprio_readonly" colspan="2" string="(-) PIS" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                        <newline/>
+                        <field name="vr_cofins_proprio" invisible="1" />
+                        <field name="vr_cofins_proprio_readonly" colspan="2" string="(-) COFINS" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                        <newline/>
+                        <field name="vr_csll" invisible="1" />
+                        <field name="vr_csll_readonly" colspan="2" string="(-) CSLL" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                        <newline/>
+                        <field name="vr_irrf" invisible="1" />
+                        <field name="vr_irrf_readonly" colspan="2" string="(-) IRPJ" attrs="{'invisible': [('regime_tributario', '=', '1')]}" />
+                        <newline/>
+                        <field name="total_imposto" invisible="1" />
+                        <field name="total_imposto_readonly" colspan="2" />
+                        <newline/>
+                        <field name="vr_produto_base" invisible="1" />
+                        <field name="vr_produto_base_readonly" string="(-) Custo" />
+                        <newline/>
+                        <field name="vr_comissao" invisible="1" />
+                        <field name="vr_comissao_readonly" string="(-) Comissão" />
+                        <newline/>
+                        <field name="vr_margem_contribuicao" invisible="1" />
+                        <field name="vr_margem_contribuicao_readonly" string="= Margem de contribuição" />
+                        <newline/>
+                        <field name="al_margem_contribuicao" invisible="1" />
+                        <field name="al_margem_contribuicao_readonly" string="%% Margem de contribuição" />
+                        <newline/>
+                        <field name="porcentagem_imposto" colspan="2" invisible="1" />
+                        <newline/>
+                        <field name="proporcao_imposto" colspan="2" invisible="1" />
+                        <newline/>
+                        <field name="falha_configuracao" colspan="2" invisible="1" />
+                        <field name="vr_icms_sn" colspan="2" invisible="1" />
+
+                <field name="regime_tributario" invisible="1"/>
+                <field name="emissao" invisible="1"/>
+                <field name="operacao_id" invisible="1"/>
+<!--                     <field name="partner_id" invisible="1"/> -->
+                <field name="data_emissao" invisible="1"/>
+                <field name="modelo" invisible="1"/>
+                    <field name="cfop_id" invisible="1"/>
+                <field name="compoe_total" invisible="1"/>
+                <field name="movimentacao_fisica" invisible="1"/>
+                    <field name="produto_id" invisible="1"/>
+                <field name="quantidade" invisible="1"/>
+                <field name="vr_unitario" invisible="1"/>
+                <field name="quantidade_tributacao" invisible="1"/>
+                <field name="vr_unitario_tributacao" invisible="1"/>
+<!--                     <field name="vr_produtos" invisible="1"/> -->
+                <field name="vr_produtos_tributacao" invisible="1"/>
+                <!--<field name="vr_frete" invisible="1"/>-->
+                <field name="vr_seguro" invisible="1"/>
+                <field name="vr_desconto" invisible="1"/>
+                <!--<field name="vr_outras" invisible="1"/>-->
+                <field name="vr_operacao" invisible="1"/>
+                <field name="vr_operacao_tributacao" invisible="1"/>
+<!--                    <field name="org_icms" invisible="1"/>-->
+                <field name="cst_icms" invisible="1"/>
+<!--                    <field name="partilha" invisible="1"/>
+                <field name="al_bc_icms_proprio_partilha" invisible="1"/>
+                <field name="uf_partilha_id" invisible="1"/>
+                <field name="repasse" invisible="1"/>
+                <field name="md_icms_proprio" invisible="1"/>
+                <field name="pr_icms_proprio" invisible="1"/>
+                <field name="rd_icms_proprio" invisible="1"/>
+                <field name="bc_icms_proprio_com_ipi" invisible="1"/>
+                <field name="bc_icms_proprio" invisible="1"/>-->
+                <field name="al_icms_proprio" invisible="1"/>
+<!--                     <field name="vr_icms_proprio" invisible="1"/> -->
+                <field name="cst_icms_sn" invisible="1"/>
+                <field name="al_icms_sn" invisible="1"/>
+                <field name="rd_icms_sn" invisible="1"/>
+<!--                     <field name="vr_icms_sn" invisible="1"/> -->
+<!--                    <field name="md_icms_st" invisible="1"/>
+                <field name="pr_icms_st" invisible="1"/>
+                <field name="rd_icms_st" invisible="1"/>
+                <field name="bc_icms_st_com_ipi" invisible="1"/>
+                <field name="bc_icms_st" invisible="1"/>-->
+                <field name="al_icms_st" invisible="1"/>
+                <field name="al_simples" invisible="1"/>
+<!--                     <field name="vr_icms_st" invisible="1"/> -->
+<!--                    <field name="md_icms_st_retido" invisible="1"/>
+                <field name="pr_icms_st_retido" invisible="1"/>
+                <field name="rd_icms_st_retido" invisible="1"/>
+                <field name="bc_icms_st_retido" invisible="1"/>
+                <field name="al_icms_st_retido" invisible="1"/>
+                <field name="vr_icms_st_retido" invisible="1"/>
+                <field name="apuracao_ipi" invisible="1"/>
+                <field name="cst_ipi" invisible="1"/>
+                <field name="md_ipi" invisible="1"/>
+                <field name="bc_ipi" invisible="1"/>-->
+                <field name="al_ipi" invisible="1"/>
+<!--                     <field name="vr_ipi" invisible="1"/> -->
+<!--                    <field name="bc_ii" invisible="1"/>
+                <field name="vr_despesas_aduaneiras" invisible="1"/>
+                <field name="vr_ii" invisible="1"/>
+                <field name="vr_iof" invisible="1"/>-->
+                <field name="al_pis_cofins_id" invisible="1"/>
+                <field name="cst_pis" invisible="1"/>
+<!--                    <field name="md_pis_proprio" invisible="1"/>
+                <field name="bc_pis_proprio" invisible="1"/>-->
+                <field name="al_pis_proprio" invisible="1"/>
+<!--                     <field name="vr_pis_proprio" invisible="1"/> -->
+                <field name="cst_cofins" invisible="1"/>
+<!--                    <field name="md_cofins_proprio" invisible="1"/>
+                <field name="bc_cofins_proprio" invisible="1"/>-->
+                <field name="al_cofins_proprio" invisible="1"/>
+<!--                     <field name="vr_cofins_proprio" invisible="1"/> -->
+<!--                    <field name="md_pis_st" invisible="1"/>
+                <field name="bc_pis_st" invisible="1"/>
+                <field name="al_pis_st" invisible="1"/>
+                <field name="vr_pis_st" invisible="1"/>
+                <field name="md_cofins_st" invisible="1"/>
+                <field name="bc_cofins_st" invisible="1"/>
+                <field name="al_cofins_st" invisible="1"/>
+                <field name="vr_cofins_st" invisible="1"/>
+                <field name="vr_servicos" invisible="1"/>-->
+                <field name="cst_iss" invisible="1"/>
+<!--                    <field name="bc_iss" invisible="1"/>-->
+                <field name="al_iss" invisible="1"/>
+<!--                     <field name="vr_iss" invisible="1"/> -->
+<!--                    <field name="vr_pis_servico" invisible="1"/>
+                <field name="vr_cofins_servico" invisible="1"/>-->
+<!--                     <field name="vr_nf" invisible="1"/> -->
+<!--                     <field name="vr_fatura" invisible="1"/> -->
+<!--                    <field name="al_ibpt" invisible="1"/>
+                <field name="vr_ibpt" invisible="1"/>
+                <field name="previdencia_retido" invisible="1"/>
+                <field name="bc_previdencia" invisible="1"/>
+                <field name="al_previdencia" invisible="1"/>
+                <field name="vr_previdencia" invisible="1"/>
+                <field name="contribuinte" invisible="1"/>-->
+
+<!--                     <field name="forca_recalculo_st_compra" invisible="1"/> -->
+<!--                    <field name="md_icms_st_compra" invisible="1"/>
+                <field name="pr_icms_st_compra" invisible="1"/>
+                <field name="rd_icms_st_compra" invisible="1"/>
+                <field name="bc_icms_st_compra" invisible="1"/>
+                <field name="al_icms_st_compra" invisible="1"/>
+                <field name="vr_icms_st_compra" invisible="1"/>-->
+
+                <field name="calcula_diferencial_aliquota" invisible="1"/>
+                <field name="al_diferencial_aliquota" invisible="1"/>
+<!--                     <field name="vr_diferencial_aliquota" invisible="1"/> -->
+                    </group>
+<!--                            <group colspan="2">
+                            <separator string="Lucro líquido" colspan="2" />
+                            <newline/>
+                            <field name="vr_liquido" colspan="2" />
+                            <newline/>
+                            <field name="margem_liquida" colspan="2" />
+                        </group>-->
+                    <group colspan="4" col="4" groups="base.group_extended">
+<!--                             <separator colspan="5" string="States"/> -->
+                        <field name="state" widget="statusbar" invisible="1" statusbar_visible="draft,confirmed,done" statusbar_colors='{"exception": "red", "cancel": "red"}'/>
+                        <field name="invoiced" invisible="1" />
+                    </group>
+                </group>
+                <group attrs="{'invisible': True}">
+                    <field name="type"/>
+                    <field name="delay"/>
+                    <field name="th_weight"/>
+                    <field name="address_allotment_id"/>
+<!--                         <separator colspan="4" string="Properties"/> -->
+                    <field name="property_ids" colspan="4" nolabel="1" invisible="1" />
+                </group>
+<!--                    <page string="History" groups="base.group_extended">
+                    <separator colspan="4" string="Invoice Lines"/>
+                    <field colspan="4" name="invoice_lines" nolabel="1"/>
+                    <separator colspan="4" string="Stock Moves"/>
+                    <field colspan="4" name="move_ids" nolabel="1" widget="many2many"/>
+                </page>-->
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sale_order_line_produto_tree" >
+        <field name="name">sale.order.line.produto.tree</field>
+        <field name="model">sale.order.line</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Produtos">
+                <field name="tipo_item" invisible="1" />
+                <field colspan="4" name="name"/>
+                <field name="product_uom_qty" string="Qtd."/>
+                <field name="price_unit" invisible="1" />
+                <field name="discount" string="Desconto" sum="Total desconto" />
+                <field name="vr_unitario_venda_impostos" />
+                <field name="vr_total_venda_impostos" sum="Total com impostos" />
+                <field name="falha_configuracao" groups="base.group_sale_manager" />
+            </tree>
+        </field>
+    </record>
+
+   </data>
+</openerp>

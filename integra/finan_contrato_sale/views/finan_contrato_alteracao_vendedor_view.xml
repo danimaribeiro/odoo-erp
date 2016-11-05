@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_vendedor_tree">
+            <field name="name">finan.contrato.alteracao.vendedor.tree</field>
+            <field name="model">finan.contrato.alteracao.vendedor</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id" />
+                    <field name="hr_department_id" />
+                    <field name="grupo_economico_id" />
+                    <field name="partner_category_id" />
+                    <field name="municipio_id" />
+                    <field name="vendedor_antigo_id" />
+                    <field name="vendedor_novo_id" />
+                    <field name="data_alteracao" />
+                    <field name="data_confirmacao" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_vendedor_form">
+            <field name="name">finan.contrato.alteracao.vendedor.form</field>
+            <field name="model">finan.contrato.alteracao.vendedor</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Alteração de Vendedores de Contratos">
+                    <group colspan="4">
+                        <field name="company_id" colspan="4" />
+                        <field name="hr_department_id" colspan="4" />
+                        <field name="grupo_economico_id" colspan="4" />
+                        <field name="partner_category_id" colspan="4" />
+                        <field name="municipio_id" colspan="4" />
+                        <field name="vendedor_antigo_id" colspan="4" />
+                        <field name="vendedor_novo_id" colspan="4" required="1" />
+                        <newline />
+                        <field name="data_alteracao" colspan="2" />
+                        <field name="data_confirmacao" colspan="2" />
+                        <field name="confirmado" invisible="1" />
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Contratos incluídos">
+                            <button string="Buscar contratos" colspan="2" type="object" name="buscar_contratos" attrs="{'invisible': [('confirmado', '=', True)]}" />
+                            <button string="Efetivar alteração" colspan="2" type="object" name="efetiva_alteracao" attrs="{'invisible': [('confirmado', '=', True)]}" />
+<!--                             <button string="Efetivar alteração" colspan="2" type="object" name="efetiva_alteracao" /> -->
+                            <field name="contrato_alterar_ids" nolabel="1" colspan="4" readonly="1">
+                                <tree>
+                                    <field name="contrato_id" />
+                                    <field name="company_id" />
+                                    <field name="numero" />
+                                    <field name="partner_id" string="Cliente" />
+                                    <field name="vendedor_antigo_id" />
+                                    <field name="vendedor_novo_id" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_alteracao_vendedor_search">
+            <field name="name">finan.contrato.alteracao.vendedor.search</field>
+            <field name="model">finan.contrato.alteracao.vendedor</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Alteração de Vendedores de Contratos">
+                    <field name="company_id" />
+                    <field name="hr_department_id" />
+                    <field name="municipio_id" />
+                    <newline />
+                    <field name="vendedor_antigo_id" />
+                    <field name="vendedor_novo_id" />
+                    <field name="data_alteracao" string="Data da alteração" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_contrato_alteracao_vendedor_acao">
+            <field name="name">Alteração de vendedores</field>
+            <field name="res_model">finan.contrato.alteracao.vendedor</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_contrato_alteracao_vendedor_tree" />
+            <field name="search_view_id" ref="finan_contrato_alteracao_vendedor_search" />
+        </record>
+
+        <menuitem action="finan_contrato_alteracao_vendedor_acao"
+            id="menu_finan_contrato_alteracao_vendedor" name="Alteração de vendedores" parent="finan_contrato.menu_finan_contratos" />
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_alteracao_vendedor_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_contrato_alteracao_vendedor_form"/>
+            <field name="act_window_id" ref="finan_contrato_alteracao_vendedor_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_alteracao_vendedor_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_contrato_alteracao_vendedor_tree"/>
+            <field name="act_window_id" ref="finan_contrato_alteracao_vendedor_acao"/>
+        </record>
+
+    </data>
+</openerp>

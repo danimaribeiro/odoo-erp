@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <report id="stock_product_category_id"
+              model="wiz.stock.prod.cate"
+              rml="integra_item_40_a_41_produto_estoque_categoria/report/product_stock_by_category.rml"
+              name="stock_product"
+              string="Estoque de produtos por categoria" auto="False">
+         </report>
+
+    </data>
+</openerp>

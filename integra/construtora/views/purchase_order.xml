@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="purchase_order_finan_action" model="ir.actions.act_window">
+            <field name="name">Pedidos de compra</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_mode">tree,form,graph,calendar</field>
+            <field name="context">{'search_default_to_approve': 1}</field>
+            <field name="search_view_id" ref="purchase.view_purchase_order_filter"/>
+        </record>
+
+        <menuitem
+            action="purchase_order_finan_action"
+            id="menu_purchase_order_finan"
+            parent="finan.menu_finan_tesouraria"
+            sequence="19"
+            />
+
+        <record id="purchase_order_form" model="ir.ui.view">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="compras.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <field name="operacao_id" position="replace">
+                    <field name="operacao_id" required="True" domain="[('emissao', '=', '1'), ('entrada_saida', '=', '0')]" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                </field>
+                
+                <xpath expr="//form/notebook/page[@string='Purchase Order']/group[1]" position="after">                    
+                    <newline />                    
+                    <group colspan="8">                                       
+                        <separator string="Vencimentos" colspan="8" />
+                        <field name="lancamento_ids" readonly="1" nolabel="1" domain="[('tipo', '=', 'P')]" context="{'form_view_ref' : 'finan.finan_pagar_form', 'tree_view_ref' : 'finan.finan_pagar_tree' }"  />
+                    </group>
+                </xpath>
+
+                <page string="Observações" position="after">
+                    <page string="Projeto e Cotação">
+                        <group colspan="4">
+                            <field name="cotacao_id" colspan="4" invisible="1" />
+                            <newline />
+                            <field name="project_id" colspan="4" />
+                        </group>
+                        <newline />
+                        <separator string="Cotação" colspan="4" />
+                        <field name="cotacao_ids" nolabel="1" widget="one2many_list" readonly="1" mode="form" />
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

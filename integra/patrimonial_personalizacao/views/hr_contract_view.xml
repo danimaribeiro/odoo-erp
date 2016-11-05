@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_contract_form_esconde_cursos" model="ir.ui.view">
+            <field name="name">hr.contract.form.esconde.cursos</field>
+            <field name="model">hr.contract</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_rh.hr_contract_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@string='Cursos e Treinamentos']" position="replace">
+                    <page string="Cursos e Treinamentos" groups="75,77,78,79">
+                        <field name="curso_ids" nolabel="1" colspan="4" >
+                            <tree editable="top" >
+                                <field name="curso_id" required="1"/>
+                                <field name="carga_horaria" required="1" />
+                                <field name="data_inicial" required="1" />
+                                <field name="data_final" required="1" />
+                                <field name="situacao" required="1" />                            
+                            </tree>
+                        </field>                     
+                    </page>
+                </xpath>
+                <xpath expr="//page[@string='Saúde ocupacional']" position="replace">
+                    <page string="Saúde ocupacional" groups="75,77,79">
+                        <field name="data_atestado_saude" />
+                        <field name="medico_atestado_saude_nome"/>
+                        <newline/>
+                        <field name="medico_atestado_saude_crm_numero"/>
+                        <field name="medico_atestado_saude_crm_estado"/>
+                        <separator string="Exames" colspan="4" />
+                        <field name="exame_ids" widget="one2many_list" colspan="4" nolabel="1">
+                            <tree editable="top">
+                                <field name="exame_id" on_change="onchange_data_exame(data_exame, exame_id)"/>
+                                <field name="data_exame" on_change="onchange_data_exame(data_exame, exame_id)"/>
+                                <field name="data_validade" />
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        
+    </data>
+</openerp>

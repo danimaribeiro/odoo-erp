@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_ecf_recebido_form">
+            <field name="name">sped.ecf.recebido.form</field>
+            <field name="model">sped.documento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Cupom Fiscal - modelo 2D">
+                    <field name="emissao" invisible="1" />
+                    <field name="modelo" invisible="1" />
+                    <field name="entrada_saida" invisible="1" />
+                    <field name="state" widget="statusbar" attrs="{'invisible': ['|',('emissao', '!=', '0'),('modelo', '!=', '2D')]}" />
+                    <newline/>
+                    <group colspan="4">
+                        <field name="company_id" colspan="4" required="1" domain="[('cnpj_cpf', '!=', False)]"/>
+                        <newline/>
+                        <field name="operacao_id" colspan="4" required="1"  on_change="onchange_operacao(operacao_id)" domain="[('modelo', '=', modelo), ('emissao', '=', emissao)]" />
+                        <newline/>
+                        <field name="serie" required="1" />
+                        <newline/>
+                        <field name="numero" required="1" />
+                        <newline/>
+                        <field name="data_emissao" required="1" />
+                        <field name="data_entrada_saida" required="1" />
+                        <newline/>
+                        <field name="situacao" required="1" />
+                        <newline/>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Destinatário/Remetente">
+                            <field name="partner_id" colspan="4" on_change="onchange_partner_id(partner_id)" />
+                            <newline />
+                            <field name="municipio_fato_gerador_id" colspan="4" />
+                            <newline />
+                            <field name="partner_cnpj_cpf" colspan="2" readonly="1"/>
+                            <field name="partner_contribuinte" invisible="1" />
+                            <field name="partner_ie" colspan="2" readonly="1"/>
+                            <newline />
+                            <field name="partner_razao_social" colspan="4" readonly="1"/>
+                            <field name="partner_fantasia" colspan="4" readonly="1"/>
+                            <field name="partner_endereco" colspan="4" readonly="1"/>
+                            <field name="partner_numero" colspan="2" readonly="1"/>
+                            <field name="partner_complemento" colspan="2" readonly="1"/>
+                            <field name="partner_bairro" colspan="2" readonly="1"/>
+                            <newline />
+                            <field name="partner_municipio_id" colspan="4" readonly="1"/>
+                            <field name="partner_cep" colspan="2" readonly="1"/>
+                        </page>
+                        <page string="Pedido de Compra">
+                            <field name="purchase_order_id" colspan="4" domain="[('state','=','approved'), ('partner_id','=', partner_id), ('date_order','&lt;=', data_emissao)]" />
+                            <newline />
+                            <field name="purchase_order_ids" nolabel="1" widget="one2many_list" readonly="1" mode="form" colspan="4" invisible="[('purchase_order_id', '=', False)]" />
+                        </page>
+                        <page string="Produtos/Serviços">
+                            <field name="documentoitem_ids" colspan="4" nolabel="1"
+                                   context="{'default_partner_id': partner_id, 'default_entrada_saida': entrada_saida, 'default_data_emissao': data_emissao, 'default_regime_tributario': regime_tributario, 'default_operacao_id': operacao_id, 'default_company_id': company_id, 'default_emissao': emissao, 'default_modelo': modelo, 'default_municipio_fato_gerador_id': municipio_fato_gerador_id, 'default_contribuinte': partner_contribuinte, 'form_view_ref' : 'sped.sped_documentoitem_entrada_form', 'tree_view_ref' : 'sped.sped_documentoitem_entrada_tree'}" mode="tree,form" />
+                        </page>
+                        <page string="Totais">
+                            <notebook colspan="4">
+                                <page string="Valores principais">
+                                    <field name="vr_produtos" />
+                                    <newline />
+                                    <field name="vr_frete" invisible="[('modelo', 'in', ['SE', 'SC'])]" />
+                                    <newline />
+                                    <field name="vr_seguro" invisible="[('modelo', 'in', ['SE', 'SC'])]" />
+                                    <newline />
+                                    <field name="vr_outras" invisible="[('modelo', 'in', ['SE', 'SC'])]" />
+                                    <newline />
+                                    <field name="vr_desconto" />
+                                    <newline />
+                                    <field name="vr_operacao" />
+                                    <newline />
+                                    <field name="vr_nf" />
+                                    <field name="vr_fatura" />
+                                </page>
+                                <page string="Impostos">
+                                    <group string="ICMS" attrs="{'invisible': [('modelo', 'in', ['SE', 'SC'])]}" colspan="4">
+                                        <group string="Crédito de ICMS SIMPLES" attrs="{'invisible': [('regime_tributario', '!=', '1')]}" colspan="2">
+                                            <field name="vr_icms_sn" />
+                                        </group>
+                                        <newline />
+                                        <group string="ICMS próprio" attrs="{'invisible': [('regime_tributario', '=', '1')]}" colspan="2">
+                                            <field name="bc_icms_proprio" />
+                                            <newline/>
+                                            <field name="vr_icms_proprio" />
+                                        </group>
+                                        <newline />
+                                        <group string="ICMS ST" colspan="2">
+                                            <field name="bc_icms_st" />
+                                            <newline/>
+                                            <field name="vr_icms_st" />
+                                        </group>
+                                    </group>
+                                    <group string="IPI" attrs="{'invisible': ['|',('regime_tributario', '=', '1'),('modelo', 'in', ['SE', 'SC'])]}" colspan="4">
+                                        <group string="IPI" colspan="2">
+                                            <field name="bc_ipi" />
+                                            <field name="vr_ipi" />
+                                        </group>
+                                    </group>
+                                    <group string="ISS" attrs="{'invisible': ['!',('modelo', 'in', ['SE', 'SC'])]}" colspan="4">
+                                        <group string="ISS próprio" colspan="2">
+                                            <field name="bc_iss" />
+                                            <newline/>
+                                            <field name="vr_iss" />
+                                        </group>
+                                        <group string="ISS" colspan="2">
+                                            <field name="iss_retido" />
+                                            <newline/>
+                                            <field name="bc_iss_retido" />
+                                            <newline/>
+                                            <field name="vr_iss_retido" />
+                                        </group>
+                                    </group>
+                                    <group string="PIS-COFINS" attrs="{'invisible': [('regime_tributario', '=', '1')]}" colspan="4">
+                                        <group string="PIS próprio" colspan="2">
+                                            <field name="bc_pis_proprio" />
+                                            <newline/>
+                                            <field name="vr_pis_proprio" />
+                                        </group>
+                                        <group string="COFINS próprio" colspan="2">
+                                            <field name="bc_cofins_proprio" />
+                                            <newline />
+                                            <field name="vr_cofins_proprio" />
+                                        </group>
+                                        <newline/>
+                                        <field name="deduz_retencao" colspan="4" />
+                                        <newline />
+                                        <separator string="Retenção" colspan="4" />
+                                        <field name="pis_cofins_retido" />
+                                        <field name="limite_retencao_pis_cofins_csll"/>
+                                        <newline/>
+                                        <group string="PIS Retido" colspan="2">
+                                            <field name="al_pis_retido" />
+                                            <newline/>
+                                            <field name="vr_pis_retido" />
+                                        </group>
+                                        <group string="COFINS Retido" colspan="2">
+                                            <field name="al_cofins_retido" />
+                                            <newline/>
+                                            <field name="vr_cofins_retido" />
+                                        </group>
+                                    </group>
+                                    <group string="CSLL" attrs="{'invisible': [('regime_tributario', '=', '1')]}" colspan="2" >
+                                        <field name="csll_retido" />
+                                        <newline/>
+                                        <field name="al_csll" />
+                                        <newline/>
+                                        <field name="vr_csll" />
+                                    </group>
+                                    <group string="IRRF" attrs="{'invisible': [('regime_tributario', '=', '1')]}" colspan="2" >
+                                        <field name="irrf_retido" />
+                                        <newline/>
+                                        <field name="bc_irrf" />
+                                        <newline/>
+                                        <field name="al_irrf" />
+                                        <newline/>
+                                        <field name="vr_irrf" />
+                                    </group>
+                                    <group string="INSS" attrs="{'invisible': [('regime_tributario', '=', '1')]}" colspan="2" >
+                                        <field name="previdencia_retido" />
+                                        <newline/>
+                                        <field name="bc_previdencia" />
+                                        <newline/>
+                                        <field name="al_previdencia" />
+                                        <newline/>
+                                        <field name="vr_previdencia" />
+                                    </group>
+                                </page>
+                            </notebook>
+                        </page>
+                        <page string="Outras informações">
+                            <field name="data_entrada_saida" />
+                            <newline />
+                            <field name="ie_st" />
+                            <newline />
+                            <field name="naturezaoperacao_id" colspan="4" />
+                        </page>
+                        <page string="Transporte">
+                            <field name="modalidade_frete" />
+                            <newline />
+                            <field name="transportadora_id" colspan="4" />
+                            <newline />
+                            <field name="veiculo_id" />
+                            <newline />
+                            <field name="reboque1_id" />
+                            <field name="reboque2_id" />
+                            <field name="reboque3_id" />
+                            <field name="reboque4_id" />
+                            <field name="reboque5_id" />
+<!--                            <group string="Imposto retidos sobre o transporte" colspan="4">
+                                <field name="vr_servico_frete" />
+                                <newline />
+                                <field name="bc_icms_frete" />
+                                <field name="al_icms_frete" />
+                                <field name="vr_icms_frete" />
+                                <newline />
+                                <field name="cfop_frete_id" />
+                                <newline />
+                                <field name="municipio_frete_id" />
+                            </group>-->
+                            <newline />
+                            <group string="Exportação" colspan="4">
+                                <field name="exportacao_estado_embarque_id" />
+                                <newline />
+                                <field name="exportacao_local_embarque" />
+                            </group>
+                            <group colspan="4">
+                                <separator string="Volumes" colspan="4" />
+                                <field name="volume_ids" colspan="4" nolabel="1">
+                                    <tree string="Volumes">
+                                        <field name="quantidade" />
+                                        <field name="especie" />
+                                        <field name="marca" />
+                                        <field name="numero" />
+                                        <field name="peso_liquido" />
+                                        <field name="peso_bruto" />
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+<!--                        <page string="Fatura/duplicatas">
+                            <field name="forma_pagamento" />
+                            <newline />
+                            <field name="payment_term_id" on_change="onchange_payment_term(payment_term_id, vr_nf, data_emissao)" />
+                        </page>-->
+                        <page string="Informações complementares">
+                            <field name="infcomplementar" colspan="4" />
+                            <field name="infadfisco" colspan="4" />
+                        </page>
+<!--                        <page string="Documentos referenciados">
+                            <field name="documentoreferenciado_ids" colspan="4" />
+                        </page>-->
+<!--                        <page string="Órgãos públicos">
+                            <field name="compra_nota_empenho" />
+                            <newline />
+                            <field name="compra_pedido" />
+                            <newline />
+                            <field name="compra_contrato" />
+                            <newline />
+                            <group string="Impostos retidos" col="4" colspan="4">
+                                <field name="vr_pis_retido" />
+                                <field name="vr_cofins_retido" />
+                                <newline />
+                                <field name="vr_csll" />
+                                <newline />
+                                <field name="bc_irrf" />
+                                <field name="vr_irrf" />
+                                <newline />
+                                <field name="bc_previdencia" />
+                                <field name="vr_previdencia" />
+                            </group>
+                        </page>-->
+                        <page string="Detalhes da NF-e">
+                            <field name="regime_tributario" />
+                            <field name="ambiente_nfe" />
+                            <field name="tipo_emissao_nfe" />
+                            <field name="finalidade_nfe" />
+                            <field name="chave" />
+                            <separator string="Cancelamento" colspan="4" />
+                            <field name="motivo_cancelamento" colspan="4" />
+                            <button name="action_cancelar" states="autorizada" string="Cancelar" type="object" />
+                            <separator string="Cartas de correção" colspan="4" />
+                            <field name="cce_ids" nolabel="1" colspan="4">
+                                <tree string="Cartas de correção" editable="top">
+                                    <field name="sequencia" required="1" />
+                                    <field name="correcao" required="1" />
+                                    <button name="gera_carta_correcao" type="object" string="Transmitir" icon="gtk-apply" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Comunicação e histórico">
+                            <separator string="Emails trocados e anotações" colspan="4" />
+                            <field name="mail_message_ids" colspan="4" nolabel="1" mode="tree" readonly="1">
+                                <tree string="Histórico">
+                                    <field name="date" string="Data" />
+                                    <field name="display_text" string="Texto"/>
+                                    <field name="email_to" invisible="1"/>
+                                    <field name="email_from" invisible="1"/>
+                                    <button
+                                        string="Reply" attrs="{'invisible': [('email_from', '=', False)]}"
+                                        name="%(mail.action_email_compose_message_wizard)d"
+                                        context="{'mail.compose.message.mode':'reply', 'message_id':active_id}"
+                                        icon="terp-mail-replied" type="action" />
+                                </tree>
+                            </field>
+                            <button string="Incluir anotação"
+                                name="incluir_anotacao"
+                                type="object"
+                                icon="terp-document-new" />
+                            <button string="Enviar e-mail"
+                                name="%(mail.action_email_compose_message_wizard)d"
+                                icon="terp-mail-message-new" type="action"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_ecf_recebido_tree">
+            <field name="name">sped.ecf.recebido.tree</field>
+            <field name="model">sped.documento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id" />
+                    <field name="serie" />
+                    <field name="numero"/>
+                    <field name="data_emissao"/>
+                    <field name="partner_id"/>
+                    <field name="vr_produtos" sum="vr_produtos" />
+                    <field name="vr_nf" sum="vr_nf" />
+                    <field name="situacao"/>
+                    <field name="state"/>
+                    <field name="ambiente_nfe"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_ecf_recebido_search">
+            <field name="name">sped.ecf.recebido.search</field>
+            <field name="model">sped.documento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Cupom Fiscal">
+                    <field name="company_id" />
+                    <field name="serie"/>
+                    <field name="numero"/>
+                    <field name="state" />
+                    <field name="situacao" string="Situação Fiscal" />
+                    <field name="partner_id" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_ecf_recebido_acao">
+            <field name="name">Cupom Fiscal</field>
+            <field name="domain">[('modelo','=','2D'),('emissao','=','1')]</field>
+            <field name="context">{'modelo': '2D', 'emissao': '1', 'default_modelo': '2D', 'default_emissao': '1','default_entrada_saida': '0'}</field>
+            <field name="res_model">sped.documento</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="sped_ecf_recebido_search" />
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_ecf_recebido_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_ecf_recebido_form"/>
+            <field name="act_window_id" ref="sped_ecf_recebido_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_ecf_recebido_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sped_ecf_recebido_tree"/>
+            <field name="act_window_id" ref="sped_ecf_recebido_acao"/>
+        </record>
+
+        <menuitem id="menu_sped_ecf_recebido" name="Cupom Fiscal - modelo 2D"
+            sequence="12"
+            parent="sped.menu_sped_fiscal_documento_recebido"
+            action="sped_ecf_recebido_acao" />
+
+    </data>
+</openerp>

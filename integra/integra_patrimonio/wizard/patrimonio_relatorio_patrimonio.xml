@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="patrimonio_relatorio_patrimonio" >
+            <field name="name">patrimonio.relatorio.patrimonio</field>
+            <field name="model">patrimonio.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório de Patrimônio">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="company_id" required="1" colspan="4" />
+                        <newline/>
+                        <field name="category_id" colspan="4" />
+                        <newline/>
+                        <field name="centrocusto_id" colspan="4" />
+                        <newline/>
+                        <field name="situacao" required="1" colspan="2"/>
+                        <newline/>
+                        <field name="nome" invisible="1" />
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_patrimonio" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="patrimonio_relatorio_patrimonio_acao">
+            <field name="name">Patrimônio</field>
+            <field name="res_model">patrimonio.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="patrimonio_relatorio_patrimonio_form_acao">
+            <field eval="10" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="patrimonio_relatorio_patrimonio"/>
+            <field name="act_window_id" ref="patrimonio_relatorio_patrimonio_acao"/>
+        </record>
+
+        <menuitem
+            action="patrimonio_relatorio_patrimonio_acao"
+            id="menu_patrimonio_relatorio_patrimonio"
+            name="Patrimônio"
+            parent="menu_patrimonio_relatorios"
+            sequence="8"  />
+
+    </data>
+</openerp>

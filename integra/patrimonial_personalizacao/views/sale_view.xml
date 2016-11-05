@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+    <record model="ir.ui.view" id="crm_sales_form_view_leads">
+        <field name="name">CRM - Leads Form</field>
+        <field name="model">crm.lead</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+        <field name="arch" type="xml">
+          <data>
+            <field name="section_id" position="after">
+                <button
+                    name="case_mark_lost"
+                    string="Converter para Perdido"
+                    help="Converter para perdido" icon="gtk-go-forward"
+                    type="action"
+                />
+            </field>
+          </data>
+        </field>
+    </record>
+
+    <record id="view_verts_sales_case_opportunities_filter" model="ir.ui.view">
+        <field name="name">CRM - Opportunities Search</field>
+        <field name="model">crm.lead</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="/search/group/filter[@string='Exp.Closing']" position="after">
+                 <filter string="Receita de vendas" context="{'group_by':'revenue_sales'}" />
+                 <filter string="Receita de locação" context="{'group_by':'revenue_location'}" />
+                 <filter string="Receita de serviços" context="{'group_by':'revenue_service'}" />
+                 <filter string="Receita total" context="{'group_by':'planned_revenue'}" />
+            </xpath>
+         </field>
+    </record>
+
+    <record model="ir.ui.view" id="salesman_crm_case_form_view_leads">
+        <field name="name">CRM - Leads Form</field>
+        <field name="model">crm.lead</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
+        <field name="arch" type="xml">
+            <data>
+                <field name="user_id" position="replace">
+                    <!--<field name="user_id" domain="[('salesman', '=', True)]"  />-->
+                    <field name="vendedor" readonly="1" />
+                </field>
+            </data>
+        </field>
+    </record>
+
+      <record id="view_verts_isb_users_form" model="ir.ui.view">
+            <field name="name">res.users.form</field>
+            <field name="model">res.users</field>
+            <field name="type">form</field>
+               <field name="inherit_id" ref="base.view_users_form"/>
+               <field name="arch" type="xml">
+                <field name ="active" position= "after">
+                    <field name ="salesman" />
+                    <field name ="mobile" />
+                </field>
+            </field>
+      </record>
+
+      <record model="ir.ui.view" id="verts_sale_reserve_sale_salesman_tree">
+        <field name="name">sale.reserve.salesman.tree</field>
+        <field name="model">sale.reserve.sale.salesman</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Sales Reserve">
+               <field name="user_id"/>
+               <field name="num_reserved_sales" />
+               <field name="num_available_sales"/>
+            </tree>
+        </field>
+       </record>
+
+      <record model="ir.ui.view" id="verts_sale_reserve_sale_salesman_form">
+        <field name="name">sale.reserve.salesman.form</field>
+        <field name="model">sale.reserve.sale.salesman</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+          <form string="Sales Reserve">
+               <field name="user_id" required="1" widget="selection" domain="[('salesman','=',True)]" />
+               <field name="num_reserved_sales" on_change="onchange_num_available_sales(num_reserved_sales)"/>
+               <field name="num_available_sales"/>
+            </form>
+        </field>
+      </record>
+
+      <record id="action_sale_reserve_sale_salesman" model="ir.actions.act_window">
+           <field name="name">Reserva de vendas para os vendedores</field>
+           <field name="type">ir.actions.act_window</field>
+           <field name="res_model">sale.reserve.sale.salesman</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="verts_sale_reserve_sale_salesman_tree"/>
+      </record>
+
+<!--      <menuitem action="action_sale_reserve_sale_salesman" id="menu_sale_reserve_sale_salesman" parent="base.menu_sales"/> -->
+
+    </data>
+</openerp>

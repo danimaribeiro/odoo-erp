@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_sped_ecd_tree" >
+            <field name="name">sped.sped.ecd.tree</field>
+            <field name="model">sped.sped.ecd</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="SPED ECD">
+                    <field name="company_id"/>
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                    <field name="data" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_sped_ecd_form" >
+            <field name="name">sped.sped.ecd.form</field>
+            <field name="model">sped.sped.ecd</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="SPED ECD">                    
+                    <group colspan="2">
+                        <field name="company_id" required="1" domain="[('cnpj_cpf', 'like', '/0001-')]" colspan="4" />
+                        <newline/>
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />                                  
+                        <newline/>
+                        <field name="finalidade" required="1" />             
+                        <field name="data" />
+                        <field name="numero_livro" required="1" />
+                        <newline/>
+                        <field name="nome_arquivo" colspan="4" invisible="1" />
+                        <newline/>
+                        <notebook colspan="4">
+                            <page string="Arquivo">
+                                <button icon="gtk-execute" string="Gerar arquivo" name="gera_arquivo" type="object" colspan="4" />
+                                <separator string="Arquivo SPED Fiscal" colspan="4" />
+                                <field name="arquivo" nolabel="1" filename="nome_arquivo" colspan="4"/>                                                                
+                            </page>                            
+                        </notebook>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_sped_ecd_acao">
+            <field name="name">SPED ECD</field>
+            <field name="res_model">sped.sped.ecd</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>           
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_sped_ecd_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_sped_ecd_form"/>
+            <field name="act_window_id" ref="sped_sped_ecd_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_sped_ecd_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sped_sped_ecd_tree"/>
+            <field name="act_window_id" ref="sped_sped_ecd_acao"/>
+        </record>
+
+        <menuitem action="sped_sped_ecd_acao"
+                  id="menu_sped_sped_ecd"
+                  name="SPED ECD"
+                  parent="menu_sped_ecd_arquivo"
+                  sequence="1" />
+    </data>
+</openerp>

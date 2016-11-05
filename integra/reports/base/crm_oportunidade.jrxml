@@ -1,0 +1,781 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="crm_oportunidade" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="171af509-aa99-44af-a781-d86011f36894">
+	<property name="ireport.zoom" value="1.7715610000000082"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="OPORTUNIDADE_ID" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USER_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+cl.name as oportunidade,
+f.name as cliente,
+fa.name as clinete_contato,
+cl.phone as cliente_telefone,
+cl.date_deadline as data_limite,
+cl.qtd_cameras as quantidade_cameras,
+cl.vr_unitario_camera as valor_unitario,
+cl.planned_revenue as valor_total,
+cl.qtd_adesoes as quantidade_adesoes,
+cl.vr_unitario_adesao as valor_unitario_adesaos,
+cl.vr_total_adesao as valor_total_adesaos,
+u.name as representante,
+rp.name as empresa,
+c.id
+
+from crm_lead cl
+left join res_users u on u.id = cl.user_id
+left join res_partner f on f.id = cl.partner_id
+left join res_partner_address fa on fa.id = cl.partner_address_id
+join res_company c on c.id = cl.company_id
+join res_partner rp on rp.id = c.partner_id
+left join res_company cc on cc.id = c.parent_id
+left join res_company ccc on ccc.id = cc.parent_id
+
+where
+cast(cl.id as varchar) like $P{OPORTUNIDADE_ID}
+and cast(u.id as varchar) like $P{USER_ID}
+and (
+    cast(c.id as varchar) like $P{COMPANY_ID}
+    or cast(c.parent_id as varchar) like $P{COMPANY_ID}
+    or cast(cc.parent_id as varchar) like $P{COMPANY_ID}
+)
+
+
+order by
+rp.name, u.name]]>
+	</queryString>
+	<field name="oportunidade" class="java.lang.String"/>
+	<field name="cliente" class="java.lang.String"/>
+	<field name="clinete_contato" class="java.lang.String"/>
+	<field name="cliente_telefone" class="java.lang.String"/>
+	<field name="data_limite" class="java.sql.Date"/>
+	<field name="quantidade_cameras" class="java.lang.Integer"/>
+	<field name="valor_unitario" class="java.lang.Double"/>
+	<field name="valor_total" class="java.lang.Double"/>
+	<field name="quantidade_adesoes" class="java.lang.Integer"/>
+	<field name="valor_unitario_adesaos" class="java.lang.Double"/>
+	<field name="valor_total_adesaos" class="java.lang.Double"/>
+	<field name="representante" class="java.lang.String"/>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="id" class="java.lang.Integer"/>
+	<variable name="quantidade_cameras_1" class="java.lang.Integer" resetType="Group" resetGroup="representante" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidade_cameras}]]></variableExpression>
+	</variable>
+	<variable name="valor_unitario_1" class="java.lang.Double" resetType="Group" resetGroup="representante" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_unitario}]]></variableExpression>
+	</variable>
+	<variable name="valor_total_1" class="java.lang.Double" resetType="Group" resetGroup="representante" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_total}]]></variableExpression>
+	</variable>
+	<variable name="quantidade_adesoes_1" class="java.lang.Integer" resetType="Group" resetGroup="representante" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidade_adesoes}]]></variableExpression>
+	</variable>
+	<variable name="valor_unitario_adesaos_1" class="java.lang.Double" resetType="Group" resetGroup="representante" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_unitario_adesaos}]]></variableExpression>
+	</variable>
+	<variable name="valor_total_adesaos_1" class="java.lang.Double" resetType="Group" resetGroup="representante" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_total_adesaos}]]></variableExpression>
+	</variable>
+	<variable name="quantidade_cameras_2" class="java.lang.Integer" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidade_cameras}]]></variableExpression>
+	</variable>
+	<variable name="valor_unitario_2" class="java.lang.Double" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_unitario}]]></variableExpression>
+	</variable>
+	<variable name="valor_total_2" class="java.lang.Double" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_total}]]></variableExpression>
+	</variable>
+	<variable name="quantidade_adesoes_2" class="java.lang.Integer" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidade_adesoes}]]></variableExpression>
+	</variable>
+	<variable name="valor_unitario_adesaos_2" class="java.lang.Double" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_unitario_adesaos}]]></variableExpression>
+	</variable>
+	<variable name="valor_total_adesaos_2" class="java.lang.Double" resetType="Group" resetGroup="empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_total_adesaos}]]></variableExpression>
+	</variable>
+	<variable name="quantidade_cameras_3" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidade_cameras}]]></variableExpression>
+	</variable>
+	<variable name="valor_unitario_3" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_unitario}]]></variableExpression>
+	</variable>
+	<variable name="valor_total_3" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_total}]]></variableExpression>
+	</variable>
+	<variable name="quantidade_adesoes_3" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidade_adesoes}]]></variableExpression>
+	</variable>
+	<variable name="valor_unitario_adesaos_3" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_unitario_adesaos}]]></variableExpression>
+	</variable>
+	<variable name="valor_total_adesaos_3" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_total_adesaos}]]></variableExpression>
+	</variable>
+	<group name="empresa" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{id}]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<staticText>
+					<reportElement x="0" y="0" width="35" height="14" uuid="8b2ca31b-49c7-4091-bdfd-bb5bf75e5a52"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Empresa:]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement isPrintRepeatedValues="false" x="35" y="0" width="767" height="14" printWhenGroupChanges="representante" uuid="270dc5f7-873b-4bc4-8f1b-8388d8913e91"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa}.toUpperCase()]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<staticText>
+					<reportElement x="0" y="0" width="391" height="12" uuid="9084de2a-6f5d-4a3c-a186-7e2cdce7b9ee"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Empresa:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="747" y="0" width="55" height="12" printWhenGroupChanges="representante" uuid="93d40b29-4b94-4c7d-8c56-441f06ef7d42"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_total_2} + $V{valor_total_adesaos_2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="502" y="0" width="45" height="12" printWhenGroupChanges="representante" uuid="bf691de6-a8e6-4313-8d11-6d6ac87d54df"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_unitario_2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="547" y="0" width="55" height="12" printWhenGroupChanges="representante" uuid="e239c85f-0a0b-4de6-860b-b9127491fa61"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_total_2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="391" y="0" width="111" height="12" printWhenGroupChanges="representante" uuid="4cbe217c-eddb-48d9-aa73-25e52beab4fd"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{quantidade_cameras_2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="647" y="0" width="45" height="12" printWhenGroupChanges="representante" uuid="923096fb-6d46-4192-a0bc-7dcab33fbcc8"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_unitario_2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="602" y="0" width="45" height="12" printWhenGroupChanges="representante" uuid="f679df72-caf8-4627-a52c-886987d9cd5e"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{quantidade_adesoes_2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="692" y="0" width="55" height="12" printWhenGroupChanges="representante" uuid="f9c65444-9b5b-451e-83af-8d00d288fa9a"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_total_adesaos_2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="representante">
+		<groupExpression><![CDATA[$F{representante}]]></groupExpression>
+		<groupHeader>
+			<band height="39">
+				<staticText>
+					<reportElement x="339" y="14" width="52" height="20" uuid="a5dd3867-149c-4eef-9ec7-726c4d764e09"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Telefone]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="112" y="14" width="148" height="20" uuid="593d9c79-0bdc-4c9e-8647-01c95e8d137f"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cliente]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="260" y="14" width="79" height="20" uuid="e3b0709d-9291-434e-9b97-d860d19ba2ed"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Contato]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="14" width="112" height="20" uuid="eca923cd-0b41-41bb-82fd-a0aad9856489"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Oportunidade]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="547" y="14" width="55" height="20" uuid="fc5e078f-4537-4629-ac48-aa06d66a15ef"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Cameras]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="457" y="14" width="45" height="20" uuid="0db94490-02a1-43ec-9a9b-6fd5cf63044f"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Qtd. Cameras]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="502" y="14" width="45" height="20" uuid="07addf0c-486a-4500-94e9-ef4c607a1d07"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VL. Unit. Cameras ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="747" y="14" width="55" height="20" uuid="aed7be6c-9de4-48d1-9bf7-42d98e424a2f"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Oportunidade]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="602" y="14" width="45" height="20" uuid="8a15d027-c6f2-4530-ad73-76d82afe4cec"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Qtd. Adesao]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="647" y="14" width="45" height="20" uuid="6ef7aa79-706a-42ba-ac60-90a8b42e4d5c"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Vl. Unit. Adesao]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="692" y="14" width="55" height="20" uuid="0b181352-9711-44e0-8751-b616fb1bc9f4"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Adesao]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="391" y="14" width="66" height="20" uuid="b3b8c244-cb8a-4c4f-8e67-7bfd6067ce4d"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Dt. Fechamento Esperado]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement isPrintRepeatedValues="false" x="54" y="0" width="748" height="14" printWhenGroupChanges="representante" uuid="d4f22f3f-573a-436a-b308-6c6cae8f874a"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{representante}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="54" height="14" uuid="c0de6fa4-f462-4dd6-b681-68c869dfe8bc"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Representante:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="16">
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="647" y="0" width="45" height="12" printWhenGroupChanges="representante" uuid="fad8d3f2-ad3a-4871-83ff-40c6620d2954"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_unitario_adesaos_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="602" y="0" width="45" height="12" printWhenGroupChanges="representante" uuid="907397f6-7305-49cb-afd1-5ada5fd24aa3"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{quantidade_adesoes_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="747" y="0" width="55" height="12" printWhenGroupChanges="representante" uuid="0a8fef68-5e7d-450f-8123-71bfba5acb2c"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_total_1} + $V{valor_total_adesaos_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="391" y="0" width="111" height="12" printWhenGroupChanges="representante" uuid="896739c9-eb64-467a-bc92-d7fe18e4fcbf"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{quantidade_cameras_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="502" y="0" width="45" height="12" printWhenGroupChanges="representante" uuid="8a85a878-2a54-4e2f-8933-696c4e2859f9"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_unitario_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="547" y="0" width="55" height="12" printWhenGroupChanges="representante" uuid="d1fc7c67-21ad-4b42-886d-04dfa4f4a1f5"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_total_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="692" y="0" width="55" height="12" printWhenGroupChanges="representante" uuid="8c3cc6d1-27b3-4143-a2b0-24a100e74400"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_total_adesaos_1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="391" height="12" uuid="34e64853-8ba0-47ac-8f1a-14102bb2a2f5"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Totais Oportunidades:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="69">
+			<subreport>
+				<reportElement x="0" y="0" width="802" height="60" uuid="fa59adcf-8739-42a4-b859-999014682955"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="COMPANY_ID">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cabecalho_empresa_paisagem.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="710" y="29" width="80" height="12" uuid="c2de7a98-adc7-46d3-b691-ade274893159"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="790" y="29" width="24" height="12" uuid="7ef7eafe-60a7-4e8c-af96-d6897c647453"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="260" y="0" width="79" height="12" printWhenGroupChanges="representante" uuid="3c6c1987-0cfd-485e-a2be-79b0ab8087d8"/>
+				<box>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clinete_contato}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="339" y="0" width="52" height="12" printWhenGroupChanges="representante" uuid="95552ae5-344f-4485-9a14-106c47b38185"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente_telefone}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="457" y="0" width="45" height="12" printWhenGroupChanges="representante" uuid="f99e12bb-6058-4508-881a-d444ec031ba4"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantidade_cameras}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="502" y="0" width="45" height="12" printWhenGroupChanges="representante" uuid="65c09659-4026-4b7f-bb60-1c0df2462601"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_unitario}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="547" y="0" width="55" height="12" printWhenGroupChanges="representante" uuid="64bfedd6-f2a4-430f-baad-cbf1e4f0b50a"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_total}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="602" y="0" width="45" height="12" printWhenGroupChanges="representante" uuid="6866cf68-b400-4078-ae39-a9ef36ec4e44"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_unitario_adesaos}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="647" y="0" width="45" height="12" printWhenGroupChanges="representante" uuid="bf002d6b-c9ac-447c-b945-3ba57942e0b8"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_unitario_adesaos}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="692" y="0" width="55" height="12" printWhenGroupChanges="representante" uuid="69b69f71-b509-4051-b7e1-74bac80ba00d"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_total_adesaos}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="747" y="0" width="55" height="12" printWhenGroupChanges="representante" uuid="537f3be0-4f41-44d2-93ac-e37765d3a634"/>
+				<box rightPadding="5">
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_total} + $F{valor_total_adesaos}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="391" y="0" width="66" height="12" printWhenGroupChanges="representante" uuid="779a104b-d74a-4916-927f-4fdc954aa8c4"/>
+				<box rightPadding="0">
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_limite}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="112" y="0" width="148" height="12" printWhenGroupChanges="representante" uuid="ac1cecd2-87a8-4b2a-a40e-ba206baef831"/>
+				<box>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="0" y="0" width="112" height="12" printWhenGroupChanges="representante" uuid="8fe03cf6-ffa7-4846-92b7-d4f4cbf9bd0c"/>
+				<box>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{oportunidade}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="12">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="391" y="0" width="111" height="12" printWhenGroupChanges="representante" uuid="3973e53a-f5c9-45fc-9101-f62fc7cb2fd2"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{quantidade_cameras_3}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="747" y="0" width="55" height="12" printWhenGroupChanges="representante" uuid="20cbe8d0-a1e5-47bd-a3a6-62b5c6b937b2"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_total_3} + $V{valor_total_adesaos_3}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="647" y="0" width="45" height="12" printWhenGroupChanges="representante" uuid="c7ec2f4a-f38c-4fed-bd12-2abe0d629b7a"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_unitario_3}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="391" height="12" uuid="6a4220a5-ee0f-4c3d-a5e5-cbc5cdf0848b"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Geral:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="602" y="0" width="45" height="12" printWhenGroupChanges="representante" uuid="d3aa2018-ac93-438d-9048-e7ab3f28f0bd"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{quantidade_adesoes_3}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="547" y="0" width="55" height="12" printWhenGroupChanges="representante" uuid="4cd7fbbf-5e8c-4fda-8614-54ffb9708a98"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_total_3}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="692" y="0" width="55" height="12" printWhenGroupChanges="representante" uuid="c968b06c-715c-4df7-b1a6-739ad940289f"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_total_adesaos_3}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="502" y="0" width="45" height="12" printWhenGroupChanges="representante" uuid="0fd6e3e1-f903-4c19-a307-5d4dd93ac233"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_unitario_3}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

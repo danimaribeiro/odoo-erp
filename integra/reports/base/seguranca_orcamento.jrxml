@@ -1,0 +1,2000 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="seguranca_orcamento" language="groovy" pageWidth="595" pageHeight="842" columnWidth="539" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28" uuid="44bb34f0-04b2-40f6-a6af-9ef86bdcd58c">
+	<property name="ireport.zoom" value="1.8150000000000028"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="MOSTRA_MARGEM_CONTRIBUICAO" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["/home/ari/integra/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="OS_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+    o.id as os_id,
+    c.name as empresa,
+    pc.razao_social as empresa_razao_social,
+    pc.cnpj_cpf as empresa_cnpj,
+    coalesce(pc.endereco, '') || ', ' || pc.numero ||
+    case
+        when (pc.complemento is not null) and (trim(pc.complemento) != '') then ' - ' || pc.complemento
+        else ''
+    end ||
+    case
+        when (pc.bairro is not null) and (trim(pc.bairro) != '') then ' - ' || pc.bairro
+        else ''
+    end ||
+    ' - ' || pc.cidade || '-' || pc.estado || ' - ' || pc.cep
+    as empresa_endereco,
+    coalesce(pc.fone, '') as empresa_fone,
+    coalesce(pc.celular, '') as empresa_celular,
+    coalesce(pc.email, '') as empresa_email,
+    pc.cidade || '-' || pc.estado || ', ' || data_cabecalho(o.date_order) as data_cabecalho,
+    cast(c.photo as varchar) as logo,
+
+    coalesce(instalacao.name, coalesce(p.razao_social, p.name)) as cliente,
+    coalesce(p.cnpj_cpf, '') as cliente_cnpj,
+    coalesce(instalacao.endereco, '') || ', ' || coalesce(instalacao.numero, '') ||
+    case
+        when (instalacao.complemento is not null) and (trim(instalacao.complemento) != '') then ' - ' || instalacao.complemento
+        else ''
+    end ||
+    case
+        when (instalacao.bairro is not null) and (trim(instalacao.bairro) != '') then ' - ' || instalacao.bairro
+        else ''
+    end ||
+    ' - ' || coalesce(instalacao.cidade, '') || '-' || coalesce(instalacao.estado, '') || ' - ' || coalesce(instalacao.cep, '')
+    as cliente_endereco,
+    coalesce(p.fone, '') as cliente_fone,
+    coalesce(p.celular, '') as cliente_celular,
+    coalesce(p.email, '') as cliente_email,
+    l.name as lista_preco,
+    case
+        when l.meses_retorno_locacao is not null and l.meses_retorno_locacao > 0 then True
+        else False
+    end as eh_locacao,
+    case
+        when l.meses_retorno_locacao is not null and l.meses_retorno_locacao > 0 then False
+        else True
+    end as eh_venda,
+    case
+        when (select count(*) from sale_etapa_historico seh join sale_etapa se on se.id = seh.etapa_id where seh.sale_id = o.id and se.tipo = 'O') > 0 then True
+        when etapa.tipo = 'O' then True
+        else False
+    end as eh_os,
+    case
+        when (select count(*) from sale_etapa_historico seh join sale_etapa se on se.id = seh.etapa_id where seh.sale_id = o.id and se.tipo = 'V') > 0 then True
+        when etapa.tipo = 'V' then True
+        else False
+    end as tem_orcamento,
+    coalesce(l.ignora_impostos, False) as ignora_impostos,
+    coalesce(tos.nome, '') as tipo_os,
+    coalesce(v.name, '') as vendedor,
+    coalesce(t.name, '') as tecnico,
+    o.name as os_numero,
+    o.date_order as os_data,
+    o.create_date at time zone 'UTC' at time zone 'America/Sao_Paulo' as data_abertura,
+    o.dt_validade as data_validade,
+
+    coalesce(o.vr_total_produtos, 0) as vr_total_produtos,
+    coalesce(o.vr_total_produtos_sem_desconto, 0) as vr_total_produtos_sem_desconto,
+    coalesce(o.vr_total_servicos, 0) as vr_total_servicos,
+    coalesce(o.vr_total_servicos_sem_desconto, 0) as vr_total_servicos_sem_desconto,
+    coalesce(o.vr_total_mensalidades, 0) as vr_total_mensalidades,
+    coalesce(o.vr_total_mensalidades_sem_desconto, 0) as vr_total_mensalidades_sem_desconto,
+    coalesce(o.vr_mensal_locacao, 0) as vr_mensal_locacao,
+    coalesce(o.vr_mensal_total, 0) as vr_mensal_total,
+    coalesce(o.vr_simples_produtos, 0) as vr_simples_produtos,
+    coalesce(o.vr_icms_proprio_produtos, 0) as vr_icms_proprio_produtos,
+    coalesce(o.vr_diferencial_aliquota_produtos, 0) as vr_diferencial_aliquota_produtos,
+    coalesce(o.vr_ipi_produtos, 0) as vr_ipi_produtos,
+    coalesce(o.vr_iss_produtos, 0) as vr_iss_produtos,
+    coalesce(o.vr_pis_proprio_produtos, 0) as vr_pis_proprio_produtos,
+    coalesce(o.vr_cofins_proprio_produtos, 0) as vr_cofins_proprio_produtos,
+    coalesce(o.vr_csll_produtos, 0) as vr_csll_produtos,
+    coalesce(o.vr_irrf_produtos, 0) as vr_irrf_produtos,
+    coalesce(o.total_imposto_produtos, 0) as total_imposto_produtos,
+    coalesce(o.vr_produto_base_produtos, 0) as vr_produto_base_produtos,
+    coalesce(o.vr_comissao_produtos, 0) as vr_comissao_produtos,
+    coalesce(o.vr_margem_contribuicao_produtos, 0) as vr_margem_contribuicao_produtos,
+    coalesce(o.al_margem_contribuicao_produtos, 0) as al_margem_contribuicao_produtos,
+    coalesce(o.vr_simples_servicos, 0) as vr_simples_servicos,
+    coalesce(o.vr_icms_proprio_servicos, 0) as vr_icms_proprio_servicos,
+    coalesce(o.vr_diferencial_aliquota_servicos, 0) as vr_diferencial_aliquota_servicos,
+    coalesce(o.vr_ipi_servicos, 0) as vr_ipi_servicos,
+    coalesce(o.vr_iss_servicos, 0) as vr_iss_servicos,
+    coalesce(o.vr_pis_proprio_servicos, 0) as vr_pis_proprio_servicos,
+    coalesce(o.vr_cofins_proprio_servicos, 0) as vr_cofins_proprio_servicos,
+    coalesce(o.vr_csll_servicos, 0) as vr_csll_servicos,
+    coalesce(o.vr_irrf_servicos, 0) as vr_irrf_servicos,
+    coalesce(o.total_imposto_servicos, 0) as total_imposto_servicos,
+    coalesce(o.vr_produto_base_servicos, 0) as vr_produto_base_servicos,
+    coalesce(o.vr_comissao_servicos, 0) as vr_comissao_servicos,
+    coalesce(o.vr_margem_contribuicao_servicos, 0) as vr_margem_contribuicao_servicos,
+    coalesce(o.al_margem_contribuicao_servicos, 0) as al_margem_contribuicao_servicos,
+    coalesce(o.vr_simples_mensalidades, 0) as vr_simples_mensalidades,
+    coalesce(o.vr_icms_proprio_mensalidades, 0) as vr_icms_proprio_mensalidades,
+    coalesce(o.vr_diferencial_aliquota_mensalidades, 0) as vr_diferencial_aliquota_mensalidades,
+    coalesce(o.vr_ipi_mensalidades, 0) as vr_ipi_mensalidades,
+    coalesce(o.vr_iss_mensalidades, 0) as vr_iss_mensalidades,
+    coalesce(o.vr_pis_proprio_mensalidades, 0) as vr_pis_proprio_mensalidades,
+    coalesce(o.vr_cofins_proprio_mensalidades, 0) as vr_cofins_proprio_mensalidades,
+    coalesce(o.vr_csll_mensalidades, 0) as vr_csll_mensalidades,
+    coalesce(o.vr_irrf_mensalidades, 0) as vr_irrf_mensalidades,
+    coalesce(o.total_imposto_mensalidades, 0) as total_imposto_mensalidades,
+    coalesce(o.vr_produto_base_mensalidades, 0) as vr_produto_base_mensalidades,
+    coalesce(o.vr_comissao_mensalidades, 0) as vr_comissao_mensalidades,
+    coalesce(o.vr_margem_contribuicao_mensalidades, 0) as vr_margem_contribuicao_mensalidades,
+    coalesce(o.al_margem_contribuicao_mensalidades, 0) as al_margem_contribuicao_mensalidades,
+    coalesce(o.meses_retorno_locacao, 0) as meses_retorno_locacao,
+    coalesce(o.al_desconto_rateio, 0) as al_desconto_rateio,
+    coalesce(o.vr_desconto_rateio, 0) as vr_desconto_rateio,
+    coalesce(o.al_desconto_rateio_servicos, 0) as al_desconto_rateio_servicos,
+    coalesce(o.vr_desconto_rateio_servicos, 0) as vr_desconto_rateio_servicos,
+    coalesce(o.al_desconto_rateio_mensalidades, 0) as al_desconto_rateio_mensalidades,
+    coalesce(o.vr_desconto_rateio_mensalidades, 0) as vr_desconto_rateio_mensalidades,
+    o.regime_tributario,
+    coalesce(o.amount_total, 0) as vr_total,
+    coalesce(o.meses_retorno_locacao, 0) as meses_retorno_locacao,
+    coalesce(o.vr_mensal_locacao, 0) as vr_mensal_locacao,
+    coalesce(o.vr_mensal_total, 0) as vr_mensal_total,
+
+    coalesce(fp.nome, '') as forma_pagamento,
+    coalesce(cp.name, '') as condicao_pagamento,
+
+    coalesce(o.defeito_obs, '') as defeito_obs
+
+
+from
+    sale_order o
+    join res_company c on c.id = o.company_id
+    join res_partner pc on pc.id = c.partner_id
+    join res_partner p on p.id = o.partner_id
+    join product_pricelist l on l.id = o.pricelist_id
+    left join res_partner_address instalacao on instalacao.id = o.partner_shipping_id
+
+    left join sale_tipo_os tos on tos.id = o.tipo_os_id
+    left join res_users v on v.id = o.user_id
+    left join res_users t on t.id = o.tecnico_id
+    left join finan_formapagamento fp on fp.id = o.finan_formapagamento_id
+    left join account_payment_term cp on cp.id = o.payment_term
+    left join sale_etapa etapa on etapa.id = o.etapa_id
+
+where
+    o.id = $P{OS_ID}]]>
+	</queryString>
+	<field name="os_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[OS]]></fieldDescription>
+	</field>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="empresa_razao_social" class="java.lang.String"/>
+	<field name="empresa_cnpj" class="java.lang.String"/>
+	<field name="empresa_endereco" class="java.lang.String"/>
+	<field name="empresa_fone" class="java.lang.String"/>
+	<field name="empresa_celular" class="java.lang.String"/>
+	<field name="empresa_email" class="java.lang.String"/>
+	<field name="data_cabecalho" class="java.lang.String"/>
+	<field name="logo" class="java.lang.String">
+		<fieldDescription><![CDATA[Logo]]></fieldDescription>
+	</field>
+	<field name="cliente" class="java.lang.String"/>
+	<field name="cliente_cnpj" class="java.lang.String"/>
+	<field name="cliente_endereco" class="java.lang.String"/>
+	<field name="cliente_fone" class="java.lang.String"/>
+	<field name="cliente_celular" class="java.lang.String"/>
+	<field name="cliente_email" class="java.lang.String"/>
+	<field name="lista_preco" class="java.lang.String"/>
+	<field name="eh_locacao" class="java.lang.Boolean"/>
+	<field name="eh_venda" class="java.lang.Boolean"/>
+	<field name="eh_os" class="java.lang.Boolean"/>
+	<field name="tem_orcamento" class="java.lang.Boolean"/>
+	<field name="ignora_impostos" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Ignora impostos da venda?]]></fieldDescription>
+	</field>
+	<field name="tipo_os" class="java.lang.String"/>
+	<field name="vendedor" class="java.lang.String"/>
+	<field name="tecnico" class="java.lang.String"/>
+	<field name="os_numero" class="java.lang.String"/>
+	<field name="os_data" class="java.sql.Date"/>
+	<field name="data_abertura" class="java.sql.Timestamp"/>
+	<field name="data_validade" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de validade]]></fieldDescription>
+	</field>
+	<field name="vr_total_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total dos produtos]]></fieldDescription>
+	</field>
+	<field name="vr_total_produtos_sem_desconto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total dos produtos sem desconto]]></fieldDescription>
+	</field>
+	<field name="vr_total_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total dos serviços]]></fieldDescription>
+	</field>
+	<field name="vr_total_servicos_sem_desconto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total dos serviços sem desconto]]></fieldDescription>
+	</field>
+	<field name="vr_total_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total das mensalidades]]></fieldDescription>
+	</field>
+	<field name="vr_total_mensalidades_sem_desconto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total das mensalidades sem desconto]]></fieldDescription>
+	</field>
+	<field name="vr_mensal_locacao" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Mensalidade locação]]></fieldDescription>
+	</field>
+	<field name="vr_mensal_total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Mensalidade total]]></fieldDescription>
+	</field>
+	<field name="vr_simples_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do SIMPLES]]></fieldDescription>
+	</field>
+	<field name="vr_icms_proprio_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ICMS próprio]]></fieldDescription>
+	</field>
+	<field name="vr_diferencial_aliquota_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do DIFA]]></fieldDescription>
+	</field>
+	<field name="vr_ipi_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do IPI]]></fieldDescription>
+	</field>
+	<field name="vr_iss_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ISS]]></fieldDescription>
+	</field>
+	<field name="vr_pis_proprio_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do PIS]]></fieldDescription>
+	</field>
+	<field name="vr_cofins_proprio_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do COFINS]]></fieldDescription>
+	</field>
+	<field name="vr_csll_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da CSLL]]></fieldDescription>
+	</field>
+	<field name="vr_irrf_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do IRPJ]]></fieldDescription>
+	</field>
+	<field name="total_imposto_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total do imposto]]></fieldDescription>
+	</field>
+	<field name="vr_produto_base_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor base do produto/serviço original]]></fieldDescription>
+	</field>
+	<field name="vr_comissao_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da comissão]]></fieldDescription>
+	</field>
+	<field name="vr_margem_contribuicao_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Margem de contribuição]]></fieldDescription>
+	</field>
+	<field name="al_margem_contribuicao_produtos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Margem de contribuição]]></fieldDescription>
+	</field>
+	<field name="vr_simples_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do SIMPLES]]></fieldDescription>
+	</field>
+	<field name="vr_icms_proprio_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ICMS próprio]]></fieldDescription>
+	</field>
+	<field name="vr_diferencial_aliquota_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do DIFA]]></fieldDescription>
+	</field>
+	<field name="vr_ipi_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do IPI]]></fieldDescription>
+	</field>
+	<field name="vr_iss_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ISS]]></fieldDescription>
+	</field>
+	<field name="vr_pis_proprio_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do PIS]]></fieldDescription>
+	</field>
+	<field name="vr_cofins_proprio_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do COFINS]]></fieldDescription>
+	</field>
+	<field name="vr_csll_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da CSLL]]></fieldDescription>
+	</field>
+	<field name="vr_irrf_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do IRPJ]]></fieldDescription>
+	</field>
+	<field name="total_imposto_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total do imposto]]></fieldDescription>
+	</field>
+	<field name="vr_produto_base_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor base do produto/serviço original]]></fieldDescription>
+	</field>
+	<field name="vr_comissao_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da comissão]]></fieldDescription>
+	</field>
+	<field name="vr_margem_contribuicao_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Margem de contribuição]]></fieldDescription>
+	</field>
+	<field name="al_margem_contribuicao_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Margem de contribuição]]></fieldDescription>
+	</field>
+	<field name="vr_simples_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do SIMPLES]]></fieldDescription>
+	</field>
+	<field name="vr_icms_proprio_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ICMS próprio]]></fieldDescription>
+	</field>
+	<field name="vr_diferencial_aliquota_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do DIFA]]></fieldDescription>
+	</field>
+	<field name="vr_ipi_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do IPI]]></fieldDescription>
+	</field>
+	<field name="vr_iss_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ISS]]></fieldDescription>
+	</field>
+	<field name="vr_pis_proprio_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do PIS]]></fieldDescription>
+	</field>
+	<field name="vr_cofins_proprio_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do COFINS]]></fieldDescription>
+	</field>
+	<field name="vr_csll_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da CSLL]]></fieldDescription>
+	</field>
+	<field name="vr_irrf_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do IRPJ]]></fieldDescription>
+	</field>
+	<field name="total_imposto_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Total do imposto]]></fieldDescription>
+	</field>
+	<field name="vr_produto_base_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor base do produto/serviço original]]></fieldDescription>
+	</field>
+	<field name="vr_comissao_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da comissão]]></fieldDescription>
+	</field>
+	<field name="vr_margem_contribuicao_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Margem de contribuição]]></fieldDescription>
+	</field>
+	<field name="al_margem_contribuicao_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Margem de contribuição]]></fieldDescription>
+	</field>
+	<field name="meses_retorno_locacao" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Meses para retorno]]></fieldDescription>
+	</field>
+	<field name="al_desconto_rateio" class="java.math.BigDecimal"/>
+	<field name="vr_desconto_rateio" class="java.math.BigDecimal"/>
+	<field name="al_desconto_rateio_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Percentual de desconto]]></fieldDescription>
+	</field>
+	<field name="vr_desconto_rateio_servicos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor desconto]]></fieldDescription>
+	</field>
+	<field name="al_desconto_rateio_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Percentual de desconto]]></fieldDescription>
+	</field>
+	<field name="vr_desconto_rateio_mensalidades" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor desconto]]></fieldDescription>
+	</field>
+	<field name="regime_tributario" class="java.lang.String">
+		<fieldDescription><![CDATA[Regime tributário]]></fieldDescription>
+	</field>
+	<field name="vr_total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Vlr. Unitário de Custo]]></fieldDescription>
+	</field>
+	<field name="forma_pagamento" class="java.lang.String">
+		<fieldDescription><![CDATA[Forma de pagamento]]></fieldDescription>
+	</field>
+	<field name="condicao_pagamento" class="java.lang.String"/>
+	<field name="defeito_obs" class="java.lang.String">
+		<fieldDescription><![CDATA[Defeito]]></fieldDescription>
+	</field>
+	<group name="Orçamento">
+		<groupExpression><![CDATA[$F{os_numero}]]></groupExpression>
+		<groupFooter>
+			<band height="30">
+				<printWhenExpression><![CDATA[(! $F{eh_os}) && (! $F{eh_locacao})]]></printWhenExpression>
+				<textField pattern="#,##0.00" isBlankWhenNull="false">
+					<reportElement mode="Opaque" x="443" y="0" width="96" height="20" forecolor="#000000" backcolor="#CCCCCC" uuid="eef83933-c6e6-43af-937e-88205b7b14fb"/>
+					<box rightPadding="5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVu Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_total}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="443" height="20" forecolor="#000000" backcolor="#CCCCCC" uuid="f9442daa-9bd7-42d4-bb91-b65a52ad78ab"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVu Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Total geral]]></text>
+				</staticText>
+			</band>
+			<band height="82">
+				<printWhenExpression><![CDATA[$F{eh_locacao} &&  (! $F{eh_os})]]></printWhenExpression>
+				<staticText>
+					<reportElement x="0" y="42" width="280" height="12" uuid="be1486b7-a622-4fdb-bed9-7aa29a119dda">
+						<printWhenExpression><![CDATA[$P{MOSTRA_MARGEM_CONTRIBUICAO}]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Meses para retorno em locação/comodato]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="54" width="443" height="20" forecolor="#000000" backcolor="#CCCCCC" uuid="11f3e394-531c-41b1-badc-86da6dfa87b9"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVu Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Total mensal]]></text>
+				</staticText>
+				<textField pattern="#,##0.00" isBlankWhenNull="false">
+					<reportElement mode="Opaque" x="443" y="54" width="96" height="20" forecolor="#000000" backcolor="#CCCCCC" uuid="9de96764-2b78-4695-a2a7-33198dd06a2b"/>
+					<box rightPadding="5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVu Sans" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_mensal_total}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="443" y="30" width="96" height="12" uuid="5ea94b90-bdbd-42cc-bc3f-33354b4a1f55"/>
+					<box rightPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_total_mensalidades}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="10" width="539" height="20" backcolor="#CCCCCC" uuid="e4b3fb6a-37c8-4f35-a793-8ac0898a1d84"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cobrança Mensal]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="280" y="30" width="163" height="12" uuid="53b2c0f0-e6d4-4eea-8125-b88194c2cadd"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Valor mensal]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="280" y="42" width="163" height="12" uuid="9501238d-60ee-42e1-a389-7f4ded5c94f2"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Valor mensal de locação/comodato]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement x="443" y="42" width="96" height="12" uuid="75e1c74b-482f-49e5-a413-2fb73feeab5b"/>
+					<box rightPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_mensal_locacao}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="202" y="42" width="46" height="12" uuid="a5010936-8765-4a05-b584-79d1fd56e0a5">
+						<printWhenExpression><![CDATA[$P{MOSTRA_MARGEM_CONTRIBUICAO}]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{meses_retorno_locacao}]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="42">
+				<printWhenExpression><![CDATA[(! $F{eh_os}) && $F{tem_orcamento}]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" pattern="">
+					<reportElement x="0" y="16" width="539" height="14" uuid="cd1b184e-a7e8-4f7c-a785-db3a79ef24fe"/>
+					<textElement textAlignment="Justified" verticalAlignment="Top">
+						<font fontName="DejaVu Sans" size="9"/>
+						<paragraph firstLineIndent="10" leftIndent="5" rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{defeito_obs}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement mode="Opaque" x="0" y="0" width="539" height="16" backcolor="#CCCCCC" uuid="14c35737-62ac-4556-ae13-a0646eeca976"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["OBSERVAÇÕES"]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="78">
+				<printWhenExpression><![CDATA[$F{eh_venda} && (! $F{eh_os})]]></printWhenExpression>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="539" height="20" backcolor="#CCCCCC" uuid="6cfa681b-77ba-41ac-8f02-ed5c622f2b2f"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Condições de Pagamento]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="20" width="60" height="14" uuid="5e42f251-9656-40a8-91b1-7e23763993c6"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Condições:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="60" y="20" width="218" height="14" uuid="f36f7f41-6aad-4e93-8689-e238fc586362"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{condicao_pagamento}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="281" y="20" width="40" height="14" uuid="7d8b8760-89a6-47fc-9d8a-197330005396"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Forma:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="321" y="20" width="218" height="14" uuid="d74f3962-ffa4-400b-ba0d-a9c33cb48260"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{forma_pagamento}]]></textFieldExpression>
+				</textField>
+				<subreport>
+					<reportElement x="0" y="34" width="539" height="36" isRemoveLineWhenBlank="true" uuid="7d30949f-fa36-4918-89e5-09f84543670e"/>
+					<subreportParameter name="OS_ID">
+						<subreportParameterExpression><![CDATA[$F{os_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "seguranca_orcamento_parcela.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			<band height="28">
+				<printWhenExpression><![CDATA[($P{MOSTRA_MARGEM_CONTRIBUICAO} == true)]]></printWhenExpression>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="14" width="268" height="14" backcolor="#CCCCCC" uuid="2d9ece82-d029-4afd-9f8b-23610c261d46"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Produtos]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="267" y="14" width="272" height="14" backcolor="#CCCCCC" uuid="af9d4219-773a-4713-805c-6d585d1f5c90"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Serviços]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="539" height="14" backcolor="#CCCCCC" uuid="dac0dab7-7c8a-46c5-a1b1-44ec03a9f8f6"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Margem de Contribuição]]></text>
+				</staticText>
+			</band>
+			<band height="28">
+				<printWhenExpression><![CDATA[($P{MOSTRA_MARGEM_CONTRIBUICAO} == true)]]></printWhenExpression>
+				<staticText>
+					<reportElement x="20" y="0" width="163" height="14" uuid="b2e3d172-c858-44fc-84df-bb71ec326441"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Total sem desconto]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="0" width="65" height="14" uuid="e8906c00-9a91-4a2b-a057-e361dff13701"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_total_produtos_sem_desconto}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="20" y="14" width="120" height="14" uuid="924339ea-a257-4d48-88a7-b720a2a00ddb"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) Desconto]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="140" y="14" width="35" height="14" uuid="c7910072-3453-4c1c-b153-63add93ba703"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{al_desconto_rateio}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="175" y="14" width="8" height="14" uuid="2b62e86b-cfd7-4863-a7bc-efec73ad8e7c"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[%]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="14" width="65" height="14" uuid="920e4c3a-636d-4798-b9e7-d210179b89d4"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_desconto_rateio}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="14" width="65" height="14" uuid="75e6a5cd-d878-4673-bf1e-59e5c79bac3d"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_desconto_rateio_servicos}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="0" width="65" height="14" uuid="c2dcf222-3c4b-46f3-90ae-da16402df217"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_total_servicos_sem_desconto}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="446" y="14" width="8" height="14" uuid="b7ee79aa-9aa6-4058-8bd9-1df12db44ff6"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[%]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="411" y="14" width="35" height="14" uuid="03c9694d-2d3b-4e02-980e-91c34a4465ae"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{al_desconto_rateio_servicos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="291" y="14" width="120" height="14" uuid="80497255-2931-446f-a94b-70e5a8dd5082"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) Desconto]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="291" y="0" width="163" height="14" uuid="422f7478-7629-4fc3-ab00-30651ce5aeef"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Total sem desconto]]></text>
+				</staticText>
+			</band>
+			<band height="14">
+				<printWhenExpression><![CDATA[($P{MOSTRA_MARGEM_CONTRIBUICAO} == true)]]></printWhenExpression>
+				<staticText>
+					<reportElement x="20" y="0" width="163" height="14" uuid="e7625e59-cd66-41c4-bda9-ea8091dc6782"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Total de produtos]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="0" width="65" height="14" uuid="35721fa9-fe7c-444f-b618-4cae799a1b81"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_total_produtos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="291" y="0" width="163" height="14" uuid="94a49926-5983-4fb1-8836-92519812309f"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Total de serviços]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="0" width="65" height="14" uuid="1a2885e8-a305-4688-a4e1-1b628b54ea6f"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_total_servicos}]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="98">
+				<printWhenExpression><![CDATA[($P{MOSTRA_MARGEM_CONTRIBUICAO} == true) && ($F{regime_tributario} != "1")]]></printWhenExpression>
+				<staticText>
+					<reportElement x="20" y="0" width="163" height="14" uuid="683d7778-0792-4a6e-9028-b69ce835d991"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) ICMS]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="0" width="65" height="14" uuid="0cd11bc5-d5c5-4c95-80da-eb5aed1c908d"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_icms_proprio_produtos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="20" y="14" width="163" height="14" uuid="c81a60f4-59b1-4420-836a-0d1325fd2c16"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) DIFA]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="14" width="65" height="14" uuid="943d28d5-074f-4fb8-b59d-919a025d6404"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_diferencial_aliquota_produtos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="20" y="28" width="163" height="14" uuid="4b7dfdfb-9280-4490-a100-20b8158f11d9"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) IPI]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="28" width="65" height="14" uuid="3ee4a8ff-f516-4c48-81c7-66f289fc5b72"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_ipi_produtos}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="42" width="65" height="14" uuid="f1f7b5b9-1ff1-4c73-9fde-54cc0021eab9"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_pis_proprio_produtos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="20" y="42" width="163" height="14" uuid="7291a57f-e25c-4b63-9270-532ce640fc20"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) PIS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="20" y="56" width="163" height="14" uuid="a04fbc61-5c6d-4a2b-85bf-5b747738a769"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) COFINS]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="56" width="65" height="14" uuid="828f4868-569b-44ae-9eb2-b79d9b1ba087"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_cofins_proprio_produtos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="20" y="70" width="163" height="14" uuid="7b2d1709-905f-4eae-9e80-4a2492f57202"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) CSLL]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="70" width="65" height="14" uuid="e7555db0-1231-4705-820f-1f6278d9c481"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_csll_produtos}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="84" width="65" height="14" uuid="ec4e7dac-15e4-4609-8e6d-704decd5469f"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_irrf_produtos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="20" y="84" width="163" height="14" uuid="8b9f8905-908c-4cea-9022-a8b6ae7fa32a"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) IRPJ]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="84" width="65" height="14" uuid="302fd8e9-e99f-4a3b-84c9-8dd9ac76e5f9"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_irrf_servicos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="291" y="0" width="163" height="14" uuid="34f5fcb7-7bda-44f3-92af-452cc8c9cfc8"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) ISS]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="56" width="65" height="14" uuid="8253caaa-02e1-494f-b3a9-7be4756717cb"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_cofins_proprio_servicos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="291" y="84" width="163" height="14" uuid="033190dd-347b-446a-b5f3-ebab44831f71"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) IRPJ]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="70" width="65" height="14" uuid="f14deb5f-6f7a-4d23-b58c-bba27fe0ec7b"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_csll_servicos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="291" y="56" width="163" height="14" uuid="f94d0baa-3abb-49ff-913c-cdb27380b7ff"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) COFINS]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="0" width="65" height="14" uuid="71545676-124a-454b-8d58-db6c005359c5"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_iss_servicos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="291" y="42" width="163" height="14" uuid="5f8b2230-0101-4f22-ac15-d802a591e5b2"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) PIS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="291" y="70" width="163" height="14" uuid="6ffbab1d-bdd4-4b75-8269-8bc97a28a572"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) CSLL]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="42" width="65" height="14" uuid="89569af2-76ed-4259-bf96-579c23c05c80"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_pis_proprio_servicos}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="14" width="65" height="14" uuid="562f97e1-83ad-42db-8b67-9ec1695351b1"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="28" width="65" height="14" uuid="9c138107-156c-4d95-b730-be47cc1bd821"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+				</textField>
+				<staticText>
+					<reportElement x="291" y="14" width="163" height="14" uuid="277776a7-e7b0-4dbb-bdf9-6f706cac5167"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="291" y="28" width="163" height="14" uuid="634ec80d-41f6-4116-b264-8dd4c6b3422c"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+			</band>
+			<band height="28">
+				<printWhenExpression><![CDATA[($P{MOSTRA_MARGEM_CONTRIBUICAO} == true) && ($F{regime_tributario} == "1")]]></printWhenExpression>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="0" width="65" height="14" uuid="9fbd02dd-b312-436b-813e-ec991485440f"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_simples_produtos}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="0" width="65" height="14" uuid="4995d88d-5fa5-453e-80d2-e2b05ce762bb"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_simples_servicos}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="14" width="65" height="14" uuid="771f813e-d5e8-4116-8001-1eca07e77ccf"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_iss_servicos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="291" y="14" width="163" height="14" uuid="f13144a8-0591-474a-87be-2e304e07964c"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) ISS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="20" y="0" width="163" height="14" uuid="f66ae0d8-a4ab-4391-908e-b58e15360316"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) SIMPLES]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="291" y="0" width="163" height="14" uuid="b9218ffa-a909-4341-98ff-2a8fb3bf7c9c"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) SIMPLES]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="14" width="65" height="14" uuid="eed30561-5032-4005-8e74-92b7f7c47881"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_diferencial_aliquota_produtos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="20" y="14" width="163" height="14" uuid="65a2639d-2670-4ea9-86b9-a5883fa41878"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) DIFA]]></text>
+				</staticText>
+			</band>
+			<band height="50">
+				<printWhenExpression><![CDATA[($P{MOSTRA_MARGEM_CONTRIBUICAO} == true)]]></printWhenExpression>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="0" width="65" height="14" uuid="45c877bd-81a4-4ba3-adc4-bea92869c4db"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_produto_base_produtos}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="14" width="65" height="14" uuid="c6d50d87-0d66-4d9b-b326-5e93c2ffdc0d"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_comissao_produtos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="291" y="28" width="120" height="14" uuid="4d1f4c97-9d99-4022-8399-189c011fcc79"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Margem de contribuição]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="20" y="14" width="163" height="14" uuid="57336f9c-158b-4650-9de6-ac3f1d78c409"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) Comissão]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="20" y="28" width="120" height="14" uuid="8af2b3cf-54f3-40dd-b8db-4f74198658d4"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Margem de contribuição]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="14" width="65" height="14" uuid="7772327a-c9ba-478a-99a8-12b8f4294542"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_comissao_servicos}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="140" y="28" width="35" height="14" uuid="85147c7f-5155-4525-9d3d-9062a889f273"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{al_margem_contribuicao_produtos}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="28" width="65" height="14" uuid="6f45b35d-f1ef-45a1-a4aa-817ef63db45e"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_margem_contribuicao_servicos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="20" y="0" width="163" height="14" uuid="40e1a608-46f1-41a5-9d64-fdd8d4024ea0"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) Custo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="175" y="28" width="8" height="14" uuid="c8456062-6546-4587-818b-215e5da7c3df"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[%]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="454" y="0" width="65" height="14" uuid="498d7f35-b2c2-4612-a33f-8eb284925e85"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_produto_base_servicos}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="183" y="28" width="65" height="14" uuid="046c81b1-9d99-4ff2-9556-2fa5619e4116"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vr_margem_contribuicao_produtos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="291" y="0" width="163" height="14" uuid="a9b35419-92e7-45a2-9f07-2a39e388256d"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) Custo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="446" y="28" width="8" height="14" uuid="73a2d4fd-279c-4b8a-9d27-dabca938515f"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[%]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;-#,##0.00">
+					<reportElement x="411" y="28" width="35" height="14" uuid="f73ed2e3-beaf-45b6-a1b4-1a47eac5d202"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{al_margem_contribuicao_servicos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="291" y="14" width="163" height="14" uuid="076e23f7-f26b-4e8d-8bf5-8051f164154f"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[(-) Comissão]]></text>
+				</staticText>
+			</band>
+			<band height="114">
+				<printWhenExpression><![CDATA[(! $F{eh_os})]]></printWhenExpression>
+				<textField>
+					<reportElement x="0" y="0" width="539" height="10" uuid="73140de5-3c03-48a5-b943-87390ab93542"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Os preços podem sofrer alterações e devem ser confirmados no fechamento da proposta"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="10" width="539" height="10" uuid="5c0973b2-76c4-42f0-a915-462e6d85d946"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Autorizo a execução dos produtos/serviços acima orçados"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="86" width="248" height="14" uuid="cade1a6d-bc67-4990-aac8-88b90ce9d993"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vendedor}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="291" y="86" width="248" height="14" uuid="323dd5d1-ccd9-43a8-9380-5c4946b9c8d1"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="31" width="539" height="10" uuid="87a0a294-6796-4da0-99e0-95d01a780621"/>
+					<box rightPadding="5">
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{data_cabecalho}]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="151">
+				<printWhenExpression><![CDATA[$F{eh_os} && (! $F{tem_orcamento})]]></printWhenExpression>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="268" height="14" backcolor="#CCCCCC" uuid="44f37c61-ab48-4e63-98cd-bd929ecc05af"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Técnico]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="267" y="0" width="272" height="14" backcolor="#CCCCCC" uuid="0ed8c455-8440-4356-9668-b39e5beecbd8"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cliente]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="14" width="248" height="16" uuid="4814dea0-fbb4-4ea7-b2af-8ff8d9beddb7"/>
+					<box leftPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Responsável]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="291" y="14" width="248" height="16" uuid="1d36aed7-eaf2-444a-8eca-448df6c7a96b"/>
+					<box leftPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Data da manutenção                     /            /]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="291" y="30" width="248" height="16" uuid="b04f3f76-ba89-414f-928d-5e0e2620e5af"/>
+					<box leftPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Horário de chegada                               :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="291" y="46" width="248" height="16" uuid="2824d7c3-1650-43bc-b331-a6b43fe0a3f6"/>
+					<box leftPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Horário de saída                                     :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="291" y="62" width="248" height="16" uuid="8cb37d13-253a-4ee0-85af-00af58fe184c"/>
+					<box leftPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Valor total cobrado                                             ,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="291" y="78" width="248" height="16" uuid="341b6f96-a067-46c8-9c27-f2aef91d2e2c"/>
+					<box leftPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Valor entregue ao técnico                                  ,]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="291" y="124" width="248" height="14" uuid="2ae33d08-da7c-44a5-9a5d-7618e9dd5857"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="30" width="248" height="16" uuid="24d0c3d6-4564-4d15-a361-3b4be6b84984"/>
+					<box leftPadding="5">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Dificuldade    [    ] Alta   [    ] Média   [    ] Baixa]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="124" width="248" height="14" uuid="9f7f7258-ce45-4c37-8ca1-90361408e192"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tecnico}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="62" width="248" height="45" uuid="217a3e96-415d-45e5-b7fe-d7b72d4dd6a4"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Antes de iniciar o processo de manutenção/instalação, verifiquei que a energia estava desligada; conferi também que os EPIs estavam em condições de uso, e os utilizei corretamente."]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="36">
+				<printWhenExpression><![CDATA[$F{eh_os} && ( $F{tem_orcamento})]]></printWhenExpression>
+				<subreport>
+					<reportElement x="0" y="0" width="539" height="36" isRemoveLineWhenBlank="true" uuid="82c441cb-ddb4-45ed-a938-ec5a78405147"/>
+					<subreportParameter name="OS_ID">
+						<subreportParameterExpression><![CDATA[$F{os_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "seguranca_orcamento_ficha_instalacao.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="162" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="539" height="20" uuid="0f5a4538-c146-4009-aeb1-6c78182d1319"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="20" width="539" height="28" uuid="57c6d9e2-cf9b-4550-a981-9e9e65283ddd"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{eh_os}?
+"Ordem de Serviço "
+:
+"Orçamento ") + $F{os_numero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="45" y="66" width="355" height="14" uuid="5bfed625-3c8e-405b-a3d3-9469896cdaca"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="66" width="95" height="14" uuid="5003e712-17b1-4edb-ab73-03e66e8aea84"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente_cnpj}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="55" y="80" width="484" height="14" uuid="41b997a4-cf75-4434-8c33-980d4c9ad194"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente_endereco}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="66" width="45" height="14" uuid="7f8fbf4a-0769-4f1a-b892-1a2b07a7d252"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="389" y="66" width="55" height="14" uuid="c05a4a88-0d9d-4ab5-bba3-569fd574c02b"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CNPJ/CPF:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="80" width="55" height="14" uuid="1b1a0edb-c41f-4e43-934a-a1f75c19256a"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="94" width="32" height="14" uuid="0fc16822-235a-443e-97cb-6186354e67f9"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fone:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="34" y="94" width="80" height="14" uuid="fb644dda-cf9b-4ec4-b7f9-75312e7eacfa"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente_fone}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="114" y="94" width="42" height="14" uuid="03d53154-d07d-4b85-ae27-e7d292566330"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Celular:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="156" y="94" width="88" height="14" uuid="effaa8ca-8775-4c41-8139-74b32f58fb51"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente_celular}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="244" y="94" width="34" height="14" uuid="23fbdd79-910b-4148-a485-693f1e389beb"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Email:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="278" y="94" width="261" height="14" uuid="1c752f97-3a93-4d1f-898c-c110d9fdd96f"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente_email}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="108" width="55" height="14" uuid="343a3483-655a-4c3e-9d49-e33ee5464397"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vendedor:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="55" y="108" width="203" height="14" uuid="f1f16bba-5c90-4838-bce2-87b518c5e3c8"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vendedor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="258" y="108" width="43" height="14" uuid="ccf7e752-291d-4b63-aacc-3a3ad07a84b1">
+					<printWhenExpression><![CDATA[$F{eh_os}]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Técnico:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="301" y="108" width="238" height="14" uuid="1b849a9b-2890-4b17-9401-9f8805863194">
+					<printWhenExpression><![CDATA[$F{eh_os}]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tecnico}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="48" width="539" height="12" uuid="760d6543-4ef8-4777-bb84-5af676b75103"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{eh_os}?
+$F{tipo_os}
+:
+$F{lista_preco}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="122" width="55" height="14" uuid="7a712cba-6b37-4d42-8388-b6a810f0eb4f"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Emissão:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="55" y="122" width="203" height="14" uuid="95e531ca-7fcd-425c-bd0a-67600bb253b3"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{os_data}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="258" y="122" width="55" height="14" uuid="fa151d2f-7614-481f-b29c-a88632d96839">
+					<printWhenExpression><![CDATA[(! $F{eh_os})]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Validade:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="313" y="122" width="203" height="14" uuid="628a9b9d-23c8-436a-8178-28cbbab62806">
+					<printWhenExpression><![CDATA[(! $F{eh_os})]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_validade}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Left" vAlign="Middle">
+				<reportElement x="0" y="0" width="200" height="50" uuid="75ae9e1a-e875-4c69-871c-d8bdff7c6188"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<imageExpression><![CDATA[new java.io.StringBufferInputStream(new org.w3c.tools.codec.Base64Decoder($F{logo}).processString())]]></imageExpression>
+			</image>
+			<textField pattern="dd/MM/yyyy HH:mm:ss">
+				<reportElement x="55" y="136" width="203" height="14" uuid="c5e8bd29-f351-4f11-9ede-ff6577df295b">
+					<printWhenExpression><![CDATA[$F{eh_os} && (!$F{tem_orcamento})]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_abertura}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="136" width="55" height="14" uuid="7916adf8-ff87-4407-8541-eeaa0f3f24bf">
+					<printWhenExpression><![CDATA[$F{eh_os} && (!$F{tem_orcamento})]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Abertura:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="41">
+			<printWhenExpression><![CDATA[$F{eh_os} && (! $F{tem_orcamento})]]></printWhenExpression>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="0" y="0" width="539" height="16" backcolor="#CCCCCC" uuid="5f16b1cf-ae8b-4a5c-b430-bd86e17a3cd4"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RECLAMAÇÃO / SERVIÇOS A EXECUTAR"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="0" y="16" width="539" height="14" uuid="41bdd7ed-2333-42d5-bd84-ec9ef0935b84"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="9"/>
+					<paragraph firstLineIndent="10" leftIndent="5" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{defeito_obs}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="42">
+			<printWhenExpression><![CDATA[$F{eh_os} && $F{tem_orcamento}]]></printWhenExpression>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="0" y="0" width="539" height="16" backcolor="#CCCCCC" uuid="bf993457-5133-487b-8ce8-c5cf57434a81"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["OBSERVAÇÕES"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="0" y="16" width="539" height="14" uuid="cecb6cd2-e977-4ace-9bee-fbcad6483ce3"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="9"/>
+					<paragraph firstLineIndent="10" leftIndent="5" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{defeito_obs}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="216">
+			<printWhenExpression><![CDATA[$F{eh_os} && (! $F{tem_orcamento})]]></printWhenExpression>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="40" width="539" height="12" uuid="f1f259a6-4827-440d-ba6d-2823718b7f59"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="16" width="539" height="12" uuid="014a7c2b-38a2-4baa-a730-f6aaff53c4af"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="0" y="0" width="539" height="16" backcolor="#CCCCCC" uuid="1fb6d5ac-6b68-4320-adc4-126311b165dc"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Serviços executados"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="52" width="539" height="12" uuid="d4117f59-ac21-404d-b838-3c48bbc6a962"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="28" width="539" height="12" uuid="cfeec2bd-abc7-408a-866b-703bf7e75792"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="116" width="539" height="12" uuid="2b9f7725-401e-42e8-9a68-7dec93f0961a"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="128" width="539" height="12" uuid="98844a4a-c346-482f-b890-f5f9f7f2bfe1"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="92" width="539" height="12" uuid="eabff2d4-6c6e-4121-81c5-b2defc15f529"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="104" width="539" height="12" uuid="163bc0a4-b987-469a-a7e7-80a48e7ac589"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="0" y="76" width="539" height="16" backcolor="#CCCCCC" uuid="143c7809-4db9-4269-ae7f-ce5b0a407c81"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Material utilizado"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="181" width="539" height="12" uuid="a679b452-a9f0-4a90-a3c4-aebcb9a462bb"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="169" width="539" height="12" uuid="dedad738-3d35-42d6-987e-99789a8fedc5"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement mode="Opaque" x="0" y="153" width="539" height="16" backcolor="#CCCCCC" uuid="a9563dbb-a398-4efb-b323-d30fb67dd0c8"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Causa do problema"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="66" splitType="Stretch">
+			<printWhenExpression><![CDATA[(! $F{eh_os}) || $F{tem_orcamento}]]></printWhenExpression>
+			<subreport>
+				<reportElement x="0" y="0" width="539" height="66" isRemoveLineWhenBlank="true" uuid="e9ab4303-89a5-4120-919d-92de4c5cfd18"/>
+				<subreportParameter name="MOSTRA_MARGEM_CONTRIBUICAO">
+					<subreportParameterExpression><![CDATA[$P{MOSTRA_MARGEM_CONTRIBUICAO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EH_OS">
+					<subreportParameterExpression><![CDATA[$F{eh_os}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EH_LOCACAO">
+					<subreportParameterExpression><![CDATA[$F{eh_locacao}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OS_ID">
+					<subreportParameterExpression><![CDATA[$F{os_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IGNORA_IMPOSTOS">
+					<subreportParameterExpression><![CDATA[$F{ignora_impostos}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_ITEM">
+					<subreportParameterExpression><![CDATA["S"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EH_VENDA">
+					<subreportParameterExpression><![CDATA[$F{eh_venda}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "seguranca_orcamento_item.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="66">
+			<printWhenExpression><![CDATA[(! $F{eh_os}) || $F{tem_orcamento}]]></printWhenExpression>
+			<subreport>
+				<reportElement x="0" y="0" width="539" height="66" isRemoveLineWhenBlank="true" uuid="0533c616-9732-401f-8ba9-67b1ab13a901"/>
+				<subreportParameter name="MOSTRA_MARGEM_CONTRIBUICAO">
+					<subreportParameterExpression><![CDATA[$P{MOSTRA_MARGEM_CONTRIBUICAO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EH_OS">
+					<subreportParameterExpression><![CDATA[$F{eh_os}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EH_LOCACAO">
+					<subreportParameterExpression><![CDATA[$F{eh_locacao}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OS_ID">
+					<subreportParameterExpression><![CDATA[$F{os_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IGNORA_IMPOSTOS">
+					<subreportParameterExpression><![CDATA[$F{ignora_impostos}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_ITEM">
+					<subreportParameterExpression><![CDATA["P"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EH_VENDA">
+					<subreportParameterExpression><![CDATA[$F{eh_venda}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "seguranca_orcamento_item.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="66">
+			<printWhenExpression><![CDATA[(true == false) && (! $F{eh_os}) || $F{tem_orcamento}]]></printWhenExpression>
+			<subreport>
+				<reportElement x="0" y="0" width="539" height="66" isRemoveLineWhenBlank="true" uuid="f730125d-5cf1-4a2a-a410-baecfdddb89e"/>
+				<subreportParameter name="MOSTRA_MARGEM_CONTRIBUICAO">
+					<subreportParameterExpression><![CDATA[$P{MOSTRA_MARGEM_CONTRIBUICAO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EH_OS">
+					<subreportParameterExpression><![CDATA[$F{eh_os}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EH_LOCACAO">
+					<subreportParameterExpression><![CDATA[$F{eh_locacao}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OS_ID">
+					<subreportParameterExpression><![CDATA[$F{os_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IGNORA_IMPOSTOS">
+					<subreportParameterExpression><![CDATA[$F{ignora_impostos}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_ITEM">
+					<subreportParameterExpression><![CDATA["M"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EH_VENDA">
+					<subreportParameterExpression><![CDATA[$F{eh_venda}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "seguranca_orcamento_item.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="48">
+			<textField pattern="dd/MM/yyyy  HH:mm:ss">
+				<reportElement x="0" y="38" width="539" height="10" uuid="9b950906-baff-450b-82cf-11a7e1c4684f"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="426" y="38" width="28" height="10" uuid="4634ae05-4bcf-4f36-b7db-5c0cc9d6c7a2"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág. " + $V{PAGE_NUMBER} + "/"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="454" y="38" width="19" height="10" uuid="56a89eb3-9cae-4b6d-afeb-022144864e65"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER} + " — "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="38" width="140" height="10" uuid="402d0d2c-cb6e-48e8-825d-46ba87c55c87"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ERP Integra — www.ERPIntegra.com.br"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="12" width="539" height="10" uuid="7cf92cc0-7898-4c8e-8415-da8a473e5743"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa} + " – " + $F{empresa_cnpj} + " – " + $F{empresa_razao_social}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="22" width="539" height="10" uuid="51baf6a4-50f8-4f24-8276-403bc01e6a6f"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_endereco} + " — " + $F{empresa_fone}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

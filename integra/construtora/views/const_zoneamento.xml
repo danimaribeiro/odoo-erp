@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="const_zoneamento_search">
+            <field name="name">const.zoneamento.search</field>
+            <field name="model">const.zoneamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Lote de Lançamentos">                   
+                    <field name="municipio_id" />                    
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="const_zoneamento_tree">
+            <field name="name">const.zoneamento.tree</field>
+            <field name="model">const.zoneamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                 <tree>                    
+                    <field name="municipio_id" />                                                          
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="const_zoneamento_form">
+            <field name="name">const.zoneamento.form</field>
+            <field name="model">const.zoneamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Zoneamentos">
+                    <separator string="Parâmetros" colspan="4"/>                    
+                    <field name="municipio_id" required="1" colspan="4" />
+                    <field name="obs" colspan="4" />
+                    <separator string="Itens" colspan="4"/>
+                    <field name="item_ids" nolabel="1" colspan="4" context="{'default_municipio_id': municipio_id}" >
+                        <tree>
+                            <field name="municipio_id" invisible="1" />
+                            <field name="descricao" required="1"/>                            
+                            <field name="lote_minimo" />
+                            <field name="lote_maximo" colspan="2"/>
+                            <field name="esquina_meio" />
+                            <field name="meio_quadra" />
+                            <field name="coeficiente_aproveitamento_minino" />
+                            <field name="coeficiente_aproveitamento" />
+                            <field name="coeficiente_aproveitamento_max" />
+                            <field name="taxa_ocupacao" />
+                            <field name="taxa_ocupacao_torre" />
+                            <field name="recuo_minimo" />
+                            <field name="recuo_minimo_obs" />
+                            <field name="afastamento_minimo" />
+                            <field name="indice_verde" />
+                            <field name="numero_pavimento" />
+                            <field name="numero_pavimento_obs" />
+                            <field name="taxa_permeabilidade" />
+                            <field name="dime_max_quadra" />
+                            <field name="fator_altura" />                            
+                            <field name="altura_media_pavimento" />                                                        
+                            <field name="numero_max_lote" />                                                        
+                        </tree>
+                        <form string="Zoneameno">                            
+                            <field name="municipio_id" invisible="1" />
+                            <field name="descricao" required="1" colspan="4"/>                            
+                            <field name="lote_minimo" colspan="2"/>
+                            <field name="lote_maximo" colspan="2"/>
+                            <separator string="Testada mín." colspan="4"/>
+                            <field name="esquina_meio" />
+                            <field name="meio_quadra" />
+                            <separator string="Coeficiente de  Aproveitametno (CA)" colspan="4"/>
+                            <field name="coeficiente_aproveitamento_minino" />
+                            <field name="coeficiente_aproveitamento" />
+                            <field name="coeficiente_aproveitamento_max" />
+                            <separator string="Taxa de Ocupação (TO)" colspan="4"/>
+                            <field name="taxa_ocupacao" />
+                            <field name="taxa_ocupacao_torre" />
+                            <newline />
+                            <field name="recuo_minimo" />
+                            <field name="recuo_minimo_obs" />
+                            <field name="afastamento_minimo" />
+                            <field name="taxa_permeabilidade" />
+                            <field name="indice_verde" />
+                            <field name="fator_altura" />                            
+                            <field name="numero_pavimento" />
+                            <field name="numero_pavimento_obs" />
+                            <field name="dime_max_quadra" />
+                            <field name="altura_media_pavimento" />                                                                                                        
+                            <field name="numero_max_lote" />                                                                                                        
+                        </form>
+                    </field>                              
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="const_zoneamento_acao">
+            <field name="name">Zoneamento</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">const.zoneamento</field>
+            <field name="search_view_id" ref="const_zoneamento_search" />
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="ecd_menu_const_zoneamento"
+            action="const_zoneamento_acao" 
+            name="Zoneamento"
+            parent="menu_imoveis_config"
+            sequence="01" />
+        
+        <record model="ir.ui.view" id="const_zoneamento_item_form">
+            <field name="name">const.zoneamento.item.form</field>
+            <field name="model">const.zoneamento.item</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Zoneamentos">
+                    <separator string="Parâmetros" colspan="4"/>                                        
+                    <field name="municipio_id" required="1"/>
+                    <field name="descricao" required="1"/>
+                    <field name="taxa_ocupacao" />
+                    <field name="coeficiente_aproveitamento" />                                         
+                </form>
+            </field>
+        </record>
+                
+    </data>
+</openerp>

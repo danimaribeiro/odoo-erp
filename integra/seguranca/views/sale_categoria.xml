@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_categoria_tree">
+            <field name="name">sale.categoria.tree</field>
+            <field name="model">sale.categoria</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Categorias de prospectos">
+                    <field name="codigo" invisible="1" />
+                    <field name="nome" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_categoria_form">
+            <field name="name">sale.categoria.form</field>
+            <field name="model">sale.categoria</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Categoria de prospectos">
+                    <group col="4" colspan="4">
+                        <field name="codigo" readonly="1" invisible="1" />
+                        <field name="nome" required="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="sale_categoria_search" model="ir.ui.view">
+            <field name="name">sale.categoria.search</field>
+            <field name="model">sale.categoria</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Categorias de prospectos">
+                    <field name="codigo" />
+                    <field name="nome" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sale_categoria_acao">
+            <field name="name">Categorias de prospectos</field>
+            <field name="res_model">sale.categoria</field>
+            <field name="view_type">form</field>
+<!--            <field name="domain">[('tipo', '=', 'O')]</field>
+            <field name="context">{'default_prioridade': 'O'}</field>-->
+            <field name="view_id" ref="sale_categoria_tree" />
+            <field name="search_view_id" ref="sale_categoria_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            action="sale_categoria_acao"
+            id="menu_sale_categoria"
+            name="Categorias de prospectos"
+            parent="base.menu_sale_config_sales"
+            sequence="35" />
+
+        <record model="ir.actions.act_window.view" id="sale_categoria_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_categoria_form"/>
+            <field name="act_window_id" ref="sale_categoria_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sale_categoria_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sale_categoria_tree"/>
+            <field name="act_window_id" ref="sale_categoria_acao"/>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_fechamento_caixa_form" >
+            <field name="name">finan.fechamento.caixa.form</field>
+            <field name="model">finan.fechamento.caixa</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Gerar Fechamento de Caixas">
+                    <group colspan="4">
+                        <button icon="gtk-execute" string="Gerar Fechamento de Caixas" name="gera_fechamento_caixas" type="object" groups="finan.group_finan_manager,fina.group_finan_treasury_manager" />
+                        <button icon="gtk-cancel" special="cancel" string="Fechar" />                        
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_fechamento_caixa_wizard" multi="True" key2="client_action_multi" name="Fechamento de Caixas" res_model="finan.fechamento.caixa" src_model="finan.saldo" view_mode="form" target="new" view_type="form" />
+
+    </data>
+</openerp>

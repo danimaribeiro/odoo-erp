@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>      
+
+        <record model="ir.ui.view" id="finan_transacaotransferencia_form">
+            <field name="name">finan.transacaotransferencia.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_transacaotransferencia_form"/>
+            <field name="arch" type="xml">                
+                <field name="res_partner_bank_id" position="replace">
+                    <field name="res_partner_bank_id" required="1" string="Conta bancária a debitar" on_change="onchange_banco_data(tipo, res_partner_bank_id, data, data_quitacao, res_partner_bank_creditar_id)" domain="[('raiz_cnpj', '=', raiz_cnpj)]" />
+                </field>
+                <field name="res_partner_bank_creditar_id" position="replace" >               
+                    <field name="res_partner_bank_creditar_id" required="1" string="Conta bancária a creditar" on_change="onchange_banco_data(tipo, res_partner_bank_id, data, data_quitacao, res_partner_bank_creditar_id)" domain="[('raiz_cnpj', '=', raiz_cnpj)]" />               
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

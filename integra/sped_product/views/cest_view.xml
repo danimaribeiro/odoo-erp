@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_cest_tree_filter">
+            <field name="name">cest.search</field>
+            <field name="model">sped.cest</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="CEST">
+                    <field name="codigo"/>
+                    <field name="descricao"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_cest_tree_view">
+            <field name="name">cest.tree</field>
+            <field name="model">sped.cest</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_cest_form_view">
+            <field name="name">cest.form</field>
+            <field name="model">sped.cest</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Código CEST">
+                    <field name="codigo" />
+                    <newline/>
+                    <field name="descricao" colspan="4" />
+                    <newline/>
+                    <separator string="NCMs" colspan="4" />
+                    <field name="ncm_ids" nolabel="1" colspan="4" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_cest_acao">
+            <field name="name">CEST</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">sped.cest</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_cest"
+            name="CEST"
+            parent="sped_base.menu_sped_fiscal_tabela" sequence="11" action="sped_cest_acao" />
+    </data>
+</openerp>

@@ -1,0 +1,9 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+frota_veiculo_full_all,Veículo,model_frota_veiculo,group_frota_staff,1,1,1,1
+frota_modelo_full_all,Modelo,model_frota_modelo,group_frota_staff,1,1,1,1
+frota_odometro_full_all,Odometro,model_frota_odometro,group_frota_staff,1,1,1,1
+frota_modelo_full_all,Modelos e Marcas,model_frota_modelo,group_frota_staff,1,1,1,1
+frota_os_full_all,OS,model_frota_os,group_frota_staff,1,1,1,1
+frota_os_item_full_all,OS item,model_frota_os_item,group_frota_staff,1,1,1,1
+frota_servico_full_all,Serviço,model_frota_servico,group_frota_staff,1,1,1,1
+frota_tipo_full_all,Serviço,model_frota_tipo,group_frota_staff,1,1,1,1

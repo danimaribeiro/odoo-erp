@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+       <menuitem id="menu_patrimonio_relatorios"
+            name="Relatórios"
+            parent="account_asset.menu_finance_assets"
+            sequence="80"/>
+
+    </data>
+</openerp>

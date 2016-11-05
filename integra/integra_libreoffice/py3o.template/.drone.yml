@@ -1,0 +1,17 @@
+clone:
+        image: hg
+        path: bitbucket.org/faide/py3o.template
+
+build:
+        image: xcgd/dronebase
+        commands:
+                - pip install setuptools --upgrade
+                - python setup.py install
+                - pip install nose
+                - python setup.py test
+
+notify:
+  slack:
+    webhook_url: $$mattermost
+    channel: Dev
+    username: drone

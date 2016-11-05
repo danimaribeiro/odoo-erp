@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="partner_form_uniteelcom">
+            <field name="name">partnef.form.uniteelcom</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <page string="History" position="after">
+                    <page string="Comissões específicas">
+                        <group string="Comissão para vendas">
+                            <field name="categoria_comissao_ids" colspan="10" nolabel="1" widget="one2many_list">
+                                <tree string="Faixas de comissão" editable="bottom">
+                                    <field name="margem"/>
+                                    <field name="comissao_preco_minimo" />
+                                    <field name="comissao" />
+                                </tree>
+                            </field>
+                        </group>
+                        <group string="Comissão para serviço/locação">
+                            <field name="categoria_comissao_servico_ids" colspan="10" nolabel="1" widget="one2many_list">
+                                <tree string="Faixas de comissão" editable="bottom">
+                                    <field name="meses_retorno_investimento"/>
+                                    <field name="degrau_comissao" />
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

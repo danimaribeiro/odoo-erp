@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="analitico_folha_inss_total" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="193a605c-82b2-4b8e-9890-a10ca82cc708">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="CNPJ" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+cast(coalesce(sum(
+case
+   when r.code like 'BASE%' then cast(hl.total as numeric(18,2))
+   else 0
+end), 0) as numeric(18,2)) as base,
+cast(coalesce(max(
+case
+   when r.code not like 'BASE%' then cast(hl.rate as numeric(18,2))
+   else 0
+end), 0) as numeric(18,2)) as aliquota,
+cast(coalesce(sum(
+case
+   when r.code not like 'BASE%' then cast(hl.total as numeric(18,2))
+   else 0
+end), 0) as numeric(18,2)) as valor
+
+
+from hr_payslip_line hl
+join hr_payslip h on h.id = hl.slip_id
+join res_company c on c.id = h.company_id
+join res_partner p on p.id = c.partner_id
+join hr_contract ct on ct.id = h.contract_id
+join hr_salary_rule r on r.id = hl.salary_rule_id
+
+where
+  h.tipo in ('N', 'R')
+  and r.code in ('INSS', 'INSS_13', 'INSS_13_AP', 'BASE_INSS', 'BASE_INSS_13') and hl.code != 'BASE_INSS_anterior'
+  -- and ct.categoria_trabalhador between '700' and '799'
+  -- and code in ('SALFAM', 'LICENCA_MATERNIDADE')
+  -- and code in ('FGTS', 'FGTS_anterior')
+  and h.date_from >= cast($P{DATA_INICIAL} as date)
+  and h.date_to <= cast($P{DATA_FINAL} as date)
+  and p.cnpj_cpf = $P{CNPJ}
+]]>
+	</queryString>
+	<field name="base" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Base]]></fieldDescription>
+	</field>
+	<field name="aliquota" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Alíquota em %]]></fieldDescription>
+	</field>
+	<field name="valor" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor total]]></fieldDescription>
+	</field>
+	<variable name="BASE" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{base}]]></variableExpression>
+	</variable>
+	<variable name="VALOR" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{valor}]]></variableExpression>
+	</variable>
+	<variable name="ALIQUOTA" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{aliquota}]]></variableExpression>
+	</variable>
+	<detail>
+		<band/>
+	</detail>
+</jasperReport>

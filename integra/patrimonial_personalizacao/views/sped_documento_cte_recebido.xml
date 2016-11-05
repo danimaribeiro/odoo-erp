@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="sped_cte_recebido_form" model="ir.ui.view">
+            <field name="name">sped.cte.recebido.form</field>
+            <field name="model">sped.documento</field>
+            <field name="inherit_id" ref="sped_finan.sped_cte_recebido_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="finan_centrocusto_id" position="replace">
+                    <field 
+                        name="finan_centrocusto_id" 
+                        colspan="4" 
+                        domain="[('sintetico', '=', False)]" 
+                        on_change="onchange_centrocusto_id(finan_centrocusto_id, vr_fatura, vr_fatura, company_id, finan_conta_id)" 
+                    />
+                </field>
+                <field name="duplicata_ids" position="after">
+                    <newline />
+                    <separator string="Itens do rateio" colspan="4" />
+                    <field name="rateio_ids" widget="many2one_list" nolabel="1" colspan="4" context="{'tree_view_ref': 'finan.finan_rateio_item_tree'}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

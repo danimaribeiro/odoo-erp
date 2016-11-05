@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="product_form">
+            <field name="name">product.form</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="sped_product.product_normal_form_view"/>
+            <field name="type">form</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <page string="SPED" position="before">
+                    <page string="Acessórios">
+                        <field name="acessorio_ids" nolabel="1" colspan="4">
+                            <tree editable="bottom">                        
+                                <field name="acessorio_id" required="1"/>                   
+                                <field name="quantidade" required="1"/>                   
+                            </tree>
+                        </field>                   
+                    </page>                    
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

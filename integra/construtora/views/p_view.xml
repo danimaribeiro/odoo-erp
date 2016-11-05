@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>      
+                  
+        <menuitem id="menu_relatorio_projeto" 
+        name="Relatórios" 
+        parent="base.menu_main_pm" 
+        sequence="59"/>
+        
+        <menuitem action="lo_construtora_modelo_acao"
+        id="menu_lo_modelo"        
+        name="Modelos LibreOffice" 
+        parent="base.menu_sale_config_sales" 
+        sequence="31"/>
+                 
+    </data>
+</openerp>

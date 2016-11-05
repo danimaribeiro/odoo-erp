@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="lote_contrato_form" >
+            <field name="name">lote.contrato.form</field>
+            <field name="model">finan.lote.contrato</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Gerar lote de contratos">
+                    <group colspan="4">
+                        <field name="nome" invisible="1"/>
+                        <button icon="gtk-execute" string="Gerar Contratos" name="gera_contratos" type="object" />
+                        <button icon="gtk-cancel" special="cancel" string="Fechar" />
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_contratos_wizard" multi="True" key2="client_action_multi" name="Imprimir Contratos" res_model="finan.lote.contrato" src_model="finan.contrato" view_mode="form" target="new" view_type="form" />
+
+        <record forcecreate="True" model="ir.actions.server" id="finan_contrato_regera_parcelas_server_action">
+            <field name="name">Regera parcelas</field>
+            <field name="model_id" ref="model_finan_contrato"/>
+            <field name="state">code</field>
+            <field name="code">action=obj.gera_todas_parcelas(context=context)</field>
+        </record>
+
+        <record model="ir.values" id="finan_contrato_regera_parcelas_values" >
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'finan.contrato'" name="model"/>
+            <field name="name">Regera parcelas</field>
+            <field eval="'ir.actions.server,%d' % finan_contrato_regera_parcelas_server_action" name="value"/>
+            <field eval="True" name="object"/>
+        </record>
+
+    </data>
+</openerp>

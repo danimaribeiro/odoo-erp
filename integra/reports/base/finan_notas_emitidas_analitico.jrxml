@@ -1,0 +1,747 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="finan_notas_emitidas_analitico" language="groovy" pageWidth="802" pageHeight="230" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6fff61ce-1432-40fb-830b-18bbe5149856">
+	<property name="ireport.zoom" value="1.331000000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="COMPANY_ID" class="java.lang.Integer"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="MODELO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSAO" class="java.lang.String"/>
+	<parameter name="NATUREZA_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CNPJ_CPF" class="java.lang.String"/>
+	<parameter name="TITULO_COLUNA_DATA_EMISSAO" class="java.lang.String"/>
+	<parameter name="PRODUCT_ID" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+       sd.numero,
+       rp.name,
+       rp.cnpj_cpf,
+       (sm.nome ||'-'||sm.estado) as cidade_estado,
+       case
+          when sd.emissao = '0' then sd.data_emissao_brasilia
+          else sd.data_entrada_saida_brasilia
+       end as data_emissao,
+       sd.vr_nf,
+       sd.vr_desconto,
+       case
+          when sd.emissao = '0' then sd.vr_icms_proprio
+          else (select coalesce(sum(coalesce(sdi.vr_icms_proprio, 0)), 0) from sped_documentoitem sdi where sdi.documento_id = sd.id and sdi.credita_icms_proprio = True)
+       end vr_icms_proprio,
+       sd.vr_icms_st,
+       sd.vr_iss - sd.vr_iss_retido as vr_iss,
+       sd.vr_iss_retido,
+       sd.vr_irrf,
+       sd.vr_previdencia as vr_inss,
+       case
+          when sd.modelo = 'SE' then sd.vr_pis_retido
+          when sd.emissao = '0' then sd.vr_pis_proprio
+          else (select coalesce(sum(coalesce(sdi.vr_pis_proprio, 0)), 0) from sped_documentoitem sdi where sdi.documento_id = sd.id and sdi.credita_pis_cofins = True)
+       end as vr_pis_retido,
+       case
+          when sd.modelo = 'SE' then sd.vr_cofins_retido
+          when sd.emissao = '0' then sd.vr_cofins_proprio
+          else (select coalesce(sum(coalesce(sdi.vr_cofins_proprio, 0)), 0) from sped_documentoitem sdi where sdi.documento_id = sd.id and sdi.credita_pis_cofins = True)
+       end as vr_cofins_retido,
+       sd.vr_csll,
+       sd.vr_fatura,
+       sd.vr_outras,
+       sd.modelo,
+       sm.nome || '-' || sm.estado as cidade_fato
+
+from sped_documento as sd
+join res_company c on c.id = sd.company_id
+join res_partner rp on rp.id = sd.partner_id
+left join sped_municipio sm on sm.id = sd.municipio_fato_gerador_id
+left join sped_naturezaoperacao snp on snp.id = sd.naturezaoperacao_id
+
+where sd.emissao = $P{EMISSAO}
+and sd.situacao in ('00','01')
+and (sd.modelo like $P{MODELO} and sd.modelo != 'TF' )
+and c.id = $P{COMPANY_ID}
+                and (
+                    (sd.emissao = '0' and sd.state = 'autorizada' and sd.modelo in ('55','SE'))
+                    or
+                    (sd.emissao = '1')
+                    or
+                    (sd.modelo not in ('55','SE'))
+                )
+and ( snp.id is null
+     or cast(snp.id as varchar) like $P{NATUREZA_ID}
+    )
+and (
+    (sd.emissao = '0' and to_char(sd.data_emissao_brasilia, 'YYYY-MM-DD') between $P{DATA_INICIAL} and $P{DATA_FINAL})
+    or
+    (sd.emissao = '1' and to_char(sd.data_entrada_saida_brasilia, 'YYYY-MM-DD') between $P{DATA_INICIAL} and $P{DATA_FINAL})
+)
+
+order by
+c.name,
+5,
+sd.serie,
+sd.numero]]>
+	</queryString>
+	<field name="numero" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Número]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String"/>
+	<field name="cnpj_cpf" class="java.lang.String"/>
+	<field name="cidade_estado" class="java.lang.String"/>
+	<field name="data_emissao" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de emissão]]></fieldDescription>
+	</field>
+	<field name="vr_nf" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da NF]]></fieldDescription>
+	</field>
+	<field name="vr_desconto" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do desconto]]></fieldDescription>
+	</field>
+	<field name="vr_icms_proprio" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ICMS próprio]]></fieldDescription>
+	</field>
+	<field name="vr_icms_st" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ICMS ST]]></fieldDescription>
+	</field>
+	<field name="vr_iss" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ISS]]></fieldDescription>
+	</field>
+	<field name="vr_iss_retido" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do ISS]]></fieldDescription>
+	</field>
+	<field name="vr_irrf" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor do IRRF]]></fieldDescription>
+	</field>
+	<field name="vr_inss" class="java.math.BigDecimal"/>
+	<field name="vr_pis_retido" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[PIS retido]]></fieldDescription>
+	</field>
+	<field name="vr_cofins_retido" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[COFINS retida]]></fieldDescription>
+	</field>
+	<field name="vr_csll" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da CSLL]]></fieldDescription>
+	</field>
+	<field name="vr_fatura" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor da fatura]]></fieldDescription>
+	</field>
+	<field name="modelo" class="java.lang.String">
+		<fieldDescription><![CDATA[Modelo]]></fieldDescription>
+	</field>
+	<field name="cidade_fato" class="java.lang.String"/>
+	<field name="vr_outras" class="java.math.BigDecimal"/>
+	<variable name="vr_nf_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_nf}]]></variableExpression>
+	</variable>
+	<variable name="vr_desconto_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_desconto}]]></variableExpression>
+	</variable>
+	<variable name="vr_outras_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_outras}]]></variableExpression>
+	</variable>
+	<variable name="vr_iss_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_iss}]]></variableExpression>
+	</variable>
+	<variable name="vr_iss_retido_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_iss_retido}]]></variableExpression>
+	</variable>
+	<variable name="vr_irrf_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_irrf}]]></variableExpression>
+	</variable>
+	<variable name="vr_inss_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_inss}]]></variableExpression>
+	</variable>
+	<variable name="vr_pis_proprio_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_pis_retido}]]></variableExpression>
+	</variable>
+	<variable name="vr_cofins_proprio_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_cofins_retido}]]></variableExpression>
+	</variable>
+	<variable name="vr_csll_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_csll}]]></variableExpression>
+	</variable>
+	<variable name="vr_fatura_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_fatura}]]></variableExpression>
+	</variable>
+	<variable name="vr_icms_proprio_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_icms_proprio}]]></variableExpression>
+	</variable>
+	<variable name="vr_icms_st_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vr_icms_st}]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="15">
+			<staticText>
+				<reportElement x="315" y="0" width="50" height="12" uuid="6b6c0c87-6d53-4d03-858a-d2082ce184ea"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="365" y="0" width="38" height="12" uuid="3823436e-3f4e-42b9-b68b-a90a1dd40b25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ISS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="721" y="0" width="30" height="12" uuid="675c4499-54cd-4c88-ab22-5e9d348057ec"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OUTRAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="36" height="12" uuid="9524a22e-e390-4ba2-a111-942f4d871b87"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[N.Doct]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="78" y="0" width="149" height="12" uuid="a20ec32c-274f-4eb5-9812-d23c487606e6"/>
+				<box leftPadding="5" rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente / Fornecedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="227" y="0" width="32" height="12" uuid="8850786d-60fa-4357-9afa-98d1fe557fe7"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Modelo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="259" y="0" width="56" height="12" uuid="77e9c32e-3ed5-4172-9b07-8449df47be33"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Município/UF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="403" y="0" width="40" height="12" uuid="05beeacb-d722-4f5c-a874-9b1db66714a3"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ISS RET.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="521" y="0" width="40" height="12" uuid="e2a097a6-a491-4eab-8334-f451bd8bc8c8"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IRRF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="561" y="0" width="40" height="12" uuid="8fae628d-f208-485f-b4ca-67c267ebfa96"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INSS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="601" y="0" width="40" height="12" uuid="691fffa6-773e-4deb-946e-8497ed2aee8e"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PIS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="641" y="0" width="40" height="12" uuid="6cf85e10-dd75-402c-898d-04b70123c535"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COFINS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="681" y="0" width="40" height="12" uuid="2bc55b47-8bdf-4ed5-a828-ec6845dc8339"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CSLL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="751" y="0" width="51" height="12" uuid="813dcb46-057f-4881-92ec-511d0850b813"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LÍQUIDO]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="36" y="0" width="42" height="12" uuid="0eebcda5-0267-4605-9528-c35467594095"/>
+				<box leftPadding="0" rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TITULO_COLUNA_DATA_EMISSAO} == "1" ?
+"Dt.Emissão"
+:
+"Dt.Entrada"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="443" y="0" width="40" height="12" uuid="bdbab36e-c187-46ee-94bd-be89d2516012"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ICMS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="483" y="0" width="38" height="12" uuid="8ec8aed1-47d2-434d-af22-c7de66c4f4a1"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ICMS ST]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="36" height="12" uuid="285cf7fe-34dc-4ce1-b833-5e897622aff2"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="36" y="0" width="42" height="12" uuid="5012790d-bd25-4714-904e-efaf68ae516c"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_emissao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="78" y="0" width="149" height="12" uuid="c4b0f96e-b77d-419a-a907-99e8b040dd5e"/>
+				<box leftPadding="5" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name} + " "+$F{cnpj_cpf}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="315" y="0" width="50" height="12" uuid="3b6c41ed-bd78-44a1-a53f-c1bbaac419cb"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_nf}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="227" y="0" width="32" height="12" uuid="b0ff05ac-48a8-4330-9135-acb9e430d5a5"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{modelo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="259" y="0" width="56" height="12" uuid="1d563051-65fd-4fba-b056-5226aa0bf8cb"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cidade_estado}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="365" y="0" width="38" height="12" uuid="ee079dae-4c46-40e9-a71d-d9d0f21a2b9c"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_iss}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="403" y="0" width="40" height="12" uuid="2f025c21-b923-4dc8-8697-138e690a1aef"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_iss_retido}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="521" y="0" width="40" height="12" uuid="c1d806b1-5f09-468e-a768-d5b14e001a00"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_irrf}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="561" y="0" width="40" height="12" uuid="288f67cd-37b0-4d76-aa30-dd6bead42e1a"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_inss}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="601" y="0" width="40" height="12" uuid="2fa25a7e-cd0a-4782-a61e-d43046457b7b"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_pis_retido}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="641" y="0" width="40" height="12" uuid="68549c27-708e-4873-87e2-413fc1277b4b"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_cofins_retido}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="681" y="0" width="40" height="12" uuid="d4cecdb5-b91b-44eb-8e54-0b715f9dc3cf"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_csll}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="751" y="0" width="51" height="12" uuid="97211b12-81c2-42c6-81ae-7a135ade965c"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_fatura}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="721" y="0" width="30" height="12" uuid="ff1de2ae-4d5a-47dc-9d04-247ec4b2b06a"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_outras}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="443" y="0" width="40" height="12" uuid="7ee1cee6-9d21-4aaa-a3ca-76f33e2b375f"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_icms_proprio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="483" y="0" width="38" height="12" uuid="48fa619e-ee6d-4edd-9fe3-7eba257b1b57"/>
+				<box leftPadding="0" rightPadding="0">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vr_icms_st}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="12">
+			<staticText>
+				<reportElement x="0" y="0" width="315" height="12" uuid="b2bfc837-deec-42d9-926e-1dc535a89187"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="315" y="0" width="50" height="12" uuid="59fc8493-c0dd-4e6f-bc7b-33dfbe0094f9"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_nf_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="721" y="0" width="30" height="12" uuid="9f702f19-5100-4b6e-9002-59e9729f891c"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_outras_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="365" y="0" width="38" height="12" uuid="b03a82d6-bb8a-4074-9fbf-56eea9a8070f"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_iss_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="403" y="0" width="40" height="12" uuid="05730aea-82b5-4a32-883c-bce2e1799f7a"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_iss_retido_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="521" y="0" width="40" height="12" uuid="46796fa0-af48-4c09-b83d-c6b2433a56b3"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_irrf_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="561" y="0" width="40" height="12" uuid="c89e7d13-7d13-4fc7-9e65-737f38477008"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_inss_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="601" y="0" width="40" height="12" uuid="510d7e82-dd4f-4dd6-9fb8-27e8db8ac785"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_pis_proprio_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="641" y="0" width="40" height="12" uuid="ffcd342d-1263-4730-b4a9-2054c2fdf07c"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_cofins_proprio_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="681" y="0" width="40" height="12" uuid="2bbbe8a9-ad14-40a1-9f1a-349a0745261b"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_csll_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="751" y="0" width="51" height="12" uuid="b7fa7ba5-8f8b-4d5f-9af2-32831108a5a9"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_fatura_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="443" y="0" width="40" height="12" uuid="400b732e-92ad-4f06-9e04-8cd65d774fc9"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_icms_proprio_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="483" y="0" width="38" height="12" uuid="06ee76ff-5802-497a-9c97-aeff8c262cdf"/>
+				<box rightPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vr_icms_st_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

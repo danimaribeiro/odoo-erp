@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_linha_transporte_tree">
+            <field name="name">hr.linha.transporte.tree</field>
+            <field name="model">hr.linha.transporte</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">                
+                <tree string="Linhas de Transporte">                      
+                    <field name="nome" required="1" />
+                    <field name="partner_id" required="1" />
+                    <field name="municipio_id" required="1" />
+                    <field name="rule_id" required="1" />
+                    <field name="data_validade" required="1" />
+                    <field name="valor" required="1" sum="total" />                                                                  
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="hr_linha_transporte_form" >
+            <field name="name">hr.linha.transporte.form</field>
+            <field name="model">hr.linha.transporte</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Linhas de Transporte">
+                    <group col="8" colspan="4" >
+                        <group col="2" colspan="4" >
+                            <separator string="Linha de Transporte" colspan="2"/>
+                            <field name="nome" required="1" colspan="2"/>                            
+                            <field name="partner_id" required="1" colspan="2"/>                            
+                            <field name="municipio_id" required="1"  colspan="2"/>                            
+                            <field name="rule_id" colspan="2" domain="[('tipo_beneficio','=','VT')]" required="1" />                            
+                            <field name="valor" required="1" />                            
+                            <field name="data_validade" />
+                        </group>
+                        <group col="6" colspan="4" >
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_linha_transporte_search">
+            <field name="name">hr.linha.transporte.search</field>
+            <field name="model">hr.linha.transporte</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Linhas de Transporte">
+                    <field name="nome" />                        
+                    <field name="partner_id" />                        
+                    <field name="valor" />                        
+                    <field name="data_validade" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_linha_transporte_acao">
+            <field name="name">Linhas de Transporte</field>
+            <field name="res_model">hr.linha.transporte</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_linha_transporte_tree"/>
+            <field name="view_mode">tree,form</field>            
+        </record>
+
+        <menuitem action="hr_linha_transporte_acao" 
+            id="menu_hr_linha_transporte" 
+            name="Linhas de Transporte" 
+            parent="integra_rh.menu_hr_beneficio"
+            sequence="10"/>
+
+        <record model="ir.actions.act_window.view" id="hr_linha_transporte_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="hr_linha_transporte_acao"/>
+            <field name="view_id" ref="hr_linha_transporte_form"/>
+        </record>
+
+         <record model="ir.actions.act_window.view" id="hr_linha_transporte_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="hr_linha_transporte_acao"/>
+            <field name="view_id" ref="hr_linha_transporte_tree"/>
+        </record>
+    </data>
+</openerp>

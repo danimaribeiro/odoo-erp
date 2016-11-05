@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_relatorio_provisao_13_form" >
+            <field name="name">hr.relatorio.provisao.13.form</field>
+            <field name="model">hr.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Provisão de 13º">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <field name="company_id" required="1" colspan="4" />
+                        <newline/>
+                        <group col="6" colspan="4">                       
+                            <group col="3" colspan="2">
+                                <field name="mes"  required="1" />
+                                <field name="ano" required="1" />
+                            </group>
+                            <group col="3" colspan="2">        
+                                <field name="imprime_recibo" />
+                                <field name="is_sintetico" />
+                            </group>        
+                        </group>        
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_provisao_13" type="object" colspan="2" />                        
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="2"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_relatorio_provisao_13_acao">
+            <field name="name">Provisão de 13º</field>
+            <field name="res_model">hr.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="hr_relatorio_provisao_13_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_relatorio_provisao_13_form"/>
+            <field name="act_window_id" ref="hr_relatorio_provisao_13_acao"/>
+        </record>
+
+        <menuitem action="hr_relatorio_provisao_13_acao"
+                  id="menu_hr_relatorio_provisao_13"
+                  name="Provisão de 13º"
+                  parent="menu_hr_relatorio_mensal"
+                  sequence="21" />
+
+    </data>
+</openerp>

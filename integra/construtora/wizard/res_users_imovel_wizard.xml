@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record forcecreate="True" model="ir.actions.server" id="res_users_imovel_guarda_action">
+            <field name="name">Guarda minha seleção</field>
+            <field name="model_id" ref="model_const_imovel"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.guarda_selecao_usuario(context=context)</field>
+        </record>
+
+        <record model="ir.values" id="res_users_imovel_guarda_values" >
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'const.imovel'" name="model"/>
+            <field name="name">Valores seleção de imóveis pelo usuário - guardar</field>
+            <field eval="'ir.actions.server,%d'%res_users_imovel_guarda_action" name="value"/>
+            <field eval="True" name="object"/>
+        </record>
+
+        <record forcecreate="True" model="ir.actions.server" id="res_users_imovel_limpa_action">
+            <field name="name">Limpa minha seleção</field>
+            <field name="model_id" ref="model_const_imovel"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.limpa_selecao_usuario(context=context)</field>
+        </record>
+
+        <record model="ir.values" id="res_users_imovel_limpa_values" >
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'const.imovel'" name="model"/>
+            <field name="name">Valores seleção de imóveis pelo usuário - limpar</field>
+            <field eval="'ir.actions.server,%d'%res_users_imovel_limpa_action" name="value"/>
+            <field eval="True" name="object"/>
+        </record>
+
+        </data>
+</openerp>

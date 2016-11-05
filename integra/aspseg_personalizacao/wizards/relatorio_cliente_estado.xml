@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="relatorio_cliente_estado_form" >
+            <field name="name">asp.relatorio.cliente.estado.form</field>
+            <field name="model">asp.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Clientes por Estado">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="company_id" colspan="4" />                                            
+                        <newline/>
+                        <field name="partner_id" colspan="4" />                                            
+                        <newline/>
+                        <field name="user_id"  />                                            
+                        <field name="municipio_id"  />                                            
+                        <field name="estado_id"  />                                            
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_clientes" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="relatorio_cliente_estado_acao">
+            <field name="name">Clientes por Estado</field>
+            <field name="res_model">asp.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="relatorio_cliente_estado_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="relatorio_cliente_estado_form"/>
+            <field name="act_window_id" ref="relatorio_cliente_estado_acao"/>
+        </record>
+
+        <menuitem action="relatorio_cliente_estado_acao"
+                  id="menu_relatorio_cliente_estado"
+                  name="Clientes por Estado"
+                  parent="sped_sale.menu_sale_relatorio"
+                  sequence="3" />
+
+    </data>
+</openerp>

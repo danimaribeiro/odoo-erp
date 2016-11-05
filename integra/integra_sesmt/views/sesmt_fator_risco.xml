@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record  model="ir.ui.view" id="sesmt_fator_risco_tree">
+            <field name="name">sesmt.fator_risco.tree</field>
+            <field name="model">sesmt.fator_risco</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Fatores de risco">
+                    <field name="tipo" />
+                    <field name="nome" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sesmt_fator_risco_form">
+            <field name="name">sesmt.fator_risco.form</field>
+            <field name="model">sesmt.fator_risco</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <field name="tipo" required="1" colspan="4" />
+                    <field name="nome" required="1" colspan="4" />
+                    <field name="data_inicial" required="1" colspan="2" />
+                    <field name="data_final" colspan="2" />
+                    <html>
+                        <a onclick="javascript:toggle_ckeditor();" class="wysiwyg_button wysiwyg_button_off oe_button">Editor ativo</a>
+                    </html>
+                    <notebook colspan="4">
+                        <page string="Comprometimento da saúde">
+                            <field name="comprometimento_saude_id" colspan="4" on_change="onchange_comprometimento_saude_id(comprometimento_saude_id)" />
+                            <field name="comprometimento_saude_texto" nolabel="1" colspan="4" widget="text_WYSIWYG" />
+                        </page>
+                        <page string="Fonte geradora">
+                            <field name="fonte_geradora_id" colspan="4" on_change="onchange_fonte_geradora_id(fonte_geradora_id)" />
+                            <field name="fonte_geradora_texto" nolabel="1" colspan="4" widget="text_WYSIWYG" />
+                        </page>
+                        <page string="Meios de propagação">
+                            <field name="meio_propagacao_id" colspan="4" on_change="onchange_meio_propagacao_id(meio_propagacao_id)" />
+                            <field name="meio_propagacao_texto" nolabel="1" colspan="4" widget="text_WYSIWYG" />
+                        </page>
+                        <page string="Possíveis danos à saude">
+                            <field name="dano_saude_id" colspan="4" on_change="onchange_dano_saude_id(dano_saude_id)" />
+                            <field name="dano_saude_texto" nolabel="1" colspan="4" widget="text_WYSIWYG" />
+                        </page>
+                        <page string="Medidas de controle">
+                            <field name="medida_controle_id" colspan="4" on_change="onchange_medida_controle_id(medida_controle_id)" />
+                            <field name="medida_controle_texto" nolabel="1" colspan="4" widget="text_WYSIWYG" />
+                        </page>
+                        <page string="Recomendações">
+                            <field name="recomendacao_id" colspan="4" on_change="onchange_recomendacao_id(recomendacao_id)" />
+                            <field name="recomendacao_texto" nolabel="1" colspan="4" widget="text_WYSIWYG" />
+                        </page>
+                        <page string="Observações">
+                            <field name="obs" nolabel="1" colspan="4" widget="text_WYSIWYG" />
+                        </page>
+                        <page string="EPIs">
+                            <field name="fator_risco_epi_ids" nolabel="1" colspan="4" widget="many2one_list" mode="form,tree">
+                                <form>
+                                    <field name="epi_id" colspan="4" />
+                                    <field name="eficaz" />
+                                    <newline />
+                                    <field name="treinamento" />
+                                    <newline />
+                                    <field name="ficha" />
+                                    <newline />
+                                    <separator string="Conclusão PPRA" colspan="4" />
+                                    <field name="conclusao_ppra" nolabel="1" colspan="4" widget="text_WYSIWYG" />
+                                    <separator string="Conclusão LTCAT" colspan="4" />
+                                    <field name="conclusao_ltcat" nolabel="1" colspan="4" widget="text_WYSIWYG" />
+                                </form>
+                                <tree>
+                                    <field name="epi_id" />
+                                    <field name="eficaz" />
+                                    <field name="treinamento" />
+                                    <field name="ficha" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sesmt_fator_risco_search">
+            <field name="name">sesmt.fator_risco.search</field>
+            <field name="model">sesmt.fator_risco</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Fatores de risco">
+                    <field name="nome" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sesmt_fator_risco_acao">
+            <field name="name">Fatores de risco</field>
+            <field name="res_model">sesmt.fator_risco</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="sesmt_fator_risco_tree"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="sesmt_fator_risco_acao" id="menu_sesmt_fator_risco" name="Fatores de risco" parent="menu_sesmt_cadastro" sequence="10"/>
+
+        <record model="ir.actions.act_window.view" id="sesmt_fator_risco_acao_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="act_window_id" ref="sesmt_fator_risco_acao"/>
+            <field name="view_id" ref="sesmt_fator_risco_form"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sesmt_fator_risco_acao_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="sesmt_fator_risco_acao"/>
+            <field name="view_id" ref="sesmt_fator_risco_tree"/>
+        </record>
+
+    </data>
+</openerp>
+

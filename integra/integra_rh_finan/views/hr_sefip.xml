@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_sefip_form" >
+            <field name="name">hr.sefip.form</field>
+            <field name="model">hr.sefip</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_rh_caged.hr_sefip_form"/>
+            <field name="arch" type="xml">
+               <xpath expr="//button[@name='abre_arquivo']" position="after">
+                    <button icon="gtk-execute" string="Gerar lançamento financeiro" name="gera_lancamento_impostos" type="object" colspan="4" states="fechado" />
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

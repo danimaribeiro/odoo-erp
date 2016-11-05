@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_order_complementar_tree">
+            <field name="name">sale.order.complementar.tree</field>
+            <field name="model">sale.order</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="sale_order_original_id"/>
+                    <field name="versao"/>
+                    <field name="name" string="Proposta"/>
+                    <field name="date_order"/>
+                    <field name="partner_id"/>
+                    <field name="user_id"/>
+                    <field name="vr_total_margem_desconto" />
+                    <field name="vr_total" />
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_order_complementar_form">
+            <field name="name">sale.order.complementar.form</field>
+            <field name="model">sale.order</field>
+            <field name="type">form</field>
+            <field name="sequence">200</field>
+            <field name="arch" type="xml">
+                <form string="Orçamento complementar">
+                    <field name="sale_order_original_id" required="1" colspan="4" on_change="onchange_sale_order_original_id(sale_order_original_id)" domain="['!', ('state', 'in', ('done', 'cancel')), ('saldo_obra_liberado', '=', False)]" />
+                    <field name="name" invisible="1" />
+                    <field name="shop_id" invisible="1" />
+                    <field name="invoiced" invisible="1" />
+                    <field name="shipped" invisible="1" />
+                    <field name="company_id" invisible="1" />
+                    <field name="date_order" />
+                    <field name="partner_id" options='{"quick_create": false}' on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True)]" context="{'search_default_customer':1}" required="1"/>
+                    <field name="pricelist_id" invisible="1" />
+                    <field name="partner_order_id" invisible="1" />
+                    <field name="partner_invoice_id" invisible="1" />
+                    <field name="partner_shipping_id" invisible="1" />
+                    <field name="project_id" invisible="1" />
+                    <field name="state" widget="statusbar" />
+                    <newline/>
+                    <field name="orcamento_aprovado" invisible="1" />
+                    <field name="operacao_fiscal_produto_id" domain="[('modelo', '=', '55')]"/>
+                    <field name="operacao_fiscal_servico_id" domain="[('modelo', '=', 'SE')]"/>
+                    <group colspan="2" string="Totais" attrs="{'invisible': [('orcamento_aprovado', '!=', 'venda')]}">
+                        <field invisible="1" name="amount_untaxed" sum="Untaxed amount"/>
+                        <field invisible="1" name="amount_tax"/>
+                        <field invisible="1" name="amount_total"/>
+                        <button icon="gtk-execute" invisible="1" name="button_dummy" states="draft" string="Compute" type="object"/>
+                        <button groups="base.group_extended" icon="gtk-execute" invisible="1" name="%(sale.action_view_sale_advance_payment_inv)d" states="draft,manual" string="Advance Invoice" type="action"/>
+                        <field name="vr_total_custo"/>
+                        <field name="vr_total_margem_desconto" string="Valor total"/>
+                        <field name="vr_comissao" invisible="1" />
+                    </group>
+                    <group colspan="2" string="Totais - locação" attrs="{'invisible': [('orcamento_aprovado', '=', 'venda')]}">
+                        <field name="vr_mensal"/>
+                        <field name="meses_retorno_investimento"/>
+                        <field name="vr_comissao_locacao" invisible="1" />
+                    </group>
+                    <group colspan="4" col="2">
+                        <button icon="gtk-apply" name="button_dummy" string="Recalcula" type="object" attrs="{'invisible': [['state', '=', 'done']]}" />
+                        <button icon="gtk-apply" name="aprovar_complementar" string="Aprovar" type="object" context="{'complementar': True}" attrs="{'invisible': [['state', '=', 'done']]}" />
+                    </group>
+                    <separator string="Itens complementares" colspan="4" />
+                    <field colspan="4" name="order_line" nolabel="1" widget="one2many_list" mode="tree,form" attrs="{'readonly': [('state', '=', 'done')]}" context="{'company_id': company_id, 'orcamento_aprovado': orcamento_aprovado}">
+                        <form string="Itens complementares">
+                            <field name="state" invisible="1"/>
+                            <field name="autoinsert" invisible="1"/>
+                            <field name="orcamento_categoria_id" />
+                            <notebook>
+                                <page string="Item do pedido">
+                                <group colspan="4" col="5">
+                                        <field colspan="3"
+                                            domain="['|', ('orcamento_categoria_id', '=', orcamento_categoria_id), ('orcamento_categoria_id', '=', False)]"
+
+context="{'default_orcamento_categoria_id': orcamento_categoria_id, 'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'shop':parent.shop_id, 'uom':product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id}"
+
+                                            name="product_id" required="1"
+                                            on_change="product_id_change(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, True, parent.date_order, product_packaging, parent.fiscal_position, False, context)" />
+                                        <newline/>
+                                        <field name="name" />
+                                        <field name="product_packaging"
+
+                                            context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'shop': parent.shop_id, 'uom': product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id}"
+
+                                            on_change="product_packaging_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, parent.partner_id, product_packaging, True, context)"
+                                            domain="[('product_id','=',product_id)]" groups="base.group_extended"
+                                            colspan="3" invisible="1" />
+                                        <newline/>
+                                        <field
+                                            context="{'default_orcamento_categoria_id': orcamento_categoria_id, 'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'shop':parent.shop_id, 'uom':product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id}"
+                                            name="product_uom_qty"
+                                            on_change="on_change_quantidade_margem_desconto(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name, parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, False, vr_unitario_custo, vr_unitario_minimo, vr_unitario_venda, margem, discount, autoinsert, True, usa_unitario_minimo, context)"/>
+                                    <field name="product_uom"
+                                        on_change="product_uom_change(parent.pricelist_id, product_id, product_uom_qty, product_uom,product_uos_qty, product_uos,name, parent.partner_id, False, False, parent.date_order, context)"
+                                        nolabel="1"/>
+                                    <field name="price_unit"/>
+
+                                    <field groups="product.group_uos" name="product_uos_qty"/>
+                                    <field groups="product.group_uos" name="product_uos" nolabel="1"/>
+                                    <newline/>
+                                    <field name="product_packaging"
+                                        context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'shop': parent.shop_id, 'uom': product_uom}" on_change="product_packaging_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, parent.partner_id, product_packaging, True, context)"
+                                        domain="[('product_id', '=', product_id)]" groups="base.group_extended"
+                                        colspan="3"/>
+                                    <field name="discount"/>
+                                    <separator colspan="5" string="Notes"/>
+                                    <field colspan="5" name="notes" nolabel="1"/>
+                                    <group colspan="5" col="4">
+                                        <group colspan="4">
+                                            <separator string="Impostos" colspan="4" />
+                                            <newline/>
+                                            <field name="vr_taxa_juros" colspan="2" readonly="1" />
+                                            <newline/>
+                                            <field name="vr_produtos" colspan="2" />
+                                            <newline/>
+                                            <field name="vr_icms_proprio" colspan="2" />
+            <!--                                 <field name="al_icms_proprio" colspan="2" /> -->
+                                            <newline/>
+                                            <field name="vr_ipi" colspan="2" />
+            <!--                                 <field name="al_ipi" colspan="2" /> -->
+                                            <newline/>
+                                            <field name="vr_iss" colspan="2" />
+            <!--                                 <field name="al_iss" colspan="2" /> -->
+                                            <newline/>
+                                            <field name="vr_pis_proprio" colspan="2" />
+            <!--                                 <field name="al_pis_proprio" colspan="2" /> -->
+                                            <newline/>
+                                            <field name="vr_cofins_proprio" colspan="2" />
+            <!--                                 <field name="al_cofins_proprio" colspan="2" /> -->
+                                            <newline/>
+                                        <field name="vr_csll" colspan="2" />
+                                            <newline/>
+                                        <field name="vr_irrf" colspan="2" />
+                                            <newline/>
+                                            <field name="total_imposto" colspan="2" />
+                                        </group>
+            <!--                            <group colspan="2">
+                                            <separator string="Lucro líquido" colspan="2" />
+                                            <newline/>
+                                            <field name="vr_liquido" colspan="2" />
+                                            <newline/>
+                                            <field name="margem_liquida" colspan="2" />
+                                        </group>-->
+                                    </group>
+                                    <group colspan="5" col="5" groups="base.group_extended">
+                                        <separator colspan="5" string="States"/>
+                                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done" statusbar_colors='{"exception": "red", "cancel": "red"}'/>
+                                        <field name="invoiced"/>
+                                    </group>
+                                </group>
+                                </page>
+                                <page groups="base.group_extended" string="Extra Info">
+                                    <field name="type"/>
+                                    <field name="delay"/>
+                                    <field name="th_weight"/>
+                                    <field name="address_allotment_id"/>
+                                    <separator colspan="4" string="Properties"/>
+                                    <field name="property_ids" colspan="4" nolabel="1"/>
+                                </page>
+                            </notebook>
+                        </form>
+                        <tree string="Itens complementares" editable="bottom">
+                                <field name="orcamento_categoria_id" />
+                                <field name="autoinsert" invisible="1"/>
+                                <field name="state" invisible="1"/>
+                                <field name="sequence" string="Ordem" />
+                                <field
+                                    domain="['|', ('orcamento_categoria_id.id', '=', orcamento_categoria_id), ('orcamento_categoria_id', '=', False)]"
+                                    context="{'default_orcamento_categoria_id': orcamento_categoria_id, 'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'shop':parent.shop_id, 'uom':product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id}"
+                                    name="product_id"
+                                    on_change="product_id_change(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, True, parent.date_order, product_packaging, parent.fiscal_position, False, context)"/>
+                                <field name="name" invisible="1"/>
+                                <field name="product_packaging"
+                                    context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'shop':parent.shop_id, 'uom':product_uom}" on_change="product_packaging_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, parent.partner_id, product_packaging, True, context)"
+                                    domain="[('product_id','=',product_id)]" groups="base.group_extended"
+                                    invisible="1"/>
+                                <field                                             context="{'default_orcamento_categoria_id': orcamento_categoria_id, 'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'shop':parent.shop_id, 'uom':product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id}"
+
+                                    name="product_uom_qty"
+                                    on_change="on_change_quantidade_margem_desconto(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name, parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, False, vr_unitario_custo, vr_unitario_minimo, vr_unitario_venda, margem, discount, autoinsert, True, usa_unitario_minimo, context)"/>
+                                <field name="product_uom" on_change="product_uom_change(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, False, parent.date_order, context)"
+                                    nolabel="1" invisible="1"/>
+                                <field groups="product.group_uos" name="product_uos_qty" string="Qty(UoS)" invisible="1" />
+                                <field groups="product.group_uos" name="product_uos" string="UoS" invisible="1" />
+                                <field name="vr_unitario_custo" readonly="0" invisible="0" groups="base.group_sale_manager" />
+                                <field name="vr_total_custo" invisible="0" groups="base.group_sale_manager" />
+                                <field name="vr_unitario_minimo" readonly="0" invisible="0" string="Unitário mín. p/ locação" />
+                                <field name="vr_total_minimo" readonly="0" sum="Mínimo" string="Total mín. p/ locação" />
+                                <field name="usa_unitario_minimo"
+
+context="{'default_orcamento_categoria_id': orcamento_categoria_id, 'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'shop':parent.shop_id, 'uom':product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id}"
+
+                                       on_change="on_change_quantidade_margem_desconto(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name, parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, False, vr_unitario_custo, vr_unitario_minimo, vr_unitario_venda, margem, discount, autoinsert, False, usa_unitario_minimo, context)" />
+                                <field name="vr_unitario_venda" readonly="0" invisible="1" />
+                                <field name="margem"
+
+context="{'default_orcamento_categoria_id': orcamento_categoria_id, 'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'shop':parent.shop_id, 'uom':product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id}"
+
+                                       on_change="on_change_quantidade_margem_desconto(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name, parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, False, vr_unitario_custo, vr_unitario_minimo, vr_unitario_venda, margem, discount, autoinsert, False, usa_unitario_minimo, context)"/>
+                                <field name="discount" string="Desconto" on_change="on_change_quantidade_margem_desconto(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name, parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, False, vr_unitario_custo, vr_unitario_minimo, vr_unitario_venda, margem, discount, autoinsert, False, usa_unitario_minimo, context)"/>
+                                <field name="price_unit" invisible="1" />
+                                <field name="price_subtotal" sum="Subtotal" invisible="1" />
+                                <field name="vr_unitario_margem_desconto" invisible="0"  groups="base.group_sale_manager" />
+                                <field name="vr_total_margem_desconto" sum="Subtotal" invisible="0"  groups="base.group_sale_manager" />
+                                <field name="total_imposto" string="Impostos R$" groups="base.group_sale_manager" />
+                                <field name="porcentagem_imposto" string="Impostos %%" groups="base.group_sale_manager" />
+                                <field name="proporcao_imposto" string="Impostos %% embut." groups="base.group_sale_manager" />
+                                <field name="vr_unitario_venda_impostos" string="Unitário venda"/>
+                                <field name="vr_total_venda_impostos" sum="Subtotal" string="Total venda"/>
+                                <field name="comissao" readonly="0" invisible="1" />
+                                <field name="vr_comissao" sum="Comissao" readonly="0" invisible="1" />
+                                <field name="comissao_venda_id" invisible="1" />
+                                <field name="comissao_locacao_id" invisible="1" />
+                                <field name="falha_configuracao" readonly="1" />
+                        </tree>
+                    </field>
+                    <newline/>
+                        <group col="13" colspan="10">
+                            <field name="amount_untaxed" sum="Untaxed amount"/>
+                            <field name="amount_tax"/>
+                            <field name="amount_total"/>
+                        </group>
+                        <field name="incoterm" invisible="1" />
+                        <field name="picking_policy" invisible="1" />
+                        <field name="order_policy" invisible="1" />
+                        <field name="invoice_quantity" invisible="1" />
+
+                        <field name="user_id" string="Gestor de contas"  on_change="onchange_user_id(user_id)" invisible="1" />
+                        <field name="hr_department_id" invisible="1"  on_change="onchange_hr_department_id(hr_department_id)" />
+                        <field name="grupo_economico_id" invisible="1" />
+                        <field name="res_partner_category_id" invisible="1" />
+
+                        <field name="origin" invisible="1" />
+                        <field name="payment_term" invisible="1" />
+                        <field name="fiscal_position" invisible="1" />
+                        <field name="create_date" invisible="1" />
+                        <field name="date_confirm" invisible="1" />
+                </form>
+            </field>
+        </record>
+
+<!--        <record model="ir.ui.view" id="sale_order_complementar_search">
+            <field name="name">sale.order.complementar.search</field>
+            <field name="model">sale.order</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Contas a pagar">
+                    <filter name="vencido" string="Vencido" icon="terp-go-month" domain="[('situacao','=','Vencido')]" />
+                    <filter name="vence_hoje" string="Vence Hoje" icon="terp-go-month" domain="[('situacao','=','Vence hoje')]" />
+                    <filter name="a_vencer" string="A Vencer" icon="terp-go-month" domain="[('situacao','=','A vencer')]" />
+                    <filter name="quitado" string="Quitado" icon="terp-go-month" domain="['|', '|', ('situacao','=','Quitado'), ('situacao', '=', 'Conciliado'), ('parcial', '=', True)]"/>
+                    <filter name="conciliado" string="Conciliado" icon="terp-go-month" domain="[('situacao','=','Conciliado')]" />
+                    <filter name="baixado" string="Baixado" icon="terp-go-month" domain="[('situacao','=','Baixado')]" />
+                    <separator orientation="vertical" />
+                    <filter name="efetivo" string="Efetivo" domain="[('provisionado', '=', False)]" />
+                    <filter name="provisionado" string="Provisionado" domain="[('provisionado', '=', True)]" />
+                    <separator orientation="vertical" />
+                    <newline />
+                    <field name="company_id" />
+                    <field name="conta_id" />
+                    <field name="res_partner_bank_id"  />
+                    <field name="carteira_id"  />
+                    <field name="partner_id"  />
+                    <newline />
+                    <field name="documento_id"  />
+                    <field name="numero_documento" />
+                    <field name="valor_documento_from" filter_domain="[('valor_documento', '&gt;=', self)]" />
+                    <field name="valor_documento_to" filter_domain="[('valor_documento', '&lt;=', self)]" />
+                    <newline />
+
+                    <field name="data_vencimento_from" string="De vencimento" filter_domain="[('data_vencimento','&gt;=',self)]" widget="calendar" />
+                    <field name="data_vencimento_to" string="A vencimento" filter_domain="[('data_vencimento','&lt;=',self)]" widget="calendar" />
+
+                    <field name="data_documento_from" string="De documento" filter_domain="[('data_documento','&gt;=',self)]" widget="calendar" />
+                    <field name="data_documento_to" string="A documento" filter_domain="[('data_documento','&lt;=',self)]" widget="calendar" />
+                    <newline />
+
+                    <group expand="0" string="Outras datas...">
+                        <field name="data_quitacao_from" string="De quitação" filter_domain="[('data_quitacao','&gt;=',self)]" widget="calendar" />
+                        <field name="data_quitacao_to" string="A quitação" filter_domain="[('data_quitacao','&lt;=',self)]" widget="calendar" />
+
+                        <field name="data_from" string="De conciliação" filter_domain="[('data','&gt;=',self)]" widget="calendar" />
+                        <field name="data_to" string="A conciliação" filter_domain="[('data','&lt;=',self)]" widget="calendar" />
+
+                        <field name="data_baixa_from" string="De baixa" filter_domain="[('data_baixa','&gt;=',self)]" widget="calendar" />
+                        <field name="data_baixa_to" string="A baixa" filter_domain="[('data_baixa','&lt;=',self)]" widget="calendar" />
+                    </group>
+                    <newline />
+
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'parent_company_id'}" groups="finan.group_finan_manager,finan.group_finan_treasury_manager"/>
+                        <filter string="Unidade de negócio" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />
+                        <filter string="Fornecedor" icon="terp-project" domain="[]" context="{'group_by': 'partner_id'}" />
+                        <filter string="Conta" icon="terp-project" domain="[]" context="{'group_by': 'conta_id'}" />
+                        <filter string="Situação" icon="terp-project" domain="[]" context="{'group_by': 'situacao'}" />
+                        <filter string="Motivo da baixa" icon="terp-project" domain="[]" context="{'group_by': 'motivo_baixa_id'}" />
+
+                        <separator orientation="vertical" />
+                        <filter string="Data de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'data_vencimento'}" />
+                        <filter string="Mês de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'ano_mes_vencimento'}" />
+                        <filter string="Ano de vencimento" icon="terp-project" domain="[]" context="{'group_by': 'ano_vencimento'}" />
+                    </group>
+                </search>
+            </field>
+        </record>-->
+
+        <record model="ir.actions.act_window" id="sale_order_complementar_acao">
+            <field name="name">Orçamento complementar</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('sale_order_original_id', '!=', False)]</field>
+<!--             <field name="context">{'tipo':'P','default_tipo':'P','provisionado':False,'default_provisionado':False,'search_default_efetivo':True,'search_default_vencido':True,'search_default_vence_hoje':True}</field> -->
+            <field name="view_id" ref="sale_order_complementar_tree" />
+<!--             <field name="search_view_id" ref="sale_order_complementar_search" /> -->
+<!--             <field name="calendar_view_id" ref="sale_order_complementar_calendar" /> -->
+        </record>
+
+        <menuitem action="sale_order_complementar_acao"
+            id="menu_sale_order_complementar" name="Orçamento complementar" parent="base.menu_sales" />
+
+        <record model="ir.actions.act_window.view" id="sale_order_complementar_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_order_complementar_form"/>
+            <field name="act_window_id" ref="sale_order_complementar_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sale_order_complementar_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sale_order_complementar_tree"/>
+            <field name="act_window_id" ref="sale_order_complementar_acao"/>
+        </record>
+
+    </data>
+</openerp>

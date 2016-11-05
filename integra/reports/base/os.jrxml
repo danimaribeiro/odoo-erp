@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabecalho" language="groovy" pageWidth="595" pageHeight="842" columnWidth="539" leftMargin="28" rightMargin="28" topMargin="14" bottomMargin="14" uuid="df8d06c4-008a-44ae-94ea-15cfd72a6f65">
+	<property name="ireport.zoom" value="1.1000000000000036"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="INTEGRA_REPORT_TITLE" class="java.lang.String"/>
+	<parameter name="LOGO_DIR" class="java.lang.String"/>
+	<parameter name="COMPANY_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO_CLIENTE" class="java.lang.String"/>
+	<parameter name="NUMERO_PAGINA" class="java.lang.Integer"/>
+	<parameter name="TOTAL_PAGINAS" class="java.lang.Integer"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/ari/openerp/openerp_integra/integra/reports/base/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UID" class="java.lang.Integer"/>
+	<parameter name="ORDER_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+s.name as numero_os,
+p.cnpj_cpf,
+p.razao_social,
+p.endereco,
+p.numero,
+p.complemento,
+p.bairro,
+mp.nome as cidade,
+ep.uf as estado,
+p.cep,
+coalesce(p.fone, '') as fone,
+coalesce(p.celular, '') as celular
+
+from sale_order s
+join res_partner p on p.id = s.partner_id
+join sped_municipio mp on mp.id = p.municipio_id
+join sped_estado ep on ep.id = mp.estado_id
+
+where
+  s.id = $P{ORDER_ID}]]>
+	</queryString>
+	<field name="numero_os" class="java.lang.String"/>
+	<field name="cnpj_cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[CNPJ/CPF]]></fieldDescription>
+	</field>
+	<field name="razao_social" class="java.lang.String"/>
+	<field name="endereco" class="java.lang.String">
+		<fieldDescription><![CDATA[Endereço]]></fieldDescription>
+	</field>
+	<field name="numero" class="java.lang.String">
+		<fieldDescription><![CDATA[Número]]></fieldDescription>
+	</field>
+	<field name="complemento" class="java.lang.String">
+		<fieldDescription><![CDATA[Complemento]]></fieldDescription>
+	</field>
+	<field name="bairro" class="java.lang.String">
+		<fieldDescription><![CDATA[Bairro]]></fieldDescription>
+	</field>
+	<field name="cidade" class="java.lang.String"/>
+	<field name="estado" class="java.lang.String"/>
+	<field name="cep" class="java.lang.String">
+		<fieldDescription><![CDATA[CEP]]></fieldDescription>
+	</field>
+	<field name="fone" class="java.lang.String"/>
+	<field name="celular" class="java.lang.String">
+		<fieldDescription><![CDATA[Celular]]></fieldDescription>
+	</field>
+	<pageHeader>
+		<band height="177">
+			<subreport>
+				<reportElement x="0" y="0" width="539" height="84" uuid="4e81590f-9345-47af-854e-40e6514c022f"/>
+				<subreportParameter name="LOGO_DIR">
+					<subreportParameterExpression><![CDATA[$P{LOGO_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO_CLIENTE">
+					<subreportParameterExpression><![CDATA[$P{LOGO_CLIENTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="COMPANY_ID">
+					<subreportParameterExpression><![CDATA[$P{COMPANY_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NUMERO_PAGINA">
+					<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_PAGINAS">
+					<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="INTEGRA_REPORT_TITLE">
+					<subreportParameterExpression><![CDATA[$P{INTEGRA_REPORT_TITLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cabecalho_retrato.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="0" y="161" width="59" height="14" uuid="5250a366-c8f9-447d-bcc2-d249d8edd9d1"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="483" y="161" width="56" height="14" uuid="87c43692-dcc8-4d16-8193-cba369a0acd6"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="427" y="161" width="56" height="14" uuid="ffc0dc85-1cce-4482-9f26-40c0985a819c"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unitário]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="371" y="161" width="56" height="14" uuid="9f0eb908-e367-49f6-a834-af42e2bb735d"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Quant.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="59" y="161" width="312" height="14" uuid="3e76874a-6b57-4ee5-ba01-006c0c62c039"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="86" width="539" height="14" uuid="faa7b6c7-e2bb-4812-af03-d0032cfbfbbc"/>
+				<textFieldExpression><![CDATA["Cliente: " + $F{razao_social}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="100" width="539" height="14" uuid="9e146556-ce82-4274-96f9-607e923917af"/>
+				<textFieldExpression><![CDATA["CNPJ/CPF: " + $F{cnpj_cpf}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="52" y="114" width="480" height="14" uuid="6c5e39c5-1521-459c-b0b9-6d1491ae4b57"/>
+				<textFieldExpression><![CDATA[$F{endereco} + ", " + $F{numero} + " - " + $F{complemento} + " - " + $F{bairro}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="114" width="52" height="14" uuid="840ce2a8-0e86-472f-8321-6d76359c9fb4"/>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="52" y="128" width="480" height="14" uuid="b4ed6382-386b-408e-b8c1-6db79cdb9b8b"/>
+				<textFieldExpression><![CDATA[$F{cidade} + " - " + $F{estado} + " - " + $F{cep}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="52" y="142" width="480" height="14" uuid="d2d0adc0-3164-4d35-9271-6a3088956f66"/>
+				<textFieldExpression><![CDATA[$F{fone} + " - " + $F{celular}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="14">
+			<subreport>
+				<reportElement x="-28" y="0" width="597" height="14" uuid="c0e6b2b6-61f1-44de-8ce6-5083de5d050e"/>
+				<subreportParameter name="ORDER_ID">
+					<subreportParameterExpression><![CDATA[$P{ORDER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalhe_os.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="28">
+			<subreport>
+				<reportElement x="0" y="0" width="539" height="28" uuid="c568d985-a2f9-4e89-a52a-84b7fe69791d"/>
+				<subreportParameter name="UID">
+					<subreportParameterExpression><![CDATA[$P{UID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rodape_retrato.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="138">
+			<textField>
+				<reportElement x="0" y="84" width="280" height="20" uuid="761d35ce-2a55-4ad0-be6e-4738eae18ee2"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{razao_social}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="110" width="539" height="28" uuid="ca1e9b0a-7e6e-418f-8068-5cee1b5b2069"/>
+				<textElement textAlignment="Justified">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lembrete: O valor descrito no controle refere-se ao prazo de 48 horas; após este período, será cobrada uma taxa adicional de R$ 10,00 (dez reais) por dia.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="280" height="14" uuid="fc5322cf-0491-45ce-b096-a6170e966214"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Validade da proposta: 5 DIAS]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

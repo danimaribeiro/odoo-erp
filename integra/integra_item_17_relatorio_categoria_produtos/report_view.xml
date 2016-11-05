@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <report id="relatorio_produtos_por_categoria_id"
+            model="wiz.produtos.por.categoria"
+            name="relatorio_produtos_por_categoria"
+            rml="integra_item_17/integra_produtos_por_categoria.rml"
+            string="Produtos por categoria"
+            auto="False">
+        </report>
+    </data>
+</openerp>

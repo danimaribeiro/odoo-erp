@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        
+        <record model="ir.ui.view" id="finan_conciliacao_tree">
+            <field name="name">finan.conciliacao.tree</field>
+            <field name="model">finan.conciliacao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                 <tree colors="green:diferenca==0;red:diferenca!=0">                                        
+                    <field name="res_partner_bank_id" />
+                    <field name="data_final" />                    
+                    <field name="diferenca" />
+                    <field name="create_uid" />                    
+                    <field name="write_uid" />                    
+                    <field name="write_date" />                                    
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_conciliacao_form">
+            <field name="name">finan.conciliacao.form</field>
+            <field name="model">finan.conciliacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Conciliação bancária">
+                    <group colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="res_partner_bank_id" colspan="4" required="1" />
+                        <newline />
+                        <field name="data_inicial" invisible="1" />
+                        <field name="data_final" string="Data" required="1" />
+                        <button icon="gtk-execute" name="recalcula_conciliacao" context="{'res_partner_bank_id': res_partner_bank_id, 'data_inicial': data_inicial, 'data_final': data_final, 'lancamento_a_conciliar_ids': lancamento_a_conciliar_ids, 'lancamento_conciliado_ids': lancamento_conciliado_ids}" string="Buscar lançamentos" type="object" colspan="2"/>
+                    </group>
+                    <group colspan="4">
+                        <separator string="Saldos" colspan="4" />
+                        <field name="saldo_banco" readonly="1" />
+                        <newline/>
+                        <field name="saldo_movimento" readonly="1" />
+                        <newline/>
+                        <field name="saldo_conciliado" readonly="1" />
+                        <newline/>
+                        <field name="diferenca" readonly="1" />
+                        <newline/>
+                        <button icon="gtk-execute" name="recalcula_conciliacao" context="{'res_partner_bank_id': res_partner_bank_id, 'data_inicial': data_inicial, 'data_final': data_final, 'lancamento_a_conciliar_ids': lancamento_a_conciliar_ids, 'lancamento_conciliado_ids': lancamento_conciliado_ids}" string="Recalcular saldos" type="object" colspan="2"/>
+                    </group>
+                    <newline />
+                    <separator string="Lançamentos já conciliados" colspan="4" />
+                    <field name="lancamento_conciliado_ids" nolabel="1" context="{'res_partner_bank_id': res_partner_bank_id, 'data_inicial': data_inicial, 'data_final': data_final, 'default_data': data_final}">
+                        <tree editable="top" colors="blue:valor_conciliacao &gt;= 0;red:valor_conciliacao &lt; 0">
+                            <field name="valor_conciliacao" readonly="1" sum="Valor"/>
+                            <field name="data" />
+                            <field name="conciliado" />
+                            <field name="tipo" readonly="1"/>
+                            <field name="data_quitacao" readonly="1"/>
+                            <field name="numero_documento" readonly="1"/>
+                            <field name="complemento" readonly="1"/>
+                            <field name="banco_formapagamento_id" readonly="1"/>
+                            <field name="banco_conta_id" readonly="1"/>
+                            <field name="banco_partner_id" readonly="1"/>
+                            <field name="banco_contrapartida_id" readonly="1"/>
+                        </tree>
+                    </field>
+                    <separator string="Lançamentos a conciliar" colspan="4" />
+                    <field name="lancamento_a_conciliar_ids" nolabel="1" context="{'res_partner_bank_id': res_partner_bank_id, 'data_inicial': data_inicial, 'data_final': data_final, 'default_data': data_final}">
+                        <tree editable="top" colors="blue:valor_conciliacao &gt;= 0;red:valor_conciliacao &lt; 0">
+                            <field name="valor_conciliacao" readonly="1" sum="Valor"/>
+                            <field name="data" />
+                            <field name="conciliado" />
+                            <field name="tipo" readonly="1"/>
+                            <field name="data_quitacao" readonly="1"/>
+                            <field name="numero_documento" readonly="1"/>
+                            <field name="complemento" readonly="1"/>
+                            <field name="banco_formapagamento_id" readonly="1"/>
+                            <field name="banco_conta_id" readonly="1"/>
+                            <field name="banco_partner_id" readonly="1"/>
+                            <field name="banco_contrapartida_id" readonly="1"/>
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_conciliacao_acao">
+            <field name="name">Conciliação bancária</field>
+            <field name="res_model">finan.conciliacao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>            
+        </record>
+
+        <menuitem action="finan_conciliacao_acao"
+            id="menu_finan_conciliacao" name="Conciliação bancária" parent="menu_finan_tesouraria" />
+
+    </data>
+</openerp>

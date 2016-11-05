@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.actions.act_window" id="sped_operacao_cte_recebido_acao">
+            <field name="name">Operações fiscais - CT-e</field>
+            <field name="domain">[('modelo', '=', '57'), ('emissao', '=', '1'), ('entrada_saida', '=', '0')]</field>
+            <field name="context">{'default_modelo': '57', 'default_emissao': '1', 'default_entrada_saida': '0'}</field>
+            <field name="res_model">sped.operacao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_sped_operacao_cte_recebido"
+            name="CT-e"
+            parent="menu_sped_operacao_recebido" sequence="60" action="sped_operacao_cte_recebido_acao" />
+
+        <record model="ir.actions.act_window.view" id="sped_operacao_cte_recebido_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_operacao_nfe_emitida_form"/>
+            <field name="act_window_id" ref="sped_operacao_cte_recebido_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_operacao_cte_recebido_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sped_operacao_tree"/>
+            <field name="act_window_id" ref="sped_operacao_cte_recebido_acao"/>
+        </record>
+
+    </data>
+</openerp>

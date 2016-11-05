@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_tipo_os_tree">
+            <field name="name">sale.tipo.os.tree</field>
+            <field name="model">sale.tipo.os</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Tipos de ordem de serviço">
+                    <field name="codigo" invisible="1" />
+                    <field name="nome" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_tipo_os_form">
+            <field name="name">sale.tipo.os.form</field>
+            <field name="model">sale.tipo.os</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Tipo de ordem de serviço">
+                    <group col="4" colspan="4">
+                        <field name="codigo" readonly="1" invisible="1" />
+                        <field name="nome" required="1"/>
+                        <newline />
+                        <separator string="Movimentação de estoque" colspan="2" />
+                        <newline />
+                        <field name="stock_location_saida_id" domain="[('usage', 'in', ('supplier', 'customer', 'internal'))]"/>
+                        <newline />
+                        <field name="stock_location_entrada_id" domain="[('usage', 'in', ('supplier', 'customer', 'internal'))]" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="sale_tipo_os_search" model="ir.ui.view">
+            <field name="name">sale.tipo.os.search</field>
+            <field name="model">sale.tipo.os</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Tipos de ordem de serviço">
+                    <field name="codigo" />
+                    <field name="nome" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sale_tipo_os_acao">
+            <field name="name">Tipos de ordem de serviço</field>
+            <field name="res_model">sale.tipo.os</field>
+            <field name="view_type">form</field>
+<!--            <field name="domain">[('tipo', '=', 'O')]</field>
+            <field name="context">{'default_tipo': 'O'}</field>-->
+            <field name="view_id" ref="sale_tipo_os_tree" />
+            <field name="search_view_id" ref="sale_tipo_os_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            action="sale_tipo_os_acao"
+            id="menu_sale_tipo_os"
+            name="Tipos de ordem de serviço"
+            parent="base.menu_sale_config_sales"
+            sequence="32" />
+
+        <record model="ir.actions.act_window.view" id="sale_tipo_os_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_tipo_os_form"/>
+            <field name="act_window_id" ref="sale_tipo_os_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sale_tipo_os_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sale_tipo_os_tree"/>
+            <field name="act_window_id" ref="sale_tipo_os_acao"/>
+        </record>
+
+    </data>
+</openerp>

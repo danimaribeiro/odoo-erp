@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_orcamento_configuracao"
+            name="Tabelas de comissão"
+            parent="base.menu_base_config"
+            sequence="10"/>
+
+   </data>
+</openerp>

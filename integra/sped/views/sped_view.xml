@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        
+        <menuitem id="menu_sped_fiscal_relatorio"
+            name="Relatórios"
+            parent="sped_base.menu_sped_fiscal"
+            sequence="53"/>   
+                
+        <menuitem id="menu_sped_fiscal_documento_emitido"
+            name="Emissão de documentos"
+            parent="sped_base.menu_sped_fiscal"
+            sequence="10"/>
+
+        <menuitem id="menu_sped_fiscal_documento_recebido"
+            name="Documentos recebidos"
+            parent="sped_base.menu_sped_fiscal"
+            sequence="20"/>
+
+        <menuitem id="menu_sped_operacao_emitido"
+            name="Operações de emissão"
+            parent="sped_base.menu_sped_fiscal_tabela"
+            sequence="51" />
+
+        <menuitem id="menu_sped_operacao_recebido"
+            name="Operações de recepção"
+            parent="sped_base.menu_sped_fiscal_tabela"
+            sequence="52" />
+
+    </data>
+</openerp>

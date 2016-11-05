@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="ecd_partida_lancamento_search">
+            <field name="name">ecd.partida.lancamento.search</field>
+            <field name="model">ecd.partida.lancamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Partidas" >
+                    <field name="company_id" domain="[('cnpj_cpf', '!=', False)]"  widget="selection"/>
+                    <field name="lote_id" />
+                    <field name="lancamento_id" />                    
+                    <field name="data_from" string="Data de" filter_domain="[('data','&gt;=',self)]" widget="calendar" />
+                    <field name="data_to" string="Data até" filter_domain="[('data','&lt;=',self)]" widget="calendar" />
+                    <field name="conta_id" />
+                    <separator orientation="vertical" />
+                    <newline />
+                    <field name="numero_documento" />
+                    <field name="valor_de" filter_domain="['|','&amp;', ('vr_debito', '&gt;=', self), ('vr_credito', '=', 0), '&amp;', ('vr_credito', '&gt;=', self), ('vr_debito', '=', 0)]" />
+                    <field name="valor_ate" filter_domain="['|','&amp;', ('vr_debito', '&lt;=', self), ('vr_credito', '=', 0), '&amp;', ('vr_credito', '&lt;=', self), ('vr_debito', '=', 0)]" />                                                                                               
+                    <field name="centrocusto_id"  />
+                    <field name="historico_id" />
+                    <field name="historico" />
+                    <newline />                                   
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="CNPJ" icon="terp-project" domain="[]" context="{'group_by': 'cnpj_cpf'}" />                    
+                        <filter string="Empresa" icon="terp-project" domain="[]" context="{'group_by': 'company_id'}" />                                                                
+                        <filter string="Data de Lançamento" icon="terp-project" domain="[]" context="{'group_by': 'data'}" />
+                        <filter string="Conta Contábil" icon="terp-project" domain="[]" context="{'group_by': 'conta_id'}" />                        
+                        <filter string="Centro de Custo" icon="terp-project" domain="[]" context="{'group_by': 'centrocusto_id'}" />                        
+                    </group>
+                </search>                
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ecd_partida_lancamento_tree">
+            <field name="name">ecd.partida.lancamento.tree</field>
+            <field name="model">ecd.partida.lancamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Partidas">
+                    <field name="cnpj_cpf" />
+                    <field name="company_id" />
+                    <field name="lote_id" />
+                    <field name="lancamento_id" />
+                    <field name="finan_lancamento_id" />
+                    <field name="sped_documento_id" />
+                    <field name="data" />
+                    <field name="conta_id"  />
+                    <field name="numero_documento" />
+                    <field name="vr_debito" sum="Total" />
+                    <field name="vr_credito" sum="Total"  />
+                    <field name="centrocusto_id"  />
+                    <field name="historico_id" />
+                    <field name="historico" />
+                    <field name="nao_excluir" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="ecd_partida_lancamento_acao">
+            <field name="name">Partidas</field>
+            <field name="res_model">ecd.partida.lancamento</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{'nao_excluir': True, 'default_nao_excluir': True, 'conta_simples': True}</field>
+            <field name="search_view_id" ref="ecd_partida_lancamento_search" />
+        </record>
+
+        <record model="ir.actions.act_window.view" id="ecd_partida_lancamento_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="ecd_partida_lancamento_tree"/>
+            <field name="act_window_id" ref="ecd_partida_lancamento_acao"/>
+        </record>
+
+        <menuitem id="menu_partida_lacamento"
+            action="ecd_partida_lancamento_acao" 
+            name="Consulta de Partidas"
+            parent="menu_sped_ecd_movimento"
+            sequence="2" />
+
+    </data>
+</openerp>

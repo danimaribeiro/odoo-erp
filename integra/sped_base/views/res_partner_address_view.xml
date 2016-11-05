@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="res_partner_address_tree">
+            <field name="name">res.partner.address.tree</field>
+            <field name="model">res.partner.address</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="base.view_partner_address_tree"/>
+            <field name="arch" type="xml">
+                <field name="zip" position="replace" />
+                <field name="country_id" position="replace" />
+                <field name="city" position="replace">
+                    <field name="municipio_id"/>
+                </field>
+                <field name="phone" position="after">
+                    <field name="mobile"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_partner_address_form1" model="ir.ui.view">
+            <field name="name">res.partner.address.form1.integra</field>
+            <field name="model">res.partner.address</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="base.view_partner_address_form1"/>
+            <field eval="10" name="priority"/>
+            <field name="arch" type="xml">
+                <field name="street" position="replace">
+                    <field name="endereco"/>
+                    <field name="numero"/>
+                    <field name="complemento"/>
+                    <field name="street" invisible="1"/>
+                </field>
+                <field name="street2" position="replace">
+                    <field name="bairro"/>
+                    <field name="street2" invisible="1"/>
+                </field>
+                <field name="zip" position="replace">
+                    <field name="municipio_id"/>
+                    <field name="zip" invisible="1"/>
+                </field>
+                <field name="city" position="replace">
+                    <field name="cep"/>
+                    <field name="city" invisible="1"/>
+                </field>
+                <field name="country_id" position="replace">
+                    <field name="country_id" invisible="1"/>
+                </field>
+                <field name="state_id" position="replace">
+                    <field name="state_id" invisible="1"/>
+                </field>
+                <field name="email" position="after">
+                    <field name="cpf" on_change="onchange_cpf(cpf)" />
+                    <field name="rg_numero" />
+                </field>
+            </field>
+        </record>
+
+        <record id="view_partner_address_form2" model="ir.ui.view">
+            <field name="name">res.partner.address.form2.integra</field>
+            <field name="model">res.partner.address</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="base.view_partner_address_form2"/>
+            <field eval="16" name="priority"/>
+            <field name="arch" type="xml">
+                <field name="street" position="replace">
+                    <field name="endereco"/>
+                    <field name="numero"/>
+                    <field name="complemento"/>
+                    <field name="street" invisible="1"/>
+                </field>
+                <field name="street2" position="replace">
+                    <field name="bairro"/>
+                    <field name="street2" invisible="1"/>
+                </field>
+                <field name="zip" position="replace">
+                    <field name="municipio_id"/>
+                    <newline/>
+                    <field name="zip" invisible="1"/>
+                </field>
+                <field name="city" position="replace">
+                    <field name="city" invisible="1"/>
+                </field>
+                <field name="country_id" position="replace">
+                    <field name="cep"/>
+                    <field name="country_id" invisible="1"/>
+                </field>
+                <field name="state_id" position="replace">
+                    <field name="state_id" invisible="1"/>
+                </field>
+                <field name="email" position="after">
+                    <field name="cpf" on_change="onchange_cpf(cpf)" />
+                    <field name="rg_numero" />
+                </field>
+            </field>
+        </record>
+
+<!--        <record model="ir.ui.view" id="res_partner_address_kanban">
+            <field name="name">res.partner.address.kanban</field>
+            <field name="model">res.partner.address</field>
+            <field name="type">kanban</field>
+            <field name="inherit_id" ref="base.contacts_kanban_view"/>
+            <field name="arch" type="xml">
+            <kanban position="replace">
+            <kanban>
+                <field name="color"/>
+                <field name="name"/>
+                <field name="email"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <t t-set="color" t-value="kanban_color(record.color.raw_value || record.name.raw_value)"/>
+                        <div t-att-class="color + (record.color.raw_value == 1 ? ' oe_kanban_color_alert' : '')">
+                            <div class="oe_kanban_box oe_kanban_color_border">
+                                <div class="oe_kanban_box_header oe_kanban_color_bgdark oe_kanban_color_border oe_kanban_draghandle">
+                                    <table class="oe_kanban_table">
+                                        <tr>
+                                            <td class="oe_kanban_title1" align="left" valign="middle">
+                                                <field name="name"/>
+                                            </td>
+                                            <td valign="top" width="22">
+                                                <img t-att-src="kanban_gravatar(record.email.value, 22)" class="oe_kanban_gravatar"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="oe_kanban_box_content oe_kanban_color_bglight oe_kanban_box_show_onclick_trigger oe_kanban_color_border">
+                                    <table class="oe_kanban_table">
+                                        <tr>
+                                            <td valign="top" width="22" align="left">
+                                                <img src="/base/static/src/img/kanban_partner.png" width="64" height="64"/>
+                                            </td>
+                                            <td valign="top" align="left">
+                                                <div class="oe_kanban_title2">
+                                                    <field name="title"/>
+                                                    <t t-if="record.title.raw_value and record.function.raw_value">,</t>
+                                                    <field name="function"/>
+                                                </div>
+                                                <div class="oe_kanban_title3">
+                                                    <field name="partner_id"/>
+                                                    <t t-if="record.partner_id.raw_value and record.municipio_id.raw_value">,</t>
+                                                    <field name="municipio_id"/>
+                                                </div>
+                                                <div class="oe_kanban_title3">
+                                                    <i><field name="email"/>
+                                                    <t t-if="record.phone.raw_value and record.email.raw_value">,</t>
+                                                    <field name="phone"/></i>
+                                                </div>
+                                            </td>
+                                         </tr>
+                                    </table>
+                                </div>
+                                <div class="oe_kanban_buttons_set oe_kanban_color_border oe_kanban_color_bglight oe_kanban_box_show_onclick">
+                                    <div class="oe_kanban_left">
+                                        <a string="Edit" icon="gtk-edit" type="edit"/>
+                                        <a string="Change Color" icon="color-picker" type="color" name="color"/>
+                                        <a title="Mail" t-att-href="'mailto:'+record.email.value" style="text-decoration: none;" >
+                                            <img src="/web/static/src/img/icons/terp-mail-message-new.png" border="0" width="16" height="16"/>
+                                        </a>
+                                    </div>
+                                    <br class="oe_kanban_clear"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+            </kanban>
+        </field>
+    </record>-->
+
+    </data>
+</openerp>

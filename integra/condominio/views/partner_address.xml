@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="condominio_pessoa_tree">
+            <field name="name">condominio.pessoa.tree</field>
+            <field name="model">res.partner.address</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" string="Nome" />
+                    <field name="rg_numero" />
+                    <field name="mobile" />
+                    <field name="phone" />
+                    <field name="email" />
+                    <field name="partner_id" string="Condômino/proprietário" />
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="condominio_pessoa_form">
+            <field name="name">condominio.pessoa.form</field>
+            <field name="model">res.partner.address</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Pessoa Física (morador/prestador)">
+                    <field name="partner_id" colspan="4" string="Condômino/proprietário" />
+                    <field name="name" colspan="4" string="Nome" />
+                    <field name="rg_numero" />
+                    <field name="cpf" on_change="onchange_cpf(cpf)" />
+                    <separator string="Comunicação" colspan="4" />
+                    <field name="mobile" />
+                    <field name="phone" />
+                    <field name="email" colspan="4" />
+                    <separator string="Endereço" colspan="4" />
+                    <field name="endereco"/>
+                    <field name="numero"/>
+                    <field name="complemento"/>
+                    <field name="bairro"/>
+                    <field name="municipio_id"/>
+                    <field name="cep"/>
+                </form>
+            </field>
+        </record>        
+        
+        <record model="ir.ui.view" id="condominio_pessoa_search">
+            <field name="name">condominio.pessoa.search</field>
+            <field name="model">res.partner.address</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Pessoas">
+                    <field name="name" string="Nome" />
+                    <field name="rg_numero" />
+                    <field name="mobile" />
+                    <field name="phone" />
+                    <newline />
+                    <field name="partner_id" string="Condômino/proprietário" />
+                </search>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="condominio_pessoa_acao">
+            <field name="name">Pessoas</field>
+            <field name="res_model">res.partner.address</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="condominio_pessoa_tree" />
+            <field name="search_view_id" ref="condominio_pessoa_search" />
+<!--             <field name="domain">[('eh_condominio', '=', True)]</field> -->
+<!--             <field name="context">{'default_eh_condominio': True, 'default_active': True}</field> -->
+        </record>       
+        
+        <menuitem
+            action="condominio_pessoa_acao"
+            id="menu_condominio_pessoa"
+            name="Moradores/prestadores"
+            sequence="20"
+            parent="menu_condominio_cadastro" />
+
+        <record model="ir.actions.act_window.view" id="condominio_pessoa_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="condominio_pessoa_form"/>
+            <field name="act_window_id" ref="condominio_pessoa_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="condominio_pessoa_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="condominio_pessoa_tree"/>
+            <field name="act_window_id" ref="condominio_pessoa_acao"/>
+        </record>
+
+    </data> 
+</openerp>

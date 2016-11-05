@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Pedido de Venda" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f101196f-0135-4ae7-a200-89904b6c644a">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#C3C3D9">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#E6E6FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="ORDER_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/will/imotion/python/projetos/openerp_integra/integra/reports/sale_cotation/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO_DIR" class="java.lang.String"/>
+	<parameter name="IDS" class="java.lang.String"/>
+	<parameter name="IDS_PLAIN" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+     sale_order."id" AS sale_order_id,
+     sale_order."partner_id" AS sale_order_partner_id,
+     sale_order."date_order" AS sale_order_date_order,
+     sale_order."state" AS sale_order_state,
+     sale_order."partner_order_id" AS sale_order_partner_order_id,
+     sale_order."partner_invoice_id" AS sale_order_partner_invoice_id,
+     sale_order."partner_shipping_id" AS sale_order_partner_shipping_id,
+     sale_order."name" AS sale_order_name,
+     sale_order."shipped" AS sale_order_shipped,
+     sale_order."invoice_quantity" AS sale_order_invoice_quantity,
+     sale_order."date_confirm" AS sale_order_date_confirm,
+     sale_order."amount_total" AS sale_order_amount_total,
+     sale_order."origin" AS sale_order_origin,
+     sale_order."picking_policy" AS sale_order_picking_policy,
+     sale_order."order_policy" AS sale_order_order_policy,
+     sale_order."shop_id" AS sale_order_shop_id,
+     sale_order."client_order_ref" AS sale_order_client_order_ref,
+     sale_order."note" AS sale_order_note,
+     sale_order."fiscal_position" AS sale_order_fiscal_position,
+     sale_order."amount_untaxed" AS sale_order_amount_untaxed,
+     sale_order."payment_term" AS sale_order_payment_term,
+     sale_order."company_id" AS sale_order_company_id,
+     sale_order."amount_tax" AS sale_order_amount_tax,
+     sale_order."pricelist_id" AS sale_order_pricelist_id,
+     sale_order."project_id" AS sale_order_project_id,
+     sale_order."incoterm" AS sale_order_incoterm,
+     sale_order."user_id" AS sale_order_user_id,
+     res_users."name" AS res_users_name,
+     res_payterm."id" AS res_payterm_id,
+
+     res_payterm."name" AS res_payterm_name
+FROM
+     "public"."res_users" res_users LEFT JOIN "public"."sale_order" sale_order ON res_users."id" = sale_order."user_id"
+     LEFT JOIN "public"."res_payterm" res_payterm ON res_payterm."id" = sale_order."payment_term"
+
+WHERE
+     sale_order."id" = $P{IDS_PLAIN}
+ORDER BY
+     sale_order_id ASC]]>
+	</queryString>
+	<field name="sale_order_id" class="java.lang.Integer"/>
+	<field name="sale_order_partner_id" class="java.lang.Integer"/>
+	<field name="sale_order_date_order" class="java.sql.Date"/>
+	<field name="sale_order_state" class="java.lang.String"/>
+	<field name="sale_order_partner_order_id" class="java.lang.Integer"/>
+	<field name="sale_order_partner_invoice_id" class="java.lang.Integer"/>
+	<field name="sale_order_partner_shipping_id" class="java.lang.Integer"/>
+	<field name="sale_order_name" class="java.lang.String"/>
+	<field name="sale_order_shipped" class="java.lang.Boolean"/>
+	<field name="sale_order_invoice_quantity" class="java.lang.String"/>
+	<field name="sale_order_date_confirm" class="java.sql.Date"/>
+	<field name="sale_order_amount_total" class="java.math.BigDecimal"/>
+	<field name="sale_order_origin" class="java.lang.String"/>
+	<field name="sale_order_picking_policy" class="java.lang.String"/>
+	<field name="sale_order_order_policy" class="java.lang.String"/>
+	<field name="sale_order_shop_id" class="java.lang.Integer"/>
+	<field name="sale_order_client_order_ref" class="java.lang.String"/>
+	<field name="sale_order_note" class="java.lang.String"/>
+	<field name="sale_order_fiscal_position" class="java.lang.Integer"/>
+	<field name="sale_order_amount_untaxed" class="java.math.BigDecimal"/>
+	<field name="sale_order_payment_term" class="java.lang.Integer"/>
+	<field name="sale_order_company_id" class="java.lang.Integer"/>
+	<field name="sale_order_amount_tax" class="java.math.BigDecimal"/>
+	<field name="sale_order_pricelist_id" class="java.lang.Integer"/>
+	<field name="sale_order_project_id" class="java.lang.Integer"/>
+	<field name="sale_order_incoterm" class="java.lang.Integer"/>
+	<field name="sale_order_user_id" class="java.lang.Integer"/>
+	<field name="res_users_name" class="java.lang.String"/>
+	<field name="res_payterm_id" class="java.lang.Integer"/>
+	<field name="res_payterm_name" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="338" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="da68a985-837c-427f-96a9-0743891ad77d" x="12" y="125" width="777" height="141" backcolor="#EFEDED"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="e4c2fe90-5d36-41aa-928d-5f8f8aeec23b" x="320" y="6" width="163" height="42">
+					<printWhenExpression><![CDATA[new Boolean(!$F{sale_order_state}.equals( "draft" ))]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="36"/>
+				</textElement>
+				<text><![CDATA[Cotação:]]></text>
+			</staticText>
+			<frame>
+				<reportElement uuid="051632e9-552b-4948-ad8a-9202dd241838" x="24" y="127" width="352" height="139"/>
+			</frame>
+			<textField>
+				<reportElement uuid="2d8241f0-40e8-45bb-ab92-55a7394a490f" x="295" y="60" width="213" height="42"/>
+				<textElement textAlignment="Center">
+					<font size="36" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sale_order_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="58510959-d7ff-4f2b-bff8-f7012dac788b" x="334" y="6" width="135" height="42">
+					<printWhenExpression><![CDATA[new Boolean($F{sale_order_state}.equals( "draft" ))]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="36"/>
+				</textElement>
+				<text><![CDATA[Pedido:]]></text>
+			</staticText>
+			<frame>
+				<reportElement uuid="bd4b4222-838f-438d-beaf-0c5f46adab39" x="397" y="127" width="352" height="139"/>
+			</frame>
+			<staticText>
+				<reportElement uuid="e06b423a-988c-4a4d-bf39-1d136fc77d33" x="27" y="131" width="349" height="20"/>
+				<box bottomPadding="0">
+					<pen lineWidth="0.0" lineStyle="Double"/>
+					<topPen lineWidth="0.0" lineStyle="Double"/>
+					<leftPen lineWidth="0.0" lineStyle="Double"/>
+					<bottomPen lineWidth="0.5" lineStyle="Double"/>
+					<rightPen lineWidth="0.0" lineStyle="Double"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Endereço de Entrega]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="eadcde44-f985-40d2-8068-e04503f22ea9" x="400" y="131" width="349" height="20"/>
+				<box bottomPadding="0">
+					<pen lineWidth="0.0" lineStyle="Double"/>
+					<topPen lineWidth="0.0" lineStyle="Double"/>
+					<leftPen lineWidth="0.0" lineStyle="Double"/>
+					<bottomPen lineWidth="0.5" lineStyle="Double"/>
+					<rightPen lineWidth="0.0" lineStyle="Double"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Endereço de Cobrança]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="88775037-8c4b-4bb9-8613-835a3dd98c8c" x="12" y="284" width="227" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sua Referência]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cb423011-8766-4979-a889-81ec8742b704" x="12" y="304" width="227" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{sale_order_client_order_ref}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="758865d0-3a49-446c-a3f5-13833ed1232b" x="548" y="284" width="241" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Condições de Pagamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="27bfc2c6-e334-4481-a265-73416e0efd25" x="369" y="284" width="179" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Representante]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3c64ae1f-0c3c-4620-911d-181b5d29cf55" x="239" y="284" width="130" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data da Cotação]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="82957cfb-8316-40dd-a8a2-afdeb4480bce" x="239" y="304" width="130" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{sale_order_date_order}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="0c98086e-240c-4baf-9b1f-bc4384852027" x="369" y="304" width="179" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{res_users_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6c852430-6e52-4541-a247-bb66c3f6a29f" x="548" y="304" width="241" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{res_payterm_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="69" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="aa9796bd-d98f-4c13-94a2-f17c448e7a66" x="12" y="41" width="775" height="28"/>
+				<subreportParameter name="ORDER_ID">
+					<subreportParameterExpression><![CDATA[$F{sale_order_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "linhas_pedido.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement uuid="76960de3-f367-4373-a853-f26a316fb630" x="16" y="4" width="771" height="24"/>
+				<box>
+					<bottomPen lineWidth="0.5" lineStyle="Double"/>
+				</box>
+				<textElement>
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Itens]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<image>
+				<reportElement uuid="54c7a3d9-2317-4755-8d54-cb46c839391b" x="12" y="8" width="113" height="40"/>
+				<imageExpression><![CDATA[$P{LOGO_DIR}+"/logo/integra/logo.jpg"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement uuid="43a9efc6-dc21-470a-844b-44e991c6c3a9" x="689" y="4" width="100" height="50"/>
+				<imageExpression><![CDATA[$P{LOGO_DIR}+"/logo/cliente/logo.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="e3d4bdd0-224d-414e-9631-e704cdd6fe7f" x="340" y="17" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="2245fec2-be0a-4ed1-b4de-be0a13552288" x="419" y="17" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="68">
+			<staticText>
+				<reportElement uuid="a86bbb60-b170-49ea-aa46-21fb5bd384f2" x="600" y="7" width="100" height="17"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Total Líquido:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3f2944c5-bee8-4f95-a9ce-3033557f7c58" x="600" y="24" width="100" height="17"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Impostos:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b183fee5-8f20-447b-bbb0-d2f0472c30a3" x="600" y="50" width="100" height="17"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="ab9dd872-4b06-402f-8631-d81974944f53" x="599" y="47" width="190" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="5fef837c-2249-49ec-b6bb-05653d7a2cb7" x="598" y="3" width="190" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="09ac7391-6a87-4a8e-b932-2d1bf43d4124" x="700" y="7" width="89" height="17"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sale_order_amount_untaxed}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6d3a6828-0443-4ba3-8bdd-cfa1a7498871" x="700" y="24" width="89" height="17"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sale_order_amount_tax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="95c112c1-2f5b-45b6-80aa-0f0cd561996b" x="700" y="50" width="87" height="17"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sale_order_amount_total}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="bbf0fd0c-f560-4294-99a2-2ace3cb14825" x="599" y="45" width="190" height="1"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

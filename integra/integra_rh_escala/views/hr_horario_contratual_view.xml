@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view"  id="hr_horario_contratual_form">
+            <field name="name">hr.horario.contratual.form</field>
+            <field name="model">hr.horario.contratual</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Horario Contratual">
+                    <separator string="Informações básicas" colspan="6" />
+                    <field name="nome" colspan="4" required="1" />
+                    <field name="tipo" />
+                    <field name="quantidade_horas_semana" />                                       
+                    <separator string="Programação" colspan="4" />
+                    <field name="item_ids" nolabel="1" colspan="4">
+                        <tree editable="bottom">
+                            <field name="dia" required="1" />
+                            <field name="jornada_id" required="1" />                            
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_horario_contratual_tree">
+            <field name="name">hr.horario.contratual.tree</field>
+            <field name="model">hr.horario.contratual</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Horario Contratual">
+                    <field name="nome" />
+                    <field name="tipo" />                    
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="hr_horario_contratual_acao">
+            <field name="name">Horario Contratual</field>
+            <field name="res_model">hr.horario.contratual</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="hr_horario_contratual_tree" />
+        </record>
+
+        <menuitem action="hr_horario_contratual_acao"
+            id="menu_horario_contratual"
+            name="Horario Contratual"
+            parent="menu_hr_escala_controle"
+            sequence="3" />
+
+    </data>
+</openerp>
+

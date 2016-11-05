@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="frota_relatorio_km_rodado" >
+            <field name="name">frota.relatorio.km.rodado</field>
+            <field name="model">frota.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório de KM Rodado">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="data_inicial" required="1" colspan="2"/>
+                        <field name="data_final" required="1" colspan="2"/>
+                        <newline/>
+                        <field name="company_id" required="0" colspan="4" />
+                        <newline/>
+                        <field name="veiculo_id" colspan="4" />
+                        <newline/>
+                        <field name="sintetico" string="Incluir médias?" />
+                        <newline/>
+                        <field name="nome" invisible="1" />
+                        <field name="nome_csv" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_km_rodado" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                        <newline/>
+                        <field name="arquivo_csv" nolabel="1" readonly="1" filename="nome_csv" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="frota_relatorio_km_rodado_acao">
+            <field name="name">Rel. KM Rodado</field>
+            <field name="res_model">frota.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="frota_relatorio_km_rodado_form_acao">
+            <field eval="10" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="frota_relatorio_km_rodado"/>
+            <field name="act_window_id" ref="frota_relatorio_km_rodado_acao"/>
+        </record>
+
+        <menuitem action="frota_relatorio_km_rodado_acao"
+                  id="menu_frota_relatorio_km_rodado" name="Rel. KM Rodado" parent="menu_frota_relatorio" sequence="1"  />
+
+    </data>
+</openerp>

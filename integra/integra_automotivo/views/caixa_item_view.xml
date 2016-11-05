@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="caixa_item_tree">
+            <field name="name">caixa.item.tree</field>
+            <field name="model">caixa.item</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="integra_caixa.caixa_item_tree"/>
+            <field name="arch" type="xml">
+                <field name="sale_order_id" position="after">
+                    <field name="frota_veiculo_id" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="caixa_item_form">
+            <field name="name">caixa.item.form</field>
+            <field name="model">caixa.item</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_caixa.caixa_item_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="replace">
+                    <field name="partner_id" colspan="3" required="1" readonly="1" />
+                    <field name="frota_veiculo_id" colspan="1" nolabel="1" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

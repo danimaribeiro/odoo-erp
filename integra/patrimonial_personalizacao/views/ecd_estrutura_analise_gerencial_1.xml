@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="ecd_analise_gerencial_1_tree">
+            <field name="name">ecd.estrutura.analise.gerencial_1.tree</field>
+            <field name="model">ecd.estrutura.analise</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="GERENCIAL 1">
+                    <field name="company_id" />
+                    <field name="descricao" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                    <field name="data" />
+                    <field name="somente_cnpj" />
+                    <field name="sintetica" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ecd_analise_gerencial_1_form">
+            <field name="name">ecd.estrutura.analise.gerencial_1.form</field>
+            <field name="model">ecd.estrutura.analise</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="GERENCIAL 1">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="tipo_demonstrativo" invisible="1" />
+                        <field name="company_id" required="1" domain="[('cnpj_cpf', '!=', False)]" colspan="4"/>
+                        <field name="descricao" colspan="4" required="1" />
+                        <newline />
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />
+                        <newline />
+                        <field name="data" readonly="1" />
+                        <field name="formato" required="1" />
+                         <newline/>
+                        <field name="somente_cnpj" />
+                        <field name="sintetica" />
+                        <newline />
+                        <field name="nome" invisible="1"/>
+                        <button icon="gtk-execute" string="Gerar arquivo" name="gera_analise" type="object" colspan="4" />
+                    </group>
+                    <group col="4" colspan="4">
+                        <separator string="Itens do D.R.E" colspan="4"/>
+                        <field name="item_ids_view" readonly="1" colspan="4" nolabel="1" context="{'conta_simples': True}">
+                            <tree colors="red:valor &lt; 0">
+                                <field name="codigo_completo" string="Sequência" />
+                                <field name="nome_estrutura" />
+                                <field name="valor_nivel_4" />
+                                <field name="valor_nivel_3" />
+                                <field name="valor_nivel_2" />
+                                <field name="valor_nivel_1" />
+                                <field name="valor"  />
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ecd_analise_gerencial_1_search">
+            <field name="name">ecd.estrutura.analise.gerencial_1.search</field>
+            <field name="model">ecd.estrutura.analise</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="GERENCIAL 1">
+                    <!--<field name="company_ids" select="1" />-->
+                    <field name="company_id" />
+                    <field name="descricao" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
+                    <field name="data" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="ecd_analise_gerencial_1_acao">
+            <field name="name">GERENCIAL 1</field>
+            <field name="res_model">ecd.estrutura.analise</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo_demonstrativo', '=', 'GERENCIAL_1')]</field>
+            <field name="context">{'tipo_demonstrativo': 'GERENCIAL_1', 'default_tipo_demonstrativo': 'GERENCIAL_1'}</field>
+            <field name="view_id" ref="ecd_analise_gerencial_1_tree" />
+        </record>
+
+        <menuitem action="ecd_analise_gerencial_1_acao"
+            id="menu_ecd_analise_gerencial_1"
+            name="GERENCIAL 1"
+            parent="sped_ecd.menu_sped_ecd_demonstrativo_gerencial"
+            sequence="02" />
+
+    </data>
+</openerp>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_contas_receber" >
+            <field name="name">finan.relatorio.contas.receber</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório de Contas a Receber">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="company_id" colspan="4" />
+                        <newline/>
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />
+                        <newline/>
+                        <field name="situacao" required="1" />
+                        <field name="partner_id" string="Cliente" />
+                        <field name="formapagamento_id" />
+                        <field name="dias_atraso" />
+                        <newline/>
+                        <field name="ativo" string="Não Provisionado"/>
+                        <field name="provisionado" />
+                        <field name="agrupa_data_vencimento" />
+                        <newline/>
+                        <field name="res_partner_bank_ids" colspan="4" />
+                        <newline/>
+                        <field name="formato" />
+                        <newline/>
+                        <field name="filtrar_rateio" />
+                        <field name="centrocusto_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
+                        <field name="project_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <button icon="gtk-execute" string="Gerar relatório"  attrs="{'invisible': [('filtrar_rateio', '!=', False)]}" name="gera_relatorio_contas_receber" type="object" context="{'company_id' : company_id, 'data_inicial': data_inicial, 'data_final': data_final, 'partner_id': partner_id, 'provisionado': provisionado, 'ativo': ativo, 'situacao': situacao}" colspan="4" />
+                        <button icon="gtk-execute" string="Gerar relatório Rateio"  attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" name="gera_relatorio_contas_receber_rateio" type="object" context="{'company_id' : company_id, 'data_inicial': data_inicial, 'data_final': data_final, 'partner_id': partner_id, 'provisionado': provisionado, 'ativo': ativo, 'situacao': situacao}" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_relatorio_contas_receber_acao">
+            <field name="name">Contas a receber</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_relatorio_contas_receber_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_relatorio_contas_receber"/>
+            <field name="act_window_id" ref="finan_relatorio_contas_receber_acao"/>
+        </record>
+
+        <menuitem action="finan_relatorio_contas_receber_acao"
+                  id="menu_finan_relatorio_contas_receber" name="Contas a receber" parent="menu_rel_conta_receber" sequence="1" />
+
+    </data>
+</openerp>

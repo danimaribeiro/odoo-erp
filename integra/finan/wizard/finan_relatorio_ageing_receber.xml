@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_ageing_receber" >
+            <field name="name">finan.relatorio.ageing.receber</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Ageing de Contas a Receber">
+                    <group colspan="2">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <newline/>
+                        <field name="company_id" required="1" colspan="4" />
+                        <newline/>
+                        <field name="company_2_id" required="1" colspan="4" />
+                        <newline/>
+                        <field name="data_final" required="1" />
+                        <newline/>
+                        <field name="categoria_id" />
+                        <newline/>
+                        <field name="formapagamento_id" string="Forma de pagamento" />
+<!--                         <field name="partner_id" string="Cliente" /> -->
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <field name="nome_csv" invisible="1"/>                           
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_ageing_receber" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                        <newline/>
+                        <field name="arquivo_csv" nolabel="1" readonly="1" filename="nome_csv" colspan="4"/>                     
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_relatorio_ageing_receber_acao">
+            <field name="name">Ageing de contas a receber</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_relatorio_ageing_receber_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_relatorio_ageing_receber"/>
+            <field name="act_window_id" ref="finan_relatorio_ageing_receber_acao"/>
+        </record>
+
+        <menuitem action="finan_relatorio_ageing_receber_acao"
+                  id="menu_finan_relatorio_ageing_receber" name="Ageing de contas a receber" parent="menu_finan_relatorios" sequence="1" />
+
+    </data>
+</openerp>

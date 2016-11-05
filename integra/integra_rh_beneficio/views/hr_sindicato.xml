@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_sindicato_form" model="ir.ui.view">
+            <field name="name">hr.sindicato.form</field>
+            <field name="model">hr.sindicato</field>
+            <field name="inherit_id" ref="integra_rh.hr_sindicato_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Contribuição patronal sindical" position="after">
+                    <page string="Benefícios">                       
+                        <separator string="Benefícios" colspan="4" />                            
+                        <field name="beneficio_ids" nolabel="1" colspan="4"> 
+                            <tree>                                    
+                                <field name="nome" required="1" />
+                                <field name="data_inicial" />
+                                <field name="data_final" />
+                                <field name="rule_id" />                                                                             
+                            </tree>                                                                            
+                        </field>   
+                    </page>
+                </page>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="hr_sindicato_beneficio_form">
+            <field name="name">hr.sindicato.beneficio.form</field>
+            <field name="model">hr.sindicato.beneficio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Sindicato Beneficios" >
+                    <field name="nome" required="1" />
+                    <field name="rule_id" required="1" domain="[('tipo_beneficio','in',('VA','VR','VT'))]"/>        
+                    <field name="data_inicial" required="1"/>
+                    <field name="data_final" />
+                    <separator string="Cargos" colspan="4"/> 
+                    <field name="jobs_ids" colspan="4" mode="tree" nolabel="1"/>                                                                                                             
+                    <separator string="Itens" colspan="4"/> 
+                    <field name="item_ids" colspan="4" mode="tree" nolabel="1">
+                        <tree editable="top">
+                            <field name="salario_de" />
+                            <field name="salario_ate" />
+                            <field name="vr_fixo_mes" attrs="{'readonly':['|',('vr_fixo_dia_util','!=', '0'), ('vr_percentual','!=', '0')]}" />                                                                                                   
+                            <field name="vr_fixo_dia_util" attrs="{'readonly':['|',('vr_fixo_mes','!=', '0'), ('vr_percentual','!=', '0')]}" />                                                                                                   
+                            <field name="vr_percentual" attrs="{'readonly':['|',('vr_fixo_dia_util','!=', '0'), ('vr_fixo_mes','!=', '0')]}" />                                                                                                   
+                        </tree>
+                    </field>                                                                                      
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

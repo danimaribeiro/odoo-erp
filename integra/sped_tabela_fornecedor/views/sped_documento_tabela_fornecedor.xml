@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        
+        <record model="ir.ui.view" id="sped_tabela_fornecedor_form">
+            <field name="name">sped.tabela.fornecedor.form</field>
+            <field name="model">sped.documento</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped_finan.sped_nfe_recebida_manual_form"/>
+            <field name="arch" type="xml">
+                <field name="chave" position="replace">
+                    <field name="chave" invisible="1" />
+                </field>
+                <field name="operacao_id" position="replace">
+                    <field name="operacao_id" colspan="4" on_change="onchange_operacao(operacao_id)" domain="[('modelo', '=', '55'), ('emissao', '=', emissao), ('entrada_saida', '=', '0')]" />
+                </field>
+                <page string="Remetente/Fornecedor" position="after">
+                    <page string="Arquivo de atualização">
+                        <button string="Importar arquivo" type="object" name="importa_arquivo_fornecedor" />
+                        <button string="Atualizar preço de compra do fornecedor" type="object" name="atualiza_preco_compra_fornecedor" />
+                    </page>
+                </page>
+                <page string="Financeiro" position="replace" />
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sped_tabela_fornecedor_acao">
+            <field name="name">Tabela de fornecedor</field>
+            <field name="domain">[('modelo','=','TF'),('emissao','=','1'),('entrada_saida','=','0')]</field>
+            <field name="context">{'modelo': 'TF', 'emissao': '1', 'default_modelo': 'TF', 'default_emissao': '1', 'default_entrada_saida': '0'}</field>
+            <field name="res_model">sped.documento</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="sped.sped_nfe_recebida_search" />
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_tabela_fornecedor_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_tabela_fornecedor_form"/>
+            <field name="act_window_id" ref="sped_tabela_fornecedor_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_tabela_fornecedor_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sped.sped_nfe_recebida_tree"/>
+            <field name="act_window_id" ref="sped_tabela_fornecedor_acao"/>
+        </record>
+
+        <menuitem id="menu_sped_tabela_fornecedor" name="Tabela de fornecedor" parent="sped_base.menu_sped_fiscal_tabela" action="sped_tabela_fornecedor_acao" />
+
+        <menuitem id="compras_tabela_fornecedor" name="Tabela de fornecedor" parent="purchase.menu_procurement_management" action="sped_tabela_fornecedor_acao" />
+
+    </data>
+</openerp>

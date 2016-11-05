@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="imovel_terreno_form">
+            <field name="name">imovel.terreno.form</field>
+            <field name="model">const.imovel</field>
+            <field name="inherit_id" ref="construtora.imovel_terreno_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Prospecção" position="after">
+                    <page string="Arquivo Beview" >
+                        <separator string="Gerar Arquivo XML Beview" colspan="4" />
+                        <button name="gera_xml_beview" string="Gerar Arquivo" type="object" colspan="4" />                     
+                        <field name="arquivo_xml_beview" readonly="1" nolabel='1' colspan="4"/>
+                    </page>        
+                </page>        
+            </field>
+        </record>
+
+        
+    </data>
+</openerp>

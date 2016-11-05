@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="res_partner_form_exata" model="ir.ui.view">
+            <field name="name">res.partner.form.exata</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="sped_base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="cnpj_cpf" position="replace">
+                    <field name="cnpj_cpf" on_change="onchange_cnpj_cpf(cnpj_cpf)" required="1"/>
+                </field>
+                <field name="razao_social" position="replace">
+                     <field name="razao_social" colspan="4" required="1"/>
+                </field>               
+            </field>                
+        </record>                
+
+    </data>
+</openerp>

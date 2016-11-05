@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_recibo_locacao_pdf_form" >
+            <field name="name">sped.recibo_locacao.pdf.form</field>
+            <field name="model">sped.nfse_pdf</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Imprimir Recibo Locação">
+                    <group colspan="4">
+                        <field name="nome" invisible="1"/>
+                        <button icon="gtk-execute" string="Imprimir recibos de locação" name="gerar_recibos_locacao" type="object" />
+                        <button icon="gtk-cancel" special="cancel" string="Fechar" />
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_recibo_locacao_pdf_wizard" multi="True" key2="client_action_multi" name="Imprimir Recibo Locação" res_model="sped.nfse_pdf" src_model="sped.documento" view_mode="form" target="new" view_type="form" />
+
+        <record model="ir.actions.act_window.view" id="sped_nfse_pdf_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_recibo_locacao_pdf_form"/>
+            <field name="act_window_id" ref="action_recibo_locacao_pdf_wizard"/>
+        </record>
+
+    </data>
+</openerp>

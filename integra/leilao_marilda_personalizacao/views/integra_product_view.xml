@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+<!--         # substitue a tree inical do sistema de produtos -->
+
+        <record id="product.product_product_tree_view" model="ir.ui.view">
+            <field name="name">product.product.tree</field>
+            <field name="model">product.product</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Products">
+                    <field name="default_code"/>
+                    <field name="nome_apresentacao" string="Descrição completa"/>
+                    <field name="weight_net"/>
+                    <field name="list_price"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="product_category_form_view_integra" model="ir.ui.view">
+            <field name="name">product.category.form_integra</field>
+            <field name="model">product.category</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                <field name="parent_id" position='after'>
+                <field name="tipo_classificacao" />
+                </field>
+            </field>
+        </record>
+
+<!--         # tirar o campo categ_id da tela -->
+
+        <record id="product_normal_form_view_integra_1" model="ir.ui.view">
+            <field name="name">product.normal.form_integra_1</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_product.product_normal_form_view_integra"/>
+            <field name="arch" type="xml">
+                <separator string="Status" colspan="2" position="after"/>
+                <field name="categ_id" position="replace"/>
+                <separator string="Weights" colspan="2" position="replace"/>
+                <field name="volume" colspan="2" position="replace"/>
+                <field name="weight" colspan="2" position="replace"/>
+                <field name="weight_net" colspan="2" position="replace"/>
+            </field>
+        </record>
+
+<!--    # altera a tela de cadasro de produtos incluindo os sub-itens do produto -->
+
+        <record id="product_normal_form_view_integra_2" model="ir.ui.view">
+            <field name="name">product.normal.form_integra_2</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <data>
+                    <separator string="Name" colspan="2" position="replace"/>
+                    <separator string="Codes" colspan="2" position="replace"/>
+                    <separator string="Characteristics" colspan="2" position="replace"/>
+                    <field name="default_code" position="replace"/>
+                    <field name="ean13" groups="base.group_extended" position="replace"/>
+                    <field name="sale_ok" position="replace"/>
+                    <field name="purchase_ok" position="replace"/>
+                    <field name="product_image" widget='image' nolabel="1" position="replace"/>
+                    <field name="name" position="before" >
+                        <group colspan="8" col="8">
+                            <field name="default_code" colspan="2"/>
+                            <field name="ean13" groups="base.group_extended" colspan="2"/>
+                            <field name="sale_ok" colspan="2"/>
+                            <field name="purchase_ok" colspan="2"/>
+                        </group>
+                        <field name="categ_id"  domain="[('tipo_classificacao', '=', 'Produto')]" on_change="onchange_monta_nome(name, categ_id, tipo_metal_id, tipo_cor_id, variants)"/>
+                        <field name="tipo_metal_id" domain="[('tipo_classificacao', '=', 'Metal')]" on_change="onchange_monta_nome(name, categ_id, tipo_metal_id, tipo_cor_id, variants)"/>
+                        <field name="tipo_cor_id"  domain="[('tipo_classificacao', '=', 'Cor')]" on_change="onchange_monta_nome(name, categ_id, tipo_metal_id, tipo_cor_id, variants)"/>
+                    </field>
+                    <field name="name" position="replace" >
+                        <field name="name" string="Detalhes" on_change="onchange_monta_nome(name, categ_id, tipo_metal_id, tipo_cor_id, variants)"/>
+                    </field>
+                    <field name="variants" position="replace" >
+                        <field name="variants" string="Medidas" on_change="onchange_monta_nome(name, categ_id, tipo_metal_id, tipo_cor_id, variants)"/>
+                        <field name="nome_apresentacao"  on_change="onchange_monta_nome(name, categ_id, tipo_metal_id, tipo_cor_id, variants)"/>
+                    </field>
+                    <field name="list_price" position="before">
+                        <field name="preco_por_parcela" on_change="onchange_preco_por_parcela_parcelas(preco_por_parcela, parcelas)" />
+                        <field name="parcelas" on_change="onchange_preco_por_parcela_parcelas(preco_por_parcela, parcelas)" />
+                    </field>
+                    <group name="status" position="after">
+                        <group colspan="2" col="2">
+                            <separator string="Pesos" colspan="2"/>
+                            <field digits="(14, 3)" name="volume" attrs="{'readonly':[('type','=','service')]}"/>
+                            <field name="weight" attrs="{'readonly':[('type','=','service')]}"/>
+                            <field name="weight_net" on_change="onchange_weight_net(weight_net, preco_venda_por_peso, preco_custo_por_peso)"/>
+                            <field name="preco_venda_por_peso" on_change="onchange_preco_venda_por_peso(weight_net, preco_venda_por_peso)"/>
+                            <field name="preco_custo_por_peso" on_change="onchange_preco_custo_por_peso(weight_net, preco_custo_por_peso)"/>
+                        </group>
+                    </group>
+
+                </data>
+            </field>
+        </record>
+
+<!--    #  altera tela da tree de categorias -->
+
+        <record id="product.product_category_list_view" model="ir.ui.view">
+            <field name="name">product.category.list</field>
+            <field name="model">product.category</field>
+            <field name="type">tree</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <field name="complete_name" position="replace">
+                <field name="tipo_classificacao" string="Classificação" />
+                <field name="name" string="Descrição " />
+                </field>
+            </field>
+        </record>
+
+<!-- #   esta é a tela substitue a original 'produtos por categoria' no menu 'Produtos' -->
+
+        <record id="product_category_tree_view_integra" model="ir.ui.view">
+            <field name="name">product.category.tree</field>
+            <field name="model">product.category</field>
+            <field name="type">tree</field>
+            <field name="field_parent">child_id</field>
+            <field name="arch" type="xml">
+                <tree toolbar="True" string="Product Categories">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="product.product_category_action" model="ir.actions.act_window">
+            <field name="name">Products by Category</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.category</field>
+            <field name="domain">[('tipo_classificacao','=','Produto')]</field>
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="product_category_tree_view_integra"/>
+            <field name="help">Here is a list of all your products classified by category. You can click a category to get the list of all products linked to this category or to a child of this category.</field>
+        </record>
+
+    </data>
+</openerp>

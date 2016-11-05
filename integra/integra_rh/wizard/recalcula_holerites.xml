@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="recalcula_holerites_form" >
+            <field name="name">recalcula.holerites.form</field>
+            <field name="model">hr.recalcula</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Recalcula Holerites de funcionario">
+                    <group colspan="4">
+                        <button icon="gtk-execute" string="Recalcula holerites" name="recalcula_holerites" type="object" />
+                        <button icon="gtk-cancel" special="cancel" string="Fechar" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_recalcula_wizard" multi="True" key2="client_action_multi" name="Recalcula Holerites de funcionários" res_model="hr.recalcula" src_model="hr.payslip" view_mode="form" target="new" view_type="form" />
+
+    </data>
+</openerp>

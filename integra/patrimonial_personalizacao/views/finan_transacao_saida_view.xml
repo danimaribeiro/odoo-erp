@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>      
+
+        <record model="ir.ui.view" id="finan_transacaosaida_form">
+            <field name="name">finan.transacaosaida.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_transacaosaida_form"/>
+            <field name="arch" type="xml">                
+                <field name="res_partner_bank_id" position="replace">                    
+                    <field name="res_partner_bank_id" required="1" on_change="onchange_banco_data(tipo, res_partner_bank_id, data, data_quitacao)" domain="[('raiz_cnpj', '=', raiz_cnpj)]" /> 
+                </field>                
+            </field>
+        </record>
+
+    </data>
+</openerp>

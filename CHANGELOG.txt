@@ -1,0 +1,18 @@
+
+
+2013-08-26  Aristides Caldeira  <ari@erpintegra.com.br>
+
+    * criada pasta integra_extra, para conter módulos de terceiros,
+      levemente customizados (ou não)
+
+    * movido módulo smsclient para a nova pasta integra_extra
+
+    * criado README.txt para documentar a estrutura de pastas do repo
+
+
+2013-08-22  Aristides Caldeira  <ari@erpintegra.com.br>
+
+    * abertura do changelog
+
+    * módulo smsclient retirado de https://code.launchpad.net/openerp-smsclient
+

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rodape_passagem_integra" language="groovy" pageWidth="802" pageHeight="28" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="78373472-3f92-4c44-b333-e9e55668d789">
+	<property name="ireport.zoom" value="2.8531167061100073"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="UID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     u.name as usuario
+
+FROM
+     res_users u
+
+WHERE u.id = $P{UID}]]>
+	</queryString>
+	<field name="usuario" class="java.lang.String"/>
+	<pageFooter>
+		<band height="17" splitType="Stretch">
+			<textField>
+				<reportElement x="571" y="5" width="231" height="12" uuid="0b68bfe2-cbb1-48b1-8223-42f0be4de7e0"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Usuário: " + $F{usuario}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="802" height="1" uuid="a75eaabf-c218-4598-9f20-6565529ffd7f"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="5" width="87" height="12" uuid="5ebd9fb5-50c2-4245-8b59-e1b4c230a37c"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<text><![CDATA[Impresso por ERP Integra - ]]></text>
+			</staticText>
+			<textField pattern="EE, dd/MM/yyyy, HH:mm:ss">
+				<reportElement x="87" y="5" width="177" height="12" uuid="d4fc8d9a-42ba-48a8-9277-1392908bc472"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

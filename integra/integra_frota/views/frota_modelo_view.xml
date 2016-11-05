@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="frota_modelo_tree">
+            <field name="name">frota.modelo.tree</field>
+            <field name="model">frota.modelo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="marca" />
+                    <field name="modelo" />
+                    <field name="tipo_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="frota_modelo_form">
+            <field name="name">frota.modelo.form</field>
+            <field name="model">frota.modelo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Modelo de veículo">
+                    <group col="10" colspan="10">
+                        <field name="marca" />
+                        <newline />
+                        <field name="modelo" />
+                        <newline />
+                        <field name="tipo_id" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="frota_modelo_search">
+            <field name="name">frota.modelo.search</field>
+            <field name="model">frota.modelo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Modelos de veículo">
+                    <field name="marca" />
+                    <field name="modelo" />
+                    <field name="tipo_id" select="1" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="frota_modelo_acao">
+            <field name="name">Modelos de veículo</field>
+            <field name="res_model">frota.modelo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain"></field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="frota_modelo_tree" />
+            <field name="search_view_id" ref="frota_modelo_search" />
+        </record>
+
+        <menuitem action="frota_modelo_acao"
+            id="menu_frota_modelo" name="Modelos de veículo" parent="menu_frota_config" />
+
+        <record model="ir.actions.act_window.view" id="frota_modelo_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="frota_modelo_form"/>
+            <field name="act_window_id" ref="frota_modelo_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="frota_modelo_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="frota_modelo_tree"/>
+            <field name="act_window_id" ref="frota_modelo_acao"/>
+        </record>
+
+    </data>
+</openerp>

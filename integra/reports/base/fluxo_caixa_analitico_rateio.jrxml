@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fluxo_caixa_analitico_rateio" language="groovy" pageWidth="555" pageHeight="230" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6fff61ce-1432-40fb-830b-18bbe5149856">
+	<property name="ireport.zoom" value="2.3579476910000023"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SALDO_ANTERIOR" class="java.math.BigDecimal"/>
+	<parameter name="SQL_RELATORIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[$P!{SQL_RELATORIO}]]>
+	</queryString>
+	<field name="data" class="java.sql.Date"/>
+	<field name="valor_entrada" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Valor entrada]]></fieldDescription>
+	</field>
+	<field name="valor_saida" class="java.math.BigDecimal"/>
+	<field name="diferenca" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Diferença]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[unknown]]></fieldDescription>
+	</field>
+	<field name="tipo" class="java.lang.String">
+		<fieldDescription><![CDATA[unknown]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String"/>
+	<field name="projeto" class="java.lang.String"/>
+	<variable name="valor_entrada_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_entrada}]]></variableExpression>
+	</variable>
+	<variable name="valor_saida_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_saida}]]></variableExpression>
+	</variable>
+	<variable name="diferenca_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{diferenca}]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{SALDO_ANTERIOR}]]></initialValueExpression>
+	</variable>
+	<variable name="saldo" class="java.math.BigDecimal" resetType="None">
+		<variableExpression><![CDATA[$V{_saldo} == null ?
+$F{diferenca} + $P{SALDO_ANTERIOR}
+:
+$V{saldo}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="_saldo" class="java.lang.Integer" resetType="None" calculation="Count">
+		<variableExpression><![CDATA[$V{_saldo}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="variable1" class="java.lang.String" resetType="Column">
+		<variableExpression><![CDATA[$F{diferenca}]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="12">
+			<staticText>
+				<reportElement x="355" y="0" width="50" height="12" uuid="6b6c0c87-6d53-4d03-858a-d2082ce184ea"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Entrada ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="505" y="0" width="50" height="12" uuid="3baafd03-d06c-4155-af98-796a35405fcc"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="50" height="12" uuid="3823436e-3f4e-42b9-b68b-a90a1dd40b25"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Diferença]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="0" width="50" height="12" uuid="675c4499-54cd-4c88-ab22-5e9d348057ec"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="50" height="12" uuid="9524a22e-e390-4ba2-a111-942f4d871b87"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="0" width="155" height="12" uuid="a20ec32c-274f-4eb5-9812-d23c487606e6"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente / Fornecedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="0" width="15" height="12" uuid="52a045b1-5f47-4d2e-9c02-dc9d908514e8"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[T]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="65" y="0" width="15" height="12" uuid="d64289a2-a021-49cb-bf55-b5e7c7adcb41"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[O]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="235" y="0" width="120" height="12" uuid="b32b5f12-dec8-440d-82aa-af0b999a6beb"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Projeto]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="50" height="12" uuid="285cf7fe-34dc-4ce1-b833-5e897622aff2"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="455" y="0" width="50" height="12" uuid="ff1de2ae-4d5a-47dc-9d04-247ec4b2b06a"/>
+				<box leftPadding="0" rightPadding="5">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{diferenca}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="65" y="0" width="15" height="12" uuid="c38d9c0d-d7a2-48bd-b2f2-fef3d8167571"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="80" y="0" width="155" height="12" uuid="c4b0f96e-b77d-419a-a907-99e8b040dd5e"/>
+				<box leftPadding="0" rightPadding="5">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="355" y="0" width="50" height="12" uuid="3b6c41ed-bd78-44a1-a53f-c1bbaac419cb"/>
+				<box leftPadding="0" rightPadding="5">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_entrada}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="405" y="0" width="50" height="12" uuid="ee079dae-4c46-40e9-a71d-d9d0f21a2b9c"/>
+				<box leftPadding="0" rightPadding="5">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_saida}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="505" y="0" width="50" height="12" uuid="b7ebded6-685c-42f8-8467-cd7a6e231bbe"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{diferenca_1} + $P{SALDO_ANTERIOR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="235" y="0" width="120" height="12" uuid="3f1fb1c8-427c-4ed8-b838-e5538dd28095"/>
+				<box leftPadding="0" rightPadding="5">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{projeto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="50" y="0" width="15" height="12" uuid="82f839cc-047f-4c3c-b8ee-378330c5191d"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="12">
+			<staticText>
+				<reportElement x="0" y="0" width="355" height="12" uuid="c1b17752-1183-4419-a93c-55b7c050a104"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Totais:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="355" y="0" width="50" height="12" uuid="7f2beed3-76fb-423d-a923-a3f3cd6cd8e4"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_entrada_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="405" y="0" width="50" height="12" uuid="05281b53-b221-4a4f-85d7-53b71c215336"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_saida_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="505" y="0" width="50" height="12" uuid="f945d66b-28ab-4e1e-87c7-603f10011583"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{diferenca_1} + $P{SALDO_ANTERIOR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement x="455" y="0" width="50" height="12" uuid="8cc13f52-c739-4c9b-b52c-9d8792a27491"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Droid Sans Mono" size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{diferenca_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

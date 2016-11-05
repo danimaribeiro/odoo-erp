@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_nfe_emitida_form">
+            <field name="name">sped.nfe.emitida.form</field>
+            <field name="model">sped.documento</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped.sped_nfe_emitida_form"/>
+            <field name="arch" type="xml">
+                <field name="documentoitem_ids" position="before">
+                    <button name="buscar_remessa" string="Busca Estoque ambulante" attrs="{'invisible': [('operacao_id', '!=', '6')]}" type="object" />
+                    <button name="buscar_retorno" string="Busca Retorno" attrs="{'invisible': [('operacao_id', '!=', '5')]}" type="object" />
+                </field>
+                <field name="chave" position="after">
+                    <button name="buscar_itens_retorno" string="Busca Itens do Retorno" attrs="{'invisible': [('finalidade_nfe', '!=', '4')]}" type="object" colspan="4" />
+                </field>
+                <field name="documentoitem_ids" position="replace">
+                    <field name="documentoitem_ids" colspan="4" nolabel="1"
+                        context="{'default_partner_id': partner_id, 'default_entrada_saida': entrada_saida, 'default_data_emissao': data_emissao, 'default_regime_tributario': regime_tributario, 'default_operacao_id': operacao_id, 'default_company_id': company_id, 'default_emissao': emissao, 'default_modelo': modelo, 'default_municipio_fato_gerador_id': municipio_fato_gerador_id, 'default_contribuinte': partner_contribuinte, 'form_view_ref' : 'sped.sped_documentoitem_form', 'tree_view_ref' : 'sped.sped_documentoitem_tree'}" mode="form,tree" />
+                </field>
+            </field>
+        </record>
+   </data>
+</openerp>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="product_normal_form_view" model="ir.ui.view">
+            <field name="name">product.normal.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <page string="Suppliers" position="before">
+                <page string="SPED">
+<!--                     <field colspan="4" mode="form" name="produto_id" nolabel="1" required="0"> -->
+<!--                         <form string="Form Produto"> -->
+                            <field name="tipo" />
+                            <newline/>
+                            <field name="ncm_id" colspan="4" />
+                            <newline/>
+                            <field name="cest_id" colspan="4" />
+                            <newline/>
+                            <field name="org_icms" colspan="4" />
+                            <newline/>
+                            <field name="familiatributaria_id" colspan="4" />
+                            <newline/>
+                            <field name="al_ipi_id" colspan="4" />
+                            <newline/>
+                            <field name="al_pis_cofins_id" colspan="4" />
+                            <newline/>
+                            <field name="servico_id" colspan="4" />
+<!--                         </form> -->
+<!--                     </field> -->
+                </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

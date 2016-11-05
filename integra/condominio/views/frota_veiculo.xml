@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="condominio_veiculo_form">
+            <field name="name">condominio.veiculo.form</field>
+            <field name="model">frota.veiculo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Veículo" >
+                    <group col="6" colspan="4" string="Veículo">
+                        <field name="modelo_id" string="Marca/Modelo" />
+                        <field name="placa" string="Placa" />
+                        <field name="sped_estado_id" />
+                        <field name="partner_address_id" colspan="6" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model='ir.ui.view' id='condominio_veiculo_tree'>
+            <field name="name">condominio.veiculo.tree</field>
+            <field name="model">frota.veiculo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Veículos">
+                    <field name="modelo_id" string="Marca/Modelo" />
+                    <field name="placa" />
+                    <field name="sped_estado_id"/>
+                    <field name="partner_address_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="condominio_veiculo_search">
+            <field name="name">condominio.veiculo.search</field>
+            <field name="model">frota.veiculo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Veículos">
+                    <field name="modelo_id" select="1" string="Marca/Modelo" />
+                    <field name="placa" />
+                    <field name="partner_address_id" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="condominio_veiculo_acao">
+            <field name="name">Veículos</field>
+            <field name="res_model">frota.veiculo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain"></field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="condominio_veiculo_tree" />
+            <field name="search_view_id" ref="condominio_veiculo_search" />
+        </record>
+
+        <menuitem action="condominio_veiculo_acao"
+            id="menu_condominio_veiculo" 
+            name="Veículos" 
+            sequence="30"
+            parent="menu_condominio_cadastro" />
+
+        <record model="ir.actions.act_window.view" id="condominio_veiculo_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="condominio_veiculo_form"/>
+            <field name="act_window_id" ref="condominio_veiculo_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="condominio_veiculo_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="condominio_veiculo_tree"/>
+            <field name="act_window_id" ref="condominio_veiculo_acao"/>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_operacaoitem_tree">
+            <field name="name">sped.operacaoitem.tree</field>
+            <field name="model">sped.operacaoitem</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree editable="top">
+                    <field name="regime_tributario" invisible="1" />
+                    <field name="entrada_saida" invisible="1" />
+                    <field name="familiatributaria_id"/>
+                    <field name="contribuinte" />
+                    <field name="cfop_id" domain="[('entrada_saida', '=', entrada_saida)]"/>
+                    <field name="org_icms" />
+                    <field name="cst_icms" required="[('regime_tributario', '!=', '1')]"/>
+                    <field name="al_pis_cofins_id" />
+                    <field name="cst_ipi"/>
+                    <field name="bc_icms_proprio_com_ipi" />
+                    <field name="bc_icms_st_com_ipi" />
+                    <field name="familiatributaria_alternativa_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_operacaoitem_form">
+            <field name="name">sped.operacaoitem.form</field>
+            <field name="model">sped.operacaoitem</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <field name="regime_tributario" invisible="1" />
+                    <field name="entrada_saida" invisible="1" />
+                    <field name="familiatributaria_id"/>
+                    <newline/>
+                    <field name="contribuinte" />
+                    <newline/>
+                    <field name="cfop_id" domain="[('entrada_saida', '=', entrada_saida)]"/>
+                    <newline/>
+                    <field name="org_icms" />
+                    <newline/>
+                    <field name="cst_icms" required="[('regime_tributario', '!=', '1')]" />
+                    <newline/>
+<!--                     <field name="al_pis_cofins_id" required="[('regime_tributario', '!=', '1')]" /> -->
+                    <field name="al_pis_cofins_id" />
+                    <newline/>
+                    <field name="cst_ipi"/>
+                    <newline/>
+                    <field name="bc_icms_proprio_com_ipi" />
+                    <field name="bc_icms_st_com_ipi" />
+                    <newline/>
+                    <field name="previdencia_retido" />
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

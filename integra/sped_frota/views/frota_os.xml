@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="frota_os_form" model="ir.ui.view">
+            <field name="name">frota.os.form</field>
+            <field name="model">frota.os</field>
+            <field name="inherit_id" ref="integra_frota.frota_os_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="obs" position="after">
+                    <separator string="Notas Fiscais" colspan="4" />
+                    <field name="sped_documento_ids" domain="[('partner_id', '=', res_partner_id)]" nolabel="1" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

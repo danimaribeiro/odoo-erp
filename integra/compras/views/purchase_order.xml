@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+          <record id="purchase_order_form" model="ir.ui.view">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="type">form</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <field name="warehouse_id" position="replace">
+                    <field name="warehouse_id" invisible="1" />
+                </field>
+                <xpath expr="//form/notebook/page[@string='Purchase Order']/group/button[@string='Print']" position="replace">
+                    <button name="imprime_ordem_compra" string="Print" states="approved" type="object" icon="gtk-print"/>
+                </xpath>
+                <xpath expr="//form/notebook/page[@string='Purchase Order']/group/button[@string='Convert to Purchase Order']" position="replace">
+                    <group groups="purchase.group_purchase_manager">
+                        <button name="purchase_confirm" states="draft" string="Aprovar pedido" icon="gtk-go-forward"/>
+                    </group>
+                </xpath>
+                <xpath expr="//form/notebook/page[@string='Purchase Order']/group/button[@string='Approved']" position="replace">
+                    <group groups="purchase.group_purchase_manager">
+                        <button name="wkf_approve_order" string="Confirmar pedido" type="object" states="confirmed" icon="gtk-go-forward" />
+                    </group>
+                </xpath>
+                <xpath expr="//form/notebook/page[@string='Purchase Order']/group[1]" position="replace">
+                    <group col="4" colspan="4">
+                        <group colspan="2">
+                            <field name="formapagamento_id" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                            <newline />
+                            <field name="payment_term_id" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                            <newline/>
+                            <field name="modalidade_frete" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                            <newline/>
+                            <field name="transportadora_id" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                        </group>
+                        <group colspan="2" col="4">
+                            <field name="amount_untaxed" string="Total dos produtos" colspan="4" />
+                            <newline/>
+                            <field name="amount_tax" invisible="1" colspan="4"/>
+                            <field name="vr_ipi" colspan="4" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                            <field name="vr_st" colspan="4" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                            <newline/>
+                            <field name="vr_frete" colspan="4" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                            <newline/>
+                            <field name="vr_desconto" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                            <field name="al_desconto" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                            <newline/>
+                            <button name="button_dummy" states="draft" string="Compute" type="object" icon="gtk-execute" colspan="4" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                            <newline/>
+                            <field name="amount_total" sum="Total amount" attrs="{'readonly': ['!', ('state', 'in', ('draft', 'wait', 'confirmed'))]}" />
+                            <newline/>
+                        </group>
+                    </group>
+                </xpath>
+                <field name="order_line" position="replace">
+                    <field colspan="4" name="order_line" nolabel="1" mode="tree,form" context="{'default_company_id': company_id, 'form_view_ref': 'purchase.purchase_order_line_form', 'tree_view_ref' : 'purchase.purchase_order_line_tree'}" />
+<!--                        <tree string="Purchase Order Lines">
+                            <field name="name"/>
+                            <field name="product_qty" sum="Quantidade" />
+                            <field name="price_unit"/>
+                            <field name="bc_ipi" sum="IPI" invisible="1" />
+                            <field name="al_ipi" />
+                            <field name="vr_ipi" sum="IPI" />
+                            <field name="bc_st" sum="ST" invisible="1" />
+                            <field name="al_st" />
+                            <field name="vr_st" sum="ST" />
+                            <field name="price_subtotal" sum="Total" />
+                        </tree>
+                    </field>-->
+                </field>
+                <page string="Notes" position="replace">
+                <page string="Observações">
+                    <separator string="Observação internas" colspan="4" />
+                    <field name="notes" nolabel="1" colspan="4" />
+                    <separator string="Observações para o fornecedor" colspan="4" />
+                    <field name="obs_fornecedor" nolabel="1" colspan="4" />
+                </page>
+                <page string="Comunicação e histórico">
+                    <separator string="Emails trocados e anotações" colspan="4" />
+                    <field name="mail_message_ids" colspan="4" nolabel="1" mode="tree" readonly="1">
+                        <tree string="Histórico">
+                            <field name="date" string="Data" />
+                            <field name="display_text" string="Texto"/>
+                            <field name="email_to" invisible="1"/>
+                            <field name="email_from" invisible="1"/>
+                            <button
+                                string="Reply" attrs="{'invisible': [('email_from', '=', False)]}"
+                                name="%(mail.action_email_compose_message_wizard)d"
+                                context="{'mail.compose.message.mode':'reply', 'message_id':active_id}"
+                                icon="terp-mail-replied" type="action" />
+                        </tree>
+                    </field>
+                    <button string="Incluir anotação"
+                            name="incluir_anotacao"
+                            type="object"
+                            icon="terp-document-new" />
+                    <button string="Enviar e-mail"
+                            name="%(mail.action_email_compose_message_wizard)d"
+                            icon="terp-mail-message-new" type="action"/>
+                    <newline/>
+                    <field name="partner_fone" invisible="1" />
+                    <field name="partner_celular" invisible="1" />
+                    <separator string="Ligações telefônicas" colspan="4" />
+                    <field name="crm_phonecall_ids" colspan="4" nolabel="1" mode="tree" context="{'default_partner_id': partner_id, 'default_phone': partner_fone, 'default_mobile': partner_celular}">
+                        <tree colors="gray:state in ('cancel','done');blue:state in ('pending',)" string="Phone Calls">
+                            <field name="date"/>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="partner_contact"/>
+                            <field name="partner_phone"/>
+                            <field name="user_id"/>
+                            <field name="categ_id" invisible="1"/>
+                            <field name="create_date" invisible="1"/>
+                            <field name="opportunity_id" invisible="1"/>
+                            <button string="Meeting"
+                                    states="open,pending" icon="gtk-redo"
+                                    name="action_make_meeting" type="object" />
+                            <field name="state"/>
+                            <button name="case_cancel" string="Cancel" states="open,pending" type="object" icon="gtk-cancel"/>
+                            <button name="case_open" string="Todo" states="pending" type="object" icon="gtk-go-forward"/>
+                            <button name="case_close" string="Held" states="open,pending" type="object" icon="gtk-jump-to"/>
+                            <button name="case_pending" string="Not Held" states="open" type="object" icon="gtk-media-pause"/>
+                        </tree>
+                        <form string="Phone Call">
+                            <group colspan="6" col="7">
+                                <field name="name" required="1"/>
+                                <field name="partner_phone"/>
+                                <field name="duration" widget="float_time"/>
+                                <button string="Schedule a Meeting" name="action_make_meeting" icon="gtk-redo" type="object"/>
+
+                                <field name="date"/>
+                                <field name="user_id"/>
+                                <field name="section_id" colspan="1" widget="selection" />
+                                <button string="Schedule Other Call"
+                                        icon="terp-call-start"
+                                        name="%(crm.phonecall_to_phonecall_act)d"
+                                        type="action"  />
+                            </group>
+
+                            <group col="3" colspan="2">
+                                <separator colspan="3" string="Contacts" />
+                                <field name="partner_id"
+                                        on_change="onchange_partner_id(partner_id)" />
+                                <button string="Create a Partner"
+                                        icon="terp-partner"
+                                        name="%(crm.action_crm_phonecall2partner)d"
+                                        type="action"
+                                        attrs="{'invisible':[('partner_id','!=',False)]}"
+                                        groups="base.group_partner_manager"/>
+                                <newline/>
+                                <field name="partner_address_id"
+                                        on_change="onchange_partner_address_id(partner_address_id)" />
+                                <newline/>
+                                <field name="partner_mobile" />
+                            </group>
+                            <group col="2" colspan="2">
+                                <separator colspan="2" string="Categorization" />
+                                <field name="categ_id" widget="selection"
+                                        domain="[('object_id.model', '=', 'crm.phonecall')]"/>
+                                <field name="priority"/>
+                                <field name="purchase_order_id"/>
+                            </group>
+                            <separator string="Description" colspan="4" />
+                            <field name="description" nolabel="1" colspan="4" />
+                            <separator colspan="4" />
+                            <group col="8" colspan="4">
+                                <field name="state" widget="statusbar" statusbar_visible="open,done" statusbar_colors='{"pending":"red"}' select="1"/>
+                                <button name="case_cancel" string="Cancel"
+                                        states="open,pending" type="object"
+                                        icon="gtk-cancel" />
+                                <button name="case_open" string="Todo"
+                                        states="pending" type="object"
+                                        icon="gtk-go-forward" />
+                                <button name="case_pending" string="Not Held"
+                                        states="open" type="object" icon="gtk-media-pause" />
+                                <button name="case_close" string="Held"
+                                        states="open,pending" type="object"
+                                        icon="gtk-jump-to" />
+                                <button name="case_reset" string="Reset to Todo"
+                                        states="cancel" type="object"
+                                        icon="gtk-convert" />
+                            </group>
+                        </form>
+                    </field>
+                    <newline/>
+                    <button string="Agendar/Registrar Ligação"
+                            name="%(purchaseorder2phonecall_act)d" icon="terp-call-start"
+                            type="action"/>
+                </page>
+                </page>
+            </field>
+        </record>
+
+        <record id="purchase_order_tree" model="ir.ui.view">
+            <field name="name">purchase.order.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+            <field name="arch" type="xml">
+                <tree string="Purchase Order" position="replace">
+                    <tree colors="grey:state=='cancel';blue:state in ('done','approved');red:state in ('except_invoice','except_picking')" string="Purchase Order">
+                        <field name="name" string="Reference"/>
+                        <field name="date_order" />
+                        <field name="partner_id"/>
+                        <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                        <field name="minimum_planned_date" invisible="context.get('quotation_only', False)"/>
+                        <field name="origin"/>
+                        <field name="invoiced_rate" widget="progressbar" invisible="context.get('quotation_only', False)"/>
+                        <field name="shipped_rate" widget="progressbar" invisible="context.get('quotation_only', False)"/>
+                        <field name="amount_untaxed" sum="Total Untaxed amount"/>
+                        <field name="amount_total" sum="Total amount"/>
+                        <field name="state"/>                
+                        <field name="create_uid" string="Criado por" />
+                        <field name="validator" />
+                    </tree>                         
+                </tree>                                         
+            </field>
+        </record>
+
+    </data>
+</openerp>

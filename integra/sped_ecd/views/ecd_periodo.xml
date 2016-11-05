@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="ecd_periodo_search">
+            <field name="name">ecd.periodo.search</field>
+            <field name="model">ecd.periodo</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Periodos Contábeis">
+                    <filter name="aberto" string="Aberto" icon="terp-go-month" domain="[('situacao','=','A')]" />
+                    <filter name="fechado" string="Fechado" icon="terp-go-month" domain="[('situacao','=','F')]" />               
+                    <field name="company_id" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />                    
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ecd_periodo_tree">
+            <field name="name">ecd.periodo.tree</field>
+            <field name="model">ecd.periodo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                 <tree colors="green:situacao=='A';blue:situacao=='F'">                    
+                    <field name="nome" />
+                    <field name="company_id" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />                    
+                    <field name="situacao" />
+                    <field name="create_uid" />                    
+                    <field name="write_uid" />                    
+                    <field name="write_date" />                                    
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="ecd_periodo_form">
+            <field name="name">ecd.periodo.form</field>
+            <field name="model">ecd.periodo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Periodos Contábeis">
+                    <separator string="Parâmetros" colspan="4"/>
+                    <field name="nome" required="1" colspan="4" />
+                    <field name="company_id" on_change="on_change_data_inicial(company_id)" required="1" colspan="4" domain="[('cnpj_cpf', '!=', False)]" />
+                    <field name="cnpj_cpf" readonly="1" colspan="2" />
+                    <newline/>                                            
+                    <field name="data_inicial" required="1" />
+                    <field name="data_final" required="1" />
+                    <newline/>
+                    <field name="permitir_lancamento" required="1" colspan="2" />                    
+                    <field name="situacao" required="1" colspan="2" />                                                                         
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="ecd_periodo_acao">
+            <field name="name">Periodos Contábeis</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="res_model">ecd.periodo</field>
+            <field name="search_view_id" ref="ecd_periodo_search" />
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="ecd_menu_ecd_periodo"
+            action="ecd_periodo_acao" 
+            name="Periodos Contábeis"
+            parent="menu_sped_ecd_config"
+            sequence="01"/>
+    </data>
+</openerp>

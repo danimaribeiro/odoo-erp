@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="caixa_caixa_tree">
+            <field name="name">caixa.caixa.tree</field>
+            <field name="model">caixa.caixa</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome" />
+                    <field name="company_id" />
+                    <field name="partner_bank_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="caixa_caixa_form">
+            <field name="name">caixa.caixa.form</field>
+            <field name="model">caixa.caixa</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Caixas">
+                    <group col="4" colspan="4">
+                        <separator string="Informações básicas" colspan="4" />
+                        <field name="nome" colspan="4" required="1" />
+                        <newline />
+                        <field name="company_id" colspan="4" required="1" />
+                        <newline />
+                        <field name="partner_bank_id" colspan="4" required="1" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="caixa_caixa_search">
+            <field name="name">caixa.caixa.search</field>
+            <field name="model">caixa.caixa</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Caixa">
+                    <field name="nome" />
+                    <field name="company_id" />
+                    <field name="partner_bank_id" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="caixa_caixa_acao">
+            <field name="name">Caixa</field>
+            <field name="res_model">caixa.caixa</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="caixa_caixa_tree" />
+        </record>
+
+        <menuitem action="caixa_caixa_acao"
+            id="menu_caixa_caixa" name="Caixas" parent="menu_caixa" />
+
+    </data>
+</openerp>

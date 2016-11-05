@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_sesmt_root" name="SESMT" sequence="16"
+            web_icon="images/sesmt.png"
+            web_icon_hover="images/sesmt-hover.png" />
+<!--             groups="base.group_hr_manager,base.group_hr_user,base.group_user"/> -->
+        <menuitem id="menu_sesmt_cadastro" parent="menu_sesmt_root" name="Cadastro" sequence="0"/>
+        <menuitem id="menu_sesmt_laudo" parent="menu_sesmt_root" name="Laudos e controles" sequence="5"/>
+        <menuitem id="menu_sesmt_cat" parent="menu_sesmt_root" name="CAT" sequence="5"/>
+
+        <menuitem id="menu_sesmt_ltcat" parent="menu_sesmt_laudo" name="LTCAT" />
+        <menuitem id="menu_sesmt_ppra" parent="menu_sesmt_laudo" name="PPRA" />
+        <menuitem id="menu_sesmt_pcmso" parent="menu_sesmt_laudo" name="PCMSO" />
+        <menuitem id="menu_sesmt_pcmat" parent="menu_sesmt_laudo" name="PCMAT" />
+        <menuitem id="menu_sesmt_ppp" parent="menu_sesmt_laudo" name="PPP" />
+
+<!--        <menuitem id="menu_sesmt_configuracao" name="Configuração" parent="hr.menu_hr_root" groups="base.group_hr_manager" sequence="50"/>
+        <menuitem id="menu_hr_management" name="Human Resources" parent="hr.menu_hr_configuration" sequence="1"/>
+        <menuitem id="menu_view_employee_category_configuration_form" parent="hr.menu_hr_management" name="Employees" sequence="1" />-->
+
+    </data>
+</openerp>

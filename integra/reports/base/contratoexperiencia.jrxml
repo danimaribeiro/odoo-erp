@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="contratoexperiencia" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="dde6cd8c-5779-4689-91cd-ebe76385ba1b">
+	<property name="ireport.zoom" value="1.818181818181819"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="1147"/>
+	<style name="Title" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<parameter name="UID" class="java.lang.Integer"/>
+	<parameter name="LOGO_CLIENTE" class="java.lang.String"/>
+	<parameter name="LOGO_DIR" class="java.lang.String"/>
+	<parameter name="BASE_DIR" class="java.lang.String"/>
+	<parameter name="IDS_PLAIN" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     distinct(hr_contract.id),
+     resource_resource.name as resource_name,
+     muncomp.nome as municipio_company,
+     hr_contract.date_start AS hr_contract_date_start,
+     hr_contract.name AS hr_contract_name,
+     hr_contract.trial_date_start AS hr_contract_trial_date_start,
+     hr_contract.trial_date_end AS hr_contract_trial_date_end,
+     hr_contract.date_end AS hr_contract_date_end,
+     hr_job.name AS hr_job_name,
+     hr_department.name AS hr_department_name,
+     resource_resource.name as resource_name,
+     hr_employee.data_nascimento AS hr_employee_data_nascimento,
+     hr_employee.carteira_trabalho_serie AS hr_employee_carteira_trabalho_serie,
+     hr_employee.casa_propria AS hr_employee_casa_propria,
+     hr_employee.estrangeiro_filho_com_brasileiro AS hr_employee_estrangeiro_filho_com_brasileiro,
+     hr_employee.grau_instrucao AS hr_employee_grau_instrucao,
+     hr_employee.municipio_nascimento_id AS hr_employee_municipio_nascimento_id,
+     hr_employee.nome_mae AS hr_employee_nome_mae,
+     hr_employee.raca_cor AS hr_employee_raca_cor,
+     hr_employee.deficiente_auditivo AS hr_employee_deficiente_auditivo,
+     hr_employee.deficiente_obs AS hr_employee_deficiente_obs,
+     hr_employee.rg_data_expedicao AS hr_employee_rg_data_expedicao,
+     hr_employee.rg_orgao_emissor AS hr_employee_rg_orgao_emissor,
+     hr_employee.carteira_trabalho_numero AS hr_employee_carteira_trabalho_numero,
+     hr_employee.name AS hr_employee_name,
+     hr_employee.cnh_data_expedicao AS hr_employee_cnh_data_expedicao,
+     hr_employee.roc_data_expedicao AS hr_employee_roc_data_expedicao,
+     hr_employee.deficiente_reabilitado AS hr_employee_deficiente_reabilitado,
+     hr_employee.estado_civil AS hr_employee_estado_civil,
+     hr_employee.cnh_numero AS hr_employee_cnh_numero,
+     hr_employee.roc_orgao_emissor AS hr_employee_roc_orgao_emissor,
+     hr_employee.roc_numero AS hr_employee_roc_numero,
+     hr_employee.cnh_orgao_emissor AS hr_employee_cnh_orgao_emissor,
+     hr_employee.roc_data_validade AS hr_employee_roc_data_validade,
+     hr_employee.rg_numero AS hr_employee_rg_numero,
+     hr_employee.carteira_trabalho_estado AS hr_employee_carteira_trabalho_estado,
+     hr_employee.nome_pai AS hr_employee_nome_pai,
+     hr_employee.pais_nacionalidade_id AS hr_employee_pais_nacionalidade_id,
+     hr_employee.cnh_data_validade AS hr_employee_cnh_data_validade,
+     hr_employee.casa_propria_fgts AS hr_employee_casa_propria_fgts,
+     hr_employee.deficiente_visual AS hr_employee_deficiente_visual,
+     hr_employee.sexo AS hr_employee_sexo,
+     hr_employee.estrangeiro_data_chegada AS hr_employee_estrangeiro_data_chegada,
+     hr_employee.nis AS hr_employee_nis,
+     hr_employee.deficiente_motor AS hr_employee_deficiente_motor,
+     hr_employee.cpf AS hr_employee_cpf,
+     hr_employee.estrangeiro_casado_com_brasileiro AS hr_employee_estrangeiro_casado_com_brasileiro,
+     hr_employee.estrangeiro_data_naturalizacao AS hr_employee_estrangeiro_data_naturalizacao,
+     hr_contract_type.name AS hr_contract_type_name,
+     res_company.id AS res_company_id,
+     res_company.name AS res_company_name,
+     resource_calendar.name AS resource_calendar_name,
+     partcomp.endereco as empresa_endereco,
+     partcomp.numero as empresa_numero,
+     partcomp.complemento as empresa_complemento,
+     partcomp.bairro as empresa_bairro,
+     muncomp.nome as empresa_municipio,
+     estcomp.uf as empresa_estado,
+     partcomp.cep as empresa_cep,
+     adrcomp.phone as empresa_fone,
+     partcomp.cnpj_cpf as empresa_cnpj,
+     partcomp.ie as empresa_ie
+
+FROM
+     public.hr_employee hr_employee INNER JOIN public.hr_contract hr_contract ON hr_employee.id = hr_contract.employee_id
+     INNER JOIN public.hr_job hr_job ON hr_contract.job_id = hr_job.id
+     INNER JOIN public.resource_resource resource_resource ON hr_employee.resource_id = resource_resource.id
+     INNER JOIN public.hr_department hr_department ON hr_job.department_id = hr_department.id
+     INNER JOIN public.res_company res_company ON res_company.id = hr_department.company_id
+     INNER JOIN public.resource_calendar resource_calendar ON resource_calendar.id = hr_contract.working_hours
+     INNER JOIN public.hr_contract_type hr_contract_type ON hr_contract.type_id = hr_contract_type.id
+     INNER JOIN res_partner respartcomp on respartcomp.id = res_company.partner_id
+     INNER JOIN res_partner_address adrcomp on adrcomp.partner_id = respartcomp.id and
+	adrcomp.type = 'default'
+     left join sped_participante partcomp on partcomp.partner_id = res_company.partner_id
+     left join sped_municipio muncomp on muncomp.id = partcomp.municipio_id
+     left join sped_estado estcomp on estcomp.id = muncomp.estado_id]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="resource_name" class="java.lang.String"/>
+	<field name="municipio_company" class="java.lang.String"/>
+	<field name="hr_contract_date_start" class="java.sql.Date"/>
+	<field name="hr_contract_name" class="java.lang.String"/>
+	<field name="hr_contract_trial_date_start" class="java.sql.Date"/>
+	<field name="hr_contract_trial_date_end" class="java.sql.Date"/>
+	<field name="hr_contract_date_end" class="java.sql.Date"/>
+	<field name="hr_job_name" class="java.lang.String"/>
+	<field name="hr_department_name" class="java.lang.String"/>
+	<field name="hr_employee_data_nascimento" class="java.sql.Date"/>
+	<field name="hr_employee_carteira_trabalho_serie" class="java.lang.String"/>
+	<field name="hr_employee_casa_propria" class="java.lang.Boolean"/>
+	<field name="hr_employee_estrangeiro_filho_com_brasileiro" class="java.lang.Boolean"/>
+	<field name="hr_employee_grau_instrucao" class="java.lang.String"/>
+	<field name="hr_employee_municipio_nascimento_id" class="java.lang.Integer"/>
+	<field name="hr_employee_nome_mae" class="java.lang.String"/>
+	<field name="hr_employee_raca_cor" class="java.lang.String"/>
+	<field name="hr_employee_deficiente_auditivo" class="java.lang.Boolean"/>
+	<field name="hr_employee_deficiente_obs" class="java.lang.String"/>
+	<field name="hr_employee_rg_data_expedicao" class="java.sql.Date"/>
+	<field name="hr_employee_rg_orgao_emissor" class="java.lang.String"/>
+	<field name="hr_employee_carteira_trabalho_numero" class="java.lang.String"/>
+	<field name="hr_employee_name" class="java.lang.String"/>
+	<field name="hr_employee_cnh_data_expedicao" class="java.sql.Date"/>
+	<field name="hr_employee_roc_data_expedicao" class="java.sql.Date"/>
+	<field name="hr_employee_deficiente_reabilitado" class="java.lang.Boolean"/>
+	<field name="hr_employee_estado_civil" class="java.lang.String"/>
+	<field name="hr_employee_cnh_numero" class="java.lang.String"/>
+	<field name="hr_employee_roc_orgao_emissor" class="java.lang.String"/>
+	<field name="hr_employee_roc_numero" class="java.lang.String"/>
+	<field name="hr_employee_cnh_orgao_emissor" class="java.lang.String"/>
+	<field name="hr_employee_roc_data_validade" class="java.sql.Date"/>
+	<field name="hr_employee_rg_numero" class="java.lang.String"/>
+	<field name="hr_employee_carteira_trabalho_estado" class="java.lang.String"/>
+	<field name="hr_employee_nome_pai" class="java.lang.String"/>
+	<field name="hr_employee_pais_nacionalidade_id" class="java.lang.Integer"/>
+	<field name="hr_employee_cnh_data_validade" class="java.sql.Date"/>
+	<field name="hr_employee_casa_propria_fgts" class="java.lang.Boolean"/>
+	<field name="hr_employee_deficiente_visual" class="java.lang.Boolean"/>
+	<field name="hr_employee_sexo" class="java.lang.String"/>
+	<field name="hr_employee_estrangeiro_data_chegada" class="java.sql.Date"/>
+	<field name="hr_employee_nis" class="java.lang.String"/>
+	<field name="hr_employee_deficiente_motor" class="java.lang.Boolean"/>
+	<field name="hr_employee_cpf" class="java.lang.String"/>
+	<field name="hr_employee_estrangeiro_casado_com_brasileiro" class="java.lang.Boolean"/>
+	<field name="hr_employee_estrangeiro_data_naturalizacao" class="java.sql.Date"/>
+	<field name="hr_contract_type_name" class="java.lang.String"/>
+	<field name="res_company_id" class="java.lang.Integer"/>
+	<field name="res_company_name" class="java.lang.String"/>
+	<field name="resource_calendar_name" class="java.lang.String"/>
+	<field name="empresa_endereco" class="java.lang.String"/>
+	<field name="empresa_numero" class="java.lang.String"/>
+	<field name="empresa_complemento" class="java.lang.String"/>
+	<field name="empresa_bairro" class="java.lang.String"/>
+	<field name="empresa_municipio" class="java.lang.String"/>
+	<field name="empresa_estado" class="java.lang.String"/>
+	<field name="empresa_cep" class="java.lang.String"/>
+	<field name="empresa_fone" class="java.lang.String"/>
+	<field name="empresa_cnpj" class="java.lang.String"/>
+	<field name="empresa_ie" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="85" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="89d60cf5-d536-4a9c-8d1a-6a0c5d1e4ad0" x="-21" y="-20" width="596" height="105"/>
+				<subreportParameter name="INTEGRA_REPORT_TITLE">
+					<subreportParameterExpression><![CDATA["CONTRATO DE EXPERIÊNCIA"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO_DIR">
+					<subreportParameterExpression><![CDATA[$P{LOGO_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="COMPANY_ID">
+					<subreportParameterExpression><![CDATA[$P{UID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO_CLIENTE">
+					<subreportParameterExpression><![CDATA[$P{LOGO_CLIENTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "cabecalho.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="629" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="285ecf30-d3de-4222-8349-734edb4928d4" x="1" y="0" width="554" height="598"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["       Por este instrumento particular de Contrato de Trabalho em caráter de experiência, os abaixo assinados, de um lado como empregadora " +
+$F{res_company_name} + ", com sede " + ($F{empresa_endereco} != null ? $F{empresa_endereco} : "") + " " +
+($F{empresa_numero} != null ? $F{empresa_numero} : "") + " " +
+($F{empresa_bairro} != null ? $F{empresa_bairro} : "") + " " +
+", na cidade de " + ($F{empresa_municipio} != null ? $F{empresa_municipio} : "") +
+", no Estado de " + ($F{empresa_estado} != null ? $F{empresa_estado} : "") +
+", CNPJ " + ($F{empresa_cnpj} != null ? $F{empresa_cnpj} : "") +
+" representado por sua procuradora abaixo assinado e de outro lado(a) Sr(a) " + ($F{resource_name} != null ? $F{resource_name} : "")  + ", aqui chamado de EMPREGADO(A), portador da Carteira de Trabalho e Previdência Social nº " +
+($F{hr_employee_carteira_trabalho_numero} != null ? $F{hr_employee_carteira_trabalho_numero} : "") +
+" Série " + ($F{hr_employee_carteira_trabalho_serie} != null ? $F{hr_employee_carteira_trabalho_serie} : "") +
+", celebram o presente Contrato Individual de Trabalho para fins de experiência, conforme  legislação trabalhista em vigor, regido pelas cláusulas abaixo e demais disposições legais vigentes: \n" +
+"1ª O presente instrumento particular de Contrato Individual de Trabalho é por período de experiência, com prazo determinado de duração de 45 (quarenta e cinco dias), com início em " + new SimpleDateFormat("dd/MM/yyyy").format($F{hr_contract_date_start}) + ", e término " + new SimpleDateFormat("dd/MM/yyyy").format($F{hr_contract_trial_date_end}) + "\n" +
+"O mesmo poderá ser prorrogado por uma só vez e dentro do limite legal de 90(noventa) dias. \n" +
+"2ª O Empregado(a) exercerá a função de: " + $F{hr_job_name} + "\n" +
+"3ª O local de trabalho situa-se conforme as necessidades da empregadora, podendo ser transferido temporária ou definitivamente para outro setor ou local de trabalho onde a Empregadora mantenha atividades, sem vantagens salariais, salvante as legalmente previstas. \n" +
+"4ª O horário de trabalho do EMPREGADO será das XX:XXhrs às XX:XX hrs com intervalo das XX:XX  às XX:XXhrs em escala 12x36 diurna, podendo a EMPREGADORA alterá-lo de acordo com as necessidades de serviço.\n" +
+"5ª O EMPREGADO  perceberá a  remuneração de (x) a ser pago pela EMPREGADORA por mês.\n" +
+"6ª A ausência do empregado ao trabalho por motivo de doença, este deverá comunicar a empregadora através do atestado médico, no prazo de 24:00 horas, caso não o faça acarretará a perda dos dias. \n" +
+"7ª O empregado para o exercício de sua função deverá usar uniforme fornecido pela empregadora, ficando sob sua responsabilidade a guarda, manutenção e conservação, bem como, os valores despendidos para lavação.\n" +
+"8ª O EMPREGADO compromete-se a cumprir normas de Segurança e Higiene do Trabalho, bem como utilizar os Equipamentos de Proteção Individual (EPIs), necessários para o desempenho da função sob pena de caracterizar falta grave.\n" +
+"7ª O empregado para o exercício de sua função deverá usar uniforme fornecido pela empregadora, ficando sob sua responsabilidade a guarda, manutenção e conservação, bem como, os valores despendidos para lavação. \n" +
+"8ª O EMPREGADO compromete-se a cumprir normas de Segurança e Higiene do Trabalho, bem como utilizar os Equipamentos de Proteção Individual (EPIs), necessários para o desempenho da função sob pena de caracterizar falta grave. \n" +
+"9ª O EMPREGADO autoriza desde já o depósito de sua remuneração em conta corrente bancária, aberta para esse fim, tendo disponibilidade para movimentá-la durante o expediente, e garantida a entrega de comprovante com discriminação das verbas pagas. Valerá como recibo e irrevogável quitação, pelos valores recebidos, a autenticação do banco, em listagem que permanecerá em poder da EMPREGADORA. \n" +
+"10ª A rescisão antecipada deste Contrato de Trabalho implicará em indenização de metade da remuneração devida no período não cumprido, segundo o Artigo 479 e 480 da CLT, por qualquer das partes. \n" +
+"11ª Ao término deste contrato e de acordo com os artigos 443, caput, parágrafo 1º e 2º  e alínea C e mais artigo 445, parágrafo único da CLT, cessarão automaticamente as obrigações das partes ficando desonerados de qualquer ônus a ele inerentes. \n" +
+"12ª O Empregado(a) autoriza desde já a Empregadora a fazer os descontos necessários em sua folha de pagamento, de importâncias correspondentes a eventuais danos materiais causados por culpa ou dolo, decorrentes de sua negligência, imprudência ou imperícia. \n" +
+"13ª O Empregado(a) executará todos os serviços normais inerentes a sua função e que lhe forem determinados, por escrito ou verbalmente, podendo ainda, o horário de trabalho, por necessidade dos serviços, ser alterado para noturno, misto ou revezamento. \n" +
+"14ª O Empregado(a)  também usará E. P. I. (Equipamento de Proteção Individual de Segurança) que forem determinados pela Empregadora e devolver-lhe-ão quando findo o horário de trabalho ou o presente Contrato de Trabalho. \n" +
+"15ª No período que ficar afastado por auxílio doença os dias serão excluídos do contrato de experiência, não sendo computado como tempo de serviço, ocorrendo a suspensão contratual.\n" +
+"16ª O Empregado fica ciente e concorda que poderá fazer vigilância com cães adestrados.\n" +
+"17ª Permanecendo o EMPREGADO  a serviço da EMPREGADORA  após término deste contrato, permanecerão em vigor as cláusulas constantes deste contrato.\n"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="718">
+			<staticText>
+				<reportElement uuid="b1d737dc-fd7f-4d19-b1e7-5cbaa642cb17" x="10" y="116" width="175" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[pp/ Empregadora ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1337ee01-0419-4bea-a99c-a01df24ba145" x="194" y="116" width="169" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[ Empregado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="70ee9d89-31dd-4547-bc76-d322ab83e6b2" x="372" y="116" width="174" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[ Empregado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0f8b6a56-5180-42f3-9f1d-a613f8ccac3f" x="198" y="159" width="161" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[TESTEMUNHAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f6588123-8a16-42f9-bd9d-a070714ab79e" x="10" y="217" width="248" height="31"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Nome :
+CPF :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5a47abaa-d53a-4e8a-9a14-bd4b34e4e3d1" x="298" y="217" width="248" height="31"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Nome :
+CPF :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d112ee8c-e795-4e5e-9780-f43d8004ccc3" x="152" y="288" width="220" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[ACORDO PARA BANCO DE HORAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="998fff2b-aa81-4151-9173-7b87430adde6" x="142" y="566" width="291" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Empresa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="50d3834a-676e-4b05-b96a-92b1f9e35861" x="142" y="642" width="291" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Empregado]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="98e5c276-83df-413b-9742-fb4f4091ace8" x="1" y="488" width="554" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empresa_municipio} != null ? $F{empresa_municipio} : "") + " " + DateFormat.getDateInstance(DateFormat.LONG,  new Locale("pt","BR")).format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="cef010b4-47b7-40e2-905e-4c1935092f02" x="0" y="1" width="552" height="29"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[18ª Assim por de acharem certos e ajustados, firmam o presente juntamente com duas testemunhas para que valha na melhor forma de direito.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="63032570-df4a-42a8-8ecd-dd8109abc727" x="1" y="39" width="348" height="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empresa_municipio} != null ? $F{empresa_municipio} : "") + " " + DateFormat.getDateInstance(DateFormat.LONG,  new Locale("pt","BR")).format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="fdaec390-cd50-4886-858f-98382d86baf5" x="-2" y="354" width="557" height="101"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true' isUnderline='true'>PATRIMONIAL SEGURANÇA LTDA</style>, pessoa jurídica de Direito Privado, com sede em CHAPECÓ/SC na SERVIDÃO TILIA,26-D, inscrita no CNPJ sob o nº. 82.891.805/0001-37, representada neste ato por seu representante legal abaixo assinado, e Nome do colaborador, BRASILEIRO(A), estado civil, função , portador  da  Carteira  Profissional  n.º " + $F{hr_employee_carteira_trabalho_numero} +
+" série " + $F{hr_employee_carteira_trabalho_serie} +
+" , convencionam, de acordo com a Convenção Coletiva de Trabalho 2013/2014 - Vigilância, cláusula 31ª, a implantação do banco de horas, nos moldes do art. 59, § 2º CLT, com as modificações instituídas pela Lei 9601/98 e pela Medida Provisória n.º 1.709-5, dentro das condições previstas nos parágrafos da aludida cláusula." +
+"E, por estarem de pleno acordo, as partes contratantes assinam o presente acordo em 2 (duas) vias de igual teor."]]></textFieldExpression>
+			</textField>
+			<break>
+				<reportElement uuid="46a1d6f8-e628-47a4-8f6e-d3b43d5d2ae1" x="0" y="267" width="552" height="1"/>
+			</break>
+		</band>
+		<band height="515">
+			<staticText>
+				<reportElement uuid="ef74718e-905d-44b8-ac76-5eff02b63f38" x="1" y="62" width="554" height="102"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[	A integração tem o objetivo de adaptar o novo empregado à empresa contratante, facilitando seu processo de socialização dentro da empresa.
+	Quando um profissional inicia suas atividades em uma nova empresa, é muito importante que ele seja bem recebido e apresentado ao novo ambiente de trabalho.
+	Viemos através do presente convida-lo(a) para a Integração que acontecerá no auditório da empresa PATRIMONIAL SEGURANCA LTDA, no dia ___/___/___, às 08:00 horas. <br/>
+			                <b> Sua presença é muito importante para nós. </b>]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="abbc77db-0b6c-43a4-adb8-5bfb9ccaa2be" x="181" y="20" width="180" height="15"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONVITE PARA INTEGRAÇÃO ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3d11da69-0090-4ab0-8b02-837efb8fdcd8" x="106" y="199" width="359" height="20"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROTOCOLO DE ENTREGA DE DOCUMENTOS PARA A INTEGRAÇÃO.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5a66b87d-6618-494f-a72a-b63968918102" x="106" y="242" width="359" height="93"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Declaro que recebi os documentos abaixo relacionados: <br/><br/>
+- 01 Manual de Integração.<br/>
+- 01 Questionário Manual de Integração.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c22a6444-510a-4fae-bef8-ce8d92184e3d" x="1" y="357" width="554" height="24"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Observação: O Questionário Manual de Integração deverá ser preenchido e entregue para o RH no dia da integração. No caso de rescisão contratual o Manual de Integração deverá ser devolvido a empresa em boas condições.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="2373b73f-21c5-4bcc-958e-17cfc4676d50" x="1" y="439" width="279" height="20"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{empresa_municipio} != null ? $F{empresa_municipio} : "") + " " + new SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<break>
+				<reportElement uuid="8718b743-d684-4e0a-9fab-92ceb8a558a9" x="0" y="10" width="555" height="1"/>
+			</break>
+			<textField>
+				<reportElement uuid="e14badbc-4953-4ece-a39f-882d200be802" x="1" y="478" width="279" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{resource_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="22" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="e7c9ac98-9cb4-4719-84bf-1102251f3b77" x="-19" y="0" width="594" height="22"/>
+				<subreportParameter name="UID">
+					<subreportParameterExpression><![CDATA[$P{UID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rodape.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

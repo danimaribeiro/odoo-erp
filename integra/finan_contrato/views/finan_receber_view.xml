@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_receber_contrato_tree">
+            <field name="name">finan.receber.contrato.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="valor_documento" position="after">
+<!--                    <field name="nf_numero" readonly="1" />
+                    <field name="nf_data"  readonly="1" />-->
+                    <field name="contrato_id" readonly="1" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_contrato_form">
+            <field name="name">finan.receber.contrato.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="before">
+                    <field name="nf_numero" readonly="1" />
+                    <field name="nf_data"  readonly="1" />
+                </field>
+                <field name="partner_id" position="after">
+                    <field name="contrato_id" readonly="1" />
+                </field>
+                <field name="historico" position="after">
+                    <group attrs="{'invisible': ['|', ('provisionado', '=', True), ('situacao', 'in', ('Baixado', 'Quitado', 'Conciliado')), ('valor', '&lt;=', 0)]}" colspan="4">
+                        <newline/>
+                        <separator string="Parcelamento" colspan="4" />
+                        <button icon="gtk-execute" string="Gerar parcelamento" name="gerar_parcelamento" type="object" colspan="2" />
+                    </group>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_rateio_tree">
+            <field name="name">finan.receber.rateio.tree</field>
+            <field name="model">finan.lancamento.rateio</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="finan.finan_receber_rateio_tree"/>
+            <field name="arch" type="xml">
+                <field name="centrocusto_id" position="after">
+                    <field name="contrato_id" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_contrato_search">
+            <field name="name">finan.receber.search</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_search"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="contrato_id" />
+                </field>
+                <xpath expr="//filter[@string='Forma de pagamento']" position="after">
+                    <filter string="Contrato" icon="terp-project" domain="[]" context="{'group_by': 'contrato_id'}" />
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

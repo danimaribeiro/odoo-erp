@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="analitico_folha_inss_funcionario" language="groovy" pageWidth="502" pageHeight="802" whenNoDataType="BlankPage" columnWidth="502" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="193a605c-82b2-4b8e-9890-a10ca82cc708">
+	<property name="ireport.zoom" value="1.2100000000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DATA_INICIAL" class="java.lang.String"/>
+	<parameter name="DATA_FINAL" class="java.lang.String"/>
+	<parameter name="CNPJ" class="java.lang.String"/>
+	<parameter name="TIPOS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+
+cast((
+    select
+    coalesce(sum(d.vr_previdencia), 0.00) as vr_previdencia
+
+    from sped_documento d
+    join res_company c on c.id = d.company_id
+    join res_partner p on p.id = c.partner_id
+    join res_partner f on f.id = d.partner_id
+
+    where
+    p.cnpj_cpf = $P{CNPJ}
+    and cast(d.data_emissao as date) >= cast($P{DATA_INICIAL} as date)
+    and cast(d.data_emissao as date) <= cast($P{DATA_FINAL} as date)
+    and d.vr_previdencia > 0
+    and d.emissao = '1'
+    and d.situacao = '00'
+    and f.eh_cooperativa = True
+    and $P{TIPOS} != '(''D'')'
+) as numeric(18,2)) as valor_cooperativas,
+
+cast(coalesce(sum(
+case
+   when r.code not like 'BASE%' and r.code not like 'DIFERENCA%' and ct.categoria_trabalhador = '722' then
+   cast(hl.total as numeric(18,2))
+   when r.code like 'DIFERENCA%' and ct.categoria_trabalhador = '722' then
+   cast(hl.total * -1 as numeric(18,2))
+   else 0
+end), 0) as numeric(18,2)) as valor_prolabore,
+
+cast(coalesce(sum(
+case
+   when r.code not like 'BASE%' and r.code not like 'DIFERENCA%' and ct.categoria_trabalhador in ('701','702','703') then
+   cast(hl.total as numeric(18,2))
+   when r.code like 'DIFERENCA%' and ct.categoria_trabalhador in ('701','702','703') then
+   cast(hl.total * -1 as numeric(18,2))
+   else 0
+end), 0) as numeric(18,2)) as valor_autonomo,
+
+cast(coalesce(sum(
+case
+   when r.code not like 'BASE%' and r.code not like 'DIFERENCA%' and ct.categoria_trabalhador not in ('722','701','702','703') then
+   cast(hl.total as numeric(18,2))
+   when r.code like 'DIFERENCA%'  and ct.categoria_trabalhador not in ('722','701','702','703') then
+   cast(hl.total * -1 as numeric(18,2))
+   else 0
+end), 0) as numeric(18,2)) as valor_funcionario
+
+
+from hr_payslip_line hl
+join hr_payslip h on h.id = hl.slip_id
+join res_company c on c.id = h.company_id
+join res_partner p on p.id = c.partner_id
+join hr_contract ct on ct.id = h.contract_id
+join hr_salary_rule r on r.id = hl.salary_rule_id
+
+where
+  h.tipo in $P!{TIPOS} and (h.simulacao = False or h.simulacao is null)
+  and r.code in ('INSS', 'INSS_13', 'INSS_13_AP', 'BASE_INSS', 'BASE_INSS_13', 'DIFERENCA_INSS') and hl.code != 'BASE_INSS_anterior'
+  and (
+    (h.tipo in ('N', 'D') and h.date_from >= cast($P{DATA_INICIAL} as date) and h.date_to <= cast($P{DATA_FINAL} as date))
+     or (h.tipo = 'R' and h.data_afastamento between cast($P{DATA_INICIAL} as date) and cast($P{DATA_FINAL} as date))
+  )
+  and p.cnpj_cpf = $P{CNPJ}]]>
+	</queryString>
+	<field name="valor_cooperativas" class="java.math.BigDecimal"/>
+	<field name="valor_prolabore" class="java.math.BigDecimal"/>
+	<field name="valor_autonomo" class="java.math.BigDecimal"/>
+	<field name="valor_funcionario" class="java.math.BigDecimal"/>
+	<variable name="VALOR_FUNCIONARIOS" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{valor_funcionario}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="VALOR_PROLABORE" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{valor_prolabore}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="VALOR_AUTONOMO" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{valor_autonomo}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="VALOR_COOPERATIVAS" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{valor_cooperativas}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<detail>
+		<band/>
+	</detail>
+</jasperReport>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_job_form_integra" model="ir.ui.view">
+            <field name="name">hr.job.form</field>
+            <field name="model">hr.job</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_rh.hr_job_form_integra"/>
+            <field name="arch" type="xml">
+                <page string="Description" position="after">
+                    <page string="Modelos de impressos">
+                        <separator colspan="4" string="Modelos"/>
+                        <field name="lo_modelo_ids" colspan="4" />
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>
+

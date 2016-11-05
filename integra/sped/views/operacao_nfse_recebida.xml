@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.actions.act_window" id="sped_operacao_nfse_recebida_acao">
+            <field name="name">NFS-e</field>
+            <field name="domain">[('modelo', '=', 'SE'), ('emissao', '=', '1'), ('entrada_saida', '=', '0')]</field>
+            <field name="context">{'default_modelo': 'SE', 'default_emissao': '1', 'default_entrada_saida': '0'}</field>
+            <field name="res_model">sped.operacao</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+
+        <menuitem id="menu_sped_operacao_nfse_recebida"
+            name="NFS-e"
+            parent="menu_sped_operacao_recebido" sequence="51" action="sped_operacao_nfse_recebida_acao" />
+
+        <record model="ir.actions.act_window.view" id="sped_operacao_nfse_recebida_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sped_operacao_nfse_emitida_form"/>
+            <field name="act_window_id" ref="sped_operacao_nfse_recebida_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sped_operacao_nfse_recebida_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sped_operacao_tree"/>
+            <field name="act_window_id" ref="sped_operacao_nfse_recebida_acao"/>
+        </record>
+
+    </data>
+</openerp>

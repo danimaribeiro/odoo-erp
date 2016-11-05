@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="stock_rastreabilidade_form" >
+            <field name="name">stock.rastreabilidade.form</field>
+            <field name="model">stock.rastreabilidade</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Gerar Movimento de estoque">
+                    <group colspan="4">                                               
+                        <field name="nome" invisible="1"/>
+                        <button icon="gtk-execute" string="Gerar Movimento" name="gera_movimento" type="object" />
+                        <button icon="gtk-cancel" special="cancel" string="Fechar" />
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_move_wizard" multi="True" key2="client_action_multi" name="Rel.Movimento de estoque" res_model="stock.rastreabilidade" src_model="stock.move" view_mode="form" target="new" view_type="form" />
+
+    </data>
+</openerp>

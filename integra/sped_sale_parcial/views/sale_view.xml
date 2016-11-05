@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="sale_order_form">
+        <field name="name">sale_order_form</field>
+        <field name="model">sale.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <button string="Print Order" position="replace">
+            </button>
+             <field name="pricelist_id" position="after">
+                 <newline />
+                <button icon="gtk-execute" name="imprime_pedido_venda" string="Imprimir Pedido" type="object" colspan="4" />
+            </field>
+            <field name="order_line" position="replace">
+                <field colspan="4" name="order_line" nolabel="1" widget="one2many_list" context="{'form_view_ref' : 'sped_sale.sale_order_line_form', 'tree_view_ref' : 'sped_sale.sale_order_line_tree'}" />
+            </field>
+
+            <field name="payment_term" position="after">
+                <field name="operacao_fiscal_produto_id" domain="[('modelo', '=', '55')]"/>
+                <field name="operacao_fiscal_servico_id" domain="[('modelo', '=', 'SE')]"/>
+            </field>
+
+            <field name="payment_term" position="before">
+                <field name="finan_formapagamento_id" />
+            </field>
+            <field name="invoice_quantity" position="after">
+                <field name="modalidade_frete" />
+                <field name="transportadora_id" />
+            </field>
+
+            <field name="amount_total" position="before">
+                <field name="vr_desconto_rateio" />
+            </field>
+
+            <field name="amount_untaxed" position="replace">
+                <field name="amount_untaxed" invisible="1" />
+            </field>
+            <field name="amount_tax" position="replace">
+                <field name="amount_tax" invisible="1" />
+            </field>
+
+<!--            <field name="discount" position="replace">
+                <field name="discount" invisible="1" />
+            </field>-->
+
+<!--                <field name="orcamento_resumo_ids" position="after">
+                    <button name="gera_notas" string="Recalcula lucro e margem líquidos" icon="gtk-go-forward" type="object" context="{'temporario': True}"/>
+                    <newline/>
+                    <group colspan="2">
+                        <separator string="Impostos" colspan="2" />
+                        <newline/>
+                        <field name="vr_icms_proprio" colspan="2" />
+                        <newline/>
+                        <field name="vr_ipi" colspan="2" />
+                        <newline/>
+                        <field name="vr_iss" colspan="2" />
+                        <newline/>
+                        <field name="vr_pis_proprio" colspan="2" />
+                        <newline/>
+                        <field name="vr_cofins_proprio" colspan="2" />
+                        <newline/>
+                        <field name="vr_csll" colspan="2" />
+                        <newline/>
+                        <field name="vr_irrf" colspan="2" />
+                        <newline/>
+                        <field name="total_imposto" colspan="2" />
+                    </group>
+                    <group colspan="2">
+                        <separator string="Lucro líquido" colspan="2" />
+                        <newline/>
+                        <field name="vr_liquido" colspan="2" />
+                        <newline/>
+                        <field name="margem_liquida" colspan="2" />
+                    </group>
+                </field>
+                <page position="replace" string="History">
+                    <page string="History" groups="base.group_extended">
+                        <button name="gera_notas" string="Gera notas fiscais" icon="gtk-go-forward" type="object"/>
+                        <separator colspan="4" string="Notas Fiscais"/>
+                        <field colspan="4" name="sped_documento_ids" nolabel="1"/>
+                        <separator colspan="4" string="Packings"/>
+                        <field colspan="4" name="picking_ids" nolabel="1"/>
+                    </page>
+                </page>-->
+
+        </field>
+    </record>
+
+    <record id="sale_order_tree" model="ir.ui.view">
+        <field name="name">sale.order.tree</field>
+        <field name="model">sale.order</field>
+        <field name="type">tree</field>
+        <field name="priority">3</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="date_order" position="after">
+                <field name="finan_formapagamento_id" />
+            </field>
+            <field name="invoiced_rate" position="replace" />
+        </field>
+    </record>
+
+    <record id="sale_order_search" model="ir.ui.view">
+        <field name="name">sale.order.search</field>
+        <field name="model">sale.order</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <filter string="Order Date" position="after">
+                <filter string="Forma pag." icon="terp-terp-dolar_ok!" domain="[]" context="{'group_by':'finan_formapagamento_id'}"/>
+            </filter>
+        </field>
+    </record>
+
+</data>
+</openerp>

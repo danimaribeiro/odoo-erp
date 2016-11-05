@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="product_automotivo_form_view_inherit">
+            <field name="name">product.automotivo.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="integra_product.product_normal_form_view_inherit"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="description" position="replace" />
+                <xpath expr="//separator[@string='Description']" position="replace" />
+                <field name="name" position="after">
+                    <field name="fabricante_id"/>
+                    <separator string="Aplicação" colspan="2" />
+                    <newline />
+                    <field name="description" nolabel="1" colspan="2" />
+                </field>
+                <field name="default_code" position="after">
+                    <field name="codigo_fabricante"/>
+                    <field name="codigo_montadora" />
+                </field>
+                <xpath expr="//notebook/page[@string='Information']/group[3]" position="replace" />
+                <group name="status" position="before">
+                    <group colspan="2" col="2" name="Preços">
+                        <separator string="Preços base" colspan="2"/>
+                        <field name="list_price"/>
+                        <field groups="base.group_extended" name="cost_method"/>
+                        <field name="standard_price" attrs="{'readonly':[('cost_method','=','average')]}"
+                            groups="base.group_extended"/>
+                        <newline/>
+                        <field name="price_margin" groups="product.group_product_variant"/>
+                        <field name="price_extra" groups="product.group_product_variant"/>
+                    </group>
+                    <group colspan="2" col="2" name="Validade">
+                        <separator string="Validade" colspan="2"/>
+                        <field name="validade_km_urbano"/>
+                        <field name="validade_km_rodoviario"/>
+                        <field name="validade_km_rural"/>
+                        <field name="validade_km_misto"/>
+                        <field name="validade_meses"/>
+                    </group>
+                </group>
+                <field name="supply_method" position="after">
+                    <field name="tempo_execucao" attrs="{'invisible':[('type','!=','service')]}"/>
+                    <field name="terceirizado" attrs="{'invisible':[('type','!=','service')]}"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="stock.view_normal_stock_property_form" model="ir.ui.view">
+            <field name="name">product.normal.stock.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <group name="uos" position="after">
+                    <group colspan="2" col="3">
+                        <separator string="Stocks" colspan="4"/>
+                        <field name="qty_available"/>
+                        <button name="%(stock.action_view_change_product_quantity)d" string="Update" attrs="{'invisible': [('type', '=', 'service')]}"
+                            type="action" icon="gtk-execute" groups="stock.group_stock_manager,stock.group_stock_user"/>
+                        <newline/>
+                        <field name="virtual_available"/>
+                    </group>
+                    <group colspan="2" col="2" name="stock_variations" groups="base.group_extended">
+                        <separator string="Expected Stock Variations" colspan="2"/>
+                        <field name="incoming_qty"/>
+                        <field name="outgoing_qty"/>
+                    </group>
+                    <group colspan="2" col="2" name="lot" groups="base.group_extended">
+                        <separator string="Lots" colspan="4"/>
+                        <field name="track_production" />
+                        <field name="track_incoming" />
+                        <field name="track_outgoing" />
+                    </group>
+                </group>
+            </field>
+        </record>
+    </data>
+</openerp>
