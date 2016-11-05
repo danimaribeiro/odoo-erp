@@ -3,6 +3,7 @@
 
 # from __future__ import division, print_function, unicode_literals
 from finan_conta import SQL_CRIA_ARVORE
+from sql_finan_saldo_funcoes_python import *
 
 
 SQL_VIEW_FINAN_ADIANTAMENTO_DEVOLUCAO = """
@@ -291,7 +292,7 @@ SQL_VIEW_FINAN_CONTACORRENTE_RATEIO = """
         rateio.centrocusto_id,
         rateio.hr_contract_id,
         rateio.hr_department_id,
-
+        rateio.contrato_id,
         rateio.veiculo_id,
         rateio.project_id
 
@@ -321,7 +322,7 @@ SQL_VIEW_FINAN_CONTACORRENTE_RATEIO = """
         rateio.centrocusto_id,
         rateio.hr_contract_id,
         rateio.hr_department_id,
-
+        rateio.contrato_id,
         rateio.veiculo_id,
         rateio.project_id
 
@@ -368,7 +369,7 @@ SQL_VIEW_FINAN_CONTACORRENTE_RATEIO = """
         rateio.centrocusto_id,
         rateio.hr_contract_id,
         rateio.hr_department_id,
-
+        rateio.contrato_id,
         rateio.veiculo_id,
         rateio.project_id
 
@@ -506,8 +507,8 @@ SQL_VIEW_FINAN_ENTRADA_LOTE = """
         #ed.id AS conta_demonstrativo_id,
         #l.id AS lancamento_id,
         #c.id AS conta_id,
-        #p.valor_entrada AS vr_debito,
-        #p.valor_saida AS vr_credito,
+        #p.valor_saida AS vr_debito,
+        #p.valor_entrada AS vr_credito,
         #l.centrocusto_id,
         #l.company_id,
         #p.data
@@ -1011,7 +1012,7 @@ SQL_VIEW_FINAN_FLUXO_CAIXA_SINTETICO_RATEIO = """
         f.centrocusto_id,
         f.hr_contract_id,
         f.hr_department_id,
-
+        f.contrato_id,
         f.veiculo_id,
         f.project_id,
 
@@ -1108,7 +1109,7 @@ SQL_VIEW_FINAN_FLUXO_CAIXA_SINTETICO_RATEIO = """
         f.centrocusto_id,
         f.hr_contract_id,
         f.hr_department_id,
-
+        f.contrato_id,
         f.veiculo_id,
         f.project_id,
 
@@ -1196,7 +1197,8 @@ SQL_VIEW_FINAN_FLUXO_CAIXA_SINTETICO_RATEIO = """
 SQL_VIEW_FINAN_FLUXO_MENSAL_DIARIO = """
     CREATE OR REPLACE VIEW finan_fluxo_mensal_diario AS
     SELECT e.id,
-        to_char(e.data_compensacao::timestamp with time zone, 'yyyy/mm'::text) AS mes,
+        to_char(e.data_compensacao, 'yyyy/mm') AS mes,
+        mes_extenso(e.data_compensacao) as mes_formatado,
         e.data_compensacao AS data,
         e.valor_compensado AS valor_entrada,
         0 AS valor_saida,
@@ -1210,7 +1212,8 @@ SQL_VIEW_FINAN_FLUXO_MENSAL_DIARIO = """
     WHERE e.data_quitacao IS NOT NULL
     UNION
     SELECT s.id,
-        to_char(s.data_compensacao::timestamp with time zone, 'yyyy/mm'::text) AS mes,
+        to_char(s.data_compensacao, 'yyyy/mm') AS mes,
+        mes_extenso(s.data_compensacao) as mes_formatado,
         s.data_compensacao AS data,
         0 AS valor_entrada,
         s.valor_compensado AS valor_saida,
@@ -1224,7 +1227,8 @@ SQL_VIEW_FINAN_FLUXO_MENSAL_DIARIO = """
     WHERE s.data_quitacao IS NOT NULL
     UNION
     SELECT l.id,
-        to_char(l.data_vencimento::timestamp with time zone, 'yyyy/mm'::text) AS mes,
+        to_char(l.data_vencimento, 'yyyy/mm') AS mes,
+        mes_extenso(l.data_vencimento) as mes_formatado,
         l.data_vencimento AS data,
             CASE
                 WHEN l.tipo::text = 'R'::text THEN COALESCE(l.valor_saldo, 0::numeric)
@@ -1249,6 +1253,7 @@ SQL_VIEW_FINAN_FLUXO_MENSAL_DIARIO_RATEIO = """
     CREATE OR REPLACE VIEW finan_fluxo_mensal_diario_rateio AS
     SELECT e.id,
         to_char(e.data_compensacao, 'yyyy/mm') AS mes,
+        mes_extenso(e.data_compensacao) as mes_formatado,
         e.data_compensacao AS data,
         cast((cast(coalesce(e.valor_compensado, 0) as numeric) * cast(coalesce(rateio.porcentagem, 100) as numeric) / cast(100 as numeric)) as numeric) AS valor_entrada,
         0 AS valor_saida,
@@ -1261,7 +1266,7 @@ SQL_VIEW_FINAN_FLUXO_MENSAL_DIARIO_RATEIO = """
         rateio.centrocusto_id,
         rateio.hr_contract_id,
         rateio.hr_department_id,
-
+        rateio.contrato_id,
         rateio.veiculo_id,
         rateio.project_id
 
@@ -1276,6 +1281,7 @@ SQL_VIEW_FINAN_FLUXO_MENSAL_DIARIO_RATEIO = """
 
     SELECT s.id,
         to_char(s.data_compensacao, 'yyyy/mm') AS mes,
+        mes_extenso(s.data_compensacao) as mes_formatado,
         s.data_compensacao AS data,
         0 AS valor_entrada,
         cast((cast(coalesce(s.valor_compensado, 0) as numeric) * cast(coalesce(rateio.porcentagem, 100) as numeric) / cast(100 as numeric)) as numeric) AS valor_saida,
@@ -1288,7 +1294,7 @@ SQL_VIEW_FINAN_FLUXO_MENSAL_DIARIO_RATEIO = """
         rateio.centrocusto_id,
         rateio.hr_contract_id,
         rateio.hr_department_id,
-
+        rateio.contrato_id,
         rateio.veiculo_id,
         rateio.project_id
 
@@ -1303,6 +1309,7 @@ SQL_VIEW_FINAN_FLUXO_MENSAL_DIARIO_RATEIO = """
 
     SELECT l.id,
         to_char(l.data_vencimento, 'yyyy/mm') AS mes,
+        mes_extenso(l.data_vencimento) as mes_formatado,
         l.data_vencimento AS data,
             CASE
                 WHEN l.tipo = 'R' THEN COALESCE(l.valor_saldo, 0)
@@ -1321,7 +1328,7 @@ SQL_VIEW_FINAN_FLUXO_MENSAL_DIARIO_RATEIO = """
         rateio.centrocusto_id,
         rateio.hr_contract_id,
         rateio.hr_department_id,
-
+        rateio.contrato_id,
         rateio.veiculo_id,
         rateio.project_id
 
@@ -1385,6 +1392,7 @@ SQL_VIEW_FINAN_LANCAMENTO_RATEIO_GERAL_FOLHA = """
         l.centrocusto_id,
         NULL AS hr_contract_id,
         NULL AS hr_department_id,
+        l.contrato_id,
         NULL AS veiculo_id,
         NULL AS project_id,
         cast(100.00 as numeric) AS porcentagem
@@ -1400,11 +1408,12 @@ SQL_VIEW_FINAN_LANCAMENTO_RATEIO_GERAL_FOLHA = """
         r.centrocusto_id,
         r.hr_contract_id,
         r.hr_department_id,
+        r.contrato_id,
         r.veiculo_id,
         r.project_id,
         sum(cast(COALESCE(r.porcentagem, 0) as numeric)) AS porcentagem
     FROM finan_lancamento_rateio r
-    GROUP BY r.id, r.lancamento_id, r.company_id, r.conta_id, r.centrocusto_id, r.hr_contract_id, r.project_id, r.hr_department_id, r.veiculo_id
+    GROUP BY r.id, r.lancamento_id, r.company_id, r.conta_id, r.centrocusto_id, r.hr_contract_id, r.project_id, r.contrato_id, r.hr_department_id, r.veiculo_id
     ORDER BY 1, 2, 3, 4, 5, 6;
 """
 
@@ -1523,7 +1532,7 @@ SQL_VIEW_FINAN_PAGAMENTO_RATEIO_FOLHA = """
         rateio.centrocusto_id,
         rateio.hr_contract_id,
         rateio.hr_department_id,
-
+        rateio.contrato_id,
         rateio.veiculo_id,
         rateio.project_id,
         rateio.porcentagem,
@@ -1573,7 +1582,7 @@ SQL_VIEW_FINAN_PAGAMENTO_RATEIO_FOLHA = """
         rateio.centrocusto_id,
         rateio.hr_contract_id,
         rateio.hr_department_id,
-
+        rateio.contrato_id,
         rateio.veiculo_id,
         rateio.project_id,
         rateio.porcentagem,
@@ -1624,7 +1633,7 @@ SQL_VIEW_FINAN_PAGAMENTO_RATEIO_FOLHA = """
         rateio.centrocusto_id,
         rateio.hr_contract_id,
         rateio.hr_department_id,
-
+        rateio.contrato_id,
         rateio.veiculo_id,
         rateio.project_id,
         rateio.porcentagem,
@@ -1961,6 +1970,28 @@ SQL_VIEW_GERAL += """
 
 """
 
+#
+# As funções têm que ser criadas antes das views
+#
+SQL_VIEW_GERAL += FUNCAO_DATA_CABECALHO
+SQL_VIEW_GERAL += FUNCAO_DATA_POR_EXTENSO
+SQL_VIEW_GERAL += FUNCAO_DATA_POR_EXTENSO_LEGALES
+SQL_VIEW_GERAL += FUNCAO_DIA_SEMANA_EXTENSO
+SQL_VIEW_GERAL += FUNCAO_DATA_UTIL_PAGAMENTO
+SQL_VIEW_GERAL += FUNCAO_FORMATA_FERIADOS_NO_PERIODO
+SQL_VIEW_GERAL += FUNCAO_FORMATA_CNPJ
+SQL_VIEW_GERAL += FUNCAO_FORMATA_CPF
+SQL_VIEW_GERAL += FUNCAO_FORMATA_FONE
+SQL_VIEW_GERAL += FUNCAO_FORMATA_VALOR
+SQL_VIEW_GERAL += FUNCAO_MES_EXTENSO
+SQL_VIEW_GERAL += FUNCAO_PRIMEIRA_MAIUSCULA
+SQL_VIEW_GERAL += FUNCAO_VALOR_POR_EXTENSO
+SQL_VIEW_GERAL += FUNCAO_VALOR_POR_EXTENSO_DOLAR
+SQL_VIEW_GERAL += FUNCAO_VALOR_POR_EXTENSO_EURO
+SQL_VIEW_GERAL += """
+
+"""
+
 SQL_VIEW_GERAL += SQL_VIEW_FINAN_ENTRADA
 SQL_VIEW_GERAL += SQL_VIEW_FINAN_SAIDA
 SQL_VIEW_GERAL += SQL_VIEW_FINAN_EXTRATO
@@ -1995,3 +2026,4 @@ SQL_VIEW_GERAL += SQL_VIEW_FINAN_FLUXO_CAIXA_SINTETICO
 SQL_VIEW_GERAL += SQL_VIEW_FINAN_FLUXO_CAIXA_SINTETICO_DEPARTAMENTO
 SQL_VIEW_GERAL += SQL_VIEW_FINAN_FLUXO_CAIXA_SINTETICO_RATEIO
 SQL_VIEW_GERAL += SQL_VIEW_FINAN_CONFERENCIA_FLUXO
+

@@ -314,7 +314,7 @@ class ecd_recomposicao_saldo(osv.Model):
                 where
                     s.cnpj_cpf = '{cnpj}'
                     and s.data between '{data_inicial}' and '{data_final}'
-                    and lp.id is null
+                    --and lp.id is null
                     and (s.saldo_anterior <> 0 or s.saldo <> 0)
                 
                 group by 

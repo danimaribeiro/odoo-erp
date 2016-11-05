@@ -51,7 +51,8 @@
                         <field name="operacao_ativo_id" invisible="1" />
                         <field name="operacao_faturamento_antecipado_id" invisible="1" />
 
-                        <field name="pricelist_id" colspan="4" string="Tipo do orçamento" domain="[('type', '=', 'sale'), ('tipo_os_id', '!=', False)]" on_change="onchange_pricelist_id(pricelist_id, vr_total_produtos)" attrs="{'required': True}" />
+                        <field name="pricelist_id" colspan="4" string="Tipo do orçamento" domain="[('type', '=', 'sale'), ('tipo_os_id', '!=', False)]" on_change="onchange_pricelist_id(pricelist_id, vr_total_produtos, vr_total_servicos, vr_total_mensalidades)" attrs="{'required': True}" />
+                        <field name="contrato_terceirizado" invisible="1" />
                         <field name="lista_precos_alterada" invisible="1" />
                         <group colspan="4" col="4" attrs="{'invisible': [('lista_precos_alterada', '=', False)]}">
                             <html>
@@ -63,7 +64,8 @@
                         </html>
                         <button type="object" name="atualiza_lista_precos" string="Reatribuir preços seguindo as regras do novo tipo de orçamento" colspan="4"  />
                     </group>
-                    <field name="tipo_os_id" invisible="1" />
+                    <field name="tipo_os_id" invisible="1" on_change="onchange_tipo_os_id(tipo_os_id, pricelist_id)" />
+                    <field name="tipo_os_tipo" invisible="1" readonly="1" />
                         <field name="name" string="Código" />
                         <field name="date_order" />
                         <field name="partner_id" colspan="4" on_change="onchange_partner_id_locacao(partner_id, company_id, meses_retorno_locacao_original)" attrs="{'required': True}" />
@@ -76,6 +78,7 @@
                                 </p>
                             </html>
                         </group>
+                        <field name="finan_contrato_pai_id" colspan="4" domain="[('company_id', '=', company_id), ('data_distrato', '=', False), ('contratos_filhos', '!=', False)]" attrs="{'invisible': [('contrato_terceirizado', '=', False)], 'required': [('contrato_terceirizado', '!=', False)]}" />
                         <field name="finan_contrato_id" colspan="4" domain="[('partner_id', '=', partner_id), ('company_id', '=', company_id), ('data_distrato', '=', False)]" attrs="{'invisible': [('meses_retorno_locacao_original', '=', False)]}" on_change="onchange_finan_contrato_id(finan_contrato_id, vr_mensal_locacao, vr_total_mensalidades)" />
                         <field name="user_id" colspan="4" string="Vendedor" attrs="{'required': True}" />
                         <field name="defeito_obs" string="Obs." colspan="4" attrs="{'readonly': [('etapa_seguinte_ids', '=', False)]}" />
@@ -150,14 +153,16 @@
                             </group>
                             <group col="2" colspan="2" string="Etapa">
                                 <field name="etapa_seguinte_ids"  invisible="1"/>
-                                <field name="etapa_id" invisible="1" />
+                                <field name="etapa_id" groups="seguranca.group_surpote_integra"/>
                                 <field name="etapa_id_readonly" />
                                 <field name="proxima_etapa_id" domain="[('id', 'in', etapa_seguinte_ids), ('desconto_a_autorizar', '=', desconto_a_autorizar)]" />
-                                <button name="avanca_etapa" string="Avançar Etapa" icon="gtk-go-forward" type="object" colspan="2" />
+                                <button name="avanca_etapa" string="Avançar Etapa" icon="gtk-go-forward" type="object" colspan="2" attrs="{'invisible': [('proxima_etapa_id', '=', False)]}" />
                                 <field name="codigo" readonly="1" invisible="1"/>
                                 <field name="filtro_etapa" readonly="1" invisible="1"/>
                             </group>
                             <group col="2" colspan="2" string="Orçamento">
+                                <field name="lo_modelo_os_id" invisible="1" domain="[('tabela', '=', 'sale.order.os')]"/>
+                                <field name="lo_modelo_orcamento_id" domain="[('tabela', '=', 'sale.order.orcamento')]"/>
                                 <button name="imprime_orcamento" string="Imprime orçamento" icon="gtk-print" type="object" colspan="2" />
                                 <button name="imprime_orcamento_espelho" string="Imprime orçamento espelho" icon="gtk-print" type="object" colspan="2" />
                             </group>
@@ -166,15 +171,15 @@
                     <notebook colspan="4">
                         <page string="Produtos" attrs="{'invisible': [('operacao_fiscal_produto_id', '=', False)]}">
                             <field name="item_produto_ids" colspan="4" nolabel="1"
-                            context="{'form_view_ref' : 'seguranca.sale_order_line_produto_form', 'tree_view_ref' : 'seguranca.sale_order_line_produto_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'P'}" />
+                            context="{'form_view_ref' : 'seguranca.sale_order_line_produto_form', 'tree_view_ref' : 'seguranca.sale_order_line_produto_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'P', 'default_tipo_os_id': tipo_os_id, 'default_tipo_os_tipo': tipo_os_tipo}" />
                         </page>
                         <page string="Serviços" attrs="{'invisible': [('operacao_fiscal_servico_id', '=', False)]}">
                             <field name="item_servico_ids" colspan="4" nolabel="1"
-                            context="{'form_view_ref' : 'seguranca.sale_order_line_servico_form', 'tree_view_ref' : 'seguranca.sale_order_line_servico_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'S'}" />
+                            context="{'form_view_ref' : 'seguranca.sale_order_line_servico_form', 'tree_view_ref' : 'seguranca.sale_order_line_servico_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'S', 'default_tipo_os_id': tipo_os_id, 'default_tipo_os_tipo': tipo_os_tipo}" />
                         </page>
                         <page string="Mensalidades" attrs="{'invisible': [('operacao_fiscal_servico_id', '=', False)]}">
                             <field name="item_mensalidade_ids" colspan="4" nolabel="1"
-                            context="{'form_view_ref' : 'seguranca.sale_order_line_mensalidade_form', 'tree_view_ref' : 'seguranca.sale_order_line_mensalidade_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'M'}" />
+                            context="{'form_view_ref' : 'seguranca.sale_order_line_mensalidade_form', 'tree_view_ref' : 'seguranca.sale_order_line_mensalidade_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'M', 'default_tipo_os_id': tipo_os_id, 'default_tipo_os_tipo': tipo_os_tipo}" />
                         </page>
                         <page string="Fechamento">
                             <group colspan="2" col="2">
@@ -182,8 +187,15 @@
                                 <field name="payment_term" domain="['|', ('formapagamento_id', '=', False), ('formapagamento_id', '=', finan_formapagamento_id)]" on_change="onchange_payment_term(payment_term, amount_total, vr_total_servicos, meses_retorno_locacao_original, vr_entrada, context)" required="1" />
                                 <field name="vr_entrada" on_change="onchange_payment_term(payment_term, amount_total, vr_total_servicos, meses_retorno_locacao_original, vr_entrada, context)" />
                                 <field name="carteira_id" />
-                                <field name="simulacao_parcelas_ids" invisible="1" />
-                                <field name="simulacao_parcelas_readonly_ids" nolabel="1" colspan="2">
+                                <field name="simulacao_parcelas_livre" invisible="1" />
+                                <field name="simulacao_parcelas_ids" nolabel="1" colspan="2" attrs="{'invisible': [('simulacao_parcelas_livre', '=', False)]}">
+                                    <tree editable="bottom">
+                                        <field name="numero" required="1" />
+                                        <field name="data" required="1" />
+                                        <field name="valor" required="1" />
+                                    </tree>
+                                </field>
+                                <field name="simulacao_parcelas_readonly_ids" nolabel="1" colspan="2" attrs="{'invisible': [('simulacao_parcelas_livre', '!=', False)]}">
                                     <tree>
                                         <field name="numero" />
                                         <field name="data" />

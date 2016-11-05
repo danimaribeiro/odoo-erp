@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        
+        <record model="ir.ui.view" id="finan_atualiza_caixa_form" >
+            <field name="name">finan.atualiza.caixa.form</field>
+            <field name="model">finan.atualiza.caixa</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Ajusta rateio dos lançamentos">
+                    <group colspan="4">
+                        <button icon="gtk-execute" string="Atualizar Caixas" name="atualiza_caixas" type="object" />
+                        <button icon="gtk-cancel" special="cancel" string="Fechar" />
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+        <act_window id="action_atualiza_wizard" multi="True" key2="client_action_multi" name="Atualiza Caixas" res_model="finan.atualiza.caixa" src_model="finan.saldo" view_mode="form" target="new" view_type="form" />
+        
+    </data>
+</openerp>

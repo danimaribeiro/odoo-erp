@@ -251,6 +251,7 @@
                                 <field name="proporcional" />
                                 <field name="vencida" />
                                 <field name="pagamento_dobro" />
+                                <field name="pagamento_dobro_dias" />
                                 <field name="perdido_afastamento" />
                             </tree>
                         </field>
@@ -349,10 +350,10 @@
                                 <field name="carga_horaria" required="1" />
                                 <field name="data_inicial" required="1" />
                                 <field name="data_final" required="1" />
-                                <field name="situacao" required="1" />                            
+                                <field name="situacao" required="1" />
                             </tree>
-                        </field>                     
-                    </page>                                        
+                        </field>
+                    </page>
                     <page string="Etiqueta">
                         <separator colspan="4" string="Etiqueta"/>
                         <newline/>

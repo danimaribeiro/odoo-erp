@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="frota_manutencao_tree">
+            <field name="name">frota.manutencao.tree</field>
+            <field name="model">frota.manutencao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="red:urgencia == 'vermelho';blue:urgencia == 'azul';orange:urgencia == 'amarelo'">
+                    <field name="urgencia" invisible="1" />
+                    <field name="veiculo_id" />
+                    <field name="servico_id" />
+                    <field name="km_a_cada" />
+                    <field name="data_ultima_execucao" />
+                    <field name="km_ultima_execucao" />
+                    <field name="data_maxima_proxima_execucao" />
+                    <field name="km_proxima_execucao" />
+                    <field name="data_prevista_proxima_execucao" />
+                    <field name="data_proxima_execucao" />
+                    <field name="os_id" string="Executado na OS" />
+                </tree>
+            </field>
+        </record>
+
+<!--        <record model="ir.ui.view" id="frota_manutencao_form">
+            <field name="name">frota.manutencao.form</field>
+            <field name="model">frota.manutencao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Serviços e atividades">
+                    <field name="nome" />
+                    <group col="4" colspan="4">
+                        <separator string="Agrupamento" colspan="4"/>
+                        <newline />
+                        <field name="parent_id" colspan="4" />
+                    </group>
+                    <separator string="Configurações" colspan="4"/>
+                    <newline />
+                    <field name="ignora_km" />
+                    <newline />
+                    <field name="custo_ativo" />
+                </form>
+            </field>
+        </record>-->
+
+        <record model="ir.ui.view" id="frota_manutencao_calendar" >
+            <field name="name">frota.manutencao.calendar</field>
+            <field name="model">frota.manutencao</field>
+            <field name="type">calendar</field>
+            <field name="arch" type="xml">
+                <calendar color="servico_id" date_start="data_prevista_proxima_execucao" date_stop="data_prevista_proxima_execucao" day_length="24">
+                    <field name="veiculo_id" />
+                    <field name="data_prevista_proxima_execucao" />
+                </calendar>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="frota_manutencao_search">
+            <field name="name">frota.manutencao.search</field>
+            <field name="model">frota.manutencao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="veiculo_id" />
+                    <field name="servico_id" />
+                    <newline />
+                    <group expand="1" string="Agrupado por...">
+                        <filter string="Veículo" icon="terp-project" domain="[]" context="{'group_by': 'veiculo_id'}" />
+                        <filter string="Serviço" icon="terp-project" domain="[]" context="{'group_by': 'servico_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="frota_manutencao_acao">
+            <field name="name">Manutenção preventiva</field>
+            <field name="res_model">frota.manutencao</field>
+            <field name="view_type">tree</field>
+            <field name="view_mode">calendar,tree</field>
+            <field name="domain">[('veiculo_id', '!=', False), ('os_item_id', '=', False)]</field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="frota_manutencao_tree" />
+        </record>
+
+<!--        <record model="ir.actions.act_window.view" id="frota_manutencao_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="frota_manutencao_form"/>
+            <field name="act_window_id" ref="frota_manutencao_acao"/>
+        </record>-->
+
+        <record model="ir.actions.act_window.view" id="frota_manutencao_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="frota_manutencao_tree"/>
+            <field name="act_window_id" ref="frota_manutencao_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="frota_manutencao_calendar_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">calendar</field>
+            <field name="view_id" ref="frota_manutencao_calendar"/>
+            <field name="act_window_id" ref="frota_manutencao_acao"/>
+        </record>
+
+        <menuitem
+            action="frota_manutencao_acao"
+            id="menu_frota_manutencao"
+            name="Manutenção preventiva"
+            sequence="99"
+            parent="integra_frota.menu_frota_veiculos" />
+
+    </data>
+</openerp>

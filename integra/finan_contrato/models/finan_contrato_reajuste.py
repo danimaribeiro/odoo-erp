@@ -28,6 +28,9 @@ class finan_contrato_reajuste(osv.Model):
         'contrato_reajustar_ids': fields.one2many('finan.contrato.reajuste.contrato', 'reajuste_id', u'Contratos a reajustar'),
         'confirmado': fields.boolean(u'Confirmado?'),
         'data_confirmacao': fields.datetime(u'Data de confirmação'),
+        'data_inicial': fields.date(u'Data inicial'),
+        'data_final': fields.date(u'Data final'),
+        'ignorar_centavos': fields.boolean(u'Ignorar centavos?'),
     }
 
     _defaults = {
@@ -72,13 +75,19 @@ class finan_contrato_reajuste(osv.Model):
                 )
                 and c.res_currency_id = {indice_id}
                 and c.natureza = '{natureza}'
+                and (
+                    c.data_reajuste between '{data_inicial}' and '{data_final}'
+                    or c.data_reajuste is null
+                )
             '''
 
             filtro = {
                 'company_id': reajuste_obj.company_id.id,
                 'indice_id': reajuste_obj.currency_id.id,
                 'natureza': reajuste_obj.natureza,
-                'excecoes': str(excecao).replace('[', '').replace(']', '')
+                'excecoes': str(excecao).replace('[', '').replace(']', ''),
+                'data_inicial': reajuste_obj.data_inicial,
+                'data_final': reajuste_obj.data_final,
             }
 
             if len(excecao) > 0:
@@ -106,11 +115,14 @@ class finan_contrato_reajuste(osv.Model):
                     'valor_antigo': contrato_obj.valor_mensal,
                     'valor_novo': currency_pool.compute(cr, uid, real_id, reajuste_obj.currency_id.id, contrato_obj.valor_mensal, round=False, context={'date': reajuste_obj.data_reajuste})
                 }
+
+                if reajuste_obj.ignorar_centavos:
+                    dados_item['valor_novo'] = dados_item['valor_novo'].quantize(D('1'))
+
                 item_pool.create(cr, uid, dados_item)
 
 
     def efetiva_reajuste(self, cr, uid, ids, context={}):
-
         for reajuste_obj in self.browse(cr, uid, ids):
             if reajuste_obj.confirmado:
                 raise osv.except_osv(u'Erro!', u'Esse reajuste já foi confirmado e não pode ser refeito!')
@@ -155,7 +167,7 @@ class finan_contrato_reajuste(osv.Model):
                     ###
                     ##if lancamento_obj.provisionado:
                         ##lancamento_obj.write({'valor_documento': item_obj.valor_novo, 'valor_original_contrato': item_obj.valor_novo})
-                        
+
                 #
                 # Atualizar o valor das parcelas a vencer
                 #
@@ -170,34 +182,36 @@ class finan_contrato_reajuste(osv.Model):
                         and l.data_vencimento >= '{data_reajuste}'
                         and l.nosso_numero is null
                         and l.sped_documento_id is null;
-                        
-                    update finan_contrato_produto p set
-                        vr_unitario = vr_unitario * {indice}
-                    where
-                        p.contrato_id = {contrato_id};
 
-                    update finan_contrato_produto p set
-                        vr_unitario = vr_unitario * {indice}
-                    where
-                        p.contrato_id = {contrato_id};
-                        
                     update finan_contrato c set
                         valor_mensal = {valor_novo}
                     where
                         c.id = {contrato_id};
+                """
+
+                if not reajuste_obj.ignorar_centavos:
+                    sql += """
+                    update finan_contrato_produto p set
+                        vr_unitario = vr_unitario * {indice}
+                    where
+                        p.contrato_id = {contrato_id}
+                        and p.data is null;
 
                     update finan_contrato c set
                         valor_faturamento = (
-                            select 
-                                sum(coalesce(p.quantidade, 0) * coalesce(p.vr_unitario, 0)) 
-                            from 
+                            select
+                                sum(coalesce(p.quantidade, 0) * coalesce(p.vr_unitario, 0))
+                            from
                                 finan_contrato_produto p
                             where
                                 p.contrato_id = {contrato_id}
-                            )
+                            ),
+                        data_reajuste = '{data_reajuste}'
                     where
                         c.id = {contrato_id};
-                """
+
+                    """
+
                 filtro = {
                     'contrato_id': item_obj.contrato_id.id,
                     'data_reajuste': reajuste_obj.data_reajuste,
@@ -207,32 +221,34 @@ class finan_contrato_reajuste(osv.Model):
                 sql = sql.format(**filtro)
                 cr.execute(sql)
 
-                ###
-                ### Agora, ajusta o valor dos itens a serem faturados
-                ###
-                ##indice = D(item_obj.valor_novo) / D(item_obj.valor_antigo)
-                ##total = D(0)
-                ##for prod_obj in item_obj.contrato_id.contrato_produto_ids:
-                    ##if prod_obj.data:
-                        ##continue
+                if reajuste_obj.ignorar_centavos:
+                    #
+                    # Agora, ajusta o valor dos itens a serem faturados
+                    #
+                    indice = D(item_obj.valor_novo) / D(item_obj.valor_antigo)
+                    total = D(0)
+                    for prod_obj in item_obj.contrato_id.contrato_produto_ids:
+                        if prod_obj.data:
+                            continue
 
-                    ##valor = D(prod_obj.vr_unitario) * indice
-                    ##valor = valor.quantize(D('0.01'))
-                    ##prod_obj.write({'vr_unitario': valor})
-                    ##valor *= D(prod_obj.quantidade)
-                    ##valor = valor.quantize(D('0.01'))
-                    ##total += valor
+                        valor = D(prod_obj.vr_unitario)
+                        valor *= D(prod_obj.quantidade)
+                        valor *= indice
+                        valor = valor.quantize(D('0.01'))
 
-                ###if total != item_obj.valor_novo:
-                    ###valor_rateio = D(item_obj.valor_novo) - total
-                    ###valor = valor_rateio / D(prod_obj.quantidade)
-                    ###valor += D(prod_obj.vr_unitario)
-                    ###prod_obj.write({'vr_unitario': valor})
+                        vr_unitario = valor / D(prod_obj.quantidade)
+                        vr_unitario = vr_unitario.quantize(D('0.01'))
 
-                ###
-                ### Por fim, salva o valor novo como a nova mensalidade do contrato
-                ###
-                ##item_obj.contrato_id.write({'valor_mensal': item_obj.valor_novo})
+                        prod_obj.write({'vr_unitario': valor})
+
+                        valor = vr_unitario
+                        valor *= D(prod_obj.quantidade)
+                        total += valor
+
+                    if total != item_obj.valor_novo:
+                        valor_rateio = D(item_obj.valor_novo) - total
+                        vr_unitario += valor_rateio / D(prod_obj.quantidade)
+                        prod_obj.write({'vr_unitario': vr_unitario})
 
             #
             # Agora, trava o reajuste, para não ser mais alterado

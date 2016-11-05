@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="sale.board_sales_form" model="ir.ui.view">
+            <field name="name">board.sales.form</field>
+            <field name="model">board.board</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Painel comercial">
+                    <board style="2-1">
+                        <column />
+                        <column />
+                    </board>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -8,12 +8,14 @@ from osv import osv, fields
 import base64
 from pybrasil.inscricao import limpa_formatacao
 from pybrasil.data import parse_datetime, mes_passado, primeiro_dia_mes, ultimo_dia_mes, data_hora_horario_brasilia, formata_data
-from pybrasil.febraban.banco import BANCO_CODIGO, Remessa
+from pybrasil.febraban.banco import BANCO_CODIGO, Remessa, Retorno
+from pybrasil.febraban.banco.banco_237 import CODIGO_RETORNO_FP 
 from pybrasil.febraban.pessoa import Funcionario, Beneficiario
 from pybrasil.febraban.holerite import Holerite, Holerite_Detalhe, Holerite_Informacao
 from pybrasil.valor.decimal import Decimal as D
 from collections import OrderedDict
 from dateutil.relativedelta import relativedelta
+from StringIO import StringIO
 
 class finan_remessa_folha(osv.Model):
     _name = 'finan.remessa_folha'
@@ -152,6 +154,8 @@ class finan_remessa_folha(osv.Model):
         'arquivo_texto_retorno': fields.text(u'Arquivo de retorno'),
         'sequencia': fields.integer(u'Sequência'),
         'comprovante_salario': fields.boolean(u'Gerar comprovante salarial?'),
+        'retorno_item_ids': fields.one2many('hr.retorno.folha.item', 'retorno_id', u'Holerites no retorno'),
+        'retorno_ocorrencia': fields.char(u'Ocorrência do Retorno', size=180),
     }
 
     _defaults = {
@@ -394,8 +398,8 @@ class finan_remessa_folha(osv.Model):
                 remessa.tipo = 'CNAB_240'
                 remessa.funcionarios = lista_func
         else:
-            #remessa.tipo = 'CNAB_240'
-            remessa.tipo = 'CNAB_200'
+            remessa.tipo = 'CNAB_240'
+            #remessa.tipo = 'CNAB_200'
             remessa.funcionarios = lista_func
 
         remessa.data_hora = parse_datetime(remessa_obj.data)
@@ -534,109 +538,168 @@ class finan_remessa_folha(osv.Model):
 
         arq_texto = base64.decodestring(remessa_obj.arquivo_retorno)
         remessa_obj.write({'arquivo_texto_retorno': arq_texto})
+                
+        arq = arq_texto.split()
+        
+        if '23700000' in arq[0]:
+            arquivo = StringIO()
+            arquivo.write(arq_texto)
+            arquivo.seek(0)
+            retorno = Retorno()
+            
+            if not retorno.arquivo_retorno(arquivo):
+                raise osv.except_osv(u'Erro!', u'Formato do arquivo incorreto ou inválido!') 
+            
+            if retorno.banco.codigo != remessa_obj.partner_bank_id.bank_bic:
+                raise osv.except_osv(u'Erro!', u'O arquivo é de outro banco - {banco}!'.format(banco=retorno.banco.codigo))
 
-        #
-        # Cria uma lista com os funcionários a incluir
-        #
-        funcionarios = {}
-        arq_ret = remessa_obj.arquivo_texto_retorno.split('\n')
-        if arq_ret[-1] in ('', '\r'):
-            arq_ret = arq_ret[:-1]
-        arq_ret = arq_ret[1:-1]
-        valor_final = D(0)
-        for linha in arq_ret:
-            if remessa_obj.partner_bank_id.bank_bic == '237':
-                agencia = linha[62:67]
-                # 07050
-                conta = linha[72:79]
-                digito = linha[80]
-
-                nome = linha[82:120]
-                matricula = int(linha[120:126])
-                valor = D(linha[126:139]) / D('100.00')
-                ok = linha[150:152] == '  '
-
-            elif remessa_obj.partner_bank_id.bank_bic == '748':
-                #
-                # Somente lidar com os registros tipos A e B
-                #
-                if linha[13] != 'A':
-                    continue
-
-                agencia = linha[23:28]
-                conta = linha[29:41]
-                nome = linha[43:73]
-                matricula = int(linha[73:93].replace('ID_', ''))
-
-                valor = D(linha[119:134]) / D('100.00')
-                ok = linha[230:232] == 'BD'  # Incluído com sucesso
-
+            if retorno.beneficiario.cnpj_cpf != remessa_obj.partner_bank_id.partner_id.cnpj_cpf:
+                raise osv.except_osv(u'Erro!', u'O arquivo é de outro beneficiário - {cnpj}!'.format(cnpj=remessa_obj.partner_bank_id.partner_id.cnpj_cpf))
+                raise osv.except_osv(u'Erro!', u'O arquivo é de outro beneficiário - {cnpj}!'.format(cnpj=retorno.beneficiario.cnpj_cpf))
+    
+            if retorno.banco.codigo not in ('748', '104', '237'):
+                if retorno.beneficiario.agencia.numero != remessa_obj.partner_bank_id.agencia:
+                    raise osv.except_osv(u'Erro!', u'O arquivo é de outra agência - {agencia}!'.format(agencia=retorno.beneficiario.agencia.numero))
+    
+                if retorno.beneficiario.conta.numero != remessa_obj.partner_bank_id.acc_number:
+                    try:
+                        if int(retorno.beneficiario.conta.numero) != int(remessa_obj.partner_bank_id.acc_number):
+                            raise osv.except_osv(u'Erro!', u'O arquivo é de outra conta - {conta}!'.format(conta=retorno.beneficiario.conta.numero))
+                    except:
+                        raise osv.except_osv(u'Erro!', u'O arquivo é de outra conta - {conta}!'.format(conta=retorno.beneficiario.conta.numero))    
+            
+            remessa_obj.write({'data': str(retorno.data_hora)}) 
+            
+            payslip_pool = self.pool.get('hr.payslip')
+            item_pool = self.pool.get('hr.retorno.folha.item')
+            
+            for item_obj in remessa_obj.retorno_item_ids:
+                item_obj.unlink()
+            
+            ocorrencia = u''
+            if retorno.codigo_ocorrencia:
+                retorno_ocorrencia = CODIGO_RETORNO_FP[retorno.codigo_ocorrencia[:2]] + ' - ' + CODIGO_RETORNO_FP[retorno.codigo_ocorrencia[2:4]] 
+                remessa_obj.write({'retorno_ocorrencia': retorno_ocorrencia})
+                
+            for boleto in retorno.boletos:
+                
+                codigo_ocorrencia = u''
+                if boleto.identificacao.upper().startswith('ID_'):
+                    slip_id = int(boleto.identificacao.upper().replace('ID_', ''))
+                    slip_id = payslip_pool.search(cr, uid, [('id', '=', slip_id)])
+                    if slip_id:                                        
+                        slip_id = slip_id[0]
+                    else:                            
+                        slip_id = False
+                else:
+                    slip_id = False                    
+                                                                      
+                dados = {
+                    'retorno_id': remessa_obj.id,                        
+                    'nosso_numero': boleto.nosso_numero or '',
+                }                    
+                if slip_id:
+                    dados['slip_id'] = slip_id
+                else:
+                    codigo_ocorrencia += 'Sem Holerite - Nome: ' + boleto.pagador.nome + ' CPF: ' + boleto.pagador.cnpj_cpf + ' '
+                    
+                if boleto.data_credito:
+                    dados['data_credito'] = boleto.data_credito
+                     
+                if boleto.valor_recebido: 
+                    dados['valor'] = boleto.valor_recebido
+                    
+                if boleto.comando:
+                    codigo_ocorrencia += CODIGO_RETORNO_FP[boleto.comando[:2]] + ' - ' + CODIGO_RETORNO_FP[boleto.comando[2:4]] 
+                    dados['codigo_ocorrencia'] = codigo_ocorrencia
+                
+                item_pool.create(cr,uid, dados)                   
+                
+            return True
+    
+        else:                       
             #
-            # Desvincula os funcionários com erro do arquivo atual
-            # para uqe eles vão num novo arquivo
+            # Cria uma lista com os funcionários a incluir
             #
-            #print(agencia, conta, digito, nome, matricula, valor, ok)
-            remove_ids = []
-            if not ok:
-                for h_obj in remessa_obj.payslip_ids:
-                    if h_obj.employee_id.id == matricula:
-                        remove_ids.append(h_obj.id)
-                        remessa_obj.valor -= D(h_obj.valor_liquido)
-                        texto = agencia + '|' + conta + '|' + digito + '|' + nome
-                        print('retirado do arquivo', texto.encode('utf-8'))
-            else:
-                valor_final += valor
+            funcionarios = {}
+            arq_ret = remessa_obj.arquivo_texto_retorno.split('\n')
+            if arq_ret[-1] in ('', '\r'):
+                arq_ret = arq_ret[:-1]
+            arq_ret = arq_ret[1:-1]
+            valor_final = D(0)
+            
+            
+            for linha in arq_ret:
+                if remessa_obj.partner_bank_id.bank_bic == '237':
+                    agencia = linha[62:67]
+                    # 07050
+                    conta = linha[72:79]
+                    digito = linha[80]
+    
+                    nome = linha[82:120]
+                    matricula = int(linha[120:126])
+                    valor = D(linha[126:139]) / D('100.00')
+                    ok = linha[150:152] == '  '
+    
+                elif remessa_obj.partner_bank_id.bank_bic == '748':
+                    #
+                    # Somente lidar com os registros tipos A e B
+                    #
+                    if linha[13] != 'A':
+                        continue
+    
+                    agencia = linha[23:28]
+                    conta = linha[29:41]
+                    nome = linha[43:73]
+                    matricula = int(linha[73:93].replace('ID_', ''))
+    
+                    valor = D(linha[119:134]) / D('100.00')
+                    ok = linha[230:232] == 'BD'  # Incluído com sucesso
+    
+                #
+                # Desvincula os funcionários com erro do arquivo atual
+                # para uqe eles vão num novo arquivo
+                #
+                #print(agencia, conta, digito, nome, matricula, valor, ok)
+                remove_ids = []
+                if not ok:
+                    for h_obj in remessa_obj.payslip_ids:
+                        if h_obj.employee_id.id == matricula:
+                            remove_ids.append(h_obj.id)
+                            remessa_obj.valor -= D(h_obj.valor_liquido)
+                            texto = agencia + '|' + conta + '|' + digito + '|' + nome
+                            print('retirado do arquivo', texto.encode('utf-8'))
+                else:
+                    valor_final += valor
+    
+                for id in remove_ids:
+                    self.pool.get('hr.payslip').write(cr, uid, id, {'remessa_id': False})
 
-            for id in remove_ids:
-                self.pool.get('hr.payslip').write(cr, uid, id, {'remessa_id': False})
-
-        remessa_obj.write({'valor': valor_final})
-
-        #for h_obj in holerite_ids:
-            #if not (h_obj.bank_id and h_obj.banco_conta and h_obj.banco_agencia and h_obj.valor_liquido):
-                #continue
-
-            #if h_obj.bank_id.bic != remessa_obj.partner_bank_id.bank_bic:
-                #continue
-
-            #func = Funcionario()
-            #func.matricula = h_obj.employee_id.id
-            #func.nome = h_obj.employee_id.nome.strip()
-            #func.conta.numero = h_obj.banco_conta.strip().replace('-', '')
-            #func.conta.digito = func.conta.numero[-1]
-            #func.conta.numero = func.conta.numero[:-1]
-
-            #func.agencia.numero = h_obj.banco_agencia.strip()
-            #if '-' in func.agencia.numero:
-                #func.agencia.numero = func.agencia.numero.split('-')[0]
-
-            #func.valor_creditar = D(h_obj.valor_liquido) or D(0)
-            #remessa_obj.valor += D(func.valor_creditar)
-            #lista_func.append(func)
-            #h_obj.write({'remessa_id': remessa_obj.id})
-
-        ##
-        ## Gera a remessa
-        ##
-        #remessa = Remessa()
-        #remessa.tipo = 'CNAB_200'
-        #remessa.funcionarios = lista_func
-        #remessa.data_hora = parse_datetime(remessa_obj.data)
-        #remessa.data_debito = parse_datetime(remessa_obj.data_pagamento)
-        #remessa.beneficiario = Beneficiario()
-        #remessa.beneficiario.banco = BANCO_CODIGO[remessa_obj.partner_bank_id.bank_bic]
-        #remessa.beneficiario.nome = remessa_obj.company_id.partner_id.razao_social
-        #remessa.beneficiario.agencia.numero = remessa_obj.partner_bank_id.agencia or ''
-        #remessa.beneficiario.conta.numero = remessa_obj.partner_bank_id.acc_number or ''
-        #remessa.beneficiario.conta.digito = remessa_obj.partner_bank_id.conta_digito or ''
-
-        #dados = {
-            #'nome_arquivo': 'folha_' + remessa_obj.company_id.name.replace(' ', '_') + '_' + remessa_obj.data.replace(' ', '_') + '.txt',
-            #'arquivo': base64.encodestring(remessa.arquivo_remessa),
-            #'arquivo_texto': remessa.arquivo_remessa,
-            #'valor': remessa_obj.valor,
-        #}
-        #return remessa_obj.write(dados)
-
-
+            remessa_obj.write({'valor': valor_final})
+            return True
+       
 finan_remessa_folha()
+
+class hr_retorno_folha_item(osv.Model):
+    _name = 'hr.retorno.folha.item'
+    _description = 'Item de retorno Folha Pagamento'
+    _order = 'retorno_id, slip_id'
+    _rec_name = 'slip_id'
+
+    
+    _columns = {
+        'retorno_id': fields.many2one(u'finan.remessa_folha', u'Arquivo de remessa folha', ondelete='cascade'),        
+        'slip_id': fields.many2one(u'hr.payslip', u'Holerite', ondelete='restrict'),
+        'mes': fields.related('slip_id', 'mes', type='char', string=u'Mês', store=False),
+        'ano': fields.related('slip_id', 'ano', type='integer', string=u'Ano', store=False),
+        'data_credito': fields.date(u'Data de Crédito'),        
+        'valor': fields.float(u'Valor Pago'),
+        'codigo_ocorrencia': fields.char(u'Código das Ocorrência', size=180),
+        'nosso_numero': fields.char(u'Número atribuído pelo banco', size=20),
+    }
+
+    _defaults = {               
+    }
+
+
+hr_retorno_folha_item()

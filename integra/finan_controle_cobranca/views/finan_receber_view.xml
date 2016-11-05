@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_receber_tree">
+            <field name="name">finan.receber.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_tree"/>
+            <field name="priority" eval="100"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="provisionado" position="after">
+                    <field name="cobranca_hoje" invisible="1" />
+                    <field name="cobrados" invisible="1" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_search">
+            <field name="name">finan.receber.search</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_search"/>
+            <field name="priority" eval="100"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="replace">
+                    <field name="partner_id" />
+                </field>
+
+                <filter name="baixado" position="after">
+                    <separator orientation="vertical" />
+                    <filter name="cobranca_hoje" string="Cobrança Hoje?" icon="gtk-redo" domain="[('cobranca_hoje','=', True)]" context="{'cobranca_hoje': True,'cobrados': False}" />                                         
+                    <filter name="cobrados" string="Já Cobrados" icon="gtk-undo" domain="[('cobrados','=', True)]" context="{'cobranca_hoje': False,'cobrados': True}" />
+                </filter>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_form">
+            <field name="name">finan.receber.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_form"/>
+            <field name="type">form</field>
+            <field name="priority" eval="100"/>
+            <field name="arch" type="xml">
+                <separator string="Emails trocados e anotações" position="before">                                           
+                    <separator string="Cobranças Efetuadas" colspan="4" />                                            
+                    <field name="cobranca_ids" colspan="4" nolabel="1" readonly="1" >                                   
+                        <tree>                                                                        
+                            <field name="data"  />
+                            <field name="create_uid"  />
+                            <field name="data_agendamento"  />
+                            <field name="cobrador_id" />                                                             
+                        </tree>
+                    </field>
+                </separator>
+                
+            </field>
+        </record>
+        
+
+
+    </data>
+</openerp>

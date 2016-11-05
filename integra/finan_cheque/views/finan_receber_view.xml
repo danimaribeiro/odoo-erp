@@ -7,9 +7,10 @@
             <field name="model">finan.lancamento</field>
             <field name="type">form</field>
             <field name="inherit_id" ref="finan.finan_receber_form"/>
+            <field name="priority" eval="50"/>
             <field name="arch" type="xml">
                  <page string="Baixa" position="after">
-                    <page string="Quitação com Cheques" attrs="{'invisible': [('situacao', '=', 'Baixado')]}" groups="finan.group_finan_treasury_manager,finan.group_finan_treasury_staff,finan.group_finan_manager">
+                    <page string="Quitação com Cheques" attrs="{'invisible': ['|', ('provisionado', '=', True), ('situacao', '=', 'Baixado')]}" groups="finan.group_finan_treasury_manager,finan.group_finan_treasury_staff,finan.group_finan_manager">
                         <button icon="gtk-execute" string="Lançar registros de quitação de cada cheque" name="quitar_titulo" type="object" colspan="4" />
                         <separator string="Cheques recebidos" colspan="4" />
                         <field name="cheque_receber_ids" context="{'default_company_id': company_id, 'default_partner_id': partner_id, 'default_res_partner_bank_id': sugestao_bank_id, 'form_view_ref': 'finan_cheque.finan_cheque_receber_form', 'tree_view_ref': 'finan_cheque.finan_cheque_tree'}" nolabel="1" />

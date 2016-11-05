@@ -10,6 +10,8 @@
                 <tree string="Tipos de ordem de serviço">
                     <field name="codigo" invisible="1" />
                     <field name="nome" />
+                    <field name="tipo" />
+                    <field name="pricelist_id" />
                 </tree>
             </field>
         </record>
@@ -24,11 +26,19 @@
                         <field name="codigo" readonly="1" invisible="1" />
                         <field name="nome" required="1"/>
                         <newline />
+                        <field name="tipo" required="1"/>
+                        <newline />
+                        <field name="pricelist_id" />
+                        <newline />
                         <separator string="Movimentação de estoque" colspan="2" />
                         <newline />
                         <field name="stock_location_saida_id" domain="[('usage', 'in', ('supplier', 'customer', 'internal'))]"/>
                         <newline />
                         <field name="stock_location_entrada_id" domain="[('usage', 'in', ('supplier', 'customer', 'internal'))]" />
+                        <newline />
+                        <field name="lo_modelo_os_id" domain="[('tabela', '=', 'sale.order.os')]" />
+                        <newline />
+                        <field name="lo_modelo_orcamento_id" domain="[('tabela', '=', 'sale.order.orcamento')]" />
                     </group>
                 </form>
             </field>
@@ -42,6 +52,8 @@
                 <search string="Tipos de ordem de serviço">
                     <field name="codigo" />
                     <field name="nome" />
+                    <field name="tipo" />
+                    <field name="pricelist_id" />
                 </search>
             </field>
         </record>

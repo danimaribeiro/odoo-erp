@@ -135,44 +135,47 @@
                                 <group col="6" colspan="4" >
                                 </group>
                             </group>
-                            <separator string="Documentos Fiscais" colspan="4" />
-                            <field name="documento_sempartida_ids" readonly="1" colspan="4" nolabel="1">                                                                
-                                <tree>
-                                    <field name="company_id" />
-                                    <field name="modelo"/>                                   
-                                    <field name="serie" />
-                                    <field name="numero"/>
-                                    <field name="data_emissao"/>
-                                    <field name="partner_id"/>                                                                                
-                                    <field name="vr_nf" />
-                                    <field name="operacao_id"/>
-                                </tree>
-                            </field>
-                            <separator string="Documentos Financeiros" colspan="4" />
-                            <field name="finan_sempartida_ids" readonly="1" colspan="4" nolabel="1" >                                                          
-                                <tree>
-                                    <field name="company_id" />
-                                    <field name="tipo"/>                                   
-                                    <field name="lancamento_id"/>
-                                    <field name="numero_documento"/>
-                                    <field name="data"/>
-                                    <field name="data_documento"/>
-                                    <field name="data_quitacao"/>
-                                    <field name="partner_id"/>                                                                                
-                                    <field name="valor_documento" />
-                                </tree>
-                            </field>
-                            <separator string="Holerites" colspan="4" />
-                            <field name="holerite_sempartida_ids" readonly="1" colspan="4" nolabel="1" >                                                                                          
-                                <tree>                                    
-                                    <field name="tipo" />
-                                    <field name="slip_id" />
-                                    <field name="rule_id" />
-                                    <field name="date_from"/>
-                                    <field name="date_to"/>                                    
-                                    <field name="company_id"/>                                                                
-                                </tree>
-                            </field>
+                            <group string="Documentos Fiscais" col="4" colspan="4" attrs="{'invisible':[('tipo','!=', 'D')]}">                                
+                                <field name="documento_sempartida_ids" readonly="1" colspan="4" nolabel="1">                                                                
+                                    <tree>
+                                        <field name="company_id" />
+                                        <field name="modelo"/>                                   
+                                        <field name="serie" />
+                                        <field name="numero"/>
+                                        <field name="data_emissao"/>
+                                        <field name="partner_id"/>                                                                                
+                                        <field name="vr_nf" />
+                                        <field name="operacao_id"/>
+                                    </tree>
+                                </field>
+                            </group>
+                            <group string="Documentos Financeiros" col="4" colspan="4" attrs="{'invisible':[('tipo','!=', 'F')]}">                            
+                                <field name="finan_sempartida_ids" readonly="1" colspan="4" nolabel="1" >                                                          
+                                    <tree>
+                                        <field name="company_id" />
+                                        <field name="tipo"/>                                   
+                                        <field name="lancamento_id"/>
+                                        <field name="numero_documento"/>
+                                        <field name="data"/>
+                                        <field name="data_documento"/>
+                                        <field name="data_quitacao"/>
+                                        <field name="partner_id"/>                                                                                
+                                        <field name="valor_documento" />
+                                    </tree>
+                                </field>
+                            </group>
+                            <group string="Holerites/Rubricas" col="4" colspan="4" attrs="{'invisible':[('tipo','in',('F','D','PT'))]}">                                                        
+                                <field name="holerite_sempartida_ids" readonly="1" colspan="4" nolabel="1" >                                                                                          
+                                    <tree>                                    
+                                        <field name="tipo" />
+                                        <field name="slip_id" />
+                                        <field name="rule_id" />
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>                                    
+                                        <field name="company_id"/>                                                                
+                                    </tree>
+                                </field>
+                            </group>
                         </page>
                         <page string="Relatório de Conferência">
                             <field name="diario_conta_id" domain="[('sintetica','=',False)]" context="{'conta_simples': True}" colspan="4" />

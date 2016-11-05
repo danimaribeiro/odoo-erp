@@ -158,7 +158,7 @@ class ConexaoWebService(object):
         # É preciso definir o POST abaixo como bytestring, já que importamos
         # os unicode_literals... Dá um pau com xml com acentos sem isso...
         #
-        con.set_debuglevel(1)
+        #con.set_debuglevel(1)
         con.request(b'POST', b'/' + self.url.encode('utf-8'), self.xml_envio, self.header)
         con.sock.settimeout(600.0)
         #import pdb; pdb.set_trace()

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_tipo_faturamento_tree">
+            <field name="name">finan.tipo_faturamento.tree</field>
+            <field name="model">finan.tipo.faturamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_tipo_faturamento_form">
+            <field name="name">finan.tipo_faturamento.form</field>
+            <field name="model">finan.tipo.faturamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Tipos de faturamento">
+                    <field name="nome" />
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_tipo_faturamento_acao">
+            <field name="name">Tipos de faturamento</field>
+            <field name="res_model">finan.tipo.faturamento</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_tipo_faturamento_tree" />
+        </record>
+
+        <menuitem action="finan_tipo_faturamento_acao"
+            id="menu_finan_tipo_faturamento" name="Tipos de faturamento" parent="finan.menu_finan_config" />
+
+    </data>
+</openerp>

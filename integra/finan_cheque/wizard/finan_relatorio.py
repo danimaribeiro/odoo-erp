@@ -76,11 +76,17 @@ class finan_relatorio(osv.osv_memory):
 
                     sql_relatorio += """
                         and fc.res_partner_bank_id in """  +  str(tuple(bancos_ids)).replace(',)', ')')
-
+                else:
+                    sql_relatorio += """
+                        and b.state = 'Caixa'""" 
+                        
             elif len(bancos_ids) > 0:
                     sql_relatorio += """
-                where
-                    fc.res_partner_bank_id in """  +  str(tuple(bancos_ids)).replace(',)', ')')
+                    where
+                        fc.res_partner_bank_id in """  +  str(tuple(bancos_ids)).replace(',)', ')')
+            else:
+                sql_relatorio += """
+                    where b.state = 'Caixa'""" 
 
             sql_relatorio += """
                 order by

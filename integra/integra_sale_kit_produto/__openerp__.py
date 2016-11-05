@@ -5,7 +5,7 @@
 
 
 {
-    'name': 'Integra Vendas - kit de produtos',
+    'name': 'Integra Vendas - kit de produtos (escolhe na venda)',
     'version': '1.0',
     'category': 'Integra',
     'author': 'Integra',

@@ -30,7 +30,6 @@ class finan_cheque(osv.Model):
     _description = u'Administração de Cheques'
     _name = 'finan.cheque'
 
-
     def _get_raiz_cnpj(self, cr, uid, ids, nome_campo, args=None, context={}):
         res = {}
 
@@ -41,8 +40,6 @@ class finan_cheque(osv.Model):
                 res[obj.id] = ''
 
         return res
-
-
 
     _columns = {
         'company_id': fields.many2one('res.company', u'Empresa', required=True, ondelete='restrict'),

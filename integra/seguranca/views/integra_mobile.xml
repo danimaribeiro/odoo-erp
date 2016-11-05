@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="integra_mobile_tree">
+            <field name="name">integra.mobile.tree</field>
+            <field name="model">integra.mobile</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Clientes Mobile">
+                    <field name="partner_id"/>
+                    <field name="endereco" />
+                    <field name="banco_dados" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="integra_mobile_form">
+            <field name="name">integra.mobile.form</field>
+            <field name="model">integra.mobile</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Cliente Mobile">
+                    <group col="4" colspan="4">
+                        <field name="partner_id" required="1" colspan="4" />
+                        <field name="endereco" required="1" colspan="4" />
+                        <field name="banco_dados" required="1" colspan="4" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="integra_mobile_search" model="ir.ui.view">
+            <field name="name">integra.mobile.search</field>
+            <field name="model">integra.mobile</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Clientes Mobile">
+                    <field name="partner_id" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="integra_mobile_acao">
+            <field name="name">Clientes Mobile</field>
+            <field name="res_model">integra.mobile</field>
+            <field name="view_type">form</field>
+<!--            <field name="domain">[('tipo', '=', 'O')]</field>
+            <field name="context">{'default_prioridade': 'O'}</field>-->
+            <field name="view_id" ref="integra_mobile_tree" />
+            <field name="search_view_id" ref="integra_mobile_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            action="integra_mobile_acao"
+            id="menu_integra_mobile"
+            name="Clientes Mobile"
+            parent="base.menu_sale_config_sales"
+            sequence="34" />
+
+        <record model="ir.actions.act_window.view" id="integra_mobile_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="integra_mobile_form"/>
+            <field name="act_window_id" ref="integra_mobile_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="integra_mobile_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="integra_mobile_tree"/>
+            <field name="act_window_id" ref="integra_mobile_acao"/>
+        </record>
+
+    </data>
+</openerp>

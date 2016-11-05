@@ -74,6 +74,9 @@ class crm_lead(osv.Model):
             if lead_obj.proprietario_id:
                 busca.append(['proprietario_id', '=', lead_obj.proprietario_id.id])
 
+            if lead_obj.cep_id:
+                busca.append(['cep_id', '=', lead_obj.cep_id.id])
+
             if lead_obj.endereco:
                 busca.append(['endereco', 'ilike', lead_obj.endereco])
 
@@ -102,13 +105,15 @@ class crm_lead(osv.Model):
                 imovel_pool = self.pool.get('const.imovel')
                 imovel_ids = imovel_pool.search(cr, uid, busca)
 
-                jah_tem = []
-                for imovel_obj in lead_obj.imovel_busca_ids:
-                    jah_tem.append(imovel_obj.id)
+                escolhido_ids = []
+                for escolhido_obj in lead_obj.imovel_ids:
+                    escolhido_ids.append(escolhido_obj.id)
 
+                jah_tem = []
                 for imovel_id in imovel_ids:
                     if not imovel_id in jah_tem:
-                        jah_tem.append(imovel_id)
+                        if not imovel_id in escolhido_ids:
+                            jah_tem.append(imovel_id)
 
                 cr.execute('delete from crm_lead_imovel_busca where lead_id = ' + str(lead_obj.id) + ';')
 

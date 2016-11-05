@@ -157,6 +157,17 @@ class FichaCompensacao(BandaRelato):
         lbl.borders['right'] = False
         lbl.borders['left'] = False
 
+
+        #
+        # 11ª linha
+        #
+        topo = 9.8
+        lbl, fld = self.inclui_campo(nome='sacador_nome', titulo='Sacador/Avalista', conteudo='sacador.impressao_sacador', top=topo * cm, left=0 * cm, width=12.75 * cm, height=1.8 * cm)
+        lbl.borders['top'] = False
+        lbl.borders['bottom'] = False
+        lbl.borders['right'] = False
+        lbl.borders['left'] = False
+
         topo = 10
         lbl, txt = self.inclui_texto(nome='autenticacao', titulo='Autenticação mecânica/ficha de compensação', texto='', top=topo * cm, left=12 * cm, width=5 * cm)
         lbl.borders = False
@@ -297,9 +308,12 @@ class ImpressoBoleto3Partes(ImpressoBoleto):
         ficha_caixa.height -= 0.25 * cm
 
         ficha_compensacao = FichaCompensacaoTerco()
+        ficha_compensacao.elements.pop(len(ficha_compensacao.elements) - 3)
+        ficha_compensacao.elements.pop(len(ficha_compensacao.elements) - 3)
 
         self.band_detail = titulo_recibo_pagador
         self.band_detail.child_bands = [recibo_pagador, titulo_ficha_caixa, ficha_caixa, ficha_compensacao]
+
 
 
 class FichaCompensacaoCarne(FichaCompensacaoTerco):

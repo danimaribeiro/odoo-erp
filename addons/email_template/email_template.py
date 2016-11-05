@@ -59,13 +59,21 @@ class email_template(osv.osv):
         if not template: return u""
         if context is None:
             context = {}
-        try:
+        #try:
+        if True:
             template = tools.ustr(template)
             record = None
             if res_id:
                 record = self.pool.get(model).browse(cr, uid, res_id, context=context)
             user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
-            result = MakoTemplate(template).render_unicode(object=record,
+
+            template_imports = [
+                'from pybrasil.base import (tira_acentos, primeira_maiuscula)',
+                'from pybrasil.data import (DIA_DA_SEMANA, DIA_DA_SEMANA_ABREVIADO, MES, MES_ABREVIADO, data_por_extenso, dia_da_semana_por_extenso, dia_da_semana_por_extenso_abreviado, mes_por_extenso, mes_por_extenso_abreviado, seculo, seculo_por_extenso, hora_por_extenso, hora_por_extenso_aproximada, formata_data, ParserInfoBrasil, parse_datetime, UTC, HB, fuso_horario_sistema, data_hora_horario_brasilia, agora, hoje, ontem, amanha, mes_passado, mes_que_vem, ano_passado, ano_que_vem, semana_passada, semana_que_vem, primeiro_dia_mes, ultimo_dia_mes, idade)',
+                'from pybrasil.valor import (numero_por_extenso, numero_por_extenso_ordinal, numero_por_extenso_unidade, valor_por_extenso, valor_por_extenso_ordinal, valor_por_extenso_unidade, formata_valor)',
+            ]
+            mako_template = MakoTemplate(template, imports=template_imports)
+            result = mako_template.render_unicode(object=record,
                                                            user=user,
                                                            # context kw would clash with mako internals
                                                            ctx=context,
@@ -74,9 +82,9 @@ class email_template(osv.osv):
             if result == u'False':
                 result = u''
             return result
-        except Exception:
-            logging.exception("failed to render mako template value %r", template)
-            return u""
+        #except Exception:
+            #logging.exception("failed to render mako template value %r", template)
+            #return u""
 
     def _prepare_render_template_context(self, cr, uid, model, res_id, context=None):
         if context is None:

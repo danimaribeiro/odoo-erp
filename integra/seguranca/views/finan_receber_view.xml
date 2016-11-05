@@ -14,5 +14,33 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="finan_receber_contrato_tree">
+            <field name="name">finan.receber.contrato.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan_contrato.finan_receber_contrato_tree"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="contrato_id" position="after">
+                    <field name="tipo_faturamento_id" invisible="1" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_contrato_search">
+            <field name="name">finan.receber.contrato.search</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan_contrato.finan_receber_contrato_search"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="contrato_id" position="after">
+                    <field name="tipo_faturamento_id" />
+                </field>
+                <xpath expr="//filter[@string='Contrato']" position="after">
+                    <filter string="Tipo de Faturamento" icon="terp-project" domain="[]" context="{'group_by': 'tipo_faturamento_id'}" />
+                </xpath>
+
+            </field>
+        </record>
+
     </data>
 </openerp>

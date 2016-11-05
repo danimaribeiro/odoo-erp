@@ -706,6 +706,163 @@ order by
 
         return True
 
+    def gera_dados_colaboradores(self, cr, uid, ids, context={}):
+        if not ids:
+            return {}
+
+        for rel_obj in self.browse(cr, uid, ids):
+
+            sql = """
+                select
+                    rp.name as empresa,
+                    rp.cnpj_cpf,
+                    d.name as departamento,
+                    c.name as matricula,
+                    e.nome,
+                    (cbo.codigo || ' - ' || j.name) as funcao,
+                    c.date_start as data_admissao,
+                    c.wage as salario_base,
+
+                    coalesce((SELECT sum(hl.total)
+                    FROM hr_payslip_line as hl
+                    where hl.code in ('REMUNERACAO_VARIAVEL','DSR_REMUNERACAO_VARIAVEL','DSR_REMUNERACAO_VENDAS') and hl.slip_id = h.id), 0) as remuneracao_variavel,
+
+                    coalesce((SELECT sum(hl.total)
+                    FROM hr_payslip_line as hl
+                    where hl.code in ('DSR_REMUNERACAO_VARIAVEL') and hl.slip_id = h.id), 0) as dsr_remuneracao_variavel,
+
+                    coalesce((SELECT sum(hl.total)
+                    FROM hr_payslip_line as hl
+                    where hl.code in ('GRAT_FUNC_10','GRAT_FUNC_40','GRAT_HORA_10') and hl.slip_id = h.id), 0) as gratificacao,
+
+                    coalesce((SELECT sum(hl.total)
+                    FROM hr_payslip_line as hl
+                    where hl.code = 'INSALUBRIDADE' and hl.slip_id = h.id), 0) as insalubridade,
+
+                    coalesce((SELECT sum(hl.total)
+                    FROM hr_payslip_line as hl
+                    where hl.code in ('PERICULOSIDADE','PERICULOSIDADE_ANTERIOR','PERICULOSIDADE_VALOR') and hl.slip_id = h.id), 0) as periculosidade,
+
+                    coalesce((SELECT sum(hl.total)
+                    FROM hr_payslip_line as hl
+                    where hl.code in ('ADTO_COMISSAO','COMISSAO','COMP_COMISSOES','DSR_COMIS') and hl.slip_id = h.id), 0) as comissao,
+
+                    coalesce((SELECT sum(hl.total)
+                    FROM hr_payslip_line as hl
+                    where hl.code = 'ajuda_custo' and hl.slip_id = h.id), 0) as ajuda_custo,
+
+                    coalesce((SELECT sum(hl.total)
+                    FROM hr_payslip_line as hl
+                    where hl.code = 'PREMIO_ASSIDUIDADE' and hl.slip_id = h.id), 0) as premio_assiduidade,
+
+                    coalesce((SELECT sum(hl.total)
+                    FROM hr_payslip_line as hl
+                    where hl.code = 'H_SOBREAVISO' and hl.slip_id = h.id), 0) as hora_aviso
+
+                from
+                    hr_payslip h
+                    join hr_employee e on e.id = h.employee_id
+                    join hr_contract c on c.id = h.contract_id
+
+                    join res_company co on co.id = c.company_id
+                    join res_partner rp on rp.id = co.partner_id
+
+                    left join res_company cc on cc.id = co.parent_id
+                    left join res_company ccc on ccc.id = cc.parent_id
+
+                    join hr_job j on j.id = c.job_id
+                    join hr_cbo cbo on cbo.id = j.cbo_id
+                    left join hr_department d on d.id = c.department_id
+
+                    left join res_partner lot on lot.id = c.lotacao_id
+
+                where
+                    (
+                        co.id = {company_id}
+                        or co.parent_id = {company_id}
+                        or cc.parent_id = {company_id}
+                    )
+                    and h.simulacao = false
+                    and h.tipo = 'N'
+                    and h.date_from between '{data_inicial}' and '{data_final}'
+                    and c.categoria_trabalhador < '700'
+
+                order by
+                    rp.name,
+                    e.nome;
+            """
+            filtro = {
+                'company_id': rel_obj.company_id.id,
+                'data_inicial': rel_obj.data_inicial,
+                'data_final': rel_obj.data_final,
+            }
+            sql = sql.format(**filtro)
+            print(sql)
+
+            cr.execute(sql)
+            dados = cr.fetchall()
+
+            if len(dados) == 0:
+                raise osv.except_osv(u'Erro!', u'Não existem dados nos parâmetros informados!')
+
+            linhas = []
+
+            for empresa, cnpj_cpf, departamento, matricula, nome, funcao, data_admissao, salario_base, remuneracao_variavel, dsr_remuneracao_variavel, gratificacao, insalubridade, periculosidade, comissao, ajuda_custo, premio_assiduidade, hora_aviso in dados:
+                linha = DicionarioBrasil()
+                linha['empresa'] = empresa
+                linha['cnpj_cpf'] = cnpj_cpf
+                linha['departamento'] = departamento
+                linha['matricula'] = matricula
+                linha['nome'] = nome
+                linha['funcao'] = funcao
+                linha['data_admissao'] = parse_datetime(data_admissao).date()
+                linha['salario_base'] = salario_base
+                linha['remuneracao_variavel'] = remuneracao_variavel
+                linha['dsr_remuneracao_variavel'] = dsr_remuneracao_variavel
+                linha['gratificacao'] = gratificacao
+                linha['insalubridade'] = insalubridade
+                linha['periculosidade'] = periculosidade
+                linha['comissao'] = comissao
+                linha['ajuda_custo'] = ajuda_custo
+                linha['premio_assiduidade'] = premio_assiduidade
+                linha['hora_aviso'] = hora_aviso
+                linhas.append(linha)
+
+            rel = RHRelatorioAutomaticoPaisagem()
+            rel.title = u'Análise de Salários'
+            rel.monta_contagem = False
+            rel.colunas = [
+                ['empresa', 'C', 60, u'Empresa', False],
+                ['matricula', 'C', 10, u'Matrícula', False],
+                ['nome' , 'C', 60, u'Nome', False],
+                ['funcao', 'C', 60, u'Cargo' , False],
+                ['data_admissao'  , 'D', 10, u'Admissão', False],
+                ['salario_base', 'F', 10, u'Salário base', True],
+                ['gratificacao', 'F', 10, u'Gratificação', True],
+                ['periculosidade', 'F', 10, u'Periculosidade', True],
+            ]
+
+            rel.monta_detalhe_automatico(rel.colunas)
+
+            rel.grupos = [
+                #['company_id.parent_id.name', u'Grupo', True],
+                #['company_id.name', u'Unidade', False],
+                ['empresa', u'Empresa', False],
+            ]
+            rel.monta_grupos(rel.grupos)
+
+            rel.band_page_header.elements[-1].text = u'Empresa/Unidade ' + rel_obj.company_id.name + u' -  Período de ' + formata_data(parse_datetime(rel_obj.data_inicial)) + u' a ' + formata_data(parse_datetime(rel_obj.data_final))
+
+            pdf = gera_relatorio(rel, linhas)
+
+            dados = {
+                'nome': 'analise_salarios.pdf',
+                'arquivo': base64.encodestring(pdf)
+            }
+            rel_obj.write(dados)
+
+        return True
+
 
 hr_relatorio()
 
@@ -798,3 +955,4 @@ hr_relatorio()
     # #retorno_pdf.close()
 
     # #return pdf
+

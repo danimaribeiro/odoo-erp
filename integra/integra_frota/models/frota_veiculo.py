@@ -3,6 +3,8 @@
 
 # from __future__ import division, print_function, unicode_literals
 from osv import osv, fields
+from pybrasil.valor.decimal import Decimal as D
+
 
 COMBUSTIVEL = (
     ('FLEX', 'Gasolina/etanol - FLEX'),
@@ -50,6 +52,42 @@ class frota_veiculo(osv.Model):
 
         return procura
 
+    def _km_rodados(self, cr, uid, ids, nome_campo, args=None, context={}):
+        res = {}
+
+        for id in ids:
+            sql = """
+                select
+                    sum(extract(days from coalesce(fo.data_fechamento, current_date) - fo.data)) as dias,
+                    coalesce(sum(fo.valor_atual - fo.valor_anterior), 0) as km,
+                    max(fo.valor_atual) as km_atual
+
+                from
+                    frota_odometro fo
+                    left join frota_servico s on s.id = fo.servico_id
+
+                where
+                    fo.veiculo_id = {id}
+                    and (fo.servico_id is null or (s.ignora_km is null or s.ignora_km = False))
+            """
+            sql = sql.format(id=id)
+            cr.execute(sql)
+            dados = cr.fetchall()
+
+            if dados:
+                dias = D(dados[0][0] or 0)
+                km = D(dados[0][1] or 0)
+                km_atual = D(dados[0][2] or 0)
+
+                if km > 0 and dias > 0:
+                    media = km / dias
+                else:
+                    media = 0
+
+                res[id] = {'km_rodados': km, 'dias': dias, 'km_media_diaria': media, 'km_atual': km_atual}
+
+        return res
+
     _columns = {
         'ativo': fields.boolean(u'Ativo?'),
         'nome': fields.function(_get_nome_funcao, type='char', string=u'Nome', store=True, fnct_search=_procura_nome),
@@ -74,6 +112,13 @@ class frota_veiculo(osv.Model):
         'odometro': fields.float(u'Última quilometragem'),
 
         'servico_ids': fields.one2many('frota.veiculo.servico', 'veiculo_id', u'Serviços padrão'),
+
+
+        'km_rodados': fields.function(_km_rodados, type='float', string=u'km rodados', multi='km'),
+        'dias': fields.function(_km_rodados, type='float', string=u'Dias km rodados', multi='km'),
+        'km_media_diaria': fields.function(_km_rodados, type='float', string=u'Média diária km', multi='km'),
+        'km_atual': fields.function(_km_rodados, type='float', string=u'km atual', multi='km'),
+
         #'image': fields.related('model_id', 'image', type="binary", string="Logo"),
         #'image_medium': fields.related('model_id', 'image_medium', type="binary", string="Logo"),
         #'image_small': fields.related('model_id', 'image_small', type="binary", string="Logo"),

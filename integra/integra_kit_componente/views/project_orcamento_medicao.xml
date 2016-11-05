@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="project_orcamento_medicao_item_componente_tree">
+        <field name="name">project.orcamento.medicao.item.componente.tree</field>
+        <field name="model">project.orcamento.medicao.item</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Itens da medição" colors="blue:qtd_componentes" editable="bottom">
+                <field name="parent_id" invisible="1" />
+                <field name="qtd_componentes" invisible="1" />
+                <field name="data" invisible="1" />
+                <field name="orcamento_item_id" invisible="1" />
+                <field name="etapa_id" readonly="1" invisible="1" />
+                <field name="codigo_completo" readonly="1" invisible="1" />
+                <field name="product_id" readonly="1" />
+                <field name="uom_id" readonly="1"/>
+                <field name="quantidade" readonly="1"/>
+                <field name="quantidade_medida" on_change="onchange_quantidade_medida(quantidade, quantidade_medida, 0)" />
+                <field name="quantidade_percentual" invisible="1" on_change="onchange_quantidade_medida(quantidade, 0, quantidade_percentual)"/>
+                <field name="quantidade_acumulada" invisible="1" />
+                <field name="vr_unitario" readonly="1"/>
+                <field name="vr_produto" readonly="1"/>
+                <field name="vr_unitario_medido" on_change="onchange_vr_produto_medido(quantidade_medida, vr_produto, vr_unitario_medido, 0, 0)" />
+                <field name="vr_produto_medido" on_change="onchange_vr_produto_medido(quantidade_medida, vr_produto, 0, vr_produto_medido, 0)" />
+                <field name="vr_produto_percentual" invisible="1" on_change="onchange_vr_produto_medido(quantidade_medida, vr_produto, 0, 0, vr_produto_percentual)" />
+                <field name="vr_produto_acumulado" invisible="1" />
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="project_orcamento_medicao_item_form">
+        <field name="name">project.orcamento.medicao.item.form</field>
+        <field name="model">project.orcamento.medicao.item</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="construtora.project_orcamento_medicao_item_form"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <field name="vr_produto_acumulado" position="after">
+                <field name="itens_componente_ids" nolabel="1" colspan="4" context="{'tree_view_ref': 'integra_kit_componente.project_orcamento_medicao_item_componente_tree'}" />
+            </field>
+        </field>
+    </record>
+
+</data>
+</openerp>

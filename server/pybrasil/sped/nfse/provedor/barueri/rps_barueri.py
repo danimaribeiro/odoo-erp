@@ -23,7 +23,7 @@ class REGISTRO_1(object):
     def __init__(self, *args, **kwargs):
         self.tipo_registro = '1'
         self.incricao_contribuinte = ''
-        self.versao_layout = '"PMB002'
+        self.versao_layout = 'PMB002'
         self.indentificador_remessa = 0
         self.fim_linha = ''
         
@@ -71,7 +71,7 @@ class REGISTRO_2(object):
         self.valor_total_retencoes = 0
         
         self.tomador_estrangeiro = '2'         
-        self.pais_nacionalidade_tomador_estrangeiro = '' 
+        self.pais_nacionalidade_tomador_estrangeiro = '001' 
         self.servico_exportacao = '2' 
         self.indicador_tomador = '2'  
         self.cpf_cnpj_tomador = ''  
@@ -98,7 +98,7 @@ class REGISTRO_2(object):
         reg += self.serie_rps.ljust(4)[:4] # 7-10 série do RPS    
         reg += self.serie_nfe.ljust(5)[:5] # 11-15 série do nfe
         reg += str(self.numero_rps).zfill(10)[:10] # 16-25 numero rps        
-        reg += self.data_emissao_rps.strftime('%d%m%Y') # 26-33 data emissao rps
+        reg += self.data_emissao_rps.strftime('%Y%m%d') # 26-33 data emissao rps
         reg += self.hora_rps.strftime('%H%M%S') # 34-39 hora emissao rps
         reg += self.situacao_rps.ljust(1) # 40-40 situacao E enviado C cancelado
         
@@ -106,7 +106,7 @@ class REGISTRO_2(object):
             reg += self.codigo_motivo_cancelamento.ljust(2)[:2] # 41-42 motivo cancelamento 
             reg += str(self.numero_nf_cancelada).zfill(7)[:7] # 43-49 numero nf cancelada
             reg += self.serie_nf_cancelada.ljust(5)[:5] # 50-54 serie nf cancelada
-            reg += self.data_emissao.strftime('%d%m%Y') # 55-62  data emissao nfe cancelada  
+            reg += self.data_emissao.strftime('%Y%m%d') # 55-62  data emissao nfe cancelada  
             reg += self.descricao_cancelamento.ljust(180)[:180] # 63-242 descrisacao cancelamento
         else:
             reg += self.codigo_motivo_cancelamento.ljust(2)
@@ -125,11 +125,11 @@ class REGISTRO_2(object):
         reg += self.cidade_servico_prestado.ljust(40)[:40] # 408-447 bairro local servico prestado
         reg += self.uf_servico_prestado.ljust(2) # 448-449 uf local servico prestado 
         reg += limpa_formatacao(self.cep_servico_prestado).ljust(8)[:8] # 450-457 cep local servico prestado
-        reg += str(self.quantidade_servico_prestado).zfill(6)[:6] # 458-463 quantidade servico prestado
+        reg += str(int(self.quantidade_servico_prestado)).zfill(6)[:6] # 458-463 quantidade servico prestado
         reg += str(int(self.valor_servico_prestado) * 100).zfill(15)[:15] # 464-478 valor servico prestado 
         reg += self.reservado.ljust(5) # 479-483 reservado
-        reg += str(int(self.valor_total_retencoes) *100).zfill(15)[:15] # 484-498 valor total retencoes         
-        reg += self.tomador_estrangeiro.ljust(3) # 499-499 tomador estrangeiro ? 1 : 2
+        reg += str(int(self.valor_total_retencoes) * 100).zfill(15)[:15] # 484-498 valor total retencoes         
+        reg += self.tomador_estrangeiro.ljust(1) # 499-499 tomador estrangeiro ? 1 : 2
         reg += self.pais_nacionalidade_tomador_estrangeiro.zfill(3) # 500-502 pais tomador estrangeiro 
         reg += self.servico_exportacao.zfill(1) # 503-503 servico prestado exportacao
         reg += self.indicador_tomador.zfill(1) # 504-504 indicador cpf 1 : cnpj  2 
@@ -147,7 +147,7 @@ class REGISTRO_2(object):
         reg += str(int(self.valor_fatura * 100)).zfill(15)[:15] # 941-955 valor fatura
         reg += self.forma_pagamento.ljust(15)[:15] # 956-970 forma de pagamento
         reg += self.discriminacao_servico.ljust(1000)[:1000] # 971-1970 discriminção serviço 
-        reg += self.fim_linha.ljust(1)
+        reg += self.fim_linha
         reg += '\r\n'
         reg = tira_acentos(reg).upper()
         return reg
@@ -163,11 +163,11 @@ class REGISTRO_3(object):
         
     def registro(self):
         reg = self.tipo_registro
-        reg += self.codigo_outros_valores.zfill(2)
+        reg += self.codigo_outros_valores.zfill(2)[:2]
         reg += str(int(self.valor * 100 )).zfill(15)[:15]
-        reg += self.fim_linha.ljust(1)
+        reg += self.fim_linha
         reg += '\r\n'
-        reg = tira_acentos(reg).upper()
+        #reg = tira_acentos(reg).upper()
         return reg
 
 class REGISTRO_9(object):
@@ -180,12 +180,10 @@ class REGISTRO_9(object):
         self.fim_linha = ''
         
     def registro(self):
-        reg = self.tipo_registro
+        reg = self.tipo_registro[:1]
         reg += str(self.numero_total_linha).zfill(7)[:7]
         reg += str(int(self.valor_total_servico * 100)).zfill(15)[:15]
         reg += str(int(self.valor_total_servico_registro3 * 100)).zfill(15)[:15]        
-        reg += self.fim_linha.ljust(1)
-        reg += '\r\n'
-        print(reg)
-        reg = reg.upper()
+        reg += self.fim_linha
+        reg += '\r\n'        
         return reg

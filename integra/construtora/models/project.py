@@ -36,6 +36,10 @@ class project(osv.osv):
         'modelo_comissao_pagar_outros_id': fields.many2one('finan.lancamento', u'Pagamento Comissão Outros', ondelete="restrict", domain=[('tipo','=','MP')]),
 
         'modelo_administracao_venda_pagar_id': fields.many2one('finan.lancamento', u'Pagamento administração venda', ondelete="restrict", domain=[('tipo','=','MP')]),
+
+        'modelo_terceiro_associado_receber_id': fields.many2one('finan.lancamento', u'Recebimento Terceiro', ondelete="restrict", domain=[('tipo','=','MR')]),
+        'modelo_terceiro_associado_pagar_id': fields.many2one('finan.lancamento', u'Pagamento Terceiro', ondelete="restrict", domain=[('tipo','=','MP')]),
+
     }
 
     _defaults = {

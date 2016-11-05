@@ -85,7 +85,36 @@ class finan_contrato(orm.Model):
 
         return [('id', 'in', partner_ids)]
 
+    def monta_nome(self, cr, uid, id):
+        nome = super(finan_contrato, self).monta_nome(cr, uid, id)
+
+        contrato_obj = self.browse(cr, uid, id)
+
+        if contrato_obj.contrato_atualizado:
+            nome = 'CT.AT. ' + nome
+
+        return nome
+
+    def _get_nome_funcao(self, cr, uid, ids, prop, unknow_none, context=None):
+        res = self.nome_get(cr, uid, ids, context=context)
+        return dict(res)
+
+    def _procura_nome(self, cr, uid, ids, nome_campo, args, context={}):
+        texto = args[0][2]
+
+        if 'CT.AT' in texto.upper() or 'CT AT' in texto.upper():
+            procura = [('contrato_atualizado', '!=', False)]
+        else:
+            procura = [
+                '|',
+                ('numero', 'ilike', texto),
+                ('partner_id', 'ilike', texto)
+            ]
+
+        return procura
+
     _columns = {
+        'nome': fields.function(_get_nome_funcao, type='char', size=256, string=u'Contrato', fnct_search=_procura_nome),
         'dia_vencimento': fields.selection(DIAS_VENCIMENTO, u'Dia de vencimento'),
         'contrato_atualizado': fields.boolean(u'Contrato Atualizado para Suspensão com 30 dias de Atraso no Pagamento'),
         'suspensao_ids': fields.one2many('finan.contrato.suspensao', 'contrato_id', u'Suspensões Contratuais'),

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-        
+
         <record model="ir.ui.view" id="sped_tabela_fornecedor_form">
             <field name="name">sped.tabela.fornecedor.form</field>
             <field name="model">sped.documento</field>
@@ -9,13 +9,13 @@
             <field name="inherit_id" ref="sped_finan.sped_nfe_recebida_manual_form"/>
             <field name="arch" type="xml">
                 <field name="chave" position="replace">
-                    <field name="chave" invisible="1" />
+                    <field name="chave" string="Chave da NF-e" attrs="{'invisible': [('modelo', '!=', '55')], 'required': [('modelo', '=', '55')]}" on_change="onchange_chave(modelo, chave)" />
                 </field>
                 <field name="operacao_id" position="replace">
                     <field name="operacao_id" colspan="4" on_change="onchange_operacao(operacao_id)" domain="[('modelo', '=', '55'), ('emissao', '=', emissao), ('entrada_saida', '=', '0')]" />
                 </field>
                 <page string="Remetente/Fornecedor" position="after">
-                    <page string="Arquivo de atualização">
+                    <page string="Arquivo de atualização" attrs="{'invisible': [('modelo', '=', '55')]}">
                         <button string="Importar arquivo" type="object" name="importa_arquivo_fornecedor" />
                         <button string="Atualizar preço de compra do fornecedor" type="object" name="atualiza_preco_compra_fornecedor" />
                     </page>

@@ -84,6 +84,12 @@ class finan_contrato_condicao_parcela(osv.Model):
         print('entrou aqui')
 
         for parcela_obj in self.browse(cr, uid, ids):
+            #
+            # Parcelas cuja condição de pagamento não tenha taxa de juros, ou que o índice de correção seja REAIS, não serão atualizadas
+            #
+            if (not parcela_obj.condicao_id.currency_id) or (parcela_obj.condicao_id.currency_id.id == 6) or (not parcela_obj.condicao_id.tipo_taxa):
+                continue
+
             meses = idade_meses_sem_dia(parcela_obj.data_vencimento, hoje())
 
             if meses == len(parcela_obj.atualizacao_ids):
@@ -177,7 +183,8 @@ class finan_contrato_condicao_parcela(osv.Model):
                 dados['indice'] = indice
 
                 valor_parcela = D(parcela_atual_obj.valor_capital or 0)
-                valor_parcela = currency_pool.compute(cr, uid, REAIS_ID, parcela_atual_obj.currency_id.id, valor_parcela, context={'date': str(ultimo_dia_mes(mes_passado(data_atualizacao)))})
+                valor_parcela = currency_pool.converte(cr, uid, REAIS_ID, parcela_atual_obj.currency_id.id, valor_parcela, context={'date': str(ultimo_dia_mes(mes_passado(data_atualizacao)))})
+                #valor_parcela = currency_pool.compute(cr, uid, REAIS_ID, parcela_atual_obj.currency_id.id, valor_parcela, context={'date': str(ultimo_dia_mes(mes_passado(data_atualizacao)))})
 
                 correcao = valor_parcela - D(parcela_atual_obj.valor_capital or 0)
                 dados['correcao'] = correcao

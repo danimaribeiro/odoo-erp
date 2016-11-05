@@ -48,6 +48,7 @@ class Certificado(object):
         self.doctype = ''
         self.ignora_doctype = False
         self.abertura = '<?xml version="1.0" encoding="utf-8"?>'
+        self.logo = ''
 
     def prepara_certificado_arquivo_pfx(self):
         # Lendo o arquivo pfx no formato pkcs12 como binário

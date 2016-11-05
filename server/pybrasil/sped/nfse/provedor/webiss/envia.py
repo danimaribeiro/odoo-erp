@@ -6,7 +6,7 @@ from __future__ import (division, print_function, unicode_literals,
 
 from .converte import gera_rps, gera_consulta_rps
 from ....base import ConexaoWebService
-from pybrasil.base import escape_xml, unescape_xml, xml_para_dicionario
+from pybrasil.base import escape_xml, unescape_xml, xml_para_dicionario, tira_acentos
 
 conexao = ConexaoWebService()
 conexao.codificacao = 'ascii'
@@ -18,7 +18,7 @@ MODELO_CONSULTA_SOAP_ENVELOPE = '''<?xml version="1.0" encoding="UTF-8"?><env:En
 
 
 def envia_rps(lista_notas, numero_lote, certificado, producao=False, municipio=None):
-    lote_rps = gera_rps(lista_notas, numero_lote, certificado)
+    lote_rps = gera_rps(lista_notas, numero_lote, certificado, municipio=municipio)
     #lote_rps = escape_xml(lote_rps)
 
     conexao.certificado = certificado
@@ -26,34 +26,36 @@ def envia_rps(lista_notas, numero_lote, certificado, producao=False, municipio=N
     conexao.modelo_header = {
         'Content-Type': 'text/xml; charset=utf-8',
     }
-
-    conexao.servidor = 'www.webiss.com.br'
-    conexao.modelo_header['SOAPAction'] = '"http://tempuri.org/INfseServices/RecepcionarLoteRps"'
-
     #
     # Barbacena
     #
     if municipio is None or municipio == '31056080000':
+        conexao.servidor = 'www.webiss.com.br'
         conexao.url = 'mgbarbacena_wsnfse/NfseServices.svc'
 
     elif municipio == '31701070000':
-        conexao.url = 'mguberaba_wsnfse/NfseServices.svc'
+        conexao.servidor = 'www1.webiss.com.br'
+        conexao.url = 'Uberaba_wsNFSe/NfseServices.svc'
 
+    conexao.modelo_header['SOAPAction'] = '"http://tempuri.org/INfseServices/RecepcionarLoteRps"'
     conexao.modelo_soap_envelope = MODELO_SOAP_ENVELOPE
     conexao.conectar_servico(conteudo=lote_rps)
-
-    open('/home/olhovivo/envelope.xml', 'wb').write(conexao.xml_envio)
+    
+    #if municipio == '31701070000':
+        #open('/home/brado/envelope.xml', 'wb').write(conexao.xml_envio)
     #open('/home/olhovivo/envelope_resposta.xml', 'wb').write(conexao.xml_resposta)
 
     resposta = conexao.resposta.Envelope.Body
+    print(resposta.como_xml_em_texto)
     if 'RecepcionarLoteRpsResult' in resposta.como_xml_em_texto:
         resposta = unescape_xml(resposta.RecepcionarLoteRpsResponse['RecepcionarLoteRpsResult'])
         #
         # Removemos os namespaces desnecessários
         #
-        resposta = resposta.replace('xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"', '')
-        resposta = resposta.replace('xmlns="http://www.abrasf.org.br/nfse"', '')
-        resposta = resposta.replace('xmlns:xsd="http://www.w3.org/2001/XMLSchema"', '')
+        resposta = resposta.replace(' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"', '')
+        resposta = resposta.replace(' xmlns="http://www.abrasf.org.br/nfse"', '')
+        resposta = resposta.replace(' xmlns:xsd="http://www.w3.org/2001/XMLSchema"', '')
+        #print(resposta)
         resposta = xml_para_dicionario(resposta)
 
     return resposta
@@ -68,43 +70,45 @@ def envia_consulta_rps(protocolo, prestador, certificado, producao=False):
         'Content-Type': 'text/xml; charset=utf-8',
     }
 
-    conexao.servidor = 'www.webiss.com.br'
-    conexao.modelo_header['SOAPAction'] = '"http://tempuri.org/INfseServices/ConsultarLoteRps"'
-
     if prestador.municipio.codigo_ibge == '3105608':
+        conexao.servidor = 'www.webiss.com.br'
         conexao.url = 'mgbarbacena_wsnfse/NfseServices.svc'
 
     elif prestador.municipio.codigo_ibge == '3170107':
-        conexao.url = 'mguberaba_wsnfse/NfseServices.svc'
+        conexao.servidor = 'www1.webiss.com.br'
+        conexao.url = 'Uberaba_wsNFSe/NfseServices.svc'
 
+    conexao.modelo_header['SOAPAction'] = '"http://tempuri.org/INfseServices/ConsultarLoteRps"'
     conexao.modelo_soap_envelope = MODELO_CONSULTA_SOAP_ENVELOPE
     conexao.conectar_servico(conteudo=consulta_rps)
 
-    resposta = conexao.resposta.Envelope.Body
-
-    resposta = conexao.resposta.Envelope.Body
+    resposta = conexao.resposta.Envelope.Body    
         
     if 'detail' in resposta.como_xml_em_texto:
         resposta = unescape_xml(resposta)
-        print(resposta.como_xml_em_texto)
+        #print(resposta.como_xml_em_texto)
         #
         # Removemos os namespaces desnecessários
         #
         resposta = resposta.replace('xmlns="http://schemas.microsoft.com/2003/10/Serialization/"', '')        
-        print(resposta)
+        #print(resposta)
         resposta = xml_para_dicionario(resposta)
         
     elif 'ConsultarLoteRpsResult' in resposta.como_xml_em_texto:
         resposta = unescape_xml(resposta.ConsultarLoteRpsResponse['ConsultarLoteRpsResult'])
-        print(resposta)
+        #print(resposta)
         #
         # Removemos os namespaces desnecessários
         #
-        resposta = resposta.replace('xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"', '')
-        resposta = resposta.replace('xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd"', '')
-        resposta = resposta.replace('xmlns:xsd="http://www.w3.org/2001/XMLSchema"', '')
+        resposta = resposta.replace(' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"', '')
+        resposta = resposta.replace(' xmlns="http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd"', '')
+        resposta = resposta.replace(' xmlns:xsd="http://www.w3.org/2001/XMLSchema"', '')
+        resposta = resposta.replace(' xmlns="http://www.abrasf.org.br/nfse"', '')        
+        resposta = resposta.replace('<?xml version="1.0" encoding="utf-8"?>', '') 
+        resposta = resposta.replace('&', 'e') 
+        #resposta = tira_acentos(resposta)
+        #print(resposta)               
         resposta = xml_para_dicionario(resposta)
-        
 
     return resposta
 

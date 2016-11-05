@@ -7,10 +7,33 @@
             <field name="inherit_id" ref="construtora.finan_contrato_proposta_imovel_form"/>
             <field name="type">form</field>  
             <field name="arch" type="xml">
+                <field name="imovel_res_partner_bank_id" position="after">
+                    <field name="imovel_conta_id" readonly="1" colspan="4"/>             
+                    <field name="imovel_centrocusto_id" readonly="1" colspan="4"/>             
+                </field>                
+                <field name="condicao_original_ids" position="replace">
+                    <field name="condicao_original_ids" nolabel="1" colspan="4" context="{'default_data_inicio': data_inicio, 'default_conta_id': imovel_conta_id, 'default_centrocusto_id': imovel_centrocusto_id, 'form_view_ref': 'construtora.finan_contrato_condicao_form', 'tree_view_ref': 'construtora.finan_contrato_condicao_tree', 'default_tipo': 'O'}" />
+                </field>                
+                
                 <field name="valor_comissao" position="before">
                     <field name="data_comissao" colspan="2"/>
                     <field name="vezes" colspan="2"/>
-                </field>                                               
+                </field>
+                <page string="Check-list" position="after">
+                    <page string="Reservas">
+                        <button string="Reservar" name="reserva_imovel" type="object" icon="gtk-apply" colspan="2" />
+                        <field name="reserva_ids" nolabel="1" readonly="1" colspan="6">                                                    
+                            <tree editable="top">
+                                <field name="contrato_id" />
+                                <field name="corretor_id"  />
+                                <field name="partner_id"  />
+                                <field name="data_reserva"  />
+                                <field name="data_inicial" />
+                                <field name="data_final" />                            
+                            </tree>
+                        </field>
+                    </page>            
+                </page>                                                           
             </field>
         </record>
                  

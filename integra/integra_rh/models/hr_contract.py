@@ -1189,11 +1189,15 @@ class hr_contract(osv.Model):
             # Jornada padrão
             #
             if jornada_atual.jornada_tipo == '1':
-                if jornada_atual.jornada_segunda_a_sexta_id:
-                    dias_uteis += dias_sem_feriado(data_inicial, data_final, estado, municipio, [SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA])
+                #
+                # Comentado e alterado pelo chamado 3017 da Patrimonial
+                #
+                #if jornada_atual.jornada_segunda_a_sexta_id:
+                    #dias_uteis += dias_sem_feriado(data_inicial, data_final, estado, municipio, [SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA])
 
-                if jornada_atual.jornada_sabado_id:
-                    dias_uteis += dias_sem_feriado(data_inicial, data_final, estado, municipio, [SABADO])
+                #if jornada_atual.jornada_sabado_id:
+                    #dias_uteis += dias_sem_feriado(data_inicial, data_final, estado, municipio, [SABADO])
+                dias_uteis += dias_sem_feriado(data_inicial, data_final, estado, municipio, [SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO])
 
             #
             # Turno variável
@@ -1464,6 +1468,7 @@ class hr_contract(osv.Model):
         data_limite_gozo = data_final_periodo_concessivo + relativedelta(days=-30)
         data_limite_aviso = data_limite_gozo + relativedelta(months=-1)
         pagamento_dobro = False
+        pagamento_dobro_dias = 0
 
         if contrato_obj.unidade_salario == '1':
             falta_ids = []
@@ -1533,7 +1538,10 @@ class hr_contract(osv.Model):
                     'proporcional': proporcional,
                     'data_limite_pagamento': str(parse_datetime(holerite_ferias_obj.date_from).date() + relativedelta(days=-3)),
                     'abono': holerite_ferias_obj.abono_pecuniario_ferias,
+                    'pagamento_dobro': holerite_ferias_obj.pagamento_dobro,
+                    'pagamento_dobro_dias': holerite_ferias_obj.pagamento_dobro_dias,
                 }
+                print('holerite_ferias_obj.pagamento_dobro_dias', holerite_ferias_obj.pagamento_dobro_dias, holerite_ferias_obj.pagamento_dobro)
                 #print('saldo_dias', saldo_dias)
                 saldo_dias -= holerite_ferias_obj.dias_ferias
                 dados['saldo_dias'] = saldo_dias
@@ -1601,9 +1609,22 @@ class hr_contract(osv.Model):
             print('saldo_dias, avos', saldo_dias, avos)
 
             #
-            # Férias em dobro é quando venceu o período concessivo
+            # Férias em dobro é quando venceu o período concessivo, mesmo que parcial
             #
-            pagamento_dobro = saldo_dias > 0 and data_final_periodo_concessivo < hoje_brasil()
+            pagamento_dobro_dias = 0
+            pagamento_dobro = False
+
+            if saldo_dias > 0:
+                if data_final_periodo_concessivo < hoje_brasil():
+                    pagamento_dobro = True
+                    pagamento_dobro_dias = 30
+
+                #elif data_inicial_periodo_concessivo < hoje_brasil():
+                    #pagamento_dobro = True
+                    #pagamento_dobro_dias = hoje_brasil() - data_inicial_periodo_concessivo
+                    #pagamento_dobro_dias = pagamento_dobro_dias.days
+
+                    #print('pagamento_dobro_dias', pagamento_dobro_dias)
 
             #
             # Férias são proporcionais quando o período aquisitivo não for de 1 ano exato
@@ -1642,6 +1663,7 @@ class hr_contract(osv.Model):
                 'avos': avos,
                 'proporcional': proporcional,
                 'pagamento_dobro': pagamento_dobro,
+                'pagamento_dobro_dias': pagamento_dobro_dias,
                 'vencida': vencida,
                 'perdido_afastamento': perdido_afastamento,
             }
@@ -1652,6 +1674,17 @@ class hr_contract(osv.Model):
             print('dados das novas ferias')
             print(dados)
             ferias_pool.create(cr, uid, dados)
+
+            #
+            # Se o período atual foi perdido por afastamento, e o período anterior estiver dobrado,
+            # remove a marca de dobrado
+            #
+            if perdido_afastamento:
+                dobrado_errado_ids = ferias_pool.search(cr, uid, [('contract_id', '=', contrato_obj.id), ('pagamento_dobro', '=', True), ('data_inicial_periodo_aquisitivo', '=', str(data_inicial_periodo_aquisitivo + relativedelta(years=-1)))])
+
+                if len(dobrado_errado_ids) > 0:
+                    ferias_pool.write(cr, uid, dobrado_errado_ids, {'pagamento_dobro': False})
+
 
     def ferias_vencidas(self, cr, uid, ids, data_inicial, data_final, exclui_simulacao=True, mantem_provisao=False, data_rescisao=False, data_provisao=False, calcula=True, soh_busca_valor=False, context={}):
         return self.ferias_proporcionais(cr, uid, ids, data_inicial, data_final, tipo='V', exclui_simulacao=exclui_simulacao, mantem_provisao=mantem_provisao, data_rescisao=data_rescisao, data_provisao=data_provisao, calcula=calcula, soh_busca_valor=soh_busca_valor, context=context)
@@ -2883,6 +2916,7 @@ class hr_contract_ferias(osv.Model):
         'data_limite_gozo': fields.date(u'Limite para gozo'),
         'data_limite_aviso': fields.date(u'Limite para aviso'),
         'pagamento_dobro': fields.boolean(u'Pagamento em dobro?'),
+        'pagamento_dobro_dias': fields.integer(u'Dias pagamento em dobro'),
         'faltas': fields.integer(u'Faltas'),
         'afastamentos': fields.integer(u'Afastamentos'),
         'dias': fields.integer(u'Dias'),

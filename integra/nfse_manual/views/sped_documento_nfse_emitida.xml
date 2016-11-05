@@ -7,24 +7,23 @@
             <field name="model">sped.documento</field>
             <field name="type">form</field>
             <field name="inherit_id" ref="sped.sped_nfse_emitida_form"/>
-            <field name="arch" type="xml">                                                                                                                                      
-                <button name="action_enviar_nfse" position="replace" >   
-                </button>                                  
-                                                                                                                                                   
-                <!--<button name="action_gera_danfe" position="after">
-                    <group attrs="{'invisible': ['!',('company_provedor_nfse', 'in', ['BARUERI','JOINVILLE'])]}" colspan="4" > 
-                        <separator string="Arquivo de envio" colspan="4" />                                                       
-                        <field name="nome_arquivo_nfse" nolabel="1" readonly="1" invisible="1" /> 
-                        <field name="arquivo_envio_nfse" nolabel="1" readonly="1" filename="nome_arquivo_nfse"/> 
-                                                                      
-                        <group attrs="{'invisible': [('state', '!=', 'a_enviar'), ('state', '!=', 'rejeitada')]}" colspan="4" >                        
-                            <separator string="Arquivo de retorno" colspan="4" />               
-                            <field name="arquivo_retorno_nfse" nolabel="1" /> 
-                            <button name="retorna_nfse" string="Importa retorno de RPS" type="object" />                   
-                        </group>                                                                      
-                    </group>                                                                     
-                </button> -->               
-            </field>         
-        </record>       
+            <field name="arch" type="xml">
+<!--                 <button name="action_enviar_nfse" position="replace" /> -->
+
+                <button name="action_gera_danfe" position="after">
+<!--                     <group attrs="{'invisible': ['!',('company_provedor_nfse', 'in', ['BARUERI','JOINVILLE'])]}" colspan="4" > -->
+                        <separator string="Arquivo de envio" colspan="4" />
+                        <field name="nome_arquivo_nfse" nolabel="1" readonly="1" invisible="1" />
+                        <field name="arquivo_envio_nfse" nolabel="1" readonly="1" filename="nome_arquivo_nfse"/>
+
+                        <group attrs="{'invisible': [('state', '!=', 'a_enviar'), ('state', '!=', 'rejeitada')]}" colspan="4" >
+                            <separator string="Arquivo de retorno" colspan="4" />
+                            <field name="arquivo_retorno_nfse" nolabel="1" />
+                            <button name="retorna_nfse" string="Importa retorno de RPS" type="object" />
+                        </group>
+<!--                     </group> -->
+                </button>
+            </field>
+        </record>
     </data>
 </openerp>

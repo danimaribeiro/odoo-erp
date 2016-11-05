@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_ajuste_carteira_tree">
+            <field name="name">finan.contrato.ajuste.carteira.tree</field>
+            <field name="model">finan.contrato.ajuste.carteira</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id" />
+                    <field name="data_ajuste" />
+                    <field name="data_confirmacao" />
+                    <field name="carteira_id" />
+                    <field name="carteira_nova_id" />
+                    <field name="partner_id" string="Cliente" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_ajuste_carteira_form">
+            <field name="name">finan.contrato.ajuste.carteira.form</field>
+            <field name="model">finan.contrato.ajuste.carteira</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Reajuste de Contratos">
+                    <field name="natureza" invisible="1" />
+                    <group colspan="4">
+                        <field name="carteira_id" colspan="4" required="1" />
+                        <field name="carteira_nova_id" colspan="4" required="1" />
+                        <field name="company_id" colspan="4" required="1" />
+                        <field name="partner_id" colspan="4" />
+                        <newline />
+                        <field name="data_ajuste" colspan="2" />
+                        <field name="data_confirmacao" colspan="2" />
+                        <field name="confirmado" invisible="1" />
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Contratos incluídos">
+                            <button string="Buscar contratos" colspan="2" type="object" name="buscar_contratos" attrs="{'invisible': [('confirmado', '=', True)]}" />
+                            <button string="Efetivar ajuste" colspan="2" type="object" name="efetiva_ajuste" attrs="{'invisible': [('confirmado', '=', True)]}" />
+                            <field name="contrato_reajustar_ids" nolabel="1" colspan="4" readonly="1">
+                                <tree>
+                                    <field name="contrato_id" />
+                                    <field name="company_id" />
+                                    <field name="numero" />
+                                    <field name="partner_id" string="Cliente" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Exceções ao ajuste">
+                            <field name="contrato_excecoes_ids" nolabel="1" colspan="4" domain="[('data_distrato', '=', False)]" />
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_ajuste_carteira_search">
+            <field name="name">finan.contrato.ajuste.carteira.search</field>
+            <field name="model">finan.contrato.ajuste.carteira</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Ajuste de Carteira de Contratos de cobrança">
+                    <field name="company_id" select="1" />
+                    <field name="partner_id" select="1" string="Cliente" />
+                    <field name="data_ajuste" string="Data do reajuste" />
+                    <field name="carteira_id" />
+                    <field name="carteira_nova_id" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_contrato_ajuste_carteira_acao">
+            <field name="name">Ajuste de Carteira</field>
+            <field name="res_model">finan.contrato.ajuste.carteira</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_contrato_ajuste_carteira_tree" />
+            <field name="domain">[('natureza', '=', 'R')]</field>
+            <field name="context">{'natureza': 'R', 'default_natureza': 'R'}</field>
+            <field name="search_view_id" ref="finan_contrato_ajuste_carteira_search" />
+        </record>
+
+        <menuitem
+            action="finan_contrato_ajuste_carteira_acao"
+            id="menu_finan_contrato_ajuste_carteira"
+            name="Ajuste de carteira"
+            parent="menu_finan_contratos" />
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_ajuste_carteira_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_contrato_ajuste_carteira_tree"/>
+            <field name="act_window_id" ref="finan_contrato_ajuste_carteira_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_ajuste_carteira_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_contrato_ajuste_carteira_form"/>
+            <field name="act_window_id" ref="finan_contrato_ajuste_carteira_acao"/>
+        </record>
+
+    </data>
+</openerp>

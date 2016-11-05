@@ -3,12 +3,11 @@
 	<property name="ireport.zoom" value="1.3310000000000008"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="CONTRATO_ID" class="java.lang.Integer"/>
-	<parameter name="CONDICAO_ID" class="java.lang.Integer"/>
-	<parameter name="DATA_VENCIMENTO" class="java.util.Date"/>
 	<parameter name="PARCELA_ID" class="java.lang.Integer"/>
 	<queryString>
-		<![CDATA[select
+		<![CDATA[select *
+from (
+select
     p.parcela,
     p.data_vencimento,
     coalesce(p.valor_capital, 0) as valor_capital,
@@ -30,8 +29,34 @@ from
 where
     p.parcela_id = $P{PARCELA_ID}
 
+UNION ALL
+
+select
+    p.parcela,
+    p.data_vencimento,
+    coalesce(p.valor_capital, 0) as valor_capital,
+    0 as porcentagem_juros,
+    0 as valor_juros_carteira,
+    coalesce(p.indice, 0) as indice,
+    coalesce(p.correcao, 0) as correcao,
+    coalesce(p.valor, 0) as valor_atual,
+    0 as porcentagem_multa,
+    0 as valor_multa_carteira,
+    0 as atraso,
+    coalesce(p.valor_original, 0) as valor_original,
+    0 as valor_juros_sacoc,
+    coalesce(p.valor_seguro, 0) as valor_seguro
+
+from
+    finan_contrato_condicao_parcela p
+
+where
+    p.id = $P{PARCELA_ID}
+
+) as parcelas
+
 order by
-    p.data_vencimento]]>
+    parcelas.data_vencimento]]>
 	</queryString>
 	<field name="parcela" class="java.lang.Integer">
 		<fieldDescription><![CDATA[Parcela]]></fieldDescription>

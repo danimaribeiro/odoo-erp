@@ -39,13 +39,15 @@
                         <field name="operacao_pessoa_fisica_id" invisible="1" />
                         <field name="operacao_ativo_id" invisible="1" />
                         <field name="operacao_faturamento_antecipado_id" invisible="1" />
-                        <field name="tipo_os_id" colspan="2" required="1" attrs="{'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}" />
+                        <field name="tipo_os_id" colspan="2" required="1" attrs="{'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}" on_change="onchange_tipo_os_id(tipo_os_id, pricelist_id)" />
+                        <field name="tipo_os_tipo" invisible="1" readonly="1" />
                         <field name="stock_location_saida_id" invisible="1" />
                         <field name="stock_location_entrada_id" invisible="1" />
                         <field name="alimenta_estoque" invisible="1" />
                         <field name="trava_comercial" invisible="1" />
                         <field name="trava_tecnico" invisible="1" />
-                        <field name="pricelist_id" colspan="4" required="1" string="Tipo do orçamento" domain="[('type', '=', 'sale'), ('tipo_os_id', '!=', False)]" on_change="onchange_pricelist_id(pricelist_id, vr_total_produtos)" attrs="{'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}" />
+                        <field name="pricelist_id" colspan="4" required="1" string="Tipo do orçamento" domain="[('type', '=', 'sale'), ('tipo_os_id', '!=', False)]" on_change="onchange_pricelist_id(pricelist_id, vr_total_produtos, vr_total_servicos, vr_total_mensalidades)" attrs="{'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}" />
+                        <field name="contrato_terceirizado" invisible="1" />
                         <field name="lista_precos_alterada" invisible="1" />
                         <group colspan="4" col="4" attrs="{'invisible': ['|', '|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False), ('lista_precos_alterada', '=', False)]}">
                             <html>
@@ -69,6 +71,7 @@
                                 </p>
                             </html>
                         </group>-->
+                        <field name="finan_contrato_pai_id" colspan="4" domain="[('company_id', '=', company_id), ('data_distrato', '=', False), ('contratos_filhos', '!=', False)]" attrs="{'invisible': [('contrato_terceirizado', '=', False)], 'required': [('contrato_terceirizado', '!=', False)]}" />
                         <field name="finan_contrato_id" colspan="4" domain="[('partner_id', '=', partner_id), ('company_id', '=', company_id), ('data_distrato', '=', False)]" attrs="{'invisible': [('meses_retorno_locacao_original', '=', False)], 'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}" on_change="onchange_finan_contrato_id(finan_contrato_id, vr_mensal_locacao, vr_total_mensalidades)" />
                         <field name="tecnico_id" string="Técnico" attrs="{'readonly': ['|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}" />
                         <field name="user_id" string="Vendedor" attrs="{'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}" />
@@ -143,15 +146,17 @@
                             </group>
                             <group col="2" colspan="2" string="Etapa" attrs="{'readonly': [('tecnico_id', '=', False)]}">
                                 <field name="etapa_seguinte_ids"  invisible="1"/>
-                                <field name="etapa_id" invisible="1" />
+                                <field name="etapa_id" groups="seguranca.group_surpote_integra" />
                                 <field name="etapa_id_readonly" />
                                 <field name="proxima_etapa_id" domain="[('id', 'in', etapa_seguinte_ids), ('desconto_a_autorizar', '=', desconto_a_autorizar), '|', ('situacao_etapa', '=', False), ('situacao_etapa', '=', 'V' if (not meses_retorno_locacao) else 'L'), '|', ('tipo_os_id', '=', False), ('tipo_os_id', '=', tipo_os_id)]" />
-                                <button name="avanca_etapa" string="Avançar Etapa" icon="gtk-go-forward" type="object" colspan="2" />
+                                <button name="avanca_etapa" string="Avançar Etapa" icon="gtk-go-forward" type="object" colspan="2" attrs="{'invisible': [('proxima_etapa_id', '=', False)]}" />
                                 <field name="codigo" readonly="1" invisible="1"/>
                                 <field name="filtro_etapa" readonly="1" invisible="1"/>
                                 <button type="object" name="gerar_contrato" string="Gerar contrato" colspan="2" />
                             </group>
                             <group col="2" colspan="2" string="Ordem de Serviço">
+                                <field name="lo_modelo_os_id" domain="[('tabela', '=', 'sale.order.os')]"/>
+                                <field name="lo_modelo_orcamento_id" invisible="1" domain="[('tabela', '=', 'sale.order.orcamento')]"/>
                                 <button name="imprime_orcamento" string="Imprime OS" icon="gtk-print" type="object" colspan="2" />
 <!--                                 <button name="imprime_orcamento_espelho" string="Imprime orçamento espelho" icon="gtk-print" type="object" colspan="2" /> -->
                             </group>
@@ -173,15 +178,15 @@
                         </page>
                         <page string="Produtos" attrs="{'invisible': [('operacao_fiscal_produto_id', '=', False)]}">
                             <field name="item_produto_ids" colspan="4" nolabel="1" attrs="{'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}"
-                            context="{'form_view_ref' : 'seguranca.sale_order_line_produto_form', 'tree_view_ref' : 'seguranca.sale_order_line_produto_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'P'}" />
+                            context="{'form_view_ref' : 'seguranca.sale_order_line_produto_form', 'tree_view_ref' : 'seguranca.sale_order_line_produto_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'P', 'default_tipo_os_id': tipo_os_id, 'default_tipo_os_tipo': tipo_os_tipo}" />
                         </page>
                         <page string="Serviços" attrs="{'invisible': [('operacao_fiscal_servico_id', '=', False)]}">
                             <field name="item_servico_ids" colspan="4" nolabel="1" attrs="{'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}"
-                            context="{'form_view_ref' : 'seguranca.sale_order_line_servico_form', 'tree_view_ref' : 'seguranca.sale_order_line_servico_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'S'}" />
+                            context="{'form_view_ref' : 'seguranca.sale_order_line_servico_form', 'tree_view_ref' : 'seguranca.sale_order_line_servico_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'S', 'default_tipo_os_id': tipo_os_id, 'default_tipo_os_tipo': tipo_os_tipo}" />
                         </page>
                         <page string="Mensalidades" attrs="{'invisible': [('operacao_fiscal_servico_id', '=', False)]}">
                             <field name="item_mensalidade_ids" colspan="4" nolabel="1" attrs="{'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}"
-                            context="{'form_view_ref' : 'seguranca.sale_order_line_mensalidade_form', 'tree_view_ref' : 'seguranca.sale_order_line_mensalidade_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'M'}" />
+                            context="{'form_view_ref' : 'seguranca.sale_order_line_mensalidade_form', 'tree_view_ref' : 'seguranca.sale_order_line_mensalidade_tree', 'partner_id': partner_id, 'operacao_fiscal_produto_id': operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': operacao_fiscal_servico_id, 'company_id': company_id, 'default_tipo_item': 'M', 'default_tipo_os_id': tipo_os_id, 'default_tipo_os_tipo': tipo_os_tipo}" />
                         </page>
                         <page string="Fechamento" groups="base.group_sale_manager,base.group_sale_salesman,base.group_sale_salesman_all">
                             <group colspan="2" col="2" attrs="{'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}">
@@ -189,8 +194,15 @@
                                 <field name="payment_term" domain="['|', ('formapagamento_id', '=', False), ('formapagamento_id', '=', finan_formapagamento_id)]" on_change="onchange_payment_term(payment_term, amount_total, vr_total_servicos, meses_retorno_locacao_original, vr_entrada, context)" attrs="{'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}" />
                                 <field name="vr_entrada" on_change="onchange_payment_term(payment_term, amount_total, vr_total_servicos, meses_retorno_locacao_original, vr_entrada, context)" attrs="{'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}" />
                                 <field name="carteira_id" attrs="{'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}" />
-                                <field name="simulacao_parcelas_ids" invisible="1" />
-                                <field name="simulacao_parcelas_readonly_ids" nolabel="1" colspan="2" attrs="{'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}">
+                                <field name="simulacao_parcelas_livre" invisible="1" />
+                                <field name="simulacao_parcelas_ids" nolabel="1" colspan="2" attrs="{'invisible': [('simulacao_parcelas_livre', '=', False)], 'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}">
+                                    <tree editable="bottom">
+                                        <field name="numero" required="1" />
+                                        <field name="data" required="1" />
+                                        <field name="valor" required="1" />
+                                    </tree>
+                                </field>
+                                <field name="simulacao_parcelas_readonly_ids" nolabel="1" colspan="2" attrs="{'invisible': [('simulacao_parcelas_livre', '!=', False)], 'readonly': ['|', ('trava_comercial', '=', True), '|', ('trava_tecnico', '=', True), ('etapa_seguinte_ids', '=', False)]}">
                                     <tree>
                                         <field name="numero" />
                                         <field name="data" />

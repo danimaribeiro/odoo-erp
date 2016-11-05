@@ -156,7 +156,27 @@ def linha_remessa_400(self, remessa, boleto):
     texto += pagador.endereco_numero_complemento.ljust(40)[:40]
     texto += ''.ljust(12)
     texto += pagador.cep.replace('-', '').zfill(8)
-    texto += ''.ljust(60)  # Sacador/avalista - não existe mais
+
+    #
+    # Tem o sacador?
+    #
+    if boleto.sacador.cnpj_cpf:
+        sacador = boleto.sacador
+
+        if sacador.tipo_pessoa == 'PJ':
+            #texto += '02'
+            texto += sacador.cnpj_cpf_numero[::-1] + '0'
+
+        else:
+            #texto += '01'
+            texto += sacador.cnpj_cpf_numero[::-1][0:2] + '0000' + sacador.cnpj_cpf_numero[::-1][2:] + '000'
+
+        texto += '  '
+        texto += sacador.nome[:43].ljust(43)
+
+    else:
+        texto += ''.ljust(60)  # Sacador/avalista - não existe mais
+
     texto += str(len(remessa.registros) + 1).zfill(6)  # nº do registro
 
     return self.tira_acentos(texto.upper())

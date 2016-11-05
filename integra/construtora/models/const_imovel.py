@@ -5,6 +5,7 @@
 from osv import osv, fields
 from pybrasil.valor.decimal import Decimal as D, ROUND_DOWN
 from pybrasil.inscricao import limpa_formatacao
+from pybrasil.data import hoje
 
 
 
@@ -366,7 +367,60 @@ class const_imovel(osv.Model):
 
         return res
 
+    def _proposta_id(self, cr, uid, ids, nome_campo, args=None, context={}):
+        res = {}
+
+        for imovel_obj in self.browse(cr, uid, ids):
+            res[imovel_obj.id] = False
+
+            partner_id = context.get('partner_id', False)
+
+            if not partner_id:
+                continue
+
+            sql = """
+            select
+                c.id
+
+            from
+                finan_contrato c
+
+            where
+                c.partner_id = {partner_id}
+                and c.imovel_id = {imovel_id};
+            """
+            sql = sql.format(partner_id=partner_id, imovel_id=imovel_obj.id)
+            cr.execute(sql)
+
+            dados = cr.fetchall()
+
+            if len(dados) and dados[0][0]:
+                res[imovel_obj.id] = dados[0][0]
+
+        return res
+
+    def _field_readonly(self, cr, uid, ids, nome_campo, args=None, context={}):
+        res = {}
+
+        nome_campo = nome_campo.replace('_readonly', '')
+
+        for obj in self.browse(cr, uid, ids, context=context):
+            if nome_campo[-3:] == '_id':
+                campo = getattr(obj, nome_campo, False)
+
+                if campo:
+                    res[obj.id] = campo.id
+                else:
+                    res[obj.id] = False
+
+            else:
+                res[obj.id] = getattr(obj, nome_campo, False)
+
+        return res
+
     _columns = {
+        'proposta_id': fields.function(_proposta_id, type='many2one', relation='finan.contrato', string=u'Proposta/Contrato'),
+
         'create_date': fields.datetime(string=u'Data de criação'),
         'descricao_lista': fields.function(_descricao, string=u'Imóvel', method=True, type='char', store=True, select=True),
         'project_id': fields.many2one('project.project', u'Projeto'),
@@ -374,6 +428,7 @@ class const_imovel(osv.Model):
         'eh_condominio': fields.related('project_id', 'eh_condominio', type='boolean', string=u'É num condomínio?'),
         'propriedade': fields.selection(PROPRIEDADE, u'Propriedade', select=True),
         'situacao': fields.selection(SITUACAO_IMOVEL, u'Situação comercial', select=True),
+        'situacao_readonly': fields.function(_field_readonly, type='selection', selection=SITUACAO_IMOVEL, string=u'Situação comercial'),
         'situacao_contabil': fields.selection(SITUACAO_CONTABIL, u'Situação contábil', select=True),
         'data_renovacao': fields.date(u'Data de renovação'),
         'finan_motivo_distrato_id': fields.many2one('finan.motivo_distrato', u'Motivo', ondelete='restrict'),
@@ -470,6 +525,7 @@ class const_imovel(osv.Model):
         'imovel_locado': fields.boolean(u'Imóvel Locado', select=True),
         'imovel_locado_valor': fields.float(u'Valor Locação', select=True),
         'imovel_projetado': fields.boolean(u'Imóvel projetado', select=True),
+        'data_projetado': fields.date(u'Data'),
         'imovel_desocupado': fields.boolean(u'Imóvel desocupado', select=True),
         'imovel_ocupado_obs': fields.char(u'Obs.', size=60),
         'prazo_locacao': fields.date(u'Prazo Locação'),
@@ -601,7 +657,6 @@ class const_imovel(osv.Model):
         #
         # Confrotações
         #
-
         'confrontacao_norte': fields.text(u'Confrotação norte (N)'),
         'confrontacao_sul': fields.text(u'Confrotação sul (S)'),
         'confrontacao_leste': fields.text(u'Confrotação leste (L)'),
@@ -726,6 +781,7 @@ class const_imovel(osv.Model):
     _defaults = {
         'propriedade': 'T',
         'situacao': 'NL',
+        'situacao_readonly': 'NL',
         'situacao_contabil': 'D',
     }
 
@@ -1278,6 +1334,40 @@ class const_imovel(osv.Model):
         valores['area_total'] = area_total
 
         return res
+
+    def inclui_proposta(self, cr, uid, ids, context={}):
+        if not ids:
+            return
+
+        partner_id = context.get('partner_id', False)
+        crm_lead_id = context.get('crm_lead_id', False)
+        corretor_id = context.get('corretor_id', False)
+        imovel_id = ids[0]
+
+        if not (partner_id and crm_lead_id and imovel_id and corretor_id):
+            return
+
+        imovel_obj = self.pool.get('const.imovel').browse(cr, uid, imovel_id, context=context)
+
+        if imovel_obj.proposta_id:
+            return
+
+        dados = {
+            'imovel_id': imovel_id,
+            'crm_lead_id': crm_lead_id,
+            'vendedor_id': corretor_id,
+            'partner_id': partner_id,
+            'natureza': 'RI',
+            'etapa_id': 1,
+        }
+
+        print('vai criar o contrato')
+        contrato_id = self.pool.get('finan.contrato').create(cr, uid, dados)
+        self.pool.get('finan.contrato').write(cr, uid, [contrato_id], {'numero': str(hoje().year) + '-' + str(contrato_id)})
+
+        print('contrato criado', contrato_id)
+
+        return True
 
 
 const_imovel()

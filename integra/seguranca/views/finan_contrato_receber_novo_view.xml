@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_receber_novo_form">
+            <field name="name">finan.contrato.receber.novo.form</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_receber_novo_form"/>
+            <field name="priority">2000</field>
+            <field name="arch" type="xml">
+                <field name="operacao_fiscal_servico_id" position="after">
+                    <separator string="Tipo de faturamento" colspan="4" />
+                    <field name="tipo_faturamento_id" colspan="4" />
+                </field>
+                <field name="hr_department_id" position="replace" />
+                <field name="grupo_economico_id" position="replace" />
+                <field name="res_partner_category_id" position="replace" />
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_receber_novo_tree">
+            <field name="name">finan.contrato.receber.novo.tree</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_receber_novo_tree"/>
+            <field name="priority">2000</field>
+            <field name="arch" type="xml">
+                <field name="grupo_economico_id" position="after">
+                    <field name="tipo_faturamento_id" />
+                </field>
+                <field name="hr_department_id" position="replace" />
+                <field name="grupo_economico_id" position="replace" />
+                <field name="res_partner_category_id" position="replace" />
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_receber_novo_search">
+            <field name="name">finan.contrato.receber.novo.search</field>
+            <field name="model">finan.contrato</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="finan_contrato.finan_contrato_receber_novo_search"/>
+            <field name="priority">2000</field>
+            <field name="arch" type="xml">
+                <field name="hr_department_id" position="replace" />
+                <field name="grupo_economico_id" position="replace" />
+                <field name="res_partner_category_id" position="replace" />
+
+
+                <xpath expr="//filter[@string='Grupo econômico']" position="replace">
+                    <filter string="Tipo de faturamento" icon="terp-project" domain="[]" context="{'group_by': 'tipo_faturamento_id'}" />
+                </xpath>
+                <xpath expr="//filter[@string='Posto']" position="replace" />
+                <xpath expr="//filter[@string='Categoria']" position="replace" />
+            </field>
+        </record>
+
+    </data>
+</openerp>

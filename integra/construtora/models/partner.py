@@ -6,6 +6,14 @@ from pybrasil.telefone import (formata_fone, valida_fone_fixo, valida_fone_celul
 from integra_rh.models.hr_employee import SEXO, ESTADO_CIVIL, ESTADO_CIVIL_SEXO
 
 
+TIPO_CORRETOR = (
+    ('I', u'Interno'),
+    ('A', u'Associado'),
+    ('P', u'Parceiro'),
+    ('D', u'Indicação')
+)
+TIPO_CORRETOR_DICT = dict(TIPO_CORRETOR)
+
 
 class res_partner(osv.Model):
     _name = 'res.partner'
@@ -143,7 +151,7 @@ class res_partner(osv.Model):
         'qualificacao_contratual': fields.function(_qualificacao_contratual, type='char', string=u'Qualificação contratual'),
         'eh_corretor': fields.boolean(u'É corretor?'),
         'corretor_usuario_id': fields.many2one('res.users', u'Usuário corretor'),
-        'tipo_corretor': fields.selection([('I', 'Interno'), ('A', 'Associado'), ('P', 'Parceiro'), ('D', u'Indicação')], u'Tipo do corretor'),
+        'tipo_corretor': fields.selection(TIPO_CORRETOR, u'Tipo do corretor'),
         'cep_id': fields.many2one('res.cep', u'CEP', ondelete='restrict'),
 
         'crm_lead_ids': fields.one2many('crm.lead', 'partner_id', u'Prospectos'),
@@ -191,8 +199,31 @@ class res_partner(osv.Model):
 
         return {'value': valores}
 
+    def name_get(self, cr, uid, ids, context={}):
+        res = super(res_partner, self).name_get(cr, uid, ids, context=context)
+
+        print('contexto', context)
+
+        if 'corretor' in context:
+            for i in range(len(res)):
+                partner_id, nome = res[i]
+                partner_obj = self.browse(cr, uid, partner_id, context=context)
+
+                if not partner_obj.eh_corretor:
+                    continue
+
+                if not partner_obj.tipo_corretor:
+                    continue
+
+                nome += u' (' + TIPO_CORRETOR_DICT[partner_obj.tipo_corretor] + u')'
+
+                res[i] = (partner_id, nome)
+
+        return res
+
 
 res_partner()
+
 
 class res_partner_address(osv.Model):
     _name = 'res.partner.address'

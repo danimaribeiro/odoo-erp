@@ -7,7 +7,7 @@ from pybrasil.base import DicionarioBrasil
 
 class sale_order(osv.Model):
     _inherit = 'sale.order'
-    
+
     _columns = {
         'item_principal_ids': fields.one2many('sale.order.line', 'order_id', u'Produtos principais', domain=[('parent_id', '=', False)]),
     }
@@ -37,15 +37,18 @@ class sale_order(osv.Model):
                     if acessorio_obj.linha_acessorio_id:
                         if acessorio_obj.linha_acessorio_id.quantidade_manual:
                             continue
-                        
+
                         #
                         # Ajustar a quantidade para ser proporcional
                         #
                         quantidade = D(item_obj.product_uom_qty or 0) * D(acessorio_obj.linha_acessorio_id.quantidade_componente or 0)
-                        
+
                         if quantidade == acessorio_obj.linha_acessorio_id.product_uom_qty:
                             continue
-                        
+
+                    else:
+                        quantidade *= D(item_obj.product_uom_qty or 1)
+
                     dados_item = item_pool.product_id_change(cr, uid, False, order_obj.pricelist_id.id, produto_obj.id, quantidade, False, False, False, False, order_obj.partner_id.id, False, True, order_obj.date_order, False, False, False, contexto_item)
 
                     dados_item = dados_item['value']
@@ -55,23 +58,31 @@ class sale_order(osv.Model):
                         'item_acessorio_id': acessorio_obj.id,
                         'parent_id': item_obj.id,
                         'quantidade_componente': acessorio_obj.quantidade,
+                        'product_uom_qty': quantidade,
                     })
+
+                    if produto_obj.type != 'service':
+                        dados_item['tipo_item'] = 'P'
+                    else:
+                        dados_item['tipo_item'] = 'S'
+
                     dados = {}
                     for chave in dados_item:
                         if not isinstance(dados_item[chave], DicionarioBrasil):
                             dados[chave] = dados_item[chave]
-                    
-                    print(dados)        
+
+                    print('dados acessorio')
+                    print(dados)
                     if not acessorio_obj.linha_acessorio_id:
                         item_id = item_pool.create(cr, uid, dados)
                         acessorio_obj.write({'linha_acessorio_id': item_id})
                     else:
-                        acessorio_obj.linha_acessorio_id.write(dados)                        
-                
+                        acessorio_obj.linha_acessorio_id.write(dados)
+
                 for opcionais_obj in item_obj.itens_opcionais_ids:
                     if opcionais_obj.linha_opcional_id:
                         continue
-                                                    
+
                     produto_obj = opcionais_obj.opcional_id
 
                     contexto_item = {
@@ -98,13 +109,19 @@ class sale_order(osv.Model):
                         'quantidade_componente': opcionais_obj.quantidade,
                         #'parent_id': item_obj.id,
                     })
+
+                    if produto_obj.type != 'service':
+                        dados_item['tipo_item'] = 'P'
+                    else:
+                        dados_item['tipo_item'] = 'S'
+
                     dados = {}
                     for chave in dados_item:
                         if not isinstance(dados_item[chave], DicionarioBrasil):
                             dados[chave] = dados_item[chave]
 
                     item_id = item_pool.create(cr, uid, dados)
-                    opcionais_obj.write({'linha_opcional_id': item_id})                    
+                    opcionais_obj.write({'linha_opcional_id': item_id})
 
     def create(self, cr, uid, dados, context={}):
         res = super(sale_order, self).create(cr, uid, dados, context=context)
@@ -121,16 +138,16 @@ class sale_order(osv.Model):
             self.pool.get('sale.order').ajusta_acessorios(cr, uid, ids, context=context)
 
         return res
-    
+
     def copy(self, cr, uid, id, default={}, context={}):
         res = super(sale_order, self).copy(cr, uid, id, default=default, context=context)
-        
+
         sale_pool = self.pool.get('sale.order')
         item_pool = self.pool.get('sale.order.line')
-        
+
         original_obj = sale_pool.browse(cr, uid, id)
         copiado_obj = sale_pool.browse(cr, uid, res)
-        
+
         #
         # Apagamos os itens copiados
         #
@@ -143,15 +160,14 @@ class sale_order(osv.Model):
         lista_pais = {}
         for item_obj in original_obj.order_line:
             item_novo_id = item_pool.copy(cr, uid, item_obj.id)
-            
+
             if not item_obj.parent_id:
                 lista_pais[item_obj.id] = item_novo_id
                 item_pool.write(cr, uid, [item_novo_id], {'order_id': copiado_obj.id})
             else:
                 item_pool.write(cr, uid, [item_novo_id], {'order_id': copiado_obj.id, 'parent_id': lista_pais[item_obj.parent_id.id]})
-                
+
         return res
-                
 
 
 sale_order()

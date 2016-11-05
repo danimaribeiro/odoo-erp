@@ -520,6 +520,7 @@ class lote_contabilidade(osv.Model):
                     where
                         rp.cnpj_cpf = '{cnpj}'
                         and h.simulacao = False
+                        and h.state = 'done'
                         and ((
                                 h.tipo = 'N'
                                 and h.date_from >= '{data_inicial}'

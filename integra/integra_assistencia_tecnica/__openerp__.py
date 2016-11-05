@@ -20,6 +20,8 @@
         'wizard/OS_nota_wizard.xml',
         'wizard/OS_to_phonecall_view.xml',
         'wizard/OS_gera_nota.xml',
+        'wizard/OS_relatorio_ordem_servico.xml',
+        'wizard/OS_relatorio_tempo_trabalhado.xml',
 
         'views/assistencia_view.xml',
         'views/ordem_servico_view.xml',

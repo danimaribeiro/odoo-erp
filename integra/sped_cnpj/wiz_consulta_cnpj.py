@@ -3,7 +3,7 @@
 
 from osv import osv, fields
 from consulta_cnpj import executa_consulta, cookie_receita
-# from pysped.tabela import MUNICIPIO_ESTADO_NOME
+from pysped.tabela import MUNICIPIO_ESTADO_NOME
 from consulta_cnae import executa_consulta_cnae
 
 class wizard_consulta_cnpj(osv.osv_memory):

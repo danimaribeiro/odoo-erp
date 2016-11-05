@@ -22,7 +22,7 @@ class finan_lancamento(osv.Model):
         'cheque_receber_ids': fields.one2many('finan.cheque', 'receber_id', u'Cheques'),
         'cheque_pagar_ids': fields.many2many('finan.cheque','finan_cheques_itens', 'lancamento_id', 'cheque_id', string='Cheque', ondelete='cascade'),
         'data_quitacao_cheque': fields.date(u'Data de quitação', select=True),
-        'cheque_deposito_id': fields.many2one('finan.cheque.deposito', u'Depósito de cheque'),
+        'cheque_deposito_id': fields.many2one('finan.cheque.deposito', u'Depósito de cheque', ondelete='cascade'),
     }
 
     _defaults = {

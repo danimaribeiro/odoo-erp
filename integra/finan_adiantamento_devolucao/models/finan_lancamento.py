@@ -32,9 +32,10 @@ class finan_lancamento(osv.Model):
                     from
                         finan_adiantamento_devolucao fad
                         join res_partner_bank rpb on rpb.id = fad.res_partner_bank_id
+                        join res_partner p on p.id = rpb.partner_id
                     where
                         fad.partner_id = """ + str(partner_id) + """
-                        and fad.company_id = """ + str(lancamento.company_id.id) + """
+                        and (p.cnpj_cpf = '""" + str(lancamento.company_id.partner_id.cnpj_cpf) + """' or p.cnpj_cpf is null)
                         and upper(coalesce(rpb.state, '')) = 'ADIANTAMENTO'
                         and fad.data_quitacao <= '""" + data + """'
                 """
@@ -91,9 +92,10 @@ class finan_lancamento(osv.Model):
                     from
                         finan_adiantamento_devolucao fad
                         join res_partner_bank rpb on rpb.id = fad.res_partner_bank_id
+                        join res_partner p on p.id = rpb.partner_id
                     where
                         fad.partner_id = """ + str(partner_id) + """
-                        and fad.company_id = """ + str(lancamento.company_id.id) + """
+                        and (p.cnpj_cpf = '""" + str(lancamento.company_id.partner_id.cnpj_cpf) + """' or p.cnpj_cpf is null)
                         and upper(coalesce(rpb.state, '')) = 'DEVOLUCAO'
                         and fad.data_quitacao <= '""" + data + """'
                 """

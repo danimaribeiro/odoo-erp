@@ -8,35 +8,25 @@
             <field name="type">form</field>
             <field name="inherit_id" ref="integra_frota.frota_veiculo_form" />
             <field name="arch" type="xml">
-                <field name="res_company_id" position="replace">
-                    <field name="partner_id" required="1" />
-                </field>
                 <field name="modelo_id" position="replace">
-                    <field name="modelo_id" on_change="onchange_modelo_id(modelo_id)" />
+                    <field name="modelo_id" string="Marca/Modelo" required="1" on_change="onchange_modelo_id(modelo_id)" />
                 </field>
-            </field>
-        </record>
-
-        <record model='ir.ui.view' id='frota_veiculo_tree'>
-            <field name="name">frota.veiculo.tree</field>
-            <field name="model">frota.veiculo</field>
-            <field name="type">tree</field>
-            <field name="inherit_id" ref="integra_frota.frota_veiculo_tree" />
-            <field name="arch" type="xml">
-                <field name="res_company_id" position="replace">
-                    <field name="partner_id" />
-                </field>
-            </field>
-        </record>
-
-        <record model="ir.ui.view" id="frota_veiculo_search">
-            <field name="name">frota.veiculo.search</field>
-            <field name="model">frota.veiculo</field>
-            <field name="type">search</field>
-            <field name="inherit_id" ref="integra_frota.frota_veiculo_search" />
-            <field name="arch" type="xml">
-                <field name="res_company_id" position="replace">
-                    <field name="partner_id" select="1" />
+                <field name="servico_ids" position="after">
+                    <separator string="Manutenção preventiva" colspan="4"/>
+                    <field name="manutencao_ids" nolabel="1" colspan="4">
+                        <tree editable="top" colors="red:urgencia == 'vermelho';blue:urgencia == 'azul';orange:urgencia == 'amarelo'">
+                            <field name="urgencia" invisible="1" />
+                            <field name="servico_id" required="1" domain="[('parent_id', '!=', False), ('custo_ativo', '=', True)]" />
+                            <field name="km_a_cada" required="1" on_change="onchange_km_ultima_execucao(km_a_cada, km_ultima_execucao, data_ultima_execucao, context=context)" />
+                            <field name="data_ultima_execucao" required="1" on_change="onchange_km_ultima_execucao(km_a_cada, km_ultima_execucao, data_ultima_execucao, context=context)" />
+                            <field name="km_ultima_execucao" required="1" on_change="onchange_km_ultima_execucao(km_a_cada, km_ultima_execucao, data_ultima_execucao, context=context)" />
+                            <field name="data_maxima_proxima_execucao" />
+                            <field name="km_proxima_execucao" required="1" />
+                            <field name="data_prevista_proxima_execucao" />
+                            <field name="data_proxima_execucao" />
+                            <field name="os_id" readonly="1" string="Executado na OS" />
+                        </tree>
+                    </field>
                 </field>
             </field>
         </record>

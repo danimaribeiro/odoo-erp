@@ -35,16 +35,15 @@
                         <field name="res_partner_id" />
                         <field name="vencimento_seguro" />
                     </group>
-                    <group colspan="4" string="Fornecedores padrão">
-                        <field name="servico_ids" nolabel="1" colspan="4">
-                            <tree editable="top">
-                                <field name="servico_id" required="1" />
-                                <field name="partner_id" required="1" />
-                                <field name="valor_unitario" />
-                                <button name="replica_valor_unitario" type="object" string="Replica valor para outros veículos" />
-                            </tree>
-                        </field>
-                    </group>
+                    <separator string="Fornecedores padrão" colspan="4" />
+                    <field name="servico_ids" nolabel="1" colspan="4">
+                        <tree editable="top">
+                            <field name="servico_id" required="1" />
+                            <field name="partner_id" required="1" />
+                            <field name="valor_unitario" />
+                            <button name="replica_valor_unitario" type="object" string="Replica valor para outros veículos" />
+                        </tree>
+                    </field>
                 </form>
             </field>
         </record>

@@ -36,7 +36,7 @@ class sped_documentoitem(osv.Model):
 
                        limit 1;
                 """
-                sql_custo = sql_custo.format(company_id=item_obj.company_id.id,location_id=item_obj.stock_location_id.id, product_id=item_obj.produto_id.id,data=item_obj.data_emissao)
+                sql_custo = sql_custo.format(company_id=item_obj.company_id.id,location_id=item_obj.stock_location_id.id, product_id=item_obj.produto_id.id,data=item_obj.documento_id.data_emissao)
                 #print(sql_custo)
                 cr.execute(sql_custo)
                 dados_custo = cr.fetchall()
@@ -615,9 +615,18 @@ class sped_documentoitem(osv.Model):
         #
         for item_obj in self.browse(cr, uid, ids):
             if item_obj.stock_move_id:
-                cr.execute("update stock_move set state='draft' where id = {move_id};".format(move_id=item_obj.stock_move_id.id))
-                cr.execute('delete from stock_move where id = {move_id}'.format(move_id=item_obj.stock_move_id.id))
+                #
+                # Quando houver vínculo com uma lista de separação, não excluir, apenas desvincular do item da NF
+                #
+                if item_obj.stock_move_id.picking_id:
+                    cr.execute("update stock_move set sped_documentoitem_id = null where id = {move_id};".format(move_id=item_obj.stock_move_id.id))
+                    cr.execute("update sped_documentoitem set stock_move_id = null where id = {item_id};".format(item_id=item_obj.id))
+
+                else:
+                    cr.execute("update stock_move set state='draft' where id = {move_id};".format(move_id=item_obj.stock_move_id.id))
+                    cr.execute('delete from stock_move where id = {move_id}'.format(move_id=item_obj.stock_move_id.id))
 
         return super(sped_documentoitem, self).unlink(cr, uid, ids, context=context)
+
 
 sped_documentoitem()

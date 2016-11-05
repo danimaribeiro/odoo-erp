@@ -34,6 +34,7 @@ class Boleto(object):
         self.banco = Banco()
         self.beneficiario = Beneficiario()
         self.pagador = Pagador()
+        self.sacador = Beneficiario()
 
         self.local_pagamento = 'Pagável em qualquer banco até o vencimento'
         self.aceite = 'N'

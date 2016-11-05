@@ -7,6 +7,7 @@
             <field name="model">finan.lancamento</field>
             <field name="inherit_id" ref="finan.finan_receber_tree"/>
             <field name="type">tree</field>
+            <field name="priority" eval="25"/>
             <field name="arch" type="xml">
                 <field name="valor_documento" position="after">
 <!--                    <field name="nf_numero" readonly="1" />
@@ -21,6 +22,7 @@
             <field name="model">finan.lancamento</field>
             <field name="inherit_id" ref="finan.finan_receber_form"/>
             <field name="type">form</field>
+            <field name="priority" eval="25"/>
             <field name="arch" type="xml">
                 <field name="partner_id" position="before">
                     <field name="nf_numero" readonly="1" />
@@ -44,6 +46,7 @@
             <field name="model">finan.lancamento.rateio</field>
             <field name="type">tree</field>
             <field name="inherit_id" ref="finan.finan_receber_rateio_tree"/>
+            <field name="priority" eval="25"/>
             <field name="arch" type="xml">
                 <field name="centrocusto_id" position="after">
                     <field name="contrato_id" />
@@ -56,6 +59,7 @@
             <field name="model">finan.lancamento</field>
             <field name="inherit_id" ref="finan.finan_receber_search"/>
             <field name="type">tree</field>
+            <field name="priority" eval="25"/>
             <field name="arch" type="xml">
                 <field name="partner_id" position="after">
                     <field name="contrato_id" />

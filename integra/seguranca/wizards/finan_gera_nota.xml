@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_gera_nota_servico_wizard" >
+            <field name="name">finan.gera.nota.servico.wizard</field>
+            <field name="model">finan.gera_nota</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan_contrato.finan_gera_nota_servico_wizard"/>
+            <field name="arch" type="xml">
+                <field name="grupo_economico_id" position="replace">
+                    <field name="grupo_economico_id" invisible="1"/>
+                    <field name="tipo_faturamento_id" colspan="4" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

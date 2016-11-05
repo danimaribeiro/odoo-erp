@@ -27,16 +27,19 @@ class sped_documento(osv.Model):
                 # haja pelo menos 1 associação de patrimônio com o
                 # item da nota
                 #
-                if not len(item_obj.asset_ids):
-                    continue
+                if len(item_obj.asset_ids) == 0:
+                    if doc_obj.operacao_id.validar_quantidade_patrimonio:
+                        raise osv.except_osv(u'Inválido !', u'Não pode salvar a nota de entrada de patrimônio sem vincular um patrimônio!')
+                    else:
+                        continue
 
                 #
                 # Não valida se a quantidade de patrimônios bater
                 # com a quantidade entrada no estoque
                 #
-                if len(item_obj.asset_ids) == int(item_obj.quantidade_estoque or 0):
+                if len(item_obj.asset_ids) == int(item_obj.quantidade_estoque or 0):                    
                     continue
-
+                
                 #
                 # Somente cria automaticamente os itens de patrimônio
                 # para produtos com unidade de medida por "unidade"

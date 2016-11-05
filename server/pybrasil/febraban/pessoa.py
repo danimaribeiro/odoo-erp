@@ -112,6 +112,17 @@ class Pagador(object):
         texto += self.endereco_completo
         return texto.replace('\n', '<br/>')
 
+    @property
+    def impressao_sacador(self):
+        if not (self.nome and self.cnpj_cpf):
+            return ''
+
+        texto = self.nome
+        texto += ' - CNPJ ' + self.cnpj_cpf
+        texto += '\n'
+        texto += self.endereco_completo_uma_linha
+        return texto.replace('\n', '<br/>')
+
 
 class NumeroDigito(object):
     def __init__(self, numero='', digito=''):

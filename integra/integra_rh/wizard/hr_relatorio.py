@@ -3253,11 +3253,13 @@ order by
             data_inicial, data_final = primeiro_ultimo_dia_mes(rel_obj.ano, int(rel_obj.mes))
             competencia = parse_datetime(data_inicial).strftime(b'%B-%Y').decode('utf-8')
             if rel_obj.tipo == 'T':
-                tipos = ('N', 'R')
+                tipos = ('N', 'R', 'F', 'D')
             elif rel_obj.tipo == 'N':
                 tipos = "('N')"
             elif rel_obj.tipo == 'D':
                 tipos = "('D')"
+            elif rel_obj.tipo == 'F':
+                tipos = "('F')"
             else:
                 tipos = "('R')"
 
@@ -3318,21 +3320,14 @@ order by
             sql = """
                 select
                     rp.name as empresa,
+                    co.name as codigo,
                     e.nome,
                     job.name as job,
                     co.date_start,
                     e.data_nascimento,
+                    e.rg_numero,
                     e.cpf,
-                    e.sexo,
-                    (select dp.name
-                    from hr_contract_alteracao caa
-                    join hr_department dp on dp.id = caa.department_id
-                    where
-                    caa.contract_id = co.id                
-                    order by
-                        caa.data_alteracao desc
-                    limit 1
-                    ) as departamento_lotacao,
+                    e.sexo,                    
                     to_char(e.data_nascimento,'DD/MM') || '/2016' as data_order
 
                 from
@@ -3368,8 +3363,7 @@ order by
                     rp.name,                    
                     e.nome;"""
 
-            sql = sql.format(**dados_filtro)
-            print(sql)
+            sql = sql.format(**dados_filtro)            
             cr.execute(sql)
 
             dados = cr.fetchall()
@@ -3377,52 +3371,56 @@ order by
             if not dados:
                 raise osv.except_osv(u'Erro!', u'Não existe dados nos parâmetros informados!')
 
-            for empresa, nome, cargo, date_start, data_nascimento, cpf, sexo, departamento_lotacao, data_order in dados:
+            for empresa, codigo, nome, cargo, date_start, data_nascimento, rg_numero, cpf, sexo, data_order in dados:
                 linha = DicionarioBrasil()
-                linha['empresa'] = empresa
+                linha['empresa'] = empresa                      
+                linha['codigo'] = codigo
                 linha['nome'] = nome
                 linha['cargo'] = cargo
                 linha['date_start'] = date_start
                 linha['data_nascimento'] = data_nascimento
+                linha['rg_numero'] = rg_numero
                 linha['cpf'] = cpf
-                linha['sexo'] = sexo
-                linha['departamento'] = departamento_lotacao
+                linha['sexo'] = sexo                
                 data_inicial = parse_datetime(data_inicial)
                 data_nascimento =parse_datetime(data_nascimento)
                 linha['anos'] = idade_anos(data_nascimento,data_nascimento + relativedelta(year=rel_obj.ano))
                 linha['dia'] = data_order
 
                 linhas.append(linha)
-
-            if rel_obj.is_sintetico:
-                rel = RHRelatorioAutomaticoPaisagem()
-            else:
-                rel = RHRelatorioAutomaticoRetrato()
-                
+           
+            rel = RHRelatorioAutomaticoRetrato()
+            rel_csv = RHRelatorioAutomaticoRetrato()            
             rel.title = u'Aniversários ' + MESES_DIC[rel_obj.mes] + u'/' + str(rel_obj.ano)
-            rel.colunas = [
-                #['dia', 'D', 15, u'Data ', False],
+            rel_csv.title = u'Aniversários ' + MESES_DIC[rel_obj.mes] + u'/' + str(rel_obj.ano)
+            
+            rel.colunas = [                            
+                ['codigo', 'C', 8, u'Código', False],
                 ['nome', 'C', 30, u'Nome', False],
                 ['sexo', 'C', 4, u'Sexo', False],
+                ['rg_numero', 'C', 8, u'RG', False],
                 ['cpf', 'C', 12, u'CPF', False],
                 ['cargo', 'C', 30, u'Cargo', False],
-            ]
-            
-            if rel_obj.is_sintetico:
-                rel.colunas += [
-                    ['departamento', 'C', 20, u'Departamento', False],                
-                    ['date_start', 'D', 15, u'Data Inicio ', False],
-                    ['data_nascimento', 'D', 15, u'Data Nascimento ', False],
-                    ['anos', 'I', 5, u'Anos', False],
-                ]
-            else:
-                rel.colunas += [                
-                    ['date_start', 'D', 15, u'Data Inicio ', False],
-                    ['data_nascimento', 'D', 15, u'Data Nascimento ', False],
-                    ['anos', 'I', 5, u'Anos', False],
-                ]
+                ['date_start', 'D', 10, u'Dt. Inicio ', False],
+                ['data_nascimento', 'D', 10, u'Dt. Nasc. ', False],
+                ['anos', 'I', 5, u'Anos', False],
+            ]     
+                   
+            rel_csv.colunas = [
+                ['empresa', 'C', 30, u'Empresa', False],                
+                ['codigo', 'C', 8, u'Código', False],
+                ['nome', 'C', 30, u'Nome', False],                
+                ['sexo', 'C', 4, u'Sexo', False],
+                ['rg_numero', 'C', 8, u'RG', False],
+                ['cpf', 'C', 12, u'CPF', False],
+                ['cargo', 'C', 30, u'Cargo', False],
+                ['date_start', 'D', 15, u'Data Inicio ', False],
+                ['data_nascimento', 'D', 15, u'Data Nascimento ', False],
+                ['anos', 'I', 5, u'Anos', False],
+            ]            
                 
             rel.monta_detalhe_automatico(rel.colunas)
+            rel_csv.monta_detalhe_automatico(rel_csv.colunas)
 
             rel.grupos = [
                 ['empresa', u'Empresa', False],
@@ -3431,10 +3429,10 @@ order by
 
             company_obj = self.pool.get('res.company').browse(cr, uid, company_id)
             rel.band_page_header.elements[-1].text = u'Empresa/Unidade ' + company_obj.name
+            rel_csv.band_page_header.elements[-1].text = u'Empresa/Unidade ' + company_obj.name
 
             pdf = gera_relatorio(rel, linhas)
-            csv = gera_relatorio_csv(rel, linhas)
-
+            csv = gera_relatorio_csv(rel_csv, linhas)
 
             dados = {
                 'arquivo': base64.encodestring(pdf),

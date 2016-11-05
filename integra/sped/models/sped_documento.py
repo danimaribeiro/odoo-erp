@@ -482,7 +482,7 @@ class sped_documento(osv.Model):
         'emissao': fields.selection(TIPO_EMISSAO, u'Tipo de emissão', select=True),
         'modelo': fields.selection(MODELO_FISCAL, u'Modelo', select=True),
         'serie': fields.char(u'Série', size=3, select=True),
-        'subserie': fields.char(u'Subsérie', size=4, select=True),        
+        'subserie': fields.char(u'Subsérie', size=4, select=True),
         'numero': fields.integer(u'Número', select=True),
         'numero_prefeitura': fields.float(u'Número Prefeitura', digits=(18,0), select=True),
         'situacao': fields.selection(SITUACAO_FISCAL, u'Situação fiscal', select=True),
@@ -1295,78 +1295,78 @@ class sped_documento(osv.Model):
         template_ids = template_pool.search(cr, 1, [('name', '=', 'NF emitida'), ('model_id.model', '=', 'sped.documento')])
 
         #print('vai fazer')
-        if user_obj.user_email:
-            for doc_obj in doc_pool.browse(cr, uid, ids):
-                if doc_obj.partner_id.email_nfe:
-                    #
-                    # Força a geração do PDF do recibo de locação
-                    #
-                    if doc_obj.modelo == 'RL':
-                        trata_nfse.grava_pdf_recibo_locacao(self, cr, uid, doc_obj)
-                    elif doc_obj.modelo == '55':
-                        trata_nfe.gera_danfe(self, cr, uid, doc_obj)
-                    elif doc_obj.modelo == 'SE':
-                        trata_nfse.grava_pdf(self, cr, uid, doc_obj)
+        for doc_obj in doc_pool.browse(cr, uid, ids):
+            if doc_obj.partner_id.email_nfe:
+                #
+                # Força a geração do PDF do recibo de locação
+                #
+                if doc_obj.modelo == 'RL':
+                    trata_nfse.grava_pdf_recibo_locacao(self, cr, uid, doc_obj)
+                elif doc_obj.modelo == '55':
+                    trata_nfe.gera_danfe(self, cr, uid, doc_obj)
+                elif doc_obj.modelo == 'SE':
+                    trata_nfse.grava_pdf(self, cr, uid, doc_obj)
 
-                    if template_ids:
-                        dados = template_pool.generate_email(cr, 1, template_ids[0], doc_obj.id, context=context)
+                if template_ids:
+                    dados = template_pool.generate_email(cr, 1, template_ids[0], doc_obj.id, context=context)
 
-                        if 'attachment_ids' in dados:
-                            del dados['attachment_ids']
+                    if 'attachment_ids' in dados:
+                        del dados['attachment_ids']
 
-                        dados.update({
-                            'model': 'sped.documento',
-                            'res_id': doc_obj.id,
-                            'user_id': uid,
-                            'email_to': doc_obj.partner_id.email_nfe or '',
-                            'date': str(fields.datetime.now()),
-                            'reply_to': user_obj.user_email,
-                            'state': 'outgoing',
-                        })
+                    dados.update({
+                        'model': 'sped.documento',
+                        'res_id': doc_obj.id,
+                        'user_id': uid,
+                        'email_to': doc_obj.partner_id.email_nfe or '',
+                        'date': str(fields.datetime.now()),
+                        'state': 'outgoing',
+                    })
 
-                        if 'email_from' not in dados or (not dados['email_from']):
-                            dados['email_from'] = user_obj.user_email
+                else:
+                    dados = {
+                        'subject':  u'Envio de nossa NF-e',
+                        'model': 'sped.documento',
+                        'res_id': doc_obj.id,
+                        'user_id': uid,
+                        'email_to': doc_obj.partner_id.email_nfe or '',
+                        #'email_to': 'ari@erpintegra.com.br',
+                        'date': str(fields.datetime.now()),
+                        'headers': '{}',
+                        'email_cc': '',
+                        'state': 'outgoing',
+                        'message_id': False,
+                    }
 
-                    else:
-                        dados = {
-                            'subject':  u'Envio de nossa NF-e',
-                            'model': 'sped.documento',
-                            'res_id': doc_obj.id,
-                            'user_id': uid,
-                            'email_to': doc_obj.partner_id.email_nfe or '',
-                            #'email_to': 'ari@erpintegra.com.br',
-                            'email_from': user_obj.user_email,
-                            'date': str(fields.datetime.now()),
-                            'headers': '{}',
-                            'email_cc': '',
-                            'reply_to': user_obj.user_email,
-                            'state': 'outgoing',
-                            'message_id': False,
-                        }
+                if user_obj.user_email:
+                    if 'reply_to' not in dados or (not dados['reply_to']):
+                        dados['reply_to'] = user_obj.user_email
 
-                    dados['subject'] += u' nº ' + formata_valor(doc_obj.numero or 0, casas_decimais=0) + ' de ' + formata_data(doc_obj.data_emissao_brasilia)
+                    if 'email_from' not in dados or (not dados['email_from']):
+                        dados['email_from'] = user_obj.user_email
 
-                    #
-                    # Verificando se já não foi enviado antes, quando é enviado automático depois de autorizar
-                    #
-                    if depois_autorizar:
-                        mail_ids = mail_pool.search(cr, uid, [('model', '=', 'sped.documento'), ('res_id', '=', doc_obj.id), ('subject', '=', dados['subject'])])
+                dados['subject'] += u' nº ' + formata_valor(doc_obj.numero or 0, casas_decimais=0) + ' de ' + formata_data(doc_obj.data_emissao_brasilia)
 
-                        if len(mail_ids):
-                            continue
+                #
+                # Verificando se já não foi enviado antes, quando é enviado automático depois de autorizar
+                #
+                if depois_autorizar:
+                    mail_ids = mail_pool.search(cr, uid, [('model', '=', 'sped.documento'), ('res_id', '=', doc_obj.id), ('subject', '=', dados['subject'])])
 
-                    #
-                    # Só envia o email se houver anexos
-                    #
-                    attachment_ids = attachment_pool.search(cr, uid, [('res_model', '=', 'sped.documento'), ('res_id', '=', doc_obj.id)])
-                    if len(attachment_ids):
-                        anexos = []
-                        for attachment_id in attachment_ids:
-                            anexos.append((4, attachment_id))
+                    if len(mail_ids):
+                        continue
 
-                        dados['attachment_ids'] = anexos
-                        mail_id = mail_pool.create(cr, uid, dados)
-                        mail_pool.process_email_queue(cr, uid, [mail_id])
+                #
+                # Só envia o email se houver anexos
+                #
+                attachment_ids = attachment_pool.search(cr, uid, [('res_model', '=', 'sped.documento'), ('res_id', '=', doc_obj.id)])
+                if len(attachment_ids):
+                    anexos = []
+                    for attachment_id in attachment_ids:
+                        anexos.append((4, attachment_id))
+
+                    dados['attachment_ids'] = anexos
+                    mail_id = mail_pool.create(cr, uid, dados)
+                    mail_pool.process_email_queue(cr, uid, [mail_id])
 
         return {'value': {}, 'warning': {'title': u'Confirmação', 'message': u'Envio agendado!'}}
 

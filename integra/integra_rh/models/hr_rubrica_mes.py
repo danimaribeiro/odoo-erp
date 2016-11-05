@@ -85,7 +85,7 @@ class hr_rubrica_mes(osv.osv_memory):
             where
                 (
                     hp.salary_rule_id = {rule_id} or
-                    r.code like '{similar}'
+                    r.code ilike '%{similar}%'
                 ) and
                 (c.id = {company_id}
                 or c.parent_id = {company_id}
@@ -101,37 +101,38 @@ class hr_rubrica_mes(osv.osv_memory):
                 'data_final': ru_obj.data_final,
                 'company_id': ru_obj.company_id.id,
                 'rule_id': ru_obj.rule_id.id,
-                'similar': '%' if not ru_obj.rubricas_similares else ru_obj.rule_id.code,
+                #'similar': '%' if not ru_obj.rubricas_similares else ru_obj.rule_id.code + '%',
+                'similar': ru_obj.rule_id.code,
             }
-            
-            
+
+
             if ru_obj.tipo == 'N':
                 sql += u'''
-                and                
+                and
                     h.tipo = 'N' and h.date_from >= '{data_inicial}' and h.date_to <= '{data_final}'
                 '''
 
             if ru_obj.tipo == 'D':
                 sql += u'''
-                and                
+                and
                     h.tipo = 'D' and h.date_from >= '{data_inicial}' and h.date_to <= '{data_final}'
                 '''
-                
+
             if ru_obj.tipo == 'R':
                 sql += u'''
                 and
                     h.tipo = 'R' and h.data_afastamento between '{data_inicial}' and '{data_final}'
-                '''   
-                      
+                '''
+
             if ru_obj.tipo == 'T':
                 sql += u'''
                 and
-                    h.tipo in ('N','R','F','D') and 
+                    h.tipo in ('N','R','F','D') and
                     (
                         h.date_from between '{data_inicial}' and '{data_final}'
                         or h.data_afastamento between '{data_inicial}' and '{data_final}'
                     )
-                '''       
+                '''
 
             if ru_obj.partner_id:
                 sql += u'''
@@ -224,7 +225,7 @@ class hr_rubrica_mes(osv.osv_memory):
         valores['input_ids'] = self._get_input_ids(cr, uid, ids, 'input_ids', context=context)
 
         return retorno
-    
+
     def gera_relatorio_rubrica_mes(self, cr, uid, ids,input_ids, context={}):
         if not ids and not input_ids:
             return False
@@ -234,21 +235,21 @@ class hr_rubrica_mes(osv.osv_memory):
         company_id = rubrica_obj.company_id.id
         data_inicial = parse_datetime(rubrica_obj.data_inicial).date()
         data_final = parse_datetime(rubrica_obj.data_final).date()
-        
+
         linha = []
         for linha_obj in rubrica_obj.input_ids:
-            linha.append(linha_obj.id) 
+            linha.append(linha_obj.id)
 
         rel = Report('Resumo de Resultado', cr, uid)
         rel.caminho_arquivo_jasper = os.path.join(JASPER_BASE_DIR, 'hr_rubrica_mes.jrxml')
         rel.parametros['COMPANY_ID'] = int(company_id)
         rel.parametros['DATA_INICIAL'] = str(data_inicial)[:10]
-        rel.parametros['DATA_FINAL'] = str(data_final)[:10]      
+        rel.parametros['DATA_FINAL'] = str(data_final)[:10]
         rel.parametros['RUBRICA'] =  str(linha).replace('[', '(').replace(']', ')')
-             
+
 
         pdf, formato = rel.execute()
-        
+
         attachment_pool = self.pool.get('ir.attachment')
         attachment_ids = attachment_pool.search(cr, uid, [('res_model', '=', 'hr.rubrica.mes'), ('res_id', '=', id), ('name', '=', 'rubrica_mes.pdf')])
         #

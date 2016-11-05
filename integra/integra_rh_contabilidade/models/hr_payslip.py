@@ -135,7 +135,7 @@ class hr_payslip(orm.Model):
                                 tipo = u'Provisão Férias - '
 
                         elif holerite_obj.tipo == 'R':
-                            partida.data = parse_datetime(holerite_obj.date_to).date()
+                            partida.data = parse_datetime(holerite_obj.data_afastamento).date()
                             tipo = u'Rescisão - ' + holerite_obj.employee_id.name + ' - '
 
                         elif holerite_obj.tipo == 'D':
@@ -163,7 +163,7 @@ class hr_payslip(orm.Model):
                         # Busca o valor do campo correspondente
                         #
                         partida.valor = D(rubrica_obj.total or 0)
-                        print('valor', partida.valor)
+                        #print('valor', partida.valor)
 
                         #
                         # No caso de provisão, o valor a ser contabilizado
@@ -251,14 +251,14 @@ class hr_payslip(orm.Model):
 
                         partida.historico = rubrica_obj.name + ' - ' +  tipo +  holerite_obj.company_id.partner_id.name
 
-                        print('partida.valor, partida.conta_debito_id, partida.conta_credito_id')
-                        print(partida.valor, partida.conta_debito_id, partida.conta_credito_id)
 
                         if (partida.valor > 0) and \
                             (partida.conta_debito_id and partida.conta_credito_id) and \
                             partida.conta_credito_id.id != partida.conta_debito_id.id:
                             res.append(partida)
                         else:
+                            print('partida.valor, partida.conta_debito_id, partida.conta_credito_id')
+                            print(rubrica_obj.salary_rule_id.name, partida.valor, partida.conta_debito_id, partida.conta_credito_id)
                             partida.sem_partida = True
                             partida.rule_id = rubrica_obj.salary_rule_id.id
                             res.append(partida)

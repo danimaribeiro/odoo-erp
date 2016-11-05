@@ -26,8 +26,12 @@
                         <field name="descricao" colspan="4"  required="1" />
                         <field name="dias" required="1" />
                         <field name="posicao" required="1" />
-                        <field name="template_id" colspan="4" required="1" domain="[('model_id.model', '=', 'res.partner')]" />
+                        <field name="template_id" colspan="4" required="1" domain="[('model_id.model', '=', 'finan.lancamento')]" />
                         <field name="com_contrato" />
+<!--                         <field name="somente_dias_uteis" /> -->
+                        <newline />
+                        <field name="formapagamento_id" colspan="4" />
+                        <newline />
                         <button type="object" name="enviar_emails" string="Testar" />
                     </group>
                 </form>

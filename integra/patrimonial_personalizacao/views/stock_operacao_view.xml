@@ -12,8 +12,8 @@
 <!--                         <field name="company_id" colspan="4" required="1" /> -->
                         <field name="tipo" />
                         <field name="nome" colspan="4" />
-                        <field name="location_id" colspan="4" required="0" />
-                        <field name="location_dest_id" colspan="4" required="0" />
+                        <field name="location_id" colspan="4" required="1" />
+                        <field name="location_dest_id" colspan="4" required="1" />
                         <newline/>
                         <field name="traz_custo_medio" />
                         <newline/>

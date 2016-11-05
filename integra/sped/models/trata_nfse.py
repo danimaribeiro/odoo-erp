@@ -35,7 +35,7 @@ certificado = Certificado()
 
 
 def monta_nfse(self, cr, uid, doc_obj):
-
+    prepara_certificado(self, cr, uid, doc_obj)
     #
     # Bibliotecas importadas para serem usadas nos templates
     #
@@ -74,6 +74,9 @@ def monta_nfse(self, cr, uid, doc_obj):
     else:
         prestador.regime_tributario = 'LUCRO_REAL'
 
+    if certificado.logo:
+        prestador.arquivo_logo = certificado.logo
+
     tomador = Tomador()
     tomador.nome = doc_obj.partner_id.razao_social or ''
     tomador.cnpj_cpf = doc_obj.partner_id.cnpj_cpf or ''
@@ -90,7 +93,10 @@ def monta_nfse(self, cr, uid, doc_obj):
         tomador.municipio = MUNICIPIO_IBGE[doc_obj.partner_id.municipio_id.codigo_ibge[:7]]
     tomador.cep = doc_obj.partner_id.cep or ''
     tomador.ie = doc_obj.partner_id.ie or ''
-    tomador.email = doc_obj.partner_id.email_nfe or ''
+
+    email_dest = doc_obj.partner_id.email_nfe or ''
+    tomador.email = email_dest[:60]
+
     tomador.fone = doc_obj.partner_id.fone or ''
     tomador.celular = doc_obj.partner_id.celular or ''
     #print(tomador.ie, 'inscricao estadual', doc_obj.partner_id.ie)
@@ -100,13 +106,13 @@ def monta_nfse(self, cr, uid, doc_obj):
     nfse.prestador = prestador
     nfse.tomador = tomador
     nfse.serie = doc_obj.serie or ''
-    
-    if doc_obj.company_id.provedor_nfse in ['WEBISS','GOVBR']:        
+
+    if doc_obj.company_id.provedor_nfse in ['WEBISS','GOVBR']:
         nfse.numero = D(doc_obj.numero_prefeitura or -1)
         print(nfse.numero)
     else:
         nfse.numero = doc_obj.numero or -1
-        
+
     nfse.data_hora_emissao = doc_obj.data_emissao
     nfse.data_hora_fato_gerador = doc_obj.data_emissao_rps
     nfse.rps.serie = doc_obj.serie_rps or ''
@@ -261,6 +267,9 @@ def monta_nfse(self, cr, uid, doc_obj):
         item.descricao = item_obj.produto_id.name
         nfse.itens.append(item)
 
+    if doc_obj.modelo == 'RL' and not ('PATRIMONIAL' in cr.dbname.upper() or 'TESTE_' in cr.dbname.upper()):
+        descricao = u''
+
     if doc_obj.infcomplementar:
         descricao += doc_obj.infcomplementar
 
@@ -336,10 +345,18 @@ def prepara_certificado(self, cr, uid, doc_obj):
         except:
             pass
 
+    if doc_obj.modelo == 'SE':
+        if os.path.exists(os.path.join(caminho_empresa, 'logo_nfse_caminho.txt')):
+            certificado.logo = open(os.path.join(caminho_empresa, 'logo_nfse_caminho.txt')).read().strip()
+
+    elif doc_obj.modelo == 'RL':
+        if os.path.exists(os.path.join(caminho_empresa, 'logo_recibo_caminho.txt')):
+            certificado.logo = open(os.path.join(caminho_empresa, 'logo_recibo_caminho.txt')).read().strip()
+
 
 def envia_nfse(self, cr, uid, doc_obj):
-    nfse = monta_nfse(self, cr, uid, doc_obj)
     prepara_certificado(self, cr, uid, doc_obj)
+    nfse = monta_nfse(self, cr, uid, doc_obj)
     producao = doc_obj.ambiente_nfe == AMBIENTE_NFE_PRODUCAO
 
     doc_obj = self.pool.get('sped.documento').browse(cr, uid, doc_obj.id)
@@ -454,11 +471,11 @@ def envia_nfse(self, cr, uid, doc_obj):
             return res
 
     elif company_obj.provedor_nfse == 'WEBISS':
-        
+
         try:
-            resposta_envia_rps = envia_rps_webiss([nfse], numero_lote_rps, certificado, producao)
+            resposta_envia_rps = envia_rps_webiss([nfse], numero_lote_rps, certificado, producao, municipio=company_obj.partner_id.municipio_id.codigo_ibge)
         except:
-            resposta_envia_rps = ''        
+            resposta_envia_rps = ''
 
         if isinstance(resposta_envia_rps, DicionarioBrasil) and '<Protocolo>' in resposta_envia_rps.como_xml_em_texto:
             protocolo = resposta_envia_rps.EnviarLoteRpsResposta.Protocolo
@@ -485,13 +502,13 @@ def envia_nfse(self, cr, uid, doc_obj):
             res = doc_obj.write({'resposta_nfse': u'FALHA NA RESPOSTA DA PREFEITURA', 'state': 'rejeitada'})
             cr.commit()
             return res
-    
+
     elif company_obj.provedor_nfse == 'GOVBR':
-                
+
         #try:
         resposta_envia_rps = envia_rps_govbr([nfse], numero_lote_rps, certificado, producao)
         #except:
-        #    resposta_envia_rps = ''        
+        #    resposta_envia_rps = ''
 
         if isinstance(resposta_envia_rps, DicionarioBrasil) and '<Protocolo>' in resposta_envia_rps.como_xml_em_texto:
             protocolo = resposta_envia_rps.EnviarLoteRpsResposta.Protocolo
@@ -517,14 +534,14 @@ def envia_nfse(self, cr, uid, doc_obj):
         else:
             res = doc_obj.write({'resposta_nfse': u'FALHA NA RESPOSTA DA PREFEITURA', 'state': 'rejeitada'})
             cr.commit()
-            return res     
-        
+            return res
+
     elif company_obj.provedor_nfse == 'FOZ_IGUACU':
-        
+
         #try:
         resposta_envia_rps = envia_rps_foz_iguacu([nfse], numero_lote_rps, certificado, producao)
         #except:
-        #    resposta_envia_rps = ''        
+        #    resposta_envia_rps = ''
 
         if isinstance(resposta_envia_rps, DicionarioBrasil) and '<Protocolo>' in resposta_envia_rps.como_xml_em_texto:
             protocolo = resposta_envia_rps.EnviarLoteRpsResposta.Protocolo
@@ -972,13 +989,13 @@ def consulta_nfse(self, cr, uid, doc_obj):
                 res = doc_obj.write({'resposta_nfse': u'FALHA NA CONSULTA DA SITUAÇÃO DO RPS'})
                 cr.commit()
                 return res
-            
+
         elif company_obj.provedor_nfse == 'FOZ_IGUACU':
             try:
                 resposta_consulta_situacao_rps = envia_consulta_rps_foz_iguacu(protocolo, prestador, certificado, producao)
             except:
                 resposta_consulta_situacao_rps = ''
-            
+
             if resposta_consulta_situacao_rps == '':
                 res = doc_obj.write({'resposta_nfse': u'FALHA NA CONSULTA DA SITUAÇÃO DO RPS'})
                 cr.commit()
@@ -1033,14 +1050,14 @@ def consulta_nfse(self, cr, uid, doc_obj):
                 res = doc_obj.write({'resposta_nfse': u'FALHA NA CONSULTA DA SITUAÇÃO DO RPS'})
                 cr.commit()
                 return res
-            
-            
+
+
 
         elif company_obj.provedor_nfse == 'WEBISS':
-            try:
-                resposta_consulta_situacao_rps = envia_consulta_rps_webiss(protocolo, prestador, certificado, producao)
-            except:
-                resposta_consulta_situacao_rps = ''
+            #try:
+            resposta_consulta_situacao_rps = envia_consulta_rps_webiss(protocolo, prestador, certificado, producao)
+            #except:
+            #    resposta_consulta_situacao_rps = ''
             #print(resposta_consulta_situacao_rps.como_xml_em_texto)
 
             if resposta_consulta_situacao_rps == '':
@@ -1051,16 +1068,16 @@ def consulta_nfse(self, cr, uid, doc_obj):
             elif '<CodigoVerificacao>' in resposta_consulta_situacao_rps.como_xml_em_texto:
                 infnfse = resposta_consulta_situacao_rps.ConsultarLoteRpsResposta.ListaNfse.CompNfse.Nfse.InfNfse
                 nfse.codigo_verificacao = infnfse.CodigoVerificacao
-                numero = str(infnfse.Numero.inteiro)                               
+                numero = str(infnfse.Numero.inteiro)
                 nfse.data_hora_emissao = str(parse_datetime(infnfse.DataEmissao.replace('T', ' ')))
                 nfse.fuso_horario = fuso_horario_sistema()
-                
+
                 if str(numero) > 10:
                     numero_prefeitura = float(numero)
                     nfse.numero = int(numero[4:])
                 else:
                     numero_prefeitura = float(numero)
-                    nfse.numero = int(numero) 
+                    nfse.numero = int(numero)
 
                 if doc_obj.nota_substituida_id:
                     doc_obj.nota_substituida_id.write({'situacao': '02', 'data_cancelamento': nfse.data_hora_emissao_iso_utc, 'state': 'cancelada'})
@@ -1105,7 +1122,7 @@ def consulta_nfse(self, cr, uid, doc_obj):
                 res = doc_obj.write({'resposta_nfse': u'FALHA NA CONSULTA DA SITUAÇÃO DO RPS'})
                 cr.commit()
                 return res
-            
+
         elif company_obj.provedor_nfse == 'GOVBR':
             #try:
             resposta_consulta_situacao_rps = envia_consulta_rps_govbr(protocolo, prestador, certificado, producao)
@@ -1124,25 +1141,25 @@ def consulta_nfse(self, cr, uid, doc_obj):
                 numero = str(infnfse.Numero.inteiro)
                 nfse.data_hora_emissao = infnfse.DataEmissao
                 nfse.fuso_horario = fuso_horario_sistema()
-                
+
                 if str(numero) > 10:
                     numero_prefeitura = float(numero)
                     nfse.numero = int(numero[4:])
                 else:
                     numero_prefeitura = float(numero)
-                    nfse.numero = int(numero)                               
+                    nfse.numero = int(numero)
 
                 if doc_obj.nota_substituida_id:
                     doc_obj.nota_substituida_id.write({'situacao': '02', 'data_cancelamento': nfse.data_hora_emissao_iso_utc, 'state': 'cancelada'})
                     if doc_obj.nota_substituida_id.finan_lancamento_id:
                         doc_obj.nota_substituida_id.finan_lancamento_id.write({'provisionado': True, 'sped_documento_id': False})
-                    
+
                 if doc_obj.finan_lancamento_id:
                     doc_obj.finan_lancamento_id.write({'numero_documento': str(nfse.numero)})
 
                 nfse.link_verificacao = ''#'https://notacarioca.rio.gov.br/nfse.aspx?inscricao={im}&nf={numero}&cod={verificacao}'.replace(numero=nfse.numero, im=nfe.prestador.im, verificacao=nfse.codigo_verificacao.replace('-', ''))
-                
-                
+
+
                 doc_obj.write({'codigo_verificacao_nfse': nfse.codigo_verificacao, 'numero': nfse.numero, 'numero_prefeitura': numero_prefeitura, 'data_emissao': nfse.data_hora_emissao_iso_utc, 'link_verificacao_nfse': nfse.link_verificacao})
                 doc_obj = self.pool.get('sped.documento').browse(cr, uid, doc_obj.id)
                 grava_pdf(self, cr, uid, doc_obj)
@@ -1174,8 +1191,8 @@ def consulta_nfse(self, cr, uid, doc_obj):
             else:
                 res = doc_obj.write({'resposta_nfse': u'FALHA NA CONSULTA DA SITUAÇÃO DO RPS'})
                 cr.commit()
-                return res   
-            
+                return res
+
 
         elif company_obj.provedor_nfse == 'BOANOTA':
             resposta_consulta_situacao_rps = envia_consulta_situacao_rps_boanota(protocolo, prestador, certificado, producao)
@@ -1501,6 +1518,7 @@ def grava_pdf_recibo_locacao(self, cr, uid, doc_obj, boleto=None):
 
     if boleto:
         nfse.boleto = boleto
+
     elif hasattr(doc_obj, 'finan_lancamento_id') and doc_obj.finan_lancamento_id and doc_obj.finan_lancamento_id.carteira_id:
         if (not getattr(doc_obj, 'finan_contrato_id', False)) or (not getattr(doc_obj.finan_contrato_id, 'nf_sem_boleto', False)):
             boleto = doc_obj.finan_lancamento_id.gerar_boleto()
@@ -1516,13 +1534,23 @@ def grava_pdf_recibo_locacao(self, cr, uid, doc_obj, boleto=None):
             nfse.boleto = boleto
 
     nfse.obs = u'INSS dispensado conforme IN nº 971 de 13/11/2009, art. 177, parágrafo único; '
-    nfse.obs += u'IRF dispensado conforme lei nº 9.430/96, art. 67; '
-    nfse.obs += u'CSLL, PIS e COFINS dispensados conforme lei nº 10.925/04'
+    nfse.obs += u'IRF dispensado conforme lei nº 9.430/1996, art. 67; '
+    nfse.obs += u'CSLL, PIS e COFINS dispensados conforme lei nº 10.925/2004; '
+    nfse.obs += u'Emissão de nota fiscal dispensada conforme lei complementar nº 116/2003'
 
-    gera_recibo_locacao_pdf([nfse])
+    if doc_obj.infadfisco:
+        nfse.obs += '; '
+        nfse.obs += doc_obj.infadfisco
+
+    if 'PATRIMONIAL' in cr.dbname.upper() or 'TESTE_' in cr.dbname.upper():
+        gera_recibo_locacao_pdf([nfse])
+        nome_arquivo = 'recibo_locacao_' + str(doc_obj.numero) + '.pdf'
+    else:
+        gera_recibo_locacao_pdf([nfse], titulo_fatura=True)
+        nome_arquivo = 'fatura_locacao_' + str(doc_obj.numero) + '.pdf'
+
     pdf = nfse.pdf
 
-    nome_arquivo = 'recibo_locacao_' + str(doc_obj.numero) + '.pdf'
     conteudo_arquivo = pdf
 
     anexo = grava_arquivo(self, cr, uid, doc_obj, nome_arquivo, conteudo_arquivo)

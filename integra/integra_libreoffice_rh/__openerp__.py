@@ -14,7 +14,6 @@
     'website': 'http://www.Integra.inf.br',
     'depends': [
         'base',
-        'sale',
         'integra_libreoffice',
         'hr',
         'integra_rh',

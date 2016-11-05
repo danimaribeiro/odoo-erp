@@ -112,6 +112,7 @@ class sale_order(osv.Model):
             where
                 l.tipo = 'R'
                 and l.situacao = 'Vencido'
+                and coalesce(l.provisionado, False) = False
                 and (current_date - l.data_vencimento) >= 10
                 and l.partner_id = {partner_id};
             """
@@ -217,7 +218,8 @@ class sale_order(osv.Model):
         'pendencia_financeira': fields.function(_pendencia_financeira, type='boolean', string=u'Pendência financeira'),
         'parcela_excede_limite': fields.boolean(u'Parcelas excedem limite de crédito mensal?'),
         'mensalidade_excede_limite': fields.function(_mensalidade_excede_limite, type='boolean', string=u'Mensalidades excedem limite de crédito mensal?'),
-
+        
+        'tipo_orcamento': fields.selection([('venda', 'Venda'), ('locacao', u'Locação'), ('venda_bonificacao',u'Bonificação')], u'Negociando para', required=True),
         'orcamento_aprovado': fields.selection([('venda', 'venda'), ('locacao', u'locação')], u'Orçamento aprovado para', required=True),
         #
         # O estado de aprovado cria uma cópia dos itens aprovados
@@ -376,6 +378,27 @@ class sale_order(osv.Model):
         chip_obj = self.pool.get('product.product').browse(cr, uid, produto_chip_id)
 
         valores['vr_becape_chip'] = qtd_becape_chip * chip_obj.list_price
+
+        return res
+    
+    def onchange_tipo_orcamento(self, cr, uid, ids, tipo_orcamento):
+        res = {}
+        valores = {}
+        res['value'] = valores
+
+        if not tipo_orcamento:
+            return res
+
+        if tipo_orcamento == 'venda':
+            valores['orcamento_aprovado'] = 'venda'
+            valores['bonificacao_venda'] = False            
+            return res
+        elif tipo_orcamento == 'locacao':
+            valores['orcamento_aprovado'] = 'locacao'
+            valores['bonificacao_venda'] = False           
+        else:
+            valores['orcamento_aprovado'] = 'venda'
+            valores['bonificacao_venda'] = True            
 
         return res
 
@@ -624,8 +647,8 @@ class sale_order(osv.Model):
             # Ou senão, é contrato novo
             #
             else:
-                contrato_comercio_id = contrato_pool.create(cr, uid, dados)
-                contrato_comercio_obj = contrato_pool.browse(cr, uid, contrato_comercio_id)
+                contrato_comercio_id = contrato_pool.create(cr, 1, dados)
+                contrato_comercio_obj = contrato_pool.browse(cr, 1, contrato_comercio_id)
                 #
                 # Ajusta os itens faturados da Comércio
                 #
@@ -679,8 +702,8 @@ class sale_order(osv.Model):
             #
             else:
                 dados['company_id'] = order_obj.company_id.unidade_contrato_servico_id.id
-                contrato_seguranca_id = contrato_pool.create(cr, uid, dados)
-                contrato_seguranca_obj = contrato_pool.browse(cr, uid, contrato_seguranca_id)
+                contrato_seguranca_id = contrato_pool.create(cr, 1, dados)
+                contrato_seguranca_obj = contrato_pool.browse(cr, 1, contrato_seguranca_id)
                 #
                 # Ajusta os itens faturados da Segurança
                 #
@@ -1294,23 +1317,41 @@ class sale_order(osv.Model):
             if orc_obj.orcamento_aprovado != 'locacao':
                 continue
 
-            #if orc_obj.partner_vr_limite_credito <= 0 and not orc_obj.motivo_liberacao_venda_sem_limite:
-                #raise osv.except_osv(u'Erro', u'Não é permitido aprovar a proposta, pois o crédito do cliente ainda não foi analisado, ou está indeferido!')
+            if orc_obj.partner_vr_limite_credito <= 0 and not orc_obj.motivo_liberacao_venda_sem_limite:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar a proposta, pois o crédito do cliente ainda não foi analisado, ou está indeferido!')
 
-            #if orc_obj.pendencia_financeira and not orc_obj.motivo_liberacao_venda_sem_limite:
-                #raise osv.except_osv(u'Erro', u'Não é permitido aprovar a proposta, pois o cliente possui pendências financeiras!')
+            if orc_obj.pendencia_financeira and not orc_obj.motivo_liberacao_venda_sem_limite:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar a proposta, pois o cliente possui pendências financeiras!')
 
-            #if orc_obj.mensalidade_excede_limite and not orc_obj.motivo_liberacao_venda_sem_limite:
-                #raise osv.except_osv(u'Erro', u'Não é permitido aprovar a proposta, pois o valor das mensalidades excede o limite de crédito mensal do cliente!')
+            if orc_obj.mensalidade_excede_limite and not orc_obj.motivo_liberacao_venda_sem_limite:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar a proposta, pois o valor das mensalidades excede o limite de crédito mensal do cliente!')
 
             if not orc_obj.partner_id.cnpj_cpf:
                 raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o CNPJ/CPF do cliente preenchido!')
 
-            if not orc_obj.partner_id.cep:
-                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o CEP do cliente preenchido!')
+            if not orc_obj.partner_id.razao_social:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem a razão social ou nome do cliente preenchido!')
+
+            if not orc_obj.partner_id.endereco:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o endereço do cliente preenchido!')
 
             if not orc_obj.partner_id.numero:
                 raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o nº do endereço do cliente preenchido!')
+
+            if not orc_obj.partner_id.bairro:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o bairro do cliente preenchido!')
+
+            if not orc_obj.partner_id.cep:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o CEP do cliente preenchido!')
+
+            if not orc_obj.partner_id.celular:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o celular do cliente preenchido!')
+
+            if not orc_obj.partner_id.email:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o email do cliente preenchido!')
+
+            if not orc_obj.partner_id.email_nfe:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o email para envio da NF-e do cliente preenchido!')
 
             if orc_obj.dt_validade and orc_obj.dt_validade < str(hoje()):
                 raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta fora do prazo de validade!')
@@ -1394,23 +1435,41 @@ class sale_order(osv.Model):
             if orc_obj.orcamento_aprovado != 'venda':
                 continue
 
-            #if orc_obj.partner_vr_limite_credito <= 0 and not orc_obj.motivo_liberacao_venda_sem_limite:
-                #raise osv.except_osv(u'Erro', u'Não é permitido aprovar a proposta, pois o crédito do cliente ainda não foi analisado, ou está indeferido!')
+            if orc_obj.partner_vr_limite_credito <= 0 and not orc_obj.motivo_liberacao_venda_sem_limite:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar a proposta, pois o crédito do cliente ainda não foi analisado, ou está indeferido!')
 
-            #if orc_obj.pendencia_financeira and not orc_obj.motivo_liberacao_venda_sem_limite:
-                #raise osv.except_osv(u'Erro', u'Não é permitido aprovar a proposta, pois o cliente possui pendências financeiras!')
+            if orc_obj.pendencia_financeira and not orc_obj.motivo_liberacao_venda_sem_limite:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar a proposta, pois o cliente possui pendências financeiras!')
 
-            #if orc_obj.mensalidade_excede_limite and not orc_obj.motivo_liberacao_venda_sem_limite:
-                #raise osv.except_osv(u'Erro', u'Não é permitido aprovar a proposta, pois o valor das parcelas excede o limite de crédito mensal do cliente!')
+            if orc_obj.parcela_excede_limite and not orc_obj.motivo_liberacao_venda_sem_limite:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar a proposta, pois o valor das parcelas excede o limite de crédito mensal do cliente!')
 
             if not orc_obj.partner_id.cnpj_cpf:
                 raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o CNPJ/CPF do cliente preenchido!')
 
-            if not orc_obj.partner_id.cep:
-                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o CEP do cliente preenchido!')
+            if not orc_obj.partner_id.razao_social:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem a razão social ou nome do cliente preenchido!')
+
+            if not orc_obj.partner_id.endereco:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o endereço do cliente preenchido!')
 
             if not orc_obj.partner_id.numero:
                 raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o nº do endereço do cliente preenchido!')
+
+            if not orc_obj.partner_id.bairro:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o bairro do cliente preenchido!')
+
+            if not orc_obj.partner_id.cep:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o CEP do cliente preenchido!')
+
+            if not orc_obj.partner_id.celular:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o celular do cliente preenchido!')
+
+            if not orc_obj.partner_id.email:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o email do cliente preenchido!')
+
+            if not orc_obj.partner_id.email_nfe:
+                raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta sem o email para envio da NF-e do cliente preenchido!')
 
             if orc_obj.dt_validade and orc_obj.dt_validade < str(hoje()):
                 raise osv.except_osv(u'Erro', u'Não é permitido aprovar uma proposta fora do prazo de validade!')
@@ -1504,12 +1563,15 @@ class sale_order(osv.Model):
 
                 if operacoes[0]['operacao_id'][0]:
                     valores['operacao_fiscal_ids'].append(operacoes[0]['operacao_id'][0])
-                if operacoes[0]['operacao_pessoa_fisica_id'][0]:
-                    valores['operacao_fiscal_ids'].append(operacoes[0]['operacao_pessoa_fisica_id'][0])
-                if operacoes[0]['operacao_ativo_id'][0]:
-                    valores['operacao_fiscal_ids'].append(operacoes[0]['operacao_ativo_id'][0])
-                if operacoes[0]['operacao_faturamento_antecipado_id'][0]:
-                    valores['operacao_fiscal_ids'].append(operacoes[0]['operacao_faturamento_antecipado_id'][0])
+                if operacoes[0]['operacao_pessoa_fisica_id']:
+                    if operacoes[0]['operacao_pessoa_fisica_id'][0]:
+                        valores['operacao_fiscal_ids'].append(operacoes[0]['operacao_pessoa_fisica_id'][0])
+                if operacoes[0]['operacao_ativo_id']:
+                    if operacoes[0]['operacao_ativo_id'][0]:
+                        valores['operacao_fiscal_ids'].append(operacoes[0]['operacao_ativo_id'][0])
+                if operacoes[0]['operacao_faturamento_antecipado_id']:
+                    if operacoes[0]['operacao_faturamento_antecipado_id'][0]:
+                        valores['operacao_fiscal_ids'].append(operacoes[0]['operacao_faturamento_antecipado_id'][0])
 
         return res
 
@@ -1650,30 +1712,13 @@ class sale_order(osv.Model):
 
         return parcelas_venda
 
-    def onchange_partner_id(self, cr, uid, ids, partner_id, context={}):
-        res = super(sale_order, self).onchange_partner_id(cr, uid, ids, partner_id)
+    def onchange_partner_id_patrimonial(self, cr, uid, ids, partner_id, company_id, bonificacao_venda, context={}):
+        res = super(sale_order, self).onchange_partner_id(cr, uid, ids, partner_id, context=context)
 
         if not partner_id:
             return res
 
         partner_obj = self.pool.get('res.partner').browse(cr, uid, partner_id)
-
-        #if partner_obj.finan_contrato_ativo_ids:
-            #contrato_obj = partner_obj.finan_contrato_ativo_ids[0]
-
-            #if getattr(contrato_obj, 'hr_department_id', False):
-                #res['value']['hr_department_id'] = contrato_obj.hr_department_id.id
-
-            #if getattr(contrato_obj, 'vendedor_id', False):
-                #res['value']['user_id'] = contrato_obj.vendedor_id.id
-
-            #if getattr(contrato_obj, 'grupo_economico_id', False):
-                #res['value']['grupo_economico_id'] = contrato_obj.grupo_economico_id.id
-
-            #if getattr(contrato_obj, 'res_partner_category_id', False):
-                #res['value']['res_partner_category_id'] = contrato_obj.res_partner_category_id.id
-
-        #else:
 
         if getattr(partner_obj, 'user_id', False):
             res['value']['user_id'] = partner_obj.user_id.id
@@ -1690,13 +1735,13 @@ class sale_order(osv.Model):
         if getattr(partner_obj, 'partner_category_id', False):
             res['value']['res_partner_category_id'] = partner_obj.partner_category_id.id
 
-        if 'bonificacao_venda' in context and context['bonificacao_venda']:
+        if bonificacao_venda:
             res['value']['operacao_fiscal_ids'] = [419, 163]
 
-        elif 'company_id' in context:
+        elif company_id:
             operacoes = []
 
-            company_obj = self.pool.get('res.company').browse(cr, 1, context['company_id'])
+            company_obj = self.pool.get('res.company').browse(cr, 1, company_id)
 
             if company_obj.operacao_id:
                 operacoes.append(company_obj.operacao_id.id)
@@ -1713,6 +1758,75 @@ class sale_order(osv.Model):
             res['value']['operacao_fiscal_ids'] = operacoes
 
         return res
+
+
+    ##def onchange_partner_id(self, cr, uid, ids, partner_id, context={}):
+        ##res = super(sale_order, self).onchange_partner_id(cr, uid, ids, partner_id)
+
+        ##if not partner_id:
+            ##return res
+
+        ##partner_obj = self.pool.get('res.partner').browse(cr, uid, partner_id)
+
+        ##print('contexto', context)
+
+        ###if partner_obj.finan_contrato_ativo_ids:
+            ###contrato_obj = partner_obj.finan_contrato_ativo_ids[0]
+
+            ###if getattr(contrato_obj, 'hr_department_id', False):
+                ###res['value']['hr_department_id'] = contrato_obj.hr_department_id.id
+
+            ###if getattr(contrato_obj, 'vendedor_id', False):
+                ###res['value']['user_id'] = contrato_obj.vendedor_id.id
+
+            ###if getattr(contrato_obj, 'grupo_economico_id', False):
+                ###res['value']['grupo_economico_id'] = contrato_obj.grupo_economico_id.id
+
+            ###if getattr(contrato_obj, 'res_partner_category_id', False):
+                ###res['value']['res_partner_category_id'] = contrato_obj.res_partner_category_id.id
+
+        ###else:
+
+        ##if getattr(partner_obj, 'user_id', False):
+            ##res['value']['user_id'] = partner_obj.user_id.id
+
+        ##if getattr(partner_obj, 'hr_department_id', False):
+            ##res['value']['hr_department_id'] = partner_obj.hr_department_id.id
+
+            ###if partner_obj.hr_department_id.manager_id:
+                ###res['value']['user_id'] = partner_obj.hr_department_id.manager_id.id
+
+        ##if getattr(partner_obj, 'grupo_economico_id', False):
+            ##res['value']['grupo_economico_id'] = partner_obj.grupo_economico_id.id
+
+        ##if getattr(partner_obj, 'partner_category_id', False):
+            ##res['value']['res_partner_category_id'] = partner_obj.partner_category_id.id
+
+        ##if 'bonificacao_venda' in context and context['bonificacao_venda']:
+            ##res['value']['operacao_fiscal_ids'] = [419, 163]
+
+        ##elif 'company_id' in context:
+            ##operacoes = []
+
+            ##company_obj = self.pool.get('res.company').browse(cr, 1, context['company_id'])
+
+            ##print('company no contexto', company_obj.name, company_obj.operacao_ativo_id)
+
+            ##if company_obj.operacao_id:
+                ##operacoes.append(company_obj.operacao_id.id)
+
+            ##if company_obj.operacao_pessoa_fisica_id:
+                ##operacoes.append(company_obj.operacao_pessoa_fisica_id.id)
+
+            ##if company_obj.operacao_ativo_id:
+                ##operacoes.append(company_obj.operacao_ativo_id.id)
+
+            ##if company_obj.operacao_faturamento_antecipado_id:
+                ##operacoes.append(company_obj.operacao_faturamento_antecipado_id.id)
+
+            ##res['value']['operacao_fiscal_ids'] = operacoes
+
+        ##return res
 
     def onchange_user_id(self, cr, uid, ids, user_id, context={}):
         if not user_id:
@@ -2016,3 +2130,6 @@ class sale_order_line_aprovado(osv.Model):
 
     def unlink(self, cr, uid, ids, context={}):
         super(osv.Model, self).unlink(cr, uid, ids, context=context)
+
+    def verifica_limite_credito(self, cr, uid, ids, dados={}, context={}):
+        pass

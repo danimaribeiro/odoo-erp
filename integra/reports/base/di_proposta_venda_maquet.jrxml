@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="di_proposta_venda_maquet" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="497" leftMargin="56" rightMargin="42" topMargin="16" bottomMargin="20" uuid="05a7678d-6397-4816-97ba-742668ea4f5f">
 	<property name="ireport.zoom" value="1.6500000000000241"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1719"/>
+	<property name="ireport.y" value="1575"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
 	</parameter>
@@ -1077,7 +1077,7 @@ $F{titulo_acessorios_opc}]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="23">
-				<printWhenExpression><![CDATA[$P{MOSTRAR_UNITARIO} == true && $V{COUNT_PRIN} == 1]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$P{MOSTRAR_UNITARIO} == true]]></printWhenExpression>
 				<textField pattern="#,##0.00;-#,##0.00">
 					<reportElement x="0" y="7" width="174" height="16" uuid="ede7aac6-c6ba-484f-b032-6f7bfaec735d"/>
 					<textElement verticalAlignment="Middle">

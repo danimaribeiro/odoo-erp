@@ -26,12 +26,13 @@
                     <group col="4" colspan="4">
                         <group colspan="4" col="6">
                             <field name="project_id" colspan="6" />
+                            <newline />
                             <field name="codigo" colspan="2" />
-                            <field name="situacao" colspan="2" required="1" />
+                            <field name="situacao_readonly" colspan="2" />
                             <field name="propriedade" colspan="2" required="1" />
                             <newline />
                             <field name="create_date" readonly="1" />
-                            <label string="" />
+                            <field name="situacao" colspan="2" required="1" groups="construtora.group_construtora_gerente" />
                             <field name="finan_motivo_distrato_id" colspan="2" attrs="{'required': [('situacao', '=', 'C')], 'invisible': [('situacao', '!=', 'C')]}" />
                             <field name="data_renovacao" colspan="2" attrs="{'required': [('situacao', '=', 'D'), ('propriedade', 'in', ('T', 'L'))], 'invisible': ['!', '&amp;', ('situacao', '=', 'D'), ('propriedade', 'in', ('T', 'L'))]}" />
                         </group>
@@ -83,6 +84,7 @@
                                     <field name="imovel_ocupado" />
                                     <field name="construcao" />
                                     <field name="imovel_projetado" />
+                                    <field name="data_projetado" attrs="{'invisible': [('imovel_projetado', '=', False)]}" />
                                     <field name="imovel_locado" />
                                     <field name="valor_locacao" />
                                     <field name="prazo_locacao" />

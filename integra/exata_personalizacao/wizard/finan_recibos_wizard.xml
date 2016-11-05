@@ -8,10 +8,11 @@
             <field name="type">form</field>
              <field name="inherit_id" ref="finan.finan_recibos_form"/>
             <field name="arch" type="xml">
-                <button name="gerar_recibos" position="replace">                    
+                <button name="gerar_recibos" position="replace">
                     <button icon="gtk-execute" string="Gerar recibos" name="gerar_recibos_exata" type="object" />
-                </button>                       
+                </button>
             </field>
         </record>
+
     </data>
 </openerp>

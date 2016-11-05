@@ -9,14 +9,17 @@
             <field name="arch" type="xml">
                 <form string="Estoque mínimo">
                     <group colspan="4">
-                        <separator string="Filtros do Relatório" colspan="4" />
+                        <separator string="Filtros do Relatório" colspan="4" />                        
+                        <field name="company_id" required="1" colspan="4" />                     
                         <newline/>
-                        <field name="location_id" required="1" colspan="4" />
-                        <field name="nome" invisible="1"/>
+                        <field name="location_id" required="1" colspan="2" />
+                        <field name="formato" required="1" colspan="2" />
+                        <newline/>                        
+                        <field name="nome" invisible="1"/>                        
                         <newline/>
-                        <button icon="gtk-execute" string="Gerar relatório" name="gera_estoque_minimo" type="object" colspan="2" />
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_estoque_minimo" type="object" colspan="4" />
                         <newline/>
-                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="2"/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>                        
                     </group>
                 </form>
             </field>

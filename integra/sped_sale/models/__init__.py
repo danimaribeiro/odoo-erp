@@ -6,4 +6,4 @@
 from sale import *
 from sped_documento import *
 from sale_order_line import *
-#import sped
+from stock_move import *

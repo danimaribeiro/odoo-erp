@@ -75,7 +75,7 @@
             <field name="inherit_id" ref="orcamento.orcamento_sale_order_form_dinamico"/>
             <field name="arch" type="xml">
                 <field name="partner_id" position="replace">
-                    <field name="partner_id" options='{"quick_create": false}' on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True)]" context="{'search_default_customer':1, 'company_id': company_id}" required="1"/>
+                    <field name="partner_id" options="{'quick_create': false}" on_change="onchange_partner_id_patrimonial(partner_id, company_id, bonificacao_venda)" domain="[('customer','=',True)]" context="{'search_default_customer':1, 'company_id': company_id, 'bonificacao_venda': bonificacao_venda}" required="1"/>
                 </field>
                 <field name="operacao_fiscal_produto_id" position="replace" />
                 <field name="pricelist_id" position="after">
@@ -107,15 +107,17 @@
                 <field name="name" position="after">
                     <newline/>
                     <group colspan="2" col="4">
-                        <field name="orcamento_aprovado" states="draft" string="Negociando para" />
-                        <field name="bonificacao_venda" states="draft" on_change="onchange_bonificacao_venda(bonificacao_venda, company_id)" />
+                        <field name="orcamento_aprovado" states="draft" string="Negociando para" invisible="1" />
+                        <field name="bonificacao_venda" states="draft" on_change="onchange_bonificacao_venda(bonificacao_venda, company_id)" invisible="1"/>
+                        <field name="tipo_orcamento" states="draft" on_change="onchange_tipo_orcamento(tipo_orcamento)" />
+                        
                     </group>
                 </field>
-<!--                <field name="partner_id" position="before">
-                    <field name="partner_vr_limite_credito" invisible="0" />
-                    <field name="pendencia_financeira" invisible="0" />
-                    <field name="parcela_excede_limite" invisible="0" />
-                    <field name="mensalidade_excede_limite" invisible="0" />
+                <field name="partner_id" position="before">
+                    <field name="partner_vr_limite_credito" invisible="1" />
+                    <field name="pendencia_financeira" invisible="1" />
+                    <field name="parcela_excede_limite" invisible="1" />
+                    <field name="mensalidade_excede_limite" invisible="1" />
 
                     <group colspan="4" col="4" attrs="{'invisible': ['|', ('motivo_liberacao_venda_sem_limite', '!=', False), '|', ('partner_vr_limite_credito', '=', False), ('partner_vr_limite_credito', '&gt;', 0)]}">
                         <html>
@@ -171,7 +173,7 @@
                         <field name="motivo_liberacao_venda_sem_limite" colspan="4" />
                     </group>
 
-                </field>-->
+                </field>
                 <field name="partner_id" position="after">
                     <field name="partner_assinatura_id" domain="[('partner_id','=',partner_id), ('type', '=', 'assinatura')]" />
                 </field>

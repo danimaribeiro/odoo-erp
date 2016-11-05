@@ -6,40 +6,29 @@ from osv import orm, fields, osv
 from pybrasil.valor.decimal import Decimal as D
 
 
-
 class project_orcamento_item(osv.Model):
     _inherit = 'project.orcamento.item'
     _description = u'Item do orçamento do projeto'
-    
-    def _qtd_componentes(self, cr, uid, ids, nome_campo, args=None, context={}):
-        res = {}
-        
-        for item_obj in self.browse(cr, uid, ids):
-            res[item_obj.id] = len(item_obj.itens_componente_ids)
-            
-        return res
 
-    _columns = {        
-        'itens_componente_ids': fields.one2many('project.orcamento.item', 'parent_id', u'Componentes'),                
+    _columns = {
         'quantidade_componente': fields.float(u'Quantidade componente'),
-        'qtd_componentes': fields.function(_qtd_componentes, type='float', string=u'Qtde. componentes', store=True),
     }
-    
+
     def onchange_product_id(self, cr, uid, ids, product_id, project_id):
         if not product_id or not project_id:
             return {}
-        
-        res = super(project_orcamento_item, self).onchange_product_id(cr, uid, ids, product_id, project_id)  
-                
+
+        res = super(project_orcamento_item, self).onchange_product_id(cr, uid, ids, product_id, project_id)
+
         project_obj = self.pool.get('project.project').browse(cr, uid, project_id)
         produto_obj = self.pool.get('product.product').browse(cr, uid, product_id, context={'company_id': project_obj.company_id.id})
-                
+
         composicao_ids = []
 
         if len(produto_obj.composicao_ids):
-            for composicao_obj in produto_obj.composicao_ids:                        
-                dados = {                                        
-                    'product_id': composicao_obj.componente_id.id, 
+            for composicao_obj in produto_obj.composicao_ids:
+                dados = {
+                    'product_id': composicao_obj.componente_id.id,
                     'uom_id': composicao_obj.uom_id.id,
                     'vr_unitario':  composicao_obj.standard_price,
                     'vr_produto':  composicao_obj.vr_total,
@@ -47,9 +36,9 @@ class project_orcamento_item(osv.Model):
                     'quantidade': composicao_obj.quantidade,
                     'risco': composicao_obj.risco,
                 }
-                
+
                 composicao_ids.append([0,False,dados])
-                
+
             res['value']['itens_componente_ids'] = composicao_ids
 
         return res
@@ -64,7 +53,7 @@ class project_orcamento_item(osv.Model):
             quantidade = D('0')
         else:
             quantidade = D(quantidade)
-            
+
         quantidade *= quantidade_componente
 
         if not vr_unitario:

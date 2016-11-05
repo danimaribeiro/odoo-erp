@@ -64,14 +64,14 @@ def gera_rps(lista_notas, numero_lote, certificado=None):
         valores['ValorIr'] = nota.valor.retido.ir or 0
         valores['ValorCsll'] = nota.valor.retido.csll or 0
 
-        if nota.prestador.optante_simples_nacional:
-            valores['IssRetido'] = 2
-            valores['ValorIss'] = nota.valor.vr_iss or 0.00
+        #if nota.prestador.optante_simples_nacional:
+            #valores['IssRetido'] = 2
+            #valores['ValorIss'] = nota.valor.vr_iss or 0.00
             #valores['ValorIssRetido'] = 0
-        else:
-            valores['IssRetido'] = 1 if nota.valor.retido.iss != 0 else 2
-            valores['ValorIss'] = nota.valor.vr_iss or 0.00
-            valores['ValorIssRetido'] = nota.valor.retido.iss or 0
+        #else:
+        valores['IssRetido'] = 1 if nota.valor.retido.iss != 0 else 2
+        valores['ValorIss'] = nota.valor.vr_iss or 0.00
+        valores['ValorIssRetido'] = nota.valor.retido.iss or 0
 
         valores['OutrasRetencoes'] = nota.valor.retido.outras or 0
         valores['BaseCalculo'] = nota.valor.bc_iss or None
@@ -82,14 +82,14 @@ def gera_rps(lista_notas, numero_lote, certificado=None):
         valores['DescontoIncondicionado'] = nota.valor.desconto_incondicionado or 0
         valores['DescontoCondicionado'] = nota.valor.desconto_condicionado or 0
 
-        if nota.servico_municipio:            
+        if nota.servico_municipio:
             servico['ItemListaServico'] = nota.servico_municipio
             servico['CodigoCnae'] = nota.prestador.cnae or ''
             #servico['CodigoTributacaoMunicipio'] = nota.servico_municipio
         else:
             servico['ItemListaServico'] = nota.servico.codigo.zfill(4)
             servico['CodigoCnae'] = nota.prestador.cnae or ''
-            #servico['CodigoCnae'] = nota.servico.codigo            
+            #servico['CodigoCnae'] = nota.servico.codigo
             #servico['CodigoTributacaoMunicipio'] = nota.servico.codigo
 
         servico['Discriminacao'] = tira_acentos(nota.descricao).replace('\n', ';').strip()

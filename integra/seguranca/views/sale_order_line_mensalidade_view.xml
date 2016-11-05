@@ -13,11 +13,20 @@
                         <field colspan="4"
                                string="Mensalidade"
                                name="product_id" required="1" domain="[('type', '=', 'service'), ('categ_id.name', '=', 'Mensalidade')]"
-                               context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'shop': parent.shop_id, 'uom': product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id}"
+                               context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'shop': parent.shop_id, 'uom': product_uom, 'force_product_uom': True, 'operacao_fiscal_produto_id': parent.operacao_fiscal_produto_id, 'operacao_fiscal_servico_id': parent.operacao_fiscal_servico_id, 'company_id': parent.company_id, 'agrupamento_id': agrupamento_id, 'acessorio_selecao_ids': acessorio_selecao_ids}"
                                on_change="product_id_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name,parent.partner_id, False, True, parent.date_order, product_packaging, parent.fiscal_position, False, context)"/>
                         <newline />
                         <field name="name" colspan="4"/>
+                        <newline />
+                        <field name="agrupamento_id" colspan="2"/>
+                        <field name="sequence" colspan="2"/>
+                        <field name="tipo_os_id" invisible="1" readonly="1" />
+                        <field name="tipo_os_tipo" invisible="1" readonly="1" />
+                        <field name="cobrar" attrs="{'invisible': True}" colspan="2" />
+                        <newline />
 
+                    <notebook colspan="4">
+                        <page string="Valores">
                         <group colspan="2" col="4">
                             <separator string="Valores" colspan="2" />
                             <newline />
@@ -253,22 +262,29 @@
                             <field name="state" widget="statusbar" invisible="1" statusbar_visible="draft,confirmed,done" statusbar_colors='{"exception": "red", "cancel": "red"}'/>
                             <field name="invoiced" invisible="1" />
                         </group>
-                    </group>
-                    <group attrs="{'invisible': True}">
-                        <field name="type"/>
-                        <field name="delay"/>
-                        <field name="th_weight"/>
-                        <field name="address_allotment_id"/>
-                        <!--                         <separator colspan="4" string="Properties"/> -->
-                        <field name="property_ids" colspan="4" nolabel="1" invisible="1" />
-                    </group>
-                    <!--                    <page string="History" groups="base.group_extended">
-                    <separator colspan="4" string="Invoice Lines"/>
-                    <field colspan="4" name="invoice_lines" nolabel="1"/>
-                    <separator colspan="4" string="Stock Moves"/>
-                    <field colspan="4" name="move_ids" nolabel="1" widget="many2many"/>
-                    </page>-->
-                </form>
+                        </page>
+                        <page string="Acessórios">
+                            <field name="product_acessorio_ids" nolabel="1" colspan="4" invisible="1" />
+                            <field name="product_acessorio_obrigatorio_ids" nolabel="1" colspan="4" invisible="1" />
+                            <field name="acessorio_selecao_ids" nolabel="1" colspan="4" domain="['|', ('id', 'in', product_acessorio_ids), ('id', 'in', product_acessorio_obrigatorio_ids)]" />
+                        </page>
+                    </notebook>
+                </group>
+                <group attrs="{'invisible': True}">
+                    <field name="type"/>
+                    <field name="delay"/>
+                    <field name="th_weight"/>
+                    <field name="address_allotment_id"/>
+                    <!--                         <separator colspan="4" string="Properties"/> -->
+                    <field name="property_ids" colspan="4" nolabel="1" invisible="1" />
+                </group>
+                <!--                    <page string="History" groups="base.group_extended">
+                <separator colspan="4" string="Invoice Lines"/>
+                <field colspan="4" name="invoice_lines" nolabel="1"/>
+                <separator colspan="4" string="Stock Moves"/>
+                <field colspan="4" name="move_ids" nolabel="1" widget="many2many"/>
+                </page>-->
+            </form>
             </field>
         </record>
 
@@ -279,13 +295,17 @@
             <field name="arch" type="xml">
                 <tree string="Mensalidades">
                     <field name="tipo_item" invisible="1" />
-                    <field colspan="4" name="name"/>
+                    <field name="product_id"/>
+                    <field name="name"/>
                     <field name="product_uom_qty" string="Qtd." invisible="1" />
                     <field name="price_unit" invisible="1" />
                     <field name="discount" string="Desconto" sum="Total desconto" invisible="1" />
                     <field name="vr_unitario_venda_impostos" />
                     <field name="vr_total_venda_impostos" sum="Total com impostos" />
                     <field name="falha_configuracao" groups="base.group_sale_manager" />
+                    <field name="agrupamento_id"/>
+                    <field name="sequence"/>
+                    <field name="parent_id" string="Acessório de" />
                 </tree>
             </field>
         </record>

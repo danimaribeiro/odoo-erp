@@ -23,3 +23,5 @@ from account_account import *
 from finan_classificacao_cliente import *
 
 from finan_views import *
+
+from res_currency import *

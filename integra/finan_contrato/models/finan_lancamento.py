@@ -86,7 +86,7 @@ class finan_lancamento(osv.Model):
             'data_assinatura': lancamento_obj.data_vencimento,
             'data_inicio': lancamento_obj.data_vencimento,
             'tipo_valor_base': 'T',
-            'valor': lancamento_obj.valor_documento,
+            'valor': lancamento_obj.valor_saldo,
             'documento_id': lancamento_obj.documento_id.id,
             'conta_id': lancamento_obj.conta_id.id,
             'provisionado': False,
@@ -112,7 +112,13 @@ class finan_lancamento(osv.Model):
         contrato_ids = self.pool.get('finan.contrato').search(cr, uid, [('lancamento_parcelado_id', '=', lancamento_obj.id)])
 
         if len(contrato_ids):
-            contrato_id = contrato_ids[0]
+            
+            contrato_obj = self.pool.get('finan.contrato').browse(cr, uid, contrato_ids[0])            
+            if len(contrato_obj.lancamento_ids) > 0:
+                contrato_id = contrato_obj.id
+            else:
+                cr.execute('delete from finan_contrato where id = {id}'.format(id=contrato_obj.id))
+                contrato_id = self.pool.get('finan.contrato').create(cr, uid, dados)
         else:
             contrato_id = self.pool.get('finan.contrato').create(cr, uid, dados)
 

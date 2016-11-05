@@ -74,10 +74,39 @@ class finan_remessa(osv.Model):
             nome_remessa = 'CB' + remessa.data_hora.strftime('%d%m') + str(remessa.sequencia).zfill(2) + '.txt'
         elif lista_boletos[0].banco.codigo == '104':
             nome_remessa = 'E' + str(numero_arquivo).zfill(8) + '.REM'
-        
+        elif lista_boletos[0].banco.codigo == '748':
+            nome_remessa = lista_boletos[0].beneficiario.codigo_beneficiario.numero[:5]
+            if '-01-' in remessa_obj.data:
+                nome_remessa += '1'
+            elif '-02-' in remessa_obj.data:
+                nome_remessa += '2'
+            elif '-03-' in remessa_obj.data:
+                nome_remessa += '3'
+            elif '-04-' in remessa_obj.data:
+                nome_remessa += '4'
+            elif '-05-' in remessa_obj.data:
+                nome_remessa += '5'
+            elif '-06-' in remessa_obj.data:
+                nome_remessa += '6'
+            elif '-07-' in remessa_obj.data:
+                nome_remessa += '7'
+            elif '-08-' in remessa_obj.data:
+                nome_remessa += '8'
+            elif '-09-' in remessa_obj.data:
+                nome_remessa += '9'
+            elif '-10-' in remessa_obj.data:
+                nome_remessa += 'O'
+            elif '-11-' in remessa_obj.data:
+                nome_remessa += 'N'
+            elif '-12-' in remessa_obj.data:
+                nome_remessa += 'D'
+
+            nome_remessa += remessa_obj.data[8:10]
+            nome_remessa += '.CRM'
+
         if lista_boletos[0].banco.codigo == '085':
             remessa.tipo = 'CNAB_240'
-            
+
 
         #
         # Anexa a remessa ao registro da remessa

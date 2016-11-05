@@ -28,7 +28,7 @@
             <field name="sequence">200</field>
             <field name="arch" type="xml">
                 <form string="Orçamento complementar">
-                    <field name="sale_order_original_id" required="1" colspan="4" on_change="onchange_sale_order_original_id(sale_order_original_id)" domain="['!', ('state', 'in', ('done', 'cancel')), ('saldo_obra_liberado', '=', False)]" />
+                    <field name="sale_order_original_id" required="1" colspan="4" on_change="onchange_sale_order_original_id(sale_order_original_id)" domain="['!', ('state', 'in', ('done', 'cancel')), ('saldo_obra_liberado', '=', False), ('bonificacao_venda','=', False)]" />
                     <field name="name" invisible="1" />
                     <field name="shop_id" invisible="1" />
                     <field name="invoiced" invisible="1" />

@@ -10,6 +10,7 @@ from frota_veiculo import *
 from frota_servico import *
 from frota_odometro import *
 from frota_os import *
+from frota_os_item import *
 #from fleet_odometer import *
 #from res_partner_bank import *
 #from finan_conta import *

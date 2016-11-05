@@ -48,6 +48,7 @@
         'views/finan_conta_view.xml',
         'views/finan_motivo_distrato_view.xml',
         'views/finan_contrato_reajuste_view.xml',
+        'views/finan_contrato_ajuste_carteira_view.xml',
         'views/finan_grupo_economico_view.xml',
         'views/finan_fat_eventual_contrato_view.xml',
         'views/partner_view.xml',
@@ -61,7 +62,8 @@
 
         'views/lo_modelo.xml',
 
-        'views/finan_contrato_receber_dashboard_view.xml',
+        #'views/finan_contrato_receber_renovar_dashboard_view.xml',
+        'views/finan_contrato_receber_reajustar_dashboard_view.xml',
 
         'wizard/finan_parcelamento_receber_wizard.xml',
         'wizard/finan_parcelamento_pagar_wizard.xml',

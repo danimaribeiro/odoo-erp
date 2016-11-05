@@ -2,15 +2,76 @@
 <openerp>
     <data>
 
+        <record model="ir.ui.view" id="project_orcamento_medicao_item_tree">
+            <field name="name">project.orcamento.medicao.item.tree</field>
+            <field name="model">project.orcamento.medicao.item</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Itens da medição" colors="blue:qtd_componentes">
+                    <field name="parent_id" invisible="1" />
+                    <field name="qtd_componentes" invisible="1" />
+                    <field name="data" invisible="1" />
+                    <field name="orcamento_item_id" invisible="1" />
+                    <field name="etapa_id" readonly="1" />
+                    <field name="codigo_completo" readonly="1" />
+                    <field name="product_id" readonly="1" />
+                    <field name="uom_id" readonly="1"/>
+                    <field name="quantidade" readonly="1"/>
+<!--                     <field name="quantidade_planejada" /> -->
+                    <field name="quantidade_medida" on_change="onchange_quantidade_medida(quantidade, quantidade_medida, 0)" />
+                    <field name="quantidade_percentual" on_change="onchange_quantidade_medida(quantidade, 0, quantidade_percentual)"/>
+                    <field name="quantidade_acumulada" />
+                    <field name="vr_unitario" readonly="1"/>
+                    <field name="vr_produto" readonly="1"  sum="Total" />
+                    <field name="vr_unitario_medido" on_change="onchange_vr_produto_medido(quantidade_medida, vr_produto, vr_unitario_medido, 0, 0)" />
+                    <field name="vr_produto_medido" on_change="onchange_vr_produto_medido(quantidade_medida, vr_produto, 0, vr_produto_medido, 0)"  sum="Total"  />
+                    <field name="vr_produto_percentual" on_change="onchange_vr_produto_medido(quantidade_medida, vr_produto, 0, 0, vr_produto_percentual)" />
+                    <field name="vr_produto_acumulado" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="project_orcamento_medicao_item_form">
+            <field name="name">project.orcamento.medicao.item.form</field>
+            <field name="model">project.orcamento.medicao.item</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Item da medição">
+                    <field name="data" invisible="1" />
+                    <field name="orcamento_item_id" invisible="1" />
+                    <field name="etapa_id" readonly="1" colspan="4" />
+                    <field name="codigo_completo" readonly="1" colspan="2" />
+                    <field name="product_id" readonly="1" colspan="4" />
+                    <field name="quantidade" readonly="1" colspan="2" />
+                    <field name="uom_id" readonly="1" colspan="2" />
+<!--                     <field name="quantidade_planejada" /> -->
+                    <field name="quantidade_medida" on_change="onchange_quantidade_medida(quantidade, quantidade_medida, 0)" />
+                    <newline />
+                    <field name="quantidade_percentual" on_change="onchange_quantidade_medida(quantidade, 0, quantidade_percentual)"/>
+                    <field name="quantidade_acumulada" />
+                    <newline />
+                    <field name="vr_unitario" readonly="1"/>
+                    <field name="vr_produto" readonly="1" sum="Total"/>
+                    <newline />
+                    <field name="vr_unitario_medido" on_change="onchange_vr_produto_medido(quantidade_medida, vr_produto, vr_unitario_medido, 0, 0)" />
+                    <field name="vr_produto_medido" on_change="onchange_vr_produto_medido(quantidade_medida, vr_produto, 0, vr_produto_medido, 0)" />
+                    <newline />
+                    <field name="vr_produto_percentual" on_change="onchange_vr_produto_medido(quantidade_medida, vr_produto, 0, 0, vr_produto_percentual)" />
+                    <field name="vr_produto_acumulado" />
+                </form>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="project_orcamento_medicao_tree">
             <field name="name">project.orcamento.medicao.tree</field>
             <field name="model">project.orcamento.medicao</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree colors="grey:state=='F';blue:state=='P'" string="Projeto Medição">
                     <field name="orcamento_id"/>
                     <field name="data" />
-                    <field name="etapa_id" />                    
+                    <field name="etapa_id" />
+                    <field name="state"/>                  
                 </tree>
             </field>
         </record>
@@ -21,33 +82,22 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Projeto Medição">
-                    <group col="6" colspan="4" string="Parâmetros">                                             
-                        <group col="4" colspan="4">                        
-                            <field name="orcamento_id" required="1" colspan="4" />
-                            <field name="etapa_id" domain="[('orcamento_id','=', orcamento_id)]" colspan="4" />                        
+                    <field name="state" widget="statusbar" />
+                    <group col="6" colspan="4" string="Parâmetros">
+                        <group col="4" colspan="4" >
+                            <field name="orcamento_id" required="1" colspan="4" attrs="{'readonly': [('state', '=', 'F')]}" />
+                            <field name="etapa_id" domain="[('orcamento_id','=', orcamento_id)]" colspan="4" attrs="{'readonly': [('state', '=', 'F')]}" />
                         </group>
-                        <group col="2" colspan="2">                        
-                            <field name="data" required="1" colspan="2"/>
-                            <button string="Buscar Itens do Orçamento" type="object" name="buscar_itens" icon="gtk-jump-to" colspan="4"/>
-                           <!-- <button string="Imprimir Medição" type="object" name="imprime_medicao" icon="gtk-print" colspan="4"/>-->
+                        <group col="2" colspan="2">
+                            <field name="data" required="1" colspan="2" attrs="{'readonly': [('state', '=', 'F')]}"/>
+                            <button string="Buscar Itens do Orçamento" type="object" name="buscar_itens" icon="gtk-jump-to" colspan="4"  attrs="{'invisible': [('state', '=', 'F')]}" />
+                            <button string="Finalizar Medição" type="object" name="finalizar" icon="gtk-close" colspan="4" attrs="{'invisible': [('state', '=', 'F')]}" />
                         </group>
                     </group>
                     <notebook>
                         <page string="Itens da Medição">
-                            <field name="item_ids" colspan="4" nolabel="1" context="{'default_data': data}" attrs="{'readonly': [('item_ids','=', False)]}">
-                                <tree editable="bottom">
-                                    <field name="data" invisible="1" /> 
-                                    <field name="orcamento_item_id" readonly="1" /> 
-                                    <field name="codigo_completo" readonly="1"/> 
-                                    <field name="uom_id" readonly="1"/> 
-                                    <field name="quantidade" readonly="1"/> 
-                                    <field name="quantidade_planejada" /> 
-                                    <field name="quantidade_medida" on_change="onchange_quantidade_media(quantidade, quantidade_medida, False)" /> 
-                                    <field name="percentual" on_change="onchange_quantidade_media(quantidade, False, percentual)"/> 
-                                    <field name="acumulada" /> 
-                                </tree>                                
-                            </field>
-                        </page>                        
+                            <field name="item_ids" colspan="4" nolabel="1" context="{'default_data': data, 'tree_view_ref': 'construtora.project_orcamento_medicao_item_tree', 'form_view_ref': 'construtora.project_orcamento_medicao_item_form'}" attrs="{'readonly': [('item_ids','=', False)],'readonly': [('state', '=', 'F')]}" />
+                        </page>
                     </notebook>
                 </form>
             </field>
@@ -58,9 +108,9 @@
             <field name="model">project.orcamento.medicao</field>
             <field name="type">search</field>
             <field name="arch" type="xml">
-                <search string="Orçamento Medição">                    
-                    <field name="orcamento_id" />                    
-                    <field name="data" />                    
+                <search string="Orçamento Medição">
+                    <field name="orcamento_id" />
+                    <field name="data" />
                 </search>
             </field>
         </record>
@@ -73,8 +123,8 @@
         </record>
 
         <menuitem action="project_orcamento_medicao_acao"
-            id="menu_project_orcamento_mediacao" 
-            name="Orçamento Medição" 
+            id="menu_project_orcamento_mediacao"
+            name="Orçamento Medição"
             parent="project.menu_project_management"
             sequence="10"/>
 

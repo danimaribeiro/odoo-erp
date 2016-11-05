@@ -512,10 +512,11 @@ class finan_lancamento(osv.Model):
                 for cont_obj in finan_obj.contabilizacao_entrada_ids:
                     cont_obj.unlink()
 
-                partida = self.pool.get('finan.lancamento').get_partidas_dobradas(cr, uid, [lanc_id], rateio=False, context={})
+                res = self.pool.get('finan.lancamento').get_partidas_dobradas(cr, uid, [lanc_id], rateio=False, context={})
 
-                if partida:
-                    partidas.append(partida[0])
+                for partida in res:
+                    
+                    partidas.append(partida)
 
             elif tipo in ['PR','PP']:
 
@@ -526,11 +527,11 @@ class finan_lancamento(osv.Model):
 
                     lanc_id = pag_obj.id
 
-                    partida = self.pool.get('finan.lancamento').get_partidas_dobradas(cr, uid, [lanc_id], rateio=False, context={})
+                    res = self.pool.get('finan.lancamento').get_partidas_dobradas(cr, uid, [lanc_id], rateio=False, context={})
 
-                    if partida:
+                    if partida in res:
 
-                        partidas.append(partida[0])
+                        partidas.append(partida)
 
             if partidas > 0:
 

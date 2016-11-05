@@ -20,6 +20,11 @@
             sequence="2"
             groups="integra_frota.group_frota_manager,integra_frota.group_frota_staff" />
 
+        <menuitem id="menu_operacional_relatorios"
+                  name="Relatórios"
+                  parent="menu_operacional"
+                  sequence="80"/>
+
 <!--        <menuitem
             id="intega_rh_escala.menu_hr_escalas"
             parent="menu_operacional"

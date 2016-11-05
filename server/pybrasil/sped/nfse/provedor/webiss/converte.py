@@ -15,7 +15,7 @@ from .....base import DicionarioBrasil, dicionario_para_xml, xml_para_dicionario
 from ....base import Signature, gera_assinatura, tira_abertura
 
 
-def gera_rps(lista_notas, numero_lote, certificado=None):
+def gera_rps(lista_notas, numero_lote, certificado=None, municipio=None):
     prestador = lista_notas[0].prestador
 
     lote_rps = DicionarioBrasil()
@@ -64,21 +64,28 @@ def gera_rps(lista_notas, numero_lote, certificado=None):
         valores['ValorIr'] = nota.valor.retido.ir or 0
         valores['ValorCsll'] = nota.valor.retido.csll or 0
 
-        if nota.prestador.optante_simples_nacional:
+        if nota.prestador.optante_simples_nacional and municipio == '31056080000':
             valores['IssRetido'] = 2
             valores['ValorIss'] = '0.00'
             #valores['ValorIssRetido'] = 0
+            
+        elif nota.prestador.optante_simples_nacional and  municipio == '31701070000':    
+            valores['IssRetido'] = 1 if nota.valor.retido.iss != 0 else 2
+            valores['ValorIss'] = nota.valor.vr_iss or 0.00
+            #valores['ValorIssRetido'] = nota.valor.retido.iss or 0
+            
         else:
             valores['IssRetido'] = 1 if nota.valor.retido.iss != 0 else 2
             valores['ValorIss'] = nota.valor.vr_iss or 0.00
             valores['ValorIssRetido'] = nota.valor.retido.iss or 0
 
-        valores['OutrasRetencoes'] = nota.valor.retido.outras or 0
-        #valores['BaseCalculo'] = nota.valor.bc_iss or None
-
+        valores['OutrasRetencoes'] = nota.valor.retido.outras or 0        
         valores['Aliquota'] = nota.valor.al_iss / 100 or 0.00
-
-        #valores['ValorLiquidoNfse'] = nota.valor.liquido or None
+        
+        if municipio == '31701070000':    
+            valores['BaseCalculo'] = nota.valor.bc_iss or None
+            valores['ValorLiquidoNfse'] = nota.valor.liquido or None
+            
         valores['DescontoIncondicionado'] = nota.valor.desconto_incondicionado or 0
         valores['DescontoCondicionado'] = nota.valor.desconto_condicionado or 0
 

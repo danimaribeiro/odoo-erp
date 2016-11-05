@@ -352,9 +352,8 @@ class questor_contabilidade(osv.Model):
 
             order by
                 fl.data_quitacao, fl.tipo;
-            """.format(data_inicial=export_obj.data_inicial, data_final=export_obj.data_final,
-                cnpj=cnpj)
-
+            """.format(data_inicial=export_obj.data_inicial, data_final=export_obj.data_final,cnpj=cnpj)
+            #print(sql)
             cr.execute(sql)
 
             dados = cr.fetchall()
@@ -387,9 +386,9 @@ class questor_contabilidade(osv.Model):
 
             order by
                 fl.data_quitacao, fl.tipo;
-            """.format(data_inicial=export_obj.data_inicial, data_final=export_obj.data_final,
-                cnpj=cnpj)
+            """.format(data_inicial=export_obj.data_inicial, data_final=export_obj.data_final,cnpj=cnpj)
 
+            print(sql)
             cr.execute(sql)
 
             dados = cr.fetchall()
@@ -420,9 +419,9 @@ class questor_contabilidade(osv.Model):
 
             order by
                 fl.data_documento, fl.tipo;
-            """.format(data_inicial=export_obj.data_inicial, data_final=export_obj.data_final,
-                cnpj=cnpj)
+            """.format(data_inicial=export_obj.data_inicial, data_final=export_obj.data_final,cnpj=cnpj)
 
+            print(sql)
             cr.execute(sql)
 
             dados = cr.fetchall()
@@ -442,15 +441,18 @@ class questor_contabilidade(osv.Model):
                 join res_company c on c.id = fl.company_id
                 join finan_documento d on d.id = fl.documento_id
                 join sped_modelo_partida_dobrada mpd on mpd.id = d.modelo_partida_dobrada_receber_id
-                join sped_modelo_partida_dobrada_item mpdi on mpdi.modelo_id = mpd.id and mpdi.tipo = 'B'
-
+                left join sped_documento sd on sd.id = fl.sped_documento_id
+                left join sped_operacao so on so.id = sd.operacao_id
+                left join finan_contrato fc on fc.id = fl.contrato_id
             where
                 fl.data_documento between '{data_inicial}' and '{data_final}'
                 and c.cnpj_cpf like '{cnpj}%'
-                and fl.tipo = 'R';
-            """.format(data_inicial=export_obj.data_inicial, data_final=export_obj.data_final,
-                cnpj=cnpj)
+                and fl.tipo = 'R'
+                and (fl.provisionado = false or fl.provisionado = null)
+                and so.modelo_partida_dobrada_id is null;
+            """.format(data_inicial=export_obj.data_inicial, data_final=export_obj.data_final,cnpj=cnpj)
 
+            print(sql)
             cr.execute(sql)
 
             dados = cr.fetchall()
@@ -469,16 +471,20 @@ class questor_contabilidade(osv.Model):
                 finan_lancamento fl
                 join res_company c on c.id = fl.company_id
                 join finan_documento d on d.id = fl.documento_id
-                join sped_modelo_partida_dobrada mpd on mpd.id = d.modelo_partida_dobrada_pagar_id
-                join sped_modelo_partida_dobrada_item mpdi on mpdi.modelo_id = mpd.id and mpdi.tipo = 'B'
+                join sped_modelo_partida_dobrada mpd on mpd.id = d.modelo_partida_dobrada_receber_id
+                left join sped_documento sd on sd.id = fl.sped_documento_id
+                left join sped_operacao so on so.id = sd.operacao_id
+                left join finan_contrato fc on fc.id = fl.contrato_id
 
             where
                 fl.data_documento between '{data_inicial}' and '{data_final}'
                 and c.cnpj_cpf like '{cnpj}%'
-                and fl.tipo = 'P';
-            """.format(data_inicial=export_obj.data_inicial, data_final=export_obj.data_final,
-                cnpj=cnpj)
+                and fl.tipo = 'P'
+                and (fl.provisionado = false or fl.provisionado = null)
+                and so.modelo_partida_dobrada_id is null;
+            """.format(data_inicial=export_obj.data_inicial, data_final=export_obj.data_final,cnpj=cnpj)
 
+            print(sql)
             cr.execute(sql)
 
             dados = cr.fetchall()
@@ -499,7 +505,7 @@ class questor_contabilidade(osv.Model):
                 join finan_motivobaixa mb on mb.id = fl.motivo_baixa_id
 
             where
-                    fl.data_baixa between '{data_inicial}' and '{data_final}'
+                fl.data_baixa between '{data_inicial}' and '{data_final}'
                 and c.cnpj_cpf like '{cnpj}%'
                 and fl.tipo in ('P', 'R')
                 and (
@@ -510,16 +516,16 @@ class questor_contabilidade(osv.Model):
 
             order by
                 fl.data_quitacao, fl.tipo;
-            """.format(data_inicial=export_obj.data_inicial, data_final=export_obj.data_final,
-                cnpj=cnpj)
+            """.format(data_inicial=export_obj.data_inicial, data_final=export_obj.data_final,cnpj=cnpj)
 
+            print(sql)
             cr.execute(sql)
 
             dados = cr.fetchall()
 
             for ret in dados:
                 lancamento_ids.append(ret[0])
-                
+
             sql = """
             select distinct
                 l.id,
@@ -551,13 +557,14 @@ class questor_contabilidade(osv.Model):
             """
             sql = sql.format(data_inicial=export_obj.data_inicial, data_final=export_obj.data_final,cnpj=cnpj)
 
+            print(sql)
             cr.execute(sql)
 
             dados = cr.fetchall()
 
             for ret in dados:
-                lancamento_ids.append(ret[0])    
-                
+                lancamento_ids.append(ret[0])
+
 
             if len(lancamento_ids) == 0:
                 return arquivo_texto
@@ -565,14 +572,15 @@ class questor_contabilidade(osv.Model):
             lancamento_objs = self.pool.get('finan.lancamento').browse(cr, uid, lancamento_ids)
 
             for lancamento_obj in lancamento_objs:
+                if lancamento_obj.lancamento_id.id == 15089074:
+                    print(lancamento_obj.id)
                 partida_objs = lancamento_obj.get_partidas_dobradas()
 
-                print(partida_objs)
+                #print(partida_objs)
 
                 for partida_obj in partida_objs:
                     export = integracao_questor()
                     #export.cnpj_cpf = limpa_formatacao(lancamento_obj.company_id.partner_id.cnpj_cpf)
-
 
                     if lancamento_obj.data_baixa:
                         export.data_lancamento = parse_datetime(lancamento_obj.data_baixa).date()
@@ -589,10 +597,10 @@ class questor_contabilidade(osv.Model):
 
                     if lancamento_obj.tipo in ['S', 'E', 'T', 'R', 'P']:
                         export.numero_documento = lancamento_obj.numero_documento or ''
-                        
+
                     elif lancamento_obj.tipo in ['PR', 'PP']:
                         export.numero_documento = lancamento_obj.lancamento_id.numero_documento or ''
-                        
+
                     elif lancamento_obj.tipo in ['LR', 'LP']:
                         if partida_obj.numero_documento:
                             export.numero_documento =  partida_obj.numero_documento or ''
@@ -734,7 +742,7 @@ class questor_contabilidade(osv.Model):
                             linha['numero_documento'] = item_obj.lancamento_id.lancamento_id.numero_documento
                             if item_obj.lancamento_id.lancamento_id.partner_id:
                                 linha['clifor'] = item_obj.lancamento_id.lancamento_id.partner_id.name
-                                
+
                     elif item_obj.lancamento_id.tipo in ['LP', 'LR']:
                             linha['numero_documento'] = item_obj.lancamento_id.numero_documento
                             if item_obj.lancamento_id.partner_id:

@@ -49,7 +49,7 @@ synchronization with other companies, etc.
         'security/share_security.xml',
         'share_view.xml',
         'res_users_view.xml',
-        #'wizard/share_wizard_view.xml'
+        'wizard/share_wizard_view.xml'
     ],
     'installable': True,
     'web': True,

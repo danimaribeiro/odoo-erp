@@ -93,6 +93,18 @@ class stock_picking(osv.osv):
                 res[picking_obj.id] = False
 
         return res
+    
+    def _saldo_zero(self, cr, uid, ids, nome_campo, args=None, context={}):
+        res = {}
+
+        for picking_obj in self.browse(cr, uid, ids, context=context):
+            
+            if len(picking_obj.sped_documento_ids) > 0:
+                res[picking_obj.id] = True
+            else:
+                res[picking_obj.id] = False                
+            
+        return res
 
     _columns = {
         'address_id': fields.many2one('res.partner.address', u'Endereço', select=True),
@@ -106,10 +118,12 @@ class stock_picking(osv.osv):
         'tipo': fields.selection(TIPO_INTERNO, u'Tipo interno'),
         'operacao_id': fields.many2one('stock.operacao', u'Operação', select=True),
         'saldo_obra_liberado': fields.boolean(u'Saldo da obra já liberado?'),
+        'sped_documento_ids': fields.one2many('sped.documento', 'stock_picking_id', u'Notas Fiscais'),
 
         'picking_ids': fields.one2many('stock.picking', 'picking_id', u'Listas de separação derivadas'),
         'entrega_ids': fields.one2many('stock.picking', 'picking_id', u'Listas de separação derivadas', domain=[('type', '=', 'out')]),
         #'orcamento_aprovado': fields.related('sale_id', 'orcamento_aprovado', string=u'Orçamento aprovado para', store=True),
+        'vendedor_id': fields.related('sale_id', 'user_id', type='many2one',relation='res.users',string='Vendedor',store=True),
 
         'trata_locacao_notas': fields.function(_get_trata_locacao, type='boolean', string=u'Precisa gerar notas de remessa', method=True),
         'trata_locacao_baixas': fields.function(_get_trata_locacao, type='boolean', string=u'Precisa gerar movimentações de baixa', method=True),
@@ -119,6 +133,7 @@ class stock_picking(osv.osv):
         'contrato_nota_recebida_ids': fields.many2many('sped.documento', 'stock_picking_contrato_nf_recebida', 'picking_contrato_id', 'documento_id', u'NFs recebidas'),
         'contrato_inventario_ids': fields.related('finan_contrato_id', 'contrato_inventario_ids', type='one2many', relation='finan.contrato_inventario', string=u'Inventário no cliente'),
         'formato': fields.selection(FORMATO_RELATORIO, u'Formato'),
+        'saldo_zero': fields.function(_saldo_zero, type='boolean', string=u'Saldo Zero', method=True, store=True),
 
         #
         # Campos para padrão

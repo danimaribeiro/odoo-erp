@@ -26,6 +26,7 @@
         'views/finan_dashboard_view.xml',
         'views/finan_view.xml',
 
+        'views/res_currency_view.xml',
         'views/finan_formapagamento_view.xml',
         'views/finan_pagamento_view.xml',
         'views/account_payment_term.xml',
@@ -97,6 +98,7 @@
         'wizard/finan_relatorio_aging_receber.xml',
         'wizard/finan_relatorio_aging_pagar.xml',
         'wizard/finan_relatorio_plano_contas.xml',
+        'wizard/finan_atualiza_caixa_wizard.xml',
 
     ],
     'init_xml': [],

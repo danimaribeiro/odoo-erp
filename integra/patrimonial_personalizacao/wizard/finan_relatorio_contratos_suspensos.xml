@@ -13,11 +13,11 @@
                         <newline/>
                         <field name="company_id" required="1" colspan="4"  />
                         <newline/>
-                        <field name="data_inicial" required="1" />                        
+                        <field name="data_inicial" required="1" />
                         <field name="data_final" required="1" />
-                        <newline/>                        
-                        <field name="contrato_id" domain="[('company_id','=',company_id)]" />                     
-                        <newline/>                        
+                        <newline/>
+                        <field name="contrato_id" domain="[('company_id','=',company_id)]" />
+                        <newline/>
                         <field name="nome" invisible="1"/>
                         <newline/>
                         <button icon="gtk-print" string="Gerar relatório" name="gera_relatorio_contrato_suspenso" type="object" colspan="4" />
@@ -43,9 +43,15 @@
         </record>
 
         <menuitem action="finan_relatorio_contrato_suspenso_acao"
-            id="menu_finan_relatorio_contrato_suspenso" 
-            name="Contrato Suspensos" 
-            parent="finan.menu_finan_relatorios" 
+            id="menu_finan_relatorio_contrato_suspenso"
+            name="Contrato Suspensos"
+            parent="finan.menu_finan_relatorios"
+            sequence="40"/>
+
+        <menuitem action="finan_relatorio_contrato_suspenso_acao"
+            id="menu_frota_relatorio_contrato_suspenso"
+            name="Contrato Suspensos"
+            parent="integra_frota.menu_frota_relatorio"
             sequence="40"/>
 
     </data>

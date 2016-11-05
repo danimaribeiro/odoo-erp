@@ -320,7 +320,7 @@ class sped_documento(osv.Model):
                         #print('lancamento criado', lancamento_id)
                         duplicata_obj.write({'finan_lancamento_id': lancamento_id})
 
-                    elif duplicata_obj.finan_lancamento_id.situacao in ['Quitado', 'Conciliado', 'Baixado']:
+                    elif duplicata_obj.finan_lancamento_id.situacao in ['Quitado', 'Conciliado', 'Baixado'] and duplicata_obj.finan_lancamento_id.tipo in ('P', 'R'):
                         raise osv.except_osv(u'Erro!', u'Não é permitido realizar a operação, pois a duplicata %s está vinculada a um título quitado/conciliado/baixado!!' % duplicata_obj.numero)
 
                     elif duplicata_obj.finan_lancamento_id.situacao in ['A vencer', 'Vencido', 'Vence hoje']:

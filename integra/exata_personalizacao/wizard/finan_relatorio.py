@@ -23,12 +23,15 @@ class finan_relatorio(osv.osv_memory):
         'nao_provisionado': fields.boolean(u'Não provisionado'),
         'contrato_id': fields.many2one('finan.contrato', u'Contrato'),
         'parcela_id': fields.many2one('finan.contrato.condicao.parcela', u'Parcela'),
+        'agrupa_cliente': fields.boolean(u'Somente Cliente?'),
+        'imovel_id': fields.many2one('const.imovel', u'Imóvel'),
     }
 
     _defaults = {
         'provisionado': False,
         'nao_provisionado': True,
         'company_id': False,
+        'agrupa_cliente': False,
     }
 
     def gera_relatorio_fluxo_caixa_analitico_exata(self, cr, uid, ids, context={}):
@@ -41,231 +44,251 @@ class finan_relatorio(osv.osv_memory):
         provisionado = context.get('provisionado')
         nao_provisionado = context.get('nao_provisionado')
 
-        print(provisionado)
-        print(nao_provisionado)
-
         id = ids[0]
         rel_obj = self.browse(cr, uid, id)
-        data_inicial = parse_datetime(rel_obj.data_inicial).date()
-        data_final = parse_datetime(rel_obj.data_final).date()
 
-        filtro = {
-            'company_id': company_id,
-            'data_inicial': data_inicial,
-            'data_final': data_final,
-        }
-
-        rel = Report('Fluxo de Caixa', cr, uid)
-        rel.caminho_arquivo_jasper = os.path.join(JASPER_BASE_DIR, 'fluxo_mensal_diario.jrxml')
-        rel.parametros['DATA_INICIAL'] = str(data_inicial)[:10]
-        rel.parametros['DATA_FINAL'] = str(data_final)[:10]
-        rel.parametros['TIPO_ANALISE'] = rel_obj.opcoes_caixa
-        rel.parametros['DETALHE_SALDO_BANCO'] = 'saldo_financeiro_fluxo_caixa_exata.jasper'
-        rel.outputFormat = rel_obj.formato
-
-        if company_id:
-            rel.parametros['COMPANY_ID'] = str(company_id)
+        if rel_obj.formato == 'pdf':
+            formato = 'pdf'
         else:
-            company_id_default = self.pool.get('res.company')._company_default_get(cr, uid, 'finan.relatorio')
-            rel.parametros['COMPANY_ID'] = '%'
+            formato = 'xlsx'
 
         if rel_obj.opcoes_caixa == '1':
-            filtro['tipo'] = "('Q')"
-            rel.parametros['TIPO'] = "('Q')"
+            tipo_analise = u'REALIZADO'
+            selecao = u'DATA DE QUITAÇÃO'
         elif rel_obj.opcoes_caixa == '2':
-            filtro['tipo'] = "('Q','V')"
-            rel.parametros['TIPO'] = "('Q','V')"
+            tipo_analise = u'COMPROMETIDO'
+            selecao = u'DATA VENCIMENTO'
         else:
-            filtro['tipo'] = "('V')"
-            rel.parametros['TIPO'] = "('V')"
+            tipo_analise = u'A REALIZAR'
+            selecao = u'QUITAÇÃO E VENCIMENTO'
 
-        #
-        # SALDO ANTERIOR
-        #
+        sql, sql_relatorio_SUB, saldo_anterior, filtro, filtro_banco = self.sql_fluxo_caixa_analitico(cr, uid, ids, context=context)
 
-        sql_saldo = """
-                select
-                    coalesce(sum(f.valor_entrada) - sum(f.valor_saida), 0) as diferenca
-                from
-                    finan_fluxo_mensal_diario f
-                where
-                    f.data  < '{data_inicial}'
-                    and f.tipo in {tipo} """
-        if company_id:
-            sql_saldo += """
-                and
-                    f.company_id = {company_id} """
-
-        if nao_provisionado != provisionado:
-            sql_saldo += """
-                and f.provisionado = """ + str(provisionado)
-
-        sql_saldo = sql_saldo.format(**filtro)
-        saldo_anterior = 0
-        cr.execute(sql_saldo)
+        cr.execute(sql)
         dados = cr.fetchall()
 
-        if len(dados):
-            saldo_anterior += dados[0][0]
+        if len(dados) == 0:
+            raise osv.except_osv(u'Atenção', u'Não há dados para gerar o relatório, com base nos parâmetros informados!')
 
-        rel.parametros['SALDO_ANTERIOR'] = saldo_anterior
+        grupos_empresa = {}
+        empresas = []
+        empresa_anterior = None
+        linhas = []
 
-        #
-        # FLUXO CAIXA
-        #
+        bancos = []
+        banco_anterior = None
 
-        if rel_obj.periodo == '1':
-            sql_relatorio = """
-                select
-                    f.mes,"""
-        else:
-            sql_relatorio = """
-                select
-                    f.data,"""
+        grupo_totais_mes_datas = {}
+        totais_mes_datas = []
+        mes_data = None
 
-        sql_relatorio += """
-                    sum(f.valor_entrada) as valor_entrada,
-                    sum(f.valor_saida) as valor_saida,
-                    sum(f.valor_entrada) - sum(f.valor_saida) as diferenca"""
+        if len(rel_obj.res_partner_bank_ids) > 0:
+            for banco_obj in rel_obj.res_partner_bank_ids:
+                if banco_obj.id != banco_anterior:
+                    banco = DicionarioBrasil()
+                    banco['tipo'] = banco_obj.state
+                    banco['nome'] = banco_obj.descricao
+                    bancos.append(banco)
+                    banco_anterior = banco_obj.id
 
-        if rel_obj.periodo == '3':
-            sql_relatorio += """,
-                    fd.nome,
-                    fl.tipo,
-                    case
-                    when fl.tipo = 'T' and f.id < 0 then bad.nome
-                    when fl.tipo = 'T' and f.id > 0 then bac.nome
-                    when fl.tipo not in ('P','R') or fl.situacao = 'Quitado' then bad.nome
-                    else
-                    ba.nome end as banco,
-                    case
-                    when rp.name is not NUll then
-                    rp.name
-                    else
-                    coalesce(fl.complemento,'') end as parceiro"""
 
-        sql_relatorio += """
-                from
-                    finan_fluxo_mensal_diario f
-                    join res_company c on c.id = f.company_id
-                    left join res_company cc on cc.id = c.parent_id
-                    left join res_company ccc on ccc.id = cc.parent_id
-                    join finan_lancamento fl on fl.id = f.lancamento_id
-                    left join res_partner rp on rp.id = fl.partner_id
-                    left join finan_documento fd on fd.id = fl.documento_id
-                    left join res_partner_bank bad on bad.id = fl.res_partner_bank_id
-                    left join res_partner_bank bac on bac.id = fl.res_partner_bank_creditar_id"""
+        if rel_obj.periodo in ['1','2']:
+            saldo = D(saldo_anterior)
 
-        if rel_obj.periodo not in ['1','2']:
+            print('dados', dados)
 
-            if rel_obj.opcoes_caixa == '1':
-                    sql_relatorio += """
-                        left join res_partner_bank ba on ba.id = fl.res_partner_bank_id"""
+            for company_id, cnpj_cpf, raiz_cnpj, empresa, mes, mes_formatado, valor_entrada, valor_saida, diferenca in dados:
+                linha = DicionarioBrasil()
+                linha['mes'] = mes_formatado
+                linha['valor_entrada'] = D(valor_entrada or 0)
+                linha['valor_saida'] = D(valor_saida or 0)
+                linha['diferenca'] = D(diferenca or 0)
+                saldo += D(valor_entrada or 0) - D(valor_saida or 0)
+                linha['saldo'] = saldo
+
+                linhas.append(linha)
+
+                if empresa != empresa_anterior:
+                    grupo_empresa = DicionarioBrasil()
+                    grupo_empresa['nome'] = empresa
+                    grupo_empresa['cnpj_cpf'] = cnpj_cpf
+                    grupo_empresa['linhas'] = [linha]
+                    empresas.append(grupo_empresa)
+                    grupos_empresa[empresa] = grupo_empresa
+                    empresa_anterior = empresa
+                else:
+                    grupo_empresa = grupos_empresa[empresa]
+                    grupo_empresa.linhas.append(linha)
+
+                if mes_data != mes:
+                    if mes in grupo_totais_mes_datas:
+                        total_mes_data = grupo_totais_mes_datas[mes]
+                        total_mes_data['valor_entrada'] +=  D(valor_entrada or 0)
+                        total_mes_data['valor_saida'] += D(valor_saida or 0)
+                        total_mes_data['diferenca'] += D(diferenca or 0)
+                        total_mes_data['saldo'] += D(saldo or 0)
+
+                    else:
+                        total_mes_data = DicionarioBrasil()
+                        total_mes_data['mes_data'] = mes_formatado
+                        total_mes_data['valor_entrada'] = D(valor_entrada or 0)
+                        total_mes_data['valor_saida'] = D(valor_saida or 0)
+                        total_mes_data['diferenca'] = D(diferenca or 0)
+                        total_mes_data['saldo'] = D(saldo or 0)
+                        totais_mes_datas.append(total_mes_data)
+                        grupo_totais_mes_datas[mes] = total_mes_data
+                        mes_data = mes
+                else:
+                    total_mes_data = grupo_totais_mes_datas[mes]
+                    total_mes_data['valor_entrada'] +=  D(valor_entrada or 0)
+                    total_mes_data['valor_saida'] += D(valor_saida or 0)
+                    total_mes_data['diferenca'] += linha.diferenca
+                    total_mes_data['saldo'] += saldo
+
+
+            for empresa in empresas:
+                empresa['total'] = DicionarioBrasil()
+                empresa.total['valor_entrada'] = D(0)
+                empresa.total['valor_saida'] = D(0)
+                empresa.total['diferenca'] = D(0)
+                empresa.total['saldo'] = D(0)
+                empresa.total['saldo_anterior'] = formata_valor(D(saldo_anterior))
+
+                for linha in empresa.linhas:
+                    empresa.total.valor_entrada += linha.valor_entrada
+                    empresa.total.valor_saida += linha.valor_saida
+                    empresa.total.diferenca += linha.diferenca
+                    empresa.total.saldo += linha.saldo
+
+                    linha.valor_entrada = formata_valor(linha.valor_entrada)
+                    linha.valor_saida  = formata_valor(linha.valor_saida)
+                    linha.diferenca     = formata_valor(linha.diferenca)
+                    linha.saldo     = formata_valor(linha.saldo)
+
+                empresa.total.valor_entrada = formata_valor(empresa.total.valor_entrada)
+                empresa.total.valor_saida  = formata_valor(empresa.total.valor_saida)
+                empresa.total.diferenca     = formata_valor(empresa.total.diferenca)
+                empresa.total.saldo     = formata_valor(empresa.total.saldo)
+
+            total_geral = DicionarioBrasil()
+            total_geral['valor_entrada'] = D(0)
+            total_geral['valor_saida'] = D(0)
+            total_geral['diferenca'] = D(0)
+            total_geral['saldo'] = D(0)
+            total_geral['saldo_anterior'] = formata_valor(D(saldo_anterior))
+            for total_mes_data in totais_mes_datas:
+                total_geral.valor_entrada += total_mes_data.valor_entrada
+                total_geral.valor_saida += total_mes_data.valor_saida
+                total_geral.diferenca += total_mes_data.diferenca
+                total_geral.saldo += total_mes_data.saldo
+
+                total_mes_data.valor_entrada = formata_valor(total_mes_data.valor_entrada)
+                total_mes_data.valor_saida = formata_valor(total_mes_data.valor_saida)
+                total_mes_data.diferenca = formata_valor(total_mes_data.diferenca)
+                total_mes_data.saldo = formata_valor(total_mes_data.saldo)
+
+            total_geral.valor_entrada = formata_valor(total_geral.valor_entrada)
+            total_geral.valor_saida = formata_valor(total_geral.valor_saida)
+            total_geral.diferenca = formata_valor(total_geral.diferenca)
+            total_geral.saldo = formata_valor(total_geral.saldo)
+
+            dados = {
+                'data_inicial': formata_data(rel_obj.data_inicial),
+                'data_final': formata_data(rel_obj.data_inicial),
+                'empresas': empresas,
+                'tipo_analise': tipo_analise,
+                'selecao': selecao,
+                'bancos': bancos,
+                'totais_mes_datas': totais_mes_datas,
+                'total_geral': total_geral,
+            }
+            if rel_obj.periodo  == '1':
+                dados['titulo'] = u'RELATÓRIO DE FLUXO DE CAIXA MENSAL',
+                nome_arquivo = JASPER_BASE_DIR + 'finan_fluxo_caixa_mensal_exata.ods'
+                relatorio = u'fluxo_caixa_mensal.'
             else:
-                sql_relatorio += """
-                    left join res_partner_bank ba on ba.id = fl.sugestao_bank_id"""
-
-        sql_relatorio += """
-                where
-                    f.data between '{data_inicial}' and '{data_final}'
-                    and f.tipo in {tipo} """
-
-        if company_id:
-            sql_relatorio += """
-                    and (
-                       c.id = {company_id}
-                       or cc.id = {company_id}
-                       or ccc.id = {company_id}
-                    )"""
-
-        if nao_provisionado != provisionado:
-            sql_relatorio += """
-               and fl.provisionado = """ + str(provisionado)
-
-        if rel_obj.opcoes_caixa == '2':
-            if rel_obj.res_partner_bank_id:
-                sql_relatorio += 'and fl.sugestao_bank_id = ' + str(rel_obj.res_partner_bank_id.id)
+                nome_arquivo = JASPER_BASE_DIR + 'finan_fluxo_caixa_diario_exata.ods'
+                dados['titulo'] = u'RELATÓRIO DE FLUXO DE CAIXA DIÁRIO'
+            relatorio = u'fluxo_caixa_diario.'
         else:
-            if rel_obj.res_partner_bank_id:
-                sql_relatorio += 'and (fl.res_partner_bank_id = ' + str(rel_obj.res_partner_bank_id.id)
-                sql_relatorio += ' or fl.res_partner_bank_creditar_id = ' + str(rel_obj.res_partner_bank_id.id)
-                sql_relatorio += ')'
 
-        if rel_obj.periodo == '1':
-            sql_relatorio += """
-                group by
-                    c.id,
-                    f.mes
+            saldo = D(saldo_anterior)
+            for company_id, cnpj_cpf, raiz_cnpj, empresa, data, valor_entrada, valor_saida, diferenca, numero_documento, tipo_documento, tipo, cliente in dados:
+                linha = DicionarioBrasil()
+                linha['data'] = formata_data(data)
+                linha['numero_documento'] = numero_documento
+                linha['tipo_documento'] = tipo_documento
+                linha['tipo'] = tipo
+                linha['cliente'] = cliente
+                linha['valor_entrada'] = D(valor_entrada or 0)
+                linha['valor_saida'] = D(valor_saida or 0)
+                linha['diferenca'] = D(diferenca or 0)
+                saldo += D(valor_entrada or 0) - D(valor_saida or 0)
+                linha['saldo'] = saldo
 
-                order by
-                    f.mes"""
-        elif rel_obj.periodo == '2':
-            sql_relatorio += """
-                group by
-                    c.id,
-                    f.data
+                linhas.append(linha)
 
-                order by
-                    f.data;
-            """
-        else:
-            sql_relatorio += """
-                group by
-                    c.id,
-                    f.data,
-                    fd.nome,
-                    fl.tipo,
-                    banco,
-                    parceiro
+                if empresa != empresa_anterior:
+                    grupo_empresa = DicionarioBrasil()
+                    grupo_empresa['nome'] = empresa
+                    grupo_empresa['cnpj_cpf'] = cnpj_cpf
+                    grupo_empresa['linhas'] = [linha]
+                    empresas.append(grupo_empresa)
+                    grupos_empresa[empresa] = grupo_empresa
+                    empresa_anterior = empresa
+                else:
+                    grupo_empresa = grupos_empresa[empresa]
+                    grupo_empresa.linhas.append(linha)
 
-                order by
-                    f.data,
-                    valor_entrada desc,
-                    valor_saida desc;
-            """
+            for empresa in empresas:
+                empresa['total'] = DicionarioBrasil()
+                empresa.total['valor_entrada'] = D(0)
+                empresa.total['valor_saida'] = D(0)
+                empresa.total['diferenca'] = D(0)
+                empresa.total['saldo'] = D(0)
+                empresa.total['saldo_anterior'] = formata_valor(D(saldo_anterior))
 
-        sql = sql_relatorio.format(**filtro)
+                for linha in empresa.linhas:
+                    empresa.total.valor_entrada += linha.valor_entrada
+                    empresa.total.valor_saida += linha.valor_saida
+                    empresa.total.diferenca += linha.diferenca
+                    empresa.total.saldo += linha.saldo
 
-        if rel_obj.periodo == '1':
-            rel.parametros['PERIODO'] = 'MENSAL'
-            rel.parametros['DETALHE'] = 'fluxo_mensal_lancamento.jasper'
-            rel.parametros['SQL_RELATORIO'] = sql
-            relatorio = u'fluxo_caixa_mensal_'
+                    linha.valor_entrada = formata_valor(linha.valor_entrada)
+                    linha.valor_saida  = formata_valor(linha.valor_saida)
+                    linha.diferenca     = formata_valor(linha.diferenca)
+                    linha.saldo     = formata_valor(linha.saldo)
 
-        elif rel_obj.periodo == '2':
-            rel.parametros['PERIODO'] = 'DIARIO'
-            rel.parametros['DETALHE'] = 'fluxo_diario_lancamento.jasper'
-            rel.parametros['SQL_RELATORIO'] = sql
-            relatorio = u'fluxo_caixa_diario_'
+                empresa.total.valor_entrada = formata_valor(empresa.total.valor_entrada)
+                empresa.total.valor_saida  = formata_valor(empresa.total.valor_saida)
+                empresa.total.diferenca     = formata_valor(empresa.total.diferenca)
+                empresa.total.saldo     = formata_valor(empresa.total.saldo)
 
-        else:
-            rel.parametros['PERIODO'] = 'ANALITICO'
-            rel.parametros['DETALHE'] = 'fluxo_caixa_analitico_exata.jasper'
-            rel.parametros['SQL_RELATORIO'] = sql
-            relatorio = u'fluxo_caixa_analitico_'
 
-        if rel_obj.saldo_bancario:
-            rel.parametros['SALDO_BANCO'] = True
-        else:
-            rel.parametros['SALDO_BANCO'] = False
+            dados = {
+                'data_inicial': formata_data(rel_obj.data_inicial),
+                'data_final': formata_data(rel_obj.data_inicial),
+                'empresas': empresas,
+                'tipo_analise': tipo_analise,
+                'selecao': selecao,
+                'bancos': bancos,
+            }
 
-        if rel_obj.zera_saldo:
-            rel.parametros['ZERA_SALDO'] = True
-        else:
-            rel.parametros['ZERA_SALDO'] = False
+            nome_arquivo = JASPER_BASE_DIR + 'finan_fluxo_caixa_analitico_exata.ods'
+            dados['titulo']= u'RELATÓRIO DE FLUXO DE CAIXA ANALITICO'
+            relatorio = u'fluxo_caixa_analitico.'
 
-        pdf, formato = rel.execute()
+        planilha = self.pool.get('lo.modelo').gera_modelo_novo_avulso(cr, uid, nome_arquivo, dados, formato=formato)
 
         dados = {
-            'nome': relatorio + str(agora())[:16].replace(' ','_' ).replace('-','_') + '.' + rel_obj.formato,
-            'arquivo': base64.encodestring(pdf)
+            'nome': relatorio + formato,
+            'arquivo': planilha
         }
         rel_obj.write(dados)
 
         return True
 
     def gera_relatorio_segurado(self, cr, uid, ids, context={}):
-
         product_pool = self.pool.get('product.product')
 
         id = ids[0]
@@ -302,7 +325,6 @@ class finan_relatorio(osv.osv_memory):
         contratos = {}
         saldo_total = D(0)
         for cliente, cnpj_cpf, data_nascimento, sexo, lote, quadra, contrato_id, numero_contrato, numero_parcelas, saldo_devedor  in dados:
-
             linha = DicionarioBrasil()
 
             linha['cliente'] = cliente
@@ -378,7 +400,7 @@ class finan_relatorio(osv.osv_memory):
 
             where
                 p.contrato_id = {contrato_id}
-                and l.situacao in ('Vencido', 'Vence hoje')
+                -- and l.situacao in ('Vencido', 'Vence hoje')
                 {filtro_parcela}
 
             order by
@@ -403,6 +425,8 @@ class finan_relatorio(osv.osv_memory):
         rel.parametros['SQL'] = sql_relatorio.format(**filtro)
         rel.outputFormat = rel_obj.formato
 
+        print(sql_relatorio.format(**filtro))
+
         pdf, formato = rel.execute()
 
         dados = {
@@ -413,5 +437,575 @@ class finan_relatorio(osv.osv_memory):
 
         return True
 
+    def gera_relatorio_contas_exata(self, cr, uid, ids, context={}, tipo='R'):
+        if not ids:
+            return {}
+
+        company_id = context['company_id']
+        data_inicial = context['data_inicial']
+        data_final = context['data_final']
+        situacao = context['situacao']
+        partner_id = context.get('partner_id', False)
+        provisionado = context.get('provisionado')
+        ativo = context.get('ativo')
+        formato = context.get('formato')
+
+        filtro = {
+            'company_id': company_id,
+            'data_inicial': data_inicial,
+            'data_final': data_final,
+            'tipo': tipo[0],
+            'rateio': '',
+        }
+
+        if situacao == '1':
+            sql_situacao = u"('Vencido')"
+            SITUACAO = u'Vencido'
+
+        elif situacao == '2':
+            sql_situacao = u"('Vencido', 'Vence hoje')"
+            SITUACAO = u'Vencido + Hoje'
+
+        elif situacao == '3':
+            sql_situacao = u"('A vencer')"
+            SITUACAO = u'A Vencer'
+
+        elif situacao == '4':
+            sql_situacao = u"('A vencer', 'Vencido', 'Vence hoje')"
+            SITUACAO = u'Todos em aberto'
+
+        elif situacao == '5':
+            sql_situacao = u"('Quitado', 'Conciliado', 'A vencer', 'Vencido', 'Vence hoje')"
+            SITUACAO = u'Liquidadas'
+
+        else:
+            sql_situacao = u"('Quitado', 'Conciliado', 'A vencer', 'Vencido', 'Vence hoje')"
+            SITUACAO = u'Registrados'
+
+        for rel_obj in self.browse(cr, uid, ids):
+            texto_filtro = u''
+            if len(rel_obj.res_partner_bank_ids):
+                bancos_ids = []
+
+                for banco_obj in rel_obj.res_partner_bank_ids:
+                    bancos_ids.append(banco_obj.id)
+                    #banco_obj = self.pool.get('res.partner.bank').browse(cr, uid, banco_obj.id)
+                    texto_filtro += u', ' + banco_obj.nome or ''
+
+            sql_relatorio = """
+                select
+                   l.id as lancamento,
+                   coalesce(l.numero_documento, '') as numero_documento,
+                   l.data_documento as data_documento,
+                   l.data_vencimento as data_vencimento,
+                   l.data_quitacao as data_quitacao,
+                   coalesce(fcp.valor_capital, coalesce(l.valor_documento, 0.00)) {rateio} as valor_documento,
+                   coalesce(l.valor_desconto, 0.00) {rateio} as valor_desconto,
+                   coalesce(
+                   case
+                   when l.valor_juros = 0 and l.situacao not in ('Quitado', 'Conciliado', 'Baixado', 'Baixado parcial') then
+                   l.valor_juros_previsto
+                   else
+                   l.valor_juros
+                   end, 0.00) {rateio} as valor_juros,
+
+                   coalesce(
+                   case
+                   when l.valor_multa = 0 and l.situacao not in ('Quitado', 'Conciliado', 'Baixado', 'Baixado parcial') then
+                   l.valor_multa_prevista
+                   else
+                   l.valor_multa
+                   end, 0.00) {rateio} as valor_multa,
+
+                   coalesce(l.valor, 0.00) {rateio} as valor,
+                   coalesce(l.valor_saldo, 0.00) {rateio} as valor_saldo,
+                   case
+                        when fcp.valor_capital is not null then coalesce(l.valor_saldo, 0) - coalesce(fcp.valor_capital, 0)
+                        else 0
+                    end {rateio} as valor_contrato_correcao,
+                   coalesce(l.nosso_numero, '') as nosso_numero,
+                   coalesce(p.razao_social, '') || ' | ' || coalesce(p.name, '') || ' | ' || coalesce(p.cnpj_cpf, '') as cliente,
+                   coalesce(p.fone, '') || ' - ' || coalesce(p.celular, '') as contato,
+                   coalesce(p.email_nfe, '') as email_nfe,
+                   c.name as unidade,
+                   coalesce(l.situacao, '') as situacao,
+                   coalesce(cf.codigo_completo, '') as conta_codigo,
+                   cf.nome as conta_nome,
+                   l.provisionado,
+                   case
+                   when l.data_vencimento < current_date then
+                   current_date - l.data_vencimento
+                   else
+                   0 end as data_atraso"""
+            if rel_obj.filtrar_rateio:
+                sql_relatorio += """,
+                   fcc.nome as centro_custo,
+                   a.name as projeto,
+                   ba.nome as banco
+                """
+
+            sql_relatorio += """
+                   from finan_lancamento l
+                   join res_partner p on p.id = l.partner_id
+                   join res_company c on c.id = l.company_id
+                   left join res_company cc on cc.id = c.parent_id
+                   left join res_company ccc on ccc.id = cc.parent_id
+                   left join finan_contrato_condicao_parcela fcp on fcp.id = l.finan_contrato_condicao_parcela_id"""
+
+            if rel_obj.filtrar_rateio:
+                sql_relatorio += """
+                   join finan_lancamento_rateio_geral_folha lr on lr.lancamento_id = l.id """
+
+                filtro['rateio'] = '* (coalesce(lr.porcentagem, 0) / 100.00)'
+
+            if rel_obj.filtrar_rateio:
+                sql_relatorio += """
+                   left join finan_conta cf on cf.id = lr.conta_id"""
+                   #left join finan_conta pfc on pfc.id = cf.parent_id"""
+            else:
+                sql_relatorio += """
+                   left join finan_conta cf on cf.id = l.conta_id"""
+                   #left join finan_conta pfc on pfc.id = cf.parent_id"""
+
+            if rel_obj.filtrar_rateio:
+                sql_relatorio += """
+                   left join finan_centrocusto fcc on fcc.id = lr.centrocusto_id
+                   left join project_project pp on pp.id = lr.project_id
+                   left join account_analytic_account a on a.id = pp.analytic_account_id
+                   left join res_partner_bank ba on ba.id = l.sugestao_bank_id"""
+
+            elif rel_obj.imovel_id:
+                sql_relatorio += """
+                    left join finan_contrato ci on (ci.id = l.contrato_id or ci.id = l.contrato_imovel_id)
+                """
+
+            if situacao < '5':
+                sql_relatorio += """
+                   where l.tipo = '{tipo}'
+                   and l.data_vencimento between '{data_inicial}' and '{data_final}'
+                   and l.situacao in """ + sql_situacao
+
+                if len(rel_obj.res_partner_bank_ids):
+                    sql_relatorio += 'and l.sugestao_bank_id in '  +  str(tuple(bancos_ids)).replace(',)', ')')
+
+            elif situacao == '5' and not rel_obj.agrupa_cliente:
+                sql_relatorio += """
+                   where l.tipo = '{tipo}'
+                   and exists(select lp.id from finan_lancamento lp where lp.lancamento_id = l.id and lp.tipo in ('PP', 'PR') and lp.data_quitacao between '{data_inicial}' and '{data_final}')"""
+
+                if len(rel_obj.res_partner_bank_ids):
+                    sql_relatorio += 'and l.res_partner_bank_id in'   +  str(tuple(bancos_ids)).replace(',)', ')')
+            else:
+                if rel_obj.agrupa_cliente:
+                    sql_relatorio += """
+                       where l.tipo = '{tipo}'
+                       and l.data_documento between '{data_inicial}' and '{data_final}'"""
+                else:
+                    sql_relatorio += """
+                       where l.tipo = '{tipo}'
+                       and l.data_documento between '{data_inicial}' and '{data_final}'
+                       and l.situacao in """ + sql_situacao
+
+            if rel_obj.company_id:
+                sql_relatorio += """
+                   and (
+                       c.id = {company_id}
+                       or cc.id = {company_id}
+                       or ccc.id = {company_id}
+                   )
+                """
+
+            if rel_obj.dias_atraso:
+                sql_relatorio +="""
+                    and current_date - l.data_vencimento = """ + str(rel_obj.dias_atraso)
+
+            if rel_obj.sem_nf:
+                sql_relatorio +="""
+                    and sped_documento_id is null"""
+
+            if partner_id:
+                sql_relatorio += """
+                   and l.partner_id = """ + str(partner_id)
+
+            if ativo != provisionado:
+                sql_relatorio += """
+                   and l.provisionado = """ + str(provisionado)
+
+            if rel_obj.formapagamento_id:
+                sql_relatorio += """
+                   and l.formapagamento_id = """ + str(rel_obj.formapagamento_id.id)
+
+            if rel_obj.filtrar_rateio:
+                if rel_obj.centrocusto_id:
+                    sql_relatorio += """
+                       and lr.centrocusto_id = """ + str(rel_obj.centrocusto_id.id)
+
+                if rel_obj.project_id:
+                    sql_relatorio += """
+                       and lr.project_id = """ + str(rel_obj.project_id.id)
+
+                if rel_obj.conta_id:
+                    sql_relatorio += """
+                       and cf.codigo_completo like '""" + rel_obj.conta_id.codigo_completo + """%'"""
+
+            elif rel_obj.imovel_id:
+                sql_relatorio += """
+                    and ci.imovel_id = {imovel_id}
+                """.format(imovel_id=rel_obj.imovel_id.id)
+
+            if rel_obj.agrupa_data_vencimento:
+                sql_relatorio += """
+                        order by c.name, l.situacao,l.data_vencimento, p.razao_social, p.name, p.cnpj_cpf, cf.codigo_completo desc;"""
+
+            elif rel_obj.agrupa_cliente:
+                sql_relatorio += """
+                        order by c.name, p.razao_social, p.name, p.cnpj_cpf, l.data_vencimento, cf.codigo_completo desc;"""
+
+            else:
+                sql_relatorio += """
+                        order by c.name, l.situacao, p.razao_social, p.name, p.cnpj_cpf, l.data_vencimento, cf.codigo_completo desc;"""
+
+
+            sql_relatorio = sql_relatorio.format(**filtro)
+            print(sql_relatorio)
+            cr.execute(sql_relatorio)
+            dados = cr.fetchall()
+
+            dados_relatorio = {
+                'data_inicial': formata_data(rel_obj.data_inicial),
+                'data_final': formata_data(rel_obj.data_final),
+                'banco': texto_filtro,
+                'empresas': [],
+                'total_geral': [],
+                'imprime_rel': True,
+                'empresa_nome': 'Todas',
+            }
+
+            if len(dados) == 0:
+                dados_relatorio['imprime_rel'] = False
+                if rel_obj.company_id:
+                    dados_relatorio['empresa_nome'] = rel_obj.company_id.partner_id.name
+
+            else:
+                grupos_empresa = {}
+                empresas = []
+                empresa_anterior = None
+                situacao_anterior = None
+                cliente_anterior = None
+                linhas = []
+
+                if not rel_obj.filtrar_rateio:
+                    for lancamento_id, numero_documento, data_documento, data_vencimento, data_quitacao, valor_documento, valor_desconto, valor_juros, valor_multa, valor , valor_saldo, valor_contrato_correcao, nosso_numero, cliente, contato, email_nfe, empresa, situacao, codigo_conta, conta_nome, provisionado, data_atraso  in dados:
+                        linha = DicionarioBrasil()
+                        linha['numero_documento'] = numero_documento
+                        linha['data_documento'] = formata_data(data_documento)
+                        linha['data_vencimento'] = formata_data(data_vencimento)
+                        linha['data_quitacao'] = formata_data(data_quitacao)
+                        linha['valor_documento'] = D(valor_documento or 0)
+                        linha['valor_desconto'] = D(valor_desconto or 0)
+                        linha['valor_juros'] = D(valor_juros or 0)
+                        linha['valor_multa'] = D(valor_multa or 0)
+                        linha['valor'] = D(valor or 0)
+                        linha['valor_saldo'] = D(valor_saldo or 0)
+                        linha['valor_contrato_correcao'] = D(valor_contrato_correcao or 0)
+                        linha['valor_saldo_correcao'] = D(valor_saldo or 0) + D(valor_juros or 0) + D(valor_multa or 0)
+                        linha['nosso_numero'] = nosso_numero
+                        linha['cliente'] = cliente + u' / ' + email_nfe
+                        linha['situacao'] = situacao
+                        linha['codigo_conta'] = codigo_conta
+                        linha['conta_nome'] = conta_nome
+                        linha['provisionado'] = 'X' if provisionado else ''
+                        linha['data_atraso'] = data_atraso
+
+                        linhas.append(linha)
+
+                        if empresa != empresa_anterior:
+                            grupo_empresa = DicionarioBrasil()
+                            grupo_empresa['nome'] = empresa
+                            grupo_empresa['situacoes'] = []
+                            grupo_empresa['grupos_situacao'] = {}
+                            empresas.append(grupo_empresa)
+                            grupos_empresa[empresa] = grupo_empresa
+                            empresa_anterior = empresa
+                            situacao_anterior = None
+                            cliente_anterior = None
+
+                        else:
+                            grupo_empres = grupos_empresa[empresa]
+
+                        if situacao != situacao_anterior:
+                            grupo_situacao = DicionarioBrasil()
+                            grupo_situacao['nome'] = situacao
+                            grupo_situacao['clientes'] = []
+                            grupo_situacao['grupos_cliente'] = {}
+                            grupo_empresa['situacoes'].append(grupo_situacao)
+                            grupo_empresa['grupos_situacao'][situacao] = grupo_situacao
+                            situacao_anterior = situacao
+                            cliente_anterior = None
+                        else:
+                            grupo_situacao = grupo_empresa['grupos_situacao'][situacao]
+
+                        if cliente != cliente_anterior:
+                            grupo_cliente = DicionarioBrasil()
+                            grupo_cliente['nome'] = cliente + u' / ' + email_nfe
+                            grupo_cliente['linhas'] = [linha]
+                            grupo_situacao['clientes'].append(grupo_cliente)
+                            grupo_situacao['grupos_cliente'][cliente] = grupo_cliente
+                            cliente_anterior = cliente
+                        else:
+                            grupo_cliente = grupo_situacao['grupos_cliente'][cliente]
+                            grupo_cliente.linhas.append(linha)
+
+                else:
+                    for lancamento_id, numero_documento, data_documento, data_vencimento, data_quitacao, valor_documento, valor_desconto, valor_juros, valor_multa, valor , valor_saldo, valor_contrato_correcao, nosso_numero, cliente, contato, email_nfe, empresa, situacao, codigo_conta, conta_nome, provisionado, data_atraso, centro_custo, projeto, banco  in dados:
+                        linha = DicionarioBrasil()
+                        linha['numero_documento'] = numero_documento
+                        linha['data_documento'] = formata_data(data_documento)
+                        linha['data_vencimento'] = formata_data(data_vencimento)
+                        linha['data_quitacao'] = formata_data(data_quitacao)
+                        linha['valor_documento'] = D(valor_documento or 0)
+                        linha['valor_desconto'] = D(valor_desconto or 0)
+                        linha['valor_juros'] = D(valor_juros or 0)
+                        linha['valor_multa'] = D(valor_multa or 0)
+                        linha['valor'] = D(valor or 0)
+                        linha['valor_saldo'] = D(valor_saldo or 0)
+                        linha['valor_contrato_correcao'] = D(valor_contrato_correcao or 0)
+                        linha['valor_saldo_correcao'] = D(valor_saldo or 0) + D(valor_juros or 0) + D(valor_multa or 0)
+                        linha['nosso_numero'] = nosso_numero
+                        linha['cliente'] = cliente + u' / ' + email_nfe
+                        linha['situacao'] = situacao
+                        linha['codigo_conta'] = codigo_conta
+                        linha['conta_nome'] = conta_nome
+                        linha['provisionado'] = provisionado
+                        linha['data_atraso'] = data_atraso
+                        linha['centro_custo'] = centro_custo
+                        linha['projeto'] = projeto
+                        linha['banco'] = banco
+
+                        linhas.append(linha)
+
+                        if empresa != empresa_anterior:
+                            grupo_empresa = DicionarioBrasil()
+                            grupo_empresa['nome'] = empresa
+                            grupo_empresa['situacoes'] = []
+                            grupo_empresa['grupos_situacao'] = {}
+                            empresas.append(grupo_empresa)
+                            grupos_empresa[empresa] = grupo_empresa
+                            empresa_anterior = empresa
+                            situacao_anterior = None
+                            cliente_anterior = None
+
+                        else:
+                            grupo_empresa = grupos_empresa[empresa]
+
+                        if situacao != situacao_anterior:
+                            grupo_situacao = DicionarioBrasil()
+                            grupo_situacao['nome'] = situacao
+                            grupo_situacao['clientes'] = []
+                            grupo_situacao['grupos_cliente'] = {}
+                            grupo_empresa['situacoes'].append(grupo_situacao)
+                            grupo_empresa['grupos_situacao'][situacao] = grupo_situacao
+                            situacao_anterior = situacao
+                            cliente_anterior = None
+                        else:
+                            grupo_situacao = grupo_empresa['grupos_situacao'][situacao]
+
+                        if cliente != cliente_anterior:
+                            grupo_cliente = DicionarioBrasil()
+                            grupo_cliente['nome'] = cliente + u' / ' + email_nfe
+                            grupo_cliente['linhas'] = [linha]
+                            grupo_situacao['clientes'].append(grupo_cliente)
+                            grupo_situacao['grupos_cliente'][cliente] = grupo_cliente
+                            cliente_anterior = cliente
+                        else:
+                            grupo_cliente = grupo_situacao['grupos_cliente'][cliente]
+                            grupo_cliente.linhas.append(linha)
+
+                #
+                # soma subtotais aqui
+                #
+
+                total_geral = DicionarioBrasil()
+                total_geral['valor_documento'] = D(0)
+                total_geral['valor_desconto'] = D(0)
+                total_geral['valor_juros'] = D(0)
+                total_geral['valor_multa'] = D(0)
+                total_geral['valor'] = D(0)
+                total_geral['valor_saldo'] = D(0)
+                total_geral['valor_saldo_correcao'] = D(0)
+                total_geral['valor_contrato_correcao'] = D(0)
+
+                for empresa in empresas:
+                    empresa['total'] = DicionarioBrasil()
+                    empresa.total['valor_documento'] = D(0)
+                    empresa.total['valor_desconto'] = D(0)
+                    empresa.total['valor_juros'] = D(0)
+                    empresa.total['valor_multa'] = D(0)
+                    empresa.total['valor'] = D(0)
+                    empresa.total['valor_saldo'] = D(0)
+                    empresa.total['valor_saldo_correcao'] = D(0)
+                    empresa.total['valor_contrato_correcao'] = D(0)
+
+                    for situacao in empresa.situacoes:
+                        situacao['total'] = DicionarioBrasil()
+                        situacao.total['valor_documento'] = D(0)
+                        situacao.total['valor_desconto'] = D(0)
+                        situacao.total['valor_juros'] = D(0)
+                        situacao.total['valor_multa'] = D(0)
+                        situacao.total['valor'] = D(0)
+                        situacao.total['valor_saldo'] = D(0)
+                        situacao.total['valor_saldo_correcao'] = D(0)
+                        situacao.total['valor_contrato_correcao'] = D(0)
+
+                        for cliente in situacao.clientes:
+                            cliente['total'] = DicionarioBrasil()
+                            cliente.total['valor_documento'] = D(0)
+                            cliente.total['valor_desconto'] = D(0)
+                            cliente.total['valor_juros'] = D(0)
+                            cliente.total['valor_multa'] = D(0)
+                            cliente.total['valor'] = D(0)
+                            cliente.total['valor_saldo'] = D(0)
+                            cliente.total['valor_saldo_correcao'] = D(0)
+                            cliente.total['valor_contrato_correcao'] = D(0)
+
+                            for linha in cliente.linhas:
+                                cliente.total.valor_documento += linha.valor_documento
+                                cliente.total.valor_desconto += linha.valor_desconto
+                                cliente.total.valor_juros += linha.valor_juros
+                                cliente.total.valor_multa += linha.valor_multa
+                                cliente.total.valor += linha.valor
+                                cliente.total.valor_saldo += linha.valor_saldo
+                                cliente.total.valor_saldo_correcao += linha.valor_saldo_correcao
+                                cliente.total.valor_contrato_correcao += linha.valor_contrato_correcao
+
+                                #
+                                # Deixamos agora os valores formatados
+                                #
+                                linha.valor_documento = formata_valor(linha.valor_documento)
+                                linha.valor_desconto  = formata_valor(linha.valor_desconto)
+                                linha.valor_juros     = formata_valor(linha.valor_juros)
+                                linha.valor_multa     = formata_valor(linha.valor_multa)
+                                linha.valor           = formata_valor(linha.valor)
+                                linha.valor_saldo     = formata_valor(linha.valor_saldo)
+                                linha.valor_saldo_correcao     = formata_valor(linha.valor_saldo_correcao)
+                                linha.valor_contrato_correcao     = formata_valor(linha.valor_contrato_correcao)
+
+                            situacao.total.valor_documento += cliente.total.valor_documento
+                            situacao.total.valor_desconto  += cliente.total.valor_desconto
+                            situacao.total.valor_juros     += cliente.total.valor_juros
+                            situacao.total.valor_multa     += cliente.total.valor_multa
+                            situacao.total.valor           += cliente.total.valor
+                            situacao.total.valor_saldo     += cliente.total.valor_saldo
+                            situacao.total.valor_saldo_correcao     += cliente.total.valor_saldo_correcao
+                            situacao.total.valor_contrato_correcao     += cliente.total.valor_contrato_correcao
+
+                            cliente.total.valor_documento = formata_valor(cliente.total.valor_documento)
+                            cliente.total.valor_desconto  = formata_valor(cliente.total.valor_desconto)
+                            cliente.total.valor_juros     = formata_valor(cliente.total.valor_juros)
+                            cliente.total.valor_multa     = formata_valor(cliente.total.valor_multa)
+                            cliente.total.valor           = formata_valor(cliente.total.valor)
+                            cliente.total.valor_saldo     = formata_valor(cliente.total.valor_saldo)
+                            cliente.total.valor_saldo_correcao     = formata_valor(cliente.total.valor_saldo_correcao)
+                            cliente.total.valor_contrato_correcao     = formata_valor(cliente.total.valor_contrato_correcao)
+
+
+                        empresa.total.valor_documento += situacao.total.valor_documento
+                        empresa.total.valor_desconto  += situacao.total.valor_desconto
+                        empresa.total.valor_juros     += situacao.total.valor_juros
+                        empresa.total.valor_multa     += situacao.total.valor_multa
+                        empresa.total.valor           += situacao.total.valor
+                        empresa.total.valor_saldo     += situacao.total.valor_saldo
+                        empresa.total.valor_saldo_correcao     += situacao.total.valor_saldo_correcao
+                        empresa.total.valor_contrato_correcao     += situacao.total.valor_contrato_correcao
+
+                        situacao.total.valor_documento = formata_valor(situacao.total.valor_documento)
+                        situacao.total.valor_desconto  = formata_valor(situacao.total.valor_desconto)
+                        situacao.total.valor_juros     = formata_valor(situacao.total.valor_juros)
+                        situacao.total.valor_multa     = formata_valor(situacao.total.valor_multa)
+                        situacao.total.valor           = formata_valor(situacao.total.valor)
+                        situacao.total.valor_saldo     = formata_valor(situacao.total.valor_saldo)
+                        situacao.total.valor_saldo_correcao     = formata_valor(situacao.total.valor_saldo_correcao)
+                        situacao.total.valor_contrato_correcao     = formata_valor(situacao.total.valor_contrato_correcao)
+
+                    total_geral.valor_documento += empresa.total.valor_documento
+                    total_geral.valor_desconto  += empresa.total.valor_desconto
+                    total_geral.valor_juros     += empresa.total.valor_juros
+                    total_geral.valor_multa     += empresa.total.valor_multa
+                    total_geral.valor           += empresa.total.valor
+                    total_geral.valor_saldo     += empresa.total.valor_saldo
+                    total_geral.valor_saldo_correcao     += empresa.total.valor_saldo_correcao
+                    total_geral.valor_contrato_correcao     += empresa.total.valor_contrato_correcao
+
+                    empresa.total.valor_documento = formata_valor(empresa.total.valor_documento)
+                    empresa.total.valor_desconto  = formata_valor(empresa.total.valor_desconto)
+                    empresa.total.valor_juros     = formata_valor(empresa.total.valor_juros)
+                    empresa.total.valor_multa     = formata_valor(empresa.total.valor_multa)
+                    empresa.total.valor           = formata_valor(empresa.total.valor)
+                    empresa.total.valor_saldo     = formata_valor(empresa.total.valor_saldo)
+                    empresa.total.valor_saldo_correcao     = formata_valor(empresa.total.valor_saldo_correcao)
+                    empresa.total.valor_contrato_correcao     = formata_valor(empresa.total.valor_contrato_correcao)
+
+                total_geral.valor_documento = formata_valor(total_geral.valor_documento)
+                total_geral.valor_desconto  = formata_valor(total_geral.valor_desconto)
+                total_geral.valor_juros     = formata_valor(total_geral.valor_juros)
+                total_geral.valor_multa     = formata_valor(total_geral.valor_multa)
+                total_geral.valor           = formata_valor(total_geral.valor)
+                total_geral.valor_saldo     = formata_valor(total_geral.valor_saldo)
+                total_geral.valor_saldo_correcao     = formata_valor(total_geral.valor_saldo_correcao)
+                total_geral.valor_contrato_correcao     = formata_valor(total_geral.valor_contrato_correcao)
+
+                dados_relatorio['empresas'] = empresas
+                dados_relatorio['total_geral'] = total_geral
+
+            if rel_obj.filtrar_rateio and not rel_obj.agrupa_cliente:
+                nome_arquivo = JASPER_BASE_DIR + 'finan_relatorio_contas_exata_rateio.ods'
+                if tipo == 'R':
+                    dados_relatorio['titulo']= u'RELATÓRIO DE CONTAS POR CLIENTE RATEIO'
+                    nome = 'contas_receber_rateio.' + formato
+                else:
+                    dados_relatorio['titulo']= u'RELATÓRIO DE CONTAS POR FORNECEDOR RATEIO'
+                    nome = 'contas_pagar_rateio.' + formato
+
+            elif rel_obj.agrupa_cliente :
+                nome_arquivo = JASPER_BASE_DIR + 'finan_relatorio_contas_cliente_exata.ods'
+                if tipo == 'R':
+                    dados_relatorio['titulo']= u'RELATÓRIO DE CONTAS POR CLIENTE'
+                    nome = 'contas_receber_cliente.' + formato
+                else:
+                    dados_relatorio['titulo']= u'RELATÓRIO DE CONTAS POR FORNECEDOR'
+                    nome = 'contas_receber_fornecedor.' + formato
+
+            else:
+                nome_arquivo = JASPER_BASE_DIR + 'finan_relatorio_contas_exata.ods'
+                if tipo == 'R':
+                    dados_relatorio['titulo']= u'RELATÓRIO DE CONTAS A RECEBER'
+                    nome = 'contas_receber.' + formato
+                else:
+                    dados_relatorio['titulo']= u'RELATÓRIO DE CONTAS A PAGAR'
+                    nome = 'contas_pagar.' + formato
+
+            planilha = self.pool.get('lo.modelo').gera_modelo_novo_avulso(cr, uid, nome_arquivo, dados_relatorio, formato=formato)
+
+            dados = {
+                'nome': nome,
+                'arquivo': planilha
+            }
+            rel_obj.write(dados)
+
+        return True
+
+
+    def gera_relatorio_contas_receber(self, cr, uid, ids, context={}):
+       if not ids:
+          return {}
+
+       return self.gera_relatorio_contas_exata(cr, uid, ids, context=context, tipo='R')
+
+
+    def gera_relatorio_contas_pagar(self, cr, uid, ids, context={}):
+        if not ids:
+            return {}
+
+        return self.gera_relatorio_contas_exata(cr, uid, ids, context=context, tipo='P')
 
 finan_relatorio()

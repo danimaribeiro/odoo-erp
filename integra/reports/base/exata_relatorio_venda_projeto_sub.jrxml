@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="exata_relatorio_venda_projeto_sub" language="groovy" pageWidth="555" pageHeight="752" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="387449f4-6020-40f2-bfc9-b8a030c55619">
+	<property name="ireport.zoom" value="1.7715610000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMOVEL_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select
+case
+when cod.tipo_mes = '001' then 'A cada mês (mensal)'
+when cod.tipo_mes = '002' then 'A cada 2 (dois) meses'
+when cod.tipo_mes = '003' then 'A cada 3 (três) meses'
+when cod.tipo_mes = '004' then 'A cada 4 (quatro) meses'
+when cod.tipo_mes = '005' then 'A cada 6 (cinco) meses'
+when cod.tipo_mes = '006' then 'A cada 6 (seis) meses'
+when cod.tipo_mes = '007' then 'A cada 7 (sete) meses'
+when cod.tipo_mes = '008' then 'A cada 8 (oito) meses'
+when cod.tipo_mes = '009' then 'A cada 9 (nove) meses'
+when cod.tipo_mes = '010' then 'A cada 10 (dez) meses'
+when cod.tipo_mes = '011' then 'A cada 11 (onze) meses'
+when cod.tipo_mes = '012' then 'A cada ano (anual)'
+when cod.tipo_mes = '024' then 'A cada (dois) anos'
+when cod.tipo_mes = '036' then 'A cada (três) anos'
+when cod.tipo_mes = '048' then 'A cada (quatro) anos'
+else
+'A cada (cinco) anos' end as tipo_mes,
+cod.vezes,
+cod.valor_parcela,
+cod.valor_principal,
+cod.valor_entrada,
+cod.data_inicio,
+cur.name as indici,
+cod.obs
+from finan_contrato_condicao cod
+left join res_currency cur on cur.id = cod.currency_id
+
+where
+cod.imovel_id = $P{IMOVEL_ID}
+
+order by
+cod.ordem]]>
+	</queryString>
+	<field name="tipo_mes" class="java.lang.String">
+		<fieldDescription><![CDATA[Período]]></fieldDescription>
+	</field>
+	<field name="vezes" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Vezes]]></fieldDescription>
+	</field>
+	<field name="valor_parcela" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor parcela]]></fieldDescription>
+	</field>
+	<field name="valor_principal" class="java.lang.Double">
+		<fieldDescription><![CDATA[Valor principal]]></fieldDescription>
+	</field>
+	<field name="valor_entrada" class="java.lang.Double"/>
+	<field name="data_inicio" class="java.sql.Date">
+		<fieldDescription><![CDATA[Data de início]]></fieldDescription>
+	</field>
+	<field name="indici" class="java.lang.String"/>
+	<field name="obs" class="java.lang.String">
+		<fieldDescription><![CDATA[Observação]]></fieldDescription>
+	</field>
+	<variable name="valor_principal_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_principal}]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="80" height="20" uuid="b53f5cb4-e967-4b10-888e-232e9952450b"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Periodo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="259" y="0" width="102" height="20" uuid="f019dea5-005c-476a-bc1c-3164b14e3140"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Indíce]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="199" y="0" width="60" height="20" uuid="d375be40-cb15-400c-8d3c-925dfac05b03"/>
+				<box bottomPadding="0" rightPadding="5">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="0" width="70" height="20" uuid="4f22d07b-476d-4f24-932b-b245b1757b0e"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor da Parcela]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="150" y="0" width="49" height="20" uuid="a69a7bca-7b89-4308-b371-d5a5cd62a290"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Parcelas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="361" y="0" width="194" height="20" uuid="35bc05e9-630e-4764-a315-9832b28577b8"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observação]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="###0;-###0" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="150" y="3" width="49" height="14" uuid="5608025f-e25e-48cc-8853-38a10e984952"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vezes}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="80" y="3" width="70" height="14" uuid="9a2f1b3e-cd9a-4533-b61a-e96bab54630d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_parcela}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="361" y="3" width="194" height="14" uuid="dee6fa96-6e99-495a-a650-fcb27dd86fc3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{obs}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="199" y="3" width="60" height="14" uuid="4c8b7b0a-fcee-456c-9a7f-b9201e1cac39"/>
+				<box leftPadding="2" rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_principal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="3" width="80" height="14" uuid="e02120e5-ee27-41c3-9f75-9c3c482c7d99"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo_mes}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="259" y="3" width="102" height="14" uuid="28e579ae-725d-4a1f-adf8-8339c27e3bf9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{indici}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="14">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="199" y="0" width="60" height="14" uuid="44de801e-90c8-4596-82fd-9e55aa8f2501"/>
+				<box leftPadding="2" rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_principal_1}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" uuid="f544a406-5ac3-4a9f-8fa3-e9d8ad5430a3"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

@@ -30,7 +30,7 @@ def _get_valor(certificado, data=hoje(), indice=WS_BC_DOLAR):
     ws.metodo = b'getValor'
     ws.acao = b''
     ws.certificado = certificado
-    
+
     #
     # Não atualiza os valores no sábado e domingo, pega
     # o da sexta-feira anterior
@@ -40,24 +40,24 @@ def _get_valor(certificado, data=hoje(), indice=WS_BC_DOLAR):
         data += relativedelta(days=-1)
     elif data.weekday() == 6:
         data += relativedelta(days=-2)
-    
+
     mensagem = b'<mns:getValor xmlns:mns="http://publico.ws.casosdeuso.sgs.pec.bcb.gov.br" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><in0 xsi:type="xsd:long">{indice}</in0><in1 xsi:type="xsd:string">{data}</in1></mns:getValor>'
-    
+
     dados = {
         'indice': indice,
         'data': formata_data(data),
     }
     ws.conectar_servico(conteudo=mensagem.format(**dados))
-    
+
     valor = D(0)
-    
+
     #print()
     #print(ws.xml_resposta)
     #print()
     if 'getValorResponse' in ws.xml_resposta and 'multiRef' in ws.xml_resposta:
         valor = ws.resposta.Envelope.Body.multiRef._texto
         valor = D(valor)
-    
+
     return valor
 
 
@@ -70,23 +70,33 @@ def cotacao_euro(certificado, data=hoje()):
 def cotacao_igpm(certificado, data=hoje()):
     return _get_valor(certificado, data=data, indice=WS_BC_IGPM)
 
+def cotacao_igpm_12_meses(certificado, data=hoje()):
+    valor = D(0)
+    for i in range(12):
+        if i > 0:
+            data += relativedelta(months=-1)
+        v = _get_valor(certificado, data=data, indice=WS_BC_IGPM)
+        print(data, v)
+        valor += v
+
+    return valor
 
 def _get_valores_series(certificado, data_inicial=hoje(), data_final=hoje(), indice=WS_BC_DOLAR):
     ws = ConexaoWebServiceBancoCentral()
     ws.metodo = b'getValoresSeriesXML'
     ws.acao = b''
     ws.certificado = certificado
-    
+
     mensagem = b'<mns:getValor xmlns:mns="http://publico.ws.casosdeuso.sgs.pec.bcb.gov.br" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><in0 xsi:type="xsd:long">{indice}</in0><in1 xsi:type="xsd:string">{data}</in1></mns:getValor>'
     mensagem = b'<mns:getValoresSeriesXML xmlns:mns="http://publico.ws.casosdeuso.sgs.pec.bcb.gov.br" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><in0 xsi:type="soapenc:Array" soapenc:arrayType="xsd:long[1]"><item soapenc:position="[0]" xsi:type="xsd:long">{indice}</item></in0><in1 soapenc:position="[1]" xsi:type="xsd:string">{data_inicial}</in1><in2 soapenc:position="[1]" xsi:type="xsd:string">{data_final}</in2></mns:getValoresSeriesXML>'
-    
+
     dados = {
         'indice': indice,
         'data_inicial': formata_data(data_inicial),
         'data_final': formata_data(data_final),
     }
     ws.conectar_servico(conteudo=mensagem.format(**dados))
-    
+
     valores = {}
 
     #
@@ -101,7 +111,7 @@ def _get_valores_series(certificado, data_inicial=hoje(), data_final=hoje(), ind
 
         for item in xml_itens.SERIES.SERIE.ITEM:
             valores[item.DATA] = D(item.VALOR)
-    
+
     return valores
 
 def cotacao_dolar_periodo(certificado, data_inicial=hoje(), data_final=hoje()):
@@ -114,13 +124,13 @@ def cotacao_igpm_periodo(certificado, data_inicial=hoje(), data_final=hoje()):
     return _get_valores_series(certificado, data_inicial=data_inicial, data_final=data_final, indice=WS_BC_IGPM)
 
 
-   
+
 def teste():
     import pybrasil
     c = pybrasil.sped.base.certificado.Certificado()
     c.arquivo = b'/home/ari/Downloads/ASPSEG.pfx'
     c.senha = b'aspseg@2015'
-    
+
     #print(cotacao_dolar(c, data='01/11/2014'))
     #print(cotacao_dolar(c, data='02/11/2014'))
     #print(cotacao_dolar(c, data='14/11/2014'))
@@ -128,6 +138,6 @@ def teste():
     #print(cotacao_euro(c, data='01/11/2014'))
     #print(cotacao_euro(c, data='02/11/2014'))
     #print(cotacao_euro(c, data='14/11/2014'))
-    
+
     print(cotacao_igpm_periodo(c, '01/01/2014', '13/11/2014'))
     return cotacao_igpm_periodo(c, '01/01/2014', '13/11/2014')

@@ -13,6 +13,7 @@
 	<field name="mes" class="java.lang.String">
 		<fieldDescription><![CDATA[Mês]]></fieldDescription>
 	</field>
+	<field name="mes_formatado" class="java.lang.String"/>
 	<field name="valor_entrada" class="java.math.BigDecimal"/>
 	<field name="valor_saida" class="java.math.BigDecimal"/>
 	<field name="diferenca" class="java.math.BigDecimal">
@@ -174,7 +175,7 @@ $F{diferenca} + $V{saldo}]]></variableExpression>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="6" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{mes}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{mes_formatado}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement x="220" y="0" width="110" height="12" uuid="57777739-c032-4813-a825-363babccfafc"/>

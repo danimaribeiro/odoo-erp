@@ -309,6 +309,8 @@
                     <field name="situacao" string="Situação Fiscal" />
                     <newline />
                     <field name="partner_id" />
+                    <field name="operacao_id" />
+                    <field name="documentoitem_ids" filter_domain="[('documentoitem_ids.produto_id', '=', self)]" string="Produto" />
                     <field name="data_emissao_from" string="De emissão" filter_domain="[('data_emissao_brasilia','&gt;=', self)]" widget="calendar" />
                     <field name="data_emissao_to" string="A emissão" filter_domain="[('data_emissao_brasilia','&lt;=', self)]" widget="calendar" />
                     <newline />

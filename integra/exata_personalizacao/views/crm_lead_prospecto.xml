@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="crm_lead_prospecto_form">
+            <field name="name">crm.lead.prospecto.form</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="construtora.crm_lead_prospecto_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="name" position="replace">
+                    <field name="name" invisible="1" />
+                </field>
+                <field name="user_id"  position="replace" />
+                <field name="channel_id" position="replace" />
+                <field name="motivo_id" position="replace" />
+                <field name="tipo" position="replace" />
+                <field name="referred" position="after">
+                    <field name="user_id"  string="Atendido inicialmente" />
+                </field>
+
+                <xpath expr="//page[@string='Prospecto']" position="replace">
+                    <page string="Prospecto">
+                        <group colspan="4">
+                            <separator string="01 - Contato do cliente" colspan="4" />
+                            <label string="     É hora de receber" colspan="4" />
+                            <label string="          Utilize um cumprimento (bom dia/boa tarde), apresente-se e pergunte o nome do cliente. Demonstre disposição e atenção ao atendê-lo, através de uma postura aberta" colspan="4" />
+                            <field name="partner_id" string="Contato" colspan="4" on_change="onchange_contato_id(partner_id)" context="{'mostra_fone': True, 'form_view_ref': 'construtora.res_partner_contato_form', 'tree_view_ref': 'construtora.res_partner_contato_tree', 'search_view_ref': 'construtora.res_partner_contato_search'}" />
+                            <field name="fone_contato" on_change="onchange_fone_celular(fone_contato, None)" />
+                            <field name="celular_contato" on_change="onchange_fone_celular(None, celular_contato)" />
+                            <group colspan="4" col="2">
+                                <field name="jah_teve_contato" colspan="2" />
+                            </group>
+                            <field name="corretor_id" string="Corretor" colspan="2" attrs="{'invisible': [('jah_teve_contato', '=', False)]}" domain="[('eh_corretor', '=', True)]" context="{'corretor': True, 'form_view_ref': 'construtora.res_partner_corretor_form', 'tree_view_ref': 'corretor.res_partner_corretor_tree', 'search_view_ref': 'corretor.res_partner_corretor_search'}" />
+                            <field name="hr_department_id" string="Setor" colspan="2" attrs="{'invisible': [('jah_teve_contato', '!=', False)]}" />
+                            <separator string="02 - Levantamento de informações" colspan="4" />
+                            <field name="motivo_id" />
+                            <field name="outro_motivo" attrs="{'invisible': [('motivo_id', '!=', 7)]}"/>
+                            <newline />
+                            <field name="tipo" select="1" string="Tipo do imóvel" />
+                            <newline />
+                            <field name="channel_id" select="1" />
+                            <field name="outro_canal" attrs="{'invisible': [('channel_id', '!=', 5)]}"/>
+                            <separator string="03 - Repasse de atendimento" colspan="4" />
+<!--                            <field name="corretor_id" colspan="4" />
+                            <newline />-->
+                            <field name="corretor_plantao" colspan="2" />
+                            <newline />
+                            <field name="corretor_repassado_id" colspan="4" domain="[('eh_corretor', '=', True)]" context="{'corretor': True, 'form_view_ref': 'construtora.res_partner_corretor_form', 'tree_view_ref': 'corretor.res_partner_corretor_tree', 'search_view_ref': 'corretor.res_partner_corretor_search'}" />
+                            <newline />
+                            <html colspan="4">
+                                <span style="color:red">
+                                    <p>          Atenção! Ao entregar o cliente para o corretor, você deverá informar o nome do mesmo e o que ele busca, ou seja, o motivo do seu contato.</p>
+                                </span>
+                            </html>
+                            <newline />
+                            <newline />
+                            <newline />
+                            <newline />
+<!--                            <separator colspan="4" string="Notas"/>
+                            <field name="description" nolabel="1" colspan="4"/>-->
+                        </group>
+<!--                        <separator colspan="4"/>
+                        <group col="8" colspan="4">
+                            <field name="state" widget="statusbar" statusbar_visible="draft,open,done" statusbar_colors='{"pending":"blue"}'/>
+                            <button name="case_cancel" string="Cancel"
+                                states="draft,open,pending" type="object"
+                                icon="gtk-cancel" />
+                            <button name="case_open" string="Open"
+                                states="draft,pending" type="object"
+                                icon="gtk-go-forward" />
+                            <button name="case_mark_lost" string="Close"
+                                states="open,pending" type="object"
+                                icon="gtk-close" />
+                            <button name="case_pending" string="Pending"
+                                states="open" type="object"
+                                icon="gtk-media-pause" />
+                            <button name="case_escalate" string="Escalate"
+                                states="open,pending" type="object"
+                                groups="base.group_extended"
+                                icon="gtk-go-up" />
+                            <button name="case_reset"
+                                string="Reset to Draft" states="done,cancel"
+                                type="object" icon="gtk-convert" />
+                        </group>-->
+                    </page>
+                    <page string="Ficha de Atendimento">
+                        <group colspan="4">
+                            <separator string="01 - Corretor e levantamento de informações" colspan="4" />
+                            <label string="O imóvel que procura é para" colspan="4" />
+                            <group colspan="4" col="8">
+                                <field name="procura_avaliacao" />
+                                <field name="procura_morar" />
+                                <field name="procura_investir" />
+                                <newline />
+                                <field name="procura_locacao" attrs="{'invisible': [('procura_investir', '=', False)]}" />
+                                <field name="procura_revenda" attrs="{'invisible': [('procura_investir', '=', False)]}" />
+                                <field name="procura_outro" />
+                                <field name="procura_qual" attrs="{'invisible': [('procura_outro', '=', False)]}" />
+                            </group>
+                            <label string="O que é mais importante no imóvel que você pretende adquirir?" colspan="4" />
+                            <field name="procura_obs" nolabel="1" colspan="4" />
+                            <newline />
+                            <group colspan="4" col="8">
+                                <field name="procura_filhos" />
+                                <field name="procura_filhos_quantidade" />
+                                <field name="procura_animais_estimacao" />
+                                <field name="procura_animais_estimacao_quantidade" />
+                            </group>
+                            <newline />
+                            <field name="procura_localizacao" />
+                            <field name="procura_valor" />
+                            <newline />
+                            <label string="Forma de pagamento" colspan="4" />
+                            <field name="procura_forma_pagamento" colspan="4" nolabel="1" />
+                        </group>
+                    </page>
+                </xpath>
+
+                <xpath expr="//button[@string='Atualizar']" position="replace">
+                    <separator string="Busca de imóveis" colspan="4" />
+                    <button string="Buscar" type="object" colspan="4" name="buscar_imoveis" />
+                    <group colspan="4" col="8">
+                        <field name="tipo" select="1" />
+                        <field name="situacao" select="1" />
+                        <field name="propriedade" select="1" />
+                        <field name="zoneamento_item_id" />
+                        <newline />
+
+                        <field name="codigo" />
+                        <field name="descricao" />
+                        <field name="valor_documento_from" />
+                        <field name="valor_documento_to" />
+                        <newline />
+
+                        <field name="proprietario_id" />
+                        <newline />
+
+                        <field name="cep_id" string="Endereço" domain="[('municipio_id', '=', municipio_id)]" />
+                        <field name="bairro" />
+                        <field name="municipio_id" />
+                        <field name="ponto_referencia" />
+                        <newline />
+
+                        <field name="condominio" />
+                        <field name="suite" />
+                        <field name="quarto" />
+                        <field name="garagem" />
+                    </group>
+                    <newline />
+                </xpath>
+
+                <xpath expr="//label[@name='ficha_visita']" position="after">
+                    <label string="O que está faltando para elaborar a proposta (imóvel selecionado)?" colspan="4" />
+                    <field name="atendimento_obs" nolabel="1" colspan="4" />
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -64,28 +64,20 @@ def gera_rps(lista_notas, numero_lote, certificado=None):
         valores['ValorIr'] = nota.valor.retido.ir or 0
         valores['ValorCsll'] = nota.valor.retido.csll or 0
 
-        if nota.prestador.optante_simples_nacional:
-            valores['IssRetido'] = 2
-            valores['ValorIss'] = '0.00'
-            #valores['ValorIssRetido'] = 0
-        else:
-            valores['IssRetido'] = 1 if nota.valor.retido.iss != 0 else 2
-            valores['ValorIss'] = nota.valor.vr_iss or 0.00
-            valores['ValorIssRetido'] = nota.valor.retido.iss or 0
-
+        valores['IssRetido'] = 1 if nota.valor.retido.iss != 0 else 2
+        valores['ValorIss'] = nota.valor.vr_iss or 0.00
         valores['OutrasRetencoes'] = nota.valor.retido.outras or 0
-        #valores['BaseCalculo'] = nota.valor.bc_iss or None
-
-        valores['Aliquota'] = nota.valor.al_iss / 100 or 0.00
-
-        #valores['ValorLiquidoNfse'] = nota.valor.liquido or None
-        valores['DescontoIncondicionado'] = nota.valor.desconto_incondicionado or 0
+        valores['BaseCalculo'] = nota.valor.bc_iss or None
+        valores['Aliquota'] = nota.valor.al_iss or 0.00
+        valores['ValorLiquidoNfse'] = nota.valor.liquido or None
+        valores['ValorIssRetido'] = nota.valor.retido.iss or 0
         valores['DescontoCondicionado'] = nota.valor.desconto_condicionado or 0
+        valores['DescontoIncondicionado'] = nota.valor.desconto_incondicionado or 0
 
         if nota.servico_municipio:
             servico_municipio = nota.servico_municipio
-            servico['ItemListaServico'] = servico_municipio.replace('.','').zfill(4)[:4]
-            servico['CodigoTributacaoMunicipio'] = nota.servico_municipio
+            servico['ItemListaServico'] = servico_municipio
+            servico['CodigoTributacaoMunicipio'] = servico_municipio.replace('.','').zfill(4)[:4]
         else:
             servico['ItemListaServico'] = nota.servico.codigo.zfill(4)
             #rps.InfRps.Servico.CodigoCnae = nota.servico.codigo
@@ -149,7 +141,8 @@ def gera_rps(lista_notas, numero_lote, certificado=None):
     raiz = DicionarioBrasil()
     raiz['EnviarLoteRpsEnvio'] = DicionarioBrasil()
     enviarloterpsenvio = raiz.EnviarLoteRpsEnvio
-    enviarloterpsenvio['__xmlns'] = 'http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd'
+    enviarloterpsenvio['__xmlns:xsd'] = 'http://www.w3.org/2001/XMLSchema'
+    enviarloterpsenvio['__xmlns:xsi'] = 'http://www.w3.org/2001/XMLSchema-instance'
     enviarloterpsenvio['LoteRps'] = lote_rps
     enviarloterpsenvio['Signature'] = gera_assinatura(URI='#' + lote_rps.__Id)
     certificado.doctype = '<!DOCTYPE EnviarLoteRpsEnvio [<!ATTLIST LoteRps Id ID #IMPLIED>]>'
@@ -162,7 +155,8 @@ def gera_consulta_rps(protocolo, prestador, certificado=None):
     raiz = DicionarioBrasil()
     raiz['ConsultarLoteRpsEnvio'] = DicionarioBrasil()
     consultarps = raiz.ConsultarLoteRpsEnvio
-    consultarps['__xmlns'] = 'http://www.abrasf.org.br/ABRASF/arquivos/nfse.xsd'
+    consultarps['__xmlns:xsd'] = 'http://www.w3.org/2001/XMLSchema'
+    consultarps['__xmlns:xsi'] = 'http://www.w3.org/2001/XMLSchema-instance'
     consultarps['Prestador'] = DicionarioBrasil()
     consultarps.Prestador['Cnpj'] = prestador.cnpj_cpf_numero
     consultarps.Prestador['InscricaoMunicipal'] = prestador.im

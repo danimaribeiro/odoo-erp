@@ -605,7 +605,12 @@ class NumeroPorExtenso(object):
         #
         # Extenso da parte decimal
         #
+        usa_com = False
+
         if decimal > 0:
+            if ' com ' in self.unidade[PLURAL] or ' de ' in self.unidade[PLURAL]:
+                usa_com = True
+
             fracao = F(str(numero - inteiro))
 
             if self.usa_meio and fracao == F(1, 2):
@@ -614,7 +619,7 @@ class NumeroPorExtenso(object):
                 else:
                     texto_decimal = 'meia'
 
-                if inteiro == 0:
+                if inteiro == 0 and (not usa_com):
                     texto_decimal += ' ' + self.unidade[SINGULAR]
 
             #elif self.usa_fracao and fracao in FRACOES:
@@ -645,9 +650,17 @@ class NumeroPorExtenso(object):
                     if (decimal == 0) and len(self.unidade[PLURAL]):
                         texto_decimal += ' ' + self.unidade[PLURAL]
 
-        if (inteiro > 0) and (decimal > 0):
+        if ((inteiro > 0) and (decimal > 0)) or (usa_com):
             if (not self.usa_virgula) or (self.usa_meio and fracao == F(1, 2)):
+                if usa_com:
+                    texto_inteiro = texto_inteiro.replace(self.unidade[PLURAL], '')
+                    texto_inteiro = texto_inteiro.replace(self.unidade[SINGULAR], '')
+
                 texto = texto_inteiro + ' e ' + texto_decimal
+
+                if usa_com:
+                    texto += ' ' + self.unidade[PLURAL]
+
             else:
                 texto_inteiro = texto_inteiro.replace(self.unidade[PLURAL], '')
                 texto_inteiro = texto_inteiro.replace(self.unidade[SINGULAR], '')
@@ -672,10 +685,13 @@ class NumeroPorExtenso(object):
                 texto_inteiro = ' '.join(palavras_inteiro)
                 texto_decimal = ' '.join(palavras_decimal)
 
-                if len(self.unidade[PLURAL]):
+                if len(self.unidade[PLURAL]) and (not usa_com):
                     texto_decimal += ' ' + self.unidade[PLURAL]
 
                 texto = texto_inteiro + ' vírgula ' + texto_decimal
+
+                if usa_com:
+                    texto += ' ' + self.unidade[PLURAL]
 
         elif inteiro > 0:
             texto = texto_inteiro

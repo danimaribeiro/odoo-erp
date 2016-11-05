@@ -117,15 +117,15 @@ class finan_centrocusto(orm.Model):
         'company_id': fields.many2one('res.company', u'Empresa/unidade'),
         'create_uid': fields.many2one('res.users', u'Criado por'),
         'write_uid': fields.many2one('res.users', u'Alterado por'),
-        'data': fields.date(u'Data'),           
+        'data': fields.date(u'Data'),
         'create_date': fields.datetime( u'Data de Criação'),
-        'write_date': fields.datetime( u'Data Ultima Alteração'),        
+        'write_date': fields.datetime( u'Data Ultima Alteração'),
     }
 
     _defaults = {
         'tipo': 'C',
         'sintetico': False,
-        'data': fields.datetime.now,        
+        'data': fields.datetime.now,
     }
 
     def rateia_valor(self, cr, uid, centrocusto_id, valor):
@@ -406,6 +406,9 @@ class finan_centrocusto(orm.Model):
                     for campo in campos:
                         if getattr(r_obj, campo, False):
                             p[campo] = getattr(r_obj, campo, False).id
+
+                        elif campo == 'project_id' and r_obj.centrocusto_id and getattr(r_obj.centrocusto_id, 'project_id', False):
+                            p[campo] = getattr(r_obj.centrocusto_id, campo, False).id
 
                         #
                         # Ajusta as contas de custo e despesa de acordo com o rateio

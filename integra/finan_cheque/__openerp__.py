@@ -17,6 +17,7 @@
         'finan',
         'product',
         'sped',
+        'finan_modelo_lancamento',
     ],
     'update_xml': [
         'security/ir.model.access.csv',
@@ -24,8 +25,10 @@
         'views/finan_cheque.xml',
         'views/finan_receber_view.xml',
         'views/finan_pagar_view.xml',
+        'views/finan_lote_pagar_view.xml',
         'views/finan_cheque_deposito.xml',
-        'views/finan_cheque_estorno.xml',
+        'views/finan_cheque_estorno_deposito.xml',
+        'views/finan_cheque_estorno_repasse.xml',
 
         'wizard/finan_relatorio_cheque.xml',
         'wizard/finan_relatorio_movimentacao_versao_2.xml',

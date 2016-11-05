@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fluxo_mensal_diario" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="0" uuid="171af509-aa99-44af-a781-d86011f36894">
 	<property name="ireport.zoom" value="2.1961500000000074"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="347"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/home/william/integra/openerp/integra/reports/base/"]]></defaultValueExpression>
 	</parameter>
@@ -24,6 +24,9 @@
 	<parameter name="SOMENTE_TOTAIS" class="java.lang.Boolean">
 		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
 	</parameter>
+	<parameter name="BANCO_FILTRO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[$P!{SQL_RELATORIO}]]>
 	</queryString>
@@ -36,6 +39,7 @@
 	<field name="mes" class="java.lang.String">
 		<fieldDescription><![CDATA[Mês]]></fieldDescription>
 	</field>
+	<field name="mes_formatado" class="java.lang.String"/>
 	<field name="valor_entrada" class="java.math.BigDecimal"/>
 	<field name="valor_saida" class="java.math.BigDecimal"/>
 	<field name="diferenca" class="java.math.BigDecimal">
@@ -419,7 +423,7 @@ $P{PERIODO} == "DIARIO RATEIO" ?
 				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse($P{DATA_INICIAL}))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="97" y="80" width="458" height="14" uuid="3a3e5512-ec2f-4320-bb74-f77b9a321626"/>
+				<reportElement stretchType="RelativeToBandHeight" x="87" y="80" width="468" height="14" uuid="3a3e5512-ec2f-4320-bb74-f77b9a321626"/>
 				<box leftPadding="0">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.0"/>
@@ -560,7 +564,7 @@ $V{diferenca_1} + $P{SALDO_INICIAL}]]></textFieldExpression>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="6"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{mes}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{mes_formatado}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -576,4 +580,31 @@ $V{diferenca_1} + $P{SALDO_INICIAL}]]></textFieldExpression>
 			</subreport>
 		</band>
 	</pageFooter>
+	<summary>
+		<band height="78" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="14" width="555" height="64" uuid="4c66ce5c-3740-4521-9076-1777dbe1f237"/>
+				<box topPadding="3">
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{BANCO_FILTRO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="14" uuid="468b272c-9678-466c-a1ca-bdf217d1b741"/>
+				<box leftPadding="0" rightPadding="2">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="6" isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Filtro Bancos:]]></text>
+			</staticText>
+		</band>
+	</summary>
 </jasperReport>

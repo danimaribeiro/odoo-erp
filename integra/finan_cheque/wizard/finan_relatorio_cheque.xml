@@ -11,7 +11,7 @@
                     <group colspan="4">
                         <field name="company_id" colspan="4"/>
                         <newline/>
-                        <field name="res_partner_bank_ids" colspan="4"/>
+                        <field name="res_partner_bank_ids" colspan="4" domain="[('state','=','Caixa')]"/>
                         <newline/>
                         <field name="nome" invisible="1"/>
                         <button icon="gtk-print" string="Gerar relatório" name="gera_relatorio_cheque" type="object" colspan="4" />

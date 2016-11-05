@@ -81,6 +81,7 @@ class finan_carteira(orm.Model):
         'cnpj_cpf': fields.related('res_partner_bank_id', 'cnpj_cpf', type='char', string=u'CNPJ/CPF', store=True, select=True),
         'raiz_cnpj': fields.related('res_partner_bank_id', 'raiz_cnpj', type='char', string=u'Raiz do CNPJ', store=True, select=True),
         'instrucao': fields.text(u'Instrução livre'),
+        'sacado_id': fields.many2one('res.partner', u'Sacado'),
     }
 
     #

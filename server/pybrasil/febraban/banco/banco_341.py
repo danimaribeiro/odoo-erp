@@ -23,6 +23,10 @@ def calcula_digito_nosso_numero(self, boleto):
     return self.modulo10(calculo_digito)
 
 
+def carteira_nosso_numero(self, boleto):
+    return '%s/%s-%s' % (boleto.banco.carteira, str(boleto.nosso_numero).zfill(8), boleto.digito_nosso_numero)
+
+
 def fator_vencimento(self, boleto):
     fator_vencimento = boleto.data_vencimento - date(2000, 7, 3)
     return fator_vencimento.days + 1000
@@ -120,7 +124,12 @@ def linha_remessa_400(self, remessa, boleto):
     texto += '01'  # especie do titulo'
     texto += 'A' if boleto.aceite != 'N' else 'N' # aceito e não aceito
     texto += boleto.data_processamento.strftime('%d%m%y')
-    texto += ''.zfill(2)  # 1 instrução de cobrança
+
+    if boleto.dias_protesto:
+        texto += '34'.zfill(2)  # protestar após XX dias corridos
+    else:
+        texto += ''.zfill(2)  # 1 instrução de cobrança
+
     texto += ''.zfill(2)  # 2 instrução de cobrança
     texto += str(int(boleto.valor_juros * 100)).zfill(13)
 
@@ -150,7 +159,12 @@ def linha_remessa_400(self, remessa, boleto):
     texto += ''.ljust(30)
     texto += ''.ljust(4)
     texto += boleto.data_vencimento.strftime('%d%m%y')
-    texto += ''.zfill(2)
+
+    if boleto.dias_protesto:
+        texto += str(boleto.dias_protesto).zfill(2)[:2]  # protestar após XX dias corridos
+    else:
+        texto += ''.zfill(2)
+
     texto += ''.ljust(1)
     texto += str(len(remessa.registros) + 1).zfill(6)[:06]  # nº do registro
 

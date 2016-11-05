@@ -7,8 +7,9 @@
             <field name="model">project.orcamento.item</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree colors="blue:parent_id != False;red: percentual_planejado != 100.00">
+                <tree colors="blue:qtd_componentes;red: percentual_planejado != 100.00">
                     <field name="parent_id" invisible="1" />
+                    <field name="qtd_componentes" invisible="1" />
                     <field name="project_id" invisible="1" />
                     <field name="orcamento_id" invisible="1" />
                     <field name="etapa_id" domain="[('orcamento_id', '=', parent.id)]" />
@@ -100,7 +101,7 @@
             <field name="domain">[('situacao', '=', 'A')]</field>
             <field name="search_view_id" ref="purchase_orcamento_item_search" />
         </record>
-        
+
         <record model="ir.actions.act_window.view" id="purchase_orcamento_item_form_acao">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
@@ -114,16 +115,16 @@
             <field name="view_id" ref="purchase_orcamento_item_tree"/>
             <field name="act_window_id" ref="purchase_orcamento_item_acao"/>
         </record>
-        
-        
-        
+
+
+
 <!--        <menuitem
             action="purchase_orcamento_item_acao"
             id="menu_purchase_orcamento_item"
             name="Planejamentos"
             parent="purchase.menu_procurement_management" />-->
-        
-        
+
+
 
     </data>
 </openerp>

@@ -155,6 +155,7 @@ class finan_recibos(osv.osv_memory):
         'arquivo': fields.binary(u'Arquivo', readonly=True),
         'data_quitacao': fields.date(u'Data de pagamento'),
         'recibo_previo': fields.boolean(u'Recibo prévio (antes do pagamento efetivo)?'),
+        'inclui_multa_prevista': fields.boolean(u'Inclui multa e juros previstos?'),
     }
 
     _defaults = {
@@ -211,13 +212,22 @@ class finan_recibos(osv.osv_memory):
         rel_obj = self.browse(cr, uid, ids[0])
 
         if rel_obj.recibo_previo or tipo in ('E', 'S', 'T'):
-            filtro.update({
-                'valor_documento': "coalesce((select sum(coalesce(p.valor_saldo, coalesce(p.valor, 0))) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
-                'valor_juros': "coalesce((select sum(coalesce(p.valor_juros, 0)) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
-                'valor_multa': "coalesce((select sum(coalesce(p.valor_multa, 0)) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
-                'valor_desconto': "coalesce((select sum(coalesce(p.valor_desconto, 0)) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
-                'valor': "coalesce((select sum(coalesce(p.valor_saldo, coalesce(p.valor, 0))) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
-            })
+            if tipo in ('E', 'S', 'T') or (not rel_obj.inclui_multa_prevista):
+                filtro.update({
+                    'valor_documento': "coalesce((select sum(coalesce(p.valor_saldo, coalesce(p.valor, 0))) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
+                    'valor_juros': "coalesce((select sum(coalesce(p.valor_juros, 0)) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
+                    'valor_multa': "coalesce((select sum(coalesce(p.valor_multa, 0)) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
+                    'valor_desconto': "coalesce((select sum(coalesce(p.valor_desconto, 0)) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
+                    'valor': "coalesce((select sum(coalesce(p.valor_saldo, coalesce(p.valor, 0))) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
+                })
+            else:
+                filtro.update({
+                    'valor_documento': "coalesce((select sum(coalesce(p.valor_saldo, coalesce(p.valor, 0))) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
+                    'valor_juros': "coalesce((select sum(coalesce(p.valor_juros_previsto, 0)) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
+                    'valor_multa': "coalesce((select sum(coalesce(p.valor_multa_prevista, 0)) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
+                    'valor_desconto': "coalesce((select sum(coalesce(p.valor_desconto_previsto, 0)) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
+                    'valor': "coalesce((select sum(coalesce(p.valor_saldo, coalesce(p.valor, 0))) + sum(coalesce(p.valor_juros_previsto, 0)) + sum(coalesce(p.valor_multa_prevista, 0)) - sum(coalesce(p.valor_desconto_previsto, 0)) from finan_lancamento p where p.id in {divida_ids} {filtro_adicional}), 0)",
+                })
 
             sql_divida = SQL_DIVIDA.format(**filtro)
             sql_divida = sql_divida.format(**filtro)

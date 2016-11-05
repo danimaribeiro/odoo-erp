@@ -15,3 +15,8 @@ from sped_documento import *
 from mail_compose_message import *
 from hr_payslip import *
 from finan_conta import *
+from crm_lead import *
+from const_imovel import *
+from const_reserva_imovel import *
+from finan_centrocusto import *
+

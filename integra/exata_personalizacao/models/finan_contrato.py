@@ -31,6 +31,9 @@ class finan_contrato(osv.Model):
         'comissao_ids': fields.one2many('finan.contrato.comissao', 'contrato_id', u'Comissões'),
         'data_comissao': fields.date(u'Data Comissão'),
         'vezes': fields.integer(u'Vezes'),
+        'reserva_ids': fields.related('imovel_id','reserva_ids',  type='one2many', string=u'Reservas do Imóvel', relation='const.reserva.imovel', store=False),
+        'imovel_conta_id': fields.related('imovel_id','conta_id',  type='many2one', string=u'Conta Financeira', relation='finan.conta', store=False),
+        'imovel_centrocusto_id': fields.related('imovel_id','centrocusto_id',  type='many2one', string=u'Centro Custo', relation='finan.centrocusto', store=False),
     }
 
     def _default_get_comissao_ids(self, cr, uid, context={}):
@@ -235,7 +238,7 @@ class finan_contrato(osv.Model):
                 #
                 # Imóvel de terceiros não gera a comissão a pagar
                 #
-                if contrato_obj.imovel_propriedade not in ('T', 'A'):
+                if contrato_obj.imovel_propriedade not in ('T', 'A', 'TA'):
                     lancamento_id = lancamento_pool.copy(cr, uid, modelo_total_pagar)
 
                     dados = {
@@ -286,7 +289,7 @@ class finan_contrato(osv.Model):
                 #
                 # Imóvel de terceiros, quem paga a comissão é o proprietário do imóvel
                 #
-                if contrato_obj.imovel_propriedade in ('T', 'A'):
+                if contrato_obj.imovel_propriedade in ('T', 'A', 'TA'):
                     dados['partner_id'] = contrato_obj.imovel_proprietario_id.id
 
                 lancamento_pool.write(cr, uid, [lancamento_id], dados)
@@ -371,7 +374,7 @@ class finan_contrato(osv.Model):
                     i += 1
 
         return True
-    
+
     def imprimir_contrato_comissao(self, cr, uid, ids, context={}):
         if not ids:
             return False
@@ -407,7 +410,7 @@ class finan_contrato(osv.Model):
         }
         attachment_pool.create(cr, uid, dados)
         return True
-    
+
     def imprimir_contrato_fechamento(self, cr, uid, ids, context={}):
         if not ids:
             return False
@@ -444,6 +447,76 @@ class finan_contrato(osv.Model):
         attachment_pool.create(cr, uid, dados)
         return True
 
+    def reserva_imovel(self, cr, uid, ids, context={}):
+        if not len(ids):
+            return {}
+
+        for contrato_obj in self.browse(cr, uid, ids):
+
+            dados = {
+                'imovel_id': contrato_obj.imovel_id.id,
+                'contrato_id': contrato_obj.id,
+            }
+
+            imovel_obj = contrato_obj.imovel_id
+
+            sql = """
+                select
+                    r.id
+                from const_reserva_imovel r
+                join const_imovel i on i.id = r.imovel_id
+                where
+                  i.id = """ + str(contrato_obj.imovel_id.id)
+
+            cr.execute(sql)
+            reservas = cr.fetchall()
+
+            if len(reservas) == 0:
+                dados['data_inicial'] = fields.datetime.now()
+                imovel_obj.write({'situacao': 'R'})
+            else:
+                self.pool.get('const.imovel').verifica_reserva_imovel(cr, uid, [imovel_obj.id], context=context)
+
+            self.pool.get('const.reserva.imovel').create(cr,uid, dados)
+
+
+
+        return True
+
+    def onchange_imovel_id(self, cr, uid, ids, imovel_id):
+        if not imovel_id:
+            return {}
+
+        res = {}
+        valores = {}
+        res['value'] = valores
+
+        imovel_obj = self.pool.get('const.imovel').browse(cr, uid, imovel_id)
+
+        if imovel_obj.proprietario_id:
+            valores['imovel_proprietario_id'] = imovel_obj.proprietario_id.id
+
+        if imovel_obj.res_partner_bank_id:
+            valores['imovel_res_partner_bank_id'] = imovel_obj.res_partner_bank_id.id
+
+        if imovel_obj.project_id:
+            valores['imovel_project_id'] = imovel_obj.project_id.id
+
+        valores['imovel_valor_venda'] = imovel_obj.valor_venda
+        valores['imovel_codigo'] = imovel_obj.codigo
+        valores['imovel_situacao'] = imovel_obj.situacao
+        valores['imovel_propriedade'] = imovel_obj.propriedade
+        valores['imovel_area_terreno'] = imovel_obj.area_terreno
+        valores['imovel_quadra'] = imovel_obj.quadra
+        valores['imovel_lote'] = imovel_obj.lote
+
+        if imovel_obj.conta_id:
+            valores['imovel_conta_id'] = imovel_obj.conta_id.id
+
+        if imovel_obj.centrocusto_id:
+            valores['imovel_centrocusto_id'] = imovel_obj.centrocusto_id.id
+
+        return res
 
 
 finan_contrato()
@@ -470,10 +543,12 @@ class finan_contrato_comissao(osv.Model):
                 continue
 
             if not comissao_obj.contrato_id.data_comissao:
-                raise osv.except_osv(u'Inválido !', u'Incluir Data da Comissão!')
+                #raise osv.except_osv(u'Inválido !', u'Incluir Data da Comissão!')
+                continue
 
             if not comissao_obj.contrato_id.vezes:
-                raise osv.except_osv(u'Inválido !', u'Incluir Nº de vezes!')
+                #raise osv.except_osv(u'Inválido !', u'Incluir Nº de vezes!')
+                continue
 
             for parcela_obj in comissao_obj.parcela_ids:
                 parcela_obj.unlink()

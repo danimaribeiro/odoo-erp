@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+    <record model="ir.ui.view" id="sale_order_line_produto_form">
+        <field name="name">sale.order.line.produto.form</field>
+        <field name="model">sale.order.line</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="sped_sale.sale_order_line_produto_form"/>
+        <field name="arch" type="xml">
+            <field name="vr_unitario_venda_impostos_readonly" position="replace">
+                <field name="vr_unitario_venda_impostos_readonly" invisible="1" />
+            </field>
+            <field name="vr_icms_st_readonly" position="replace">
+                <field name="vr_icms_st_readonly" invisible="1" />
+            </field>
+            <field name="vr_unitario_base" position="replace" />
+            <field name="price_unit" position="before">
+                <field name="vr_unitario_base" digits="(18, 2)" string="Unitário sem margem" on_change="onchange_preco_base_risco(vr_unitario_base, risco, product_uom_qty)" />
+                <newline />
+                <field name="risco" string="Margem" on_change="onchange_preco_base_risco(vr_unitario_base, risco, product_uom_qty)" />
+            </field>
+        </field>
+    </record>
+    
+    <record model="ir.ui.view" id="sale_order_form">
+        <field name="name">sale_order_form</field>
+        <field name="model">sale.order</field>
+        <field name="priority" eval="50"/>
+        <field name="inherit_id" ref="integra_sale.sale_order_form"/>
+        <field name="type">form</field>
+        <field name="arch" type="xml">           
+            <group name="avisa_validade" position="replace"/>                    
+        </field>
+    </record>    
+
+</data>
+</openerp>

@@ -58,7 +58,18 @@ class LogoPrefeitura(Image):
         self.cache_logo = {}
 
     def _get_image(self):
-        if get_attr_value(self.instance, 'nfse.arquivo_logo'):
+        if get_attr_value(self.instance, 'nfse.prestador.arquivo_logo'):
+            nome_arq_logo = get_attr_value(self.instance, 'nfse.prestador.arquivo_logo')
+
+            if nome_arq_logo not in CACHE_LOGO or not CACHE_LOGO[nome_arq_logo]:
+                CACHE_LOGO[nome_arq_logo] = open(nome_arq_logo, 'rb').read()
+                print('guardou cache logo empresa')
+
+            arq = StringIO(CACHE_LOGO[nome_arq_logo])
+
+            self._image = PILImage.open(arq)
+
+        elif get_attr_value(self.instance, 'nfse.arquivo_logo'):
             nome_arq_logo = get_attr_value(self.instance, 'nfse.arquivo_logo')
 
             #if nome_arq_logo not in self.cache_logo or not self.cache_logo[nome_arq_logo]:
@@ -68,7 +79,7 @@ class LogoPrefeitura(Image):
 
             if nome_arq_logo not in CACHE_LOGO or not CACHE_LOGO[nome_arq_logo]:
                 CACHE_LOGO[nome_arq_logo] = open(nome_arq_logo, 'rb').read()
-                print('guardou cache')
+                print('guardou cache logo prefeitura')
 
             arq = StringIO(CACHE_LOGO[nome_arq_logo])
 
@@ -306,8 +317,8 @@ class Cabecalho(BandaRelato):
         # Tamanhos equilaventes, em centímetros, a 3,0 x 2,2, em 128 dpi
         # estranhamente, colocar os tamanhos em centímetros encolhe a imagem
         #
-        img.width = 133
-        img.height = 98
+        #img.width = 133
+        #img.height = 98
         self.elements.append(img)
 
         self.height = 2.4*cm

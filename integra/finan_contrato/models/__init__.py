@@ -14,3 +14,4 @@ from finan_contrato_reajuste import *
 from finan_fat_eventual_contrato import *
 from partner import *
 from finan_contrato_alteracao import *
+from finan_contrato_ajuste_carteira import *

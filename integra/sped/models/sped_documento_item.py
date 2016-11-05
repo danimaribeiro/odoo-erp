@@ -406,7 +406,7 @@ limit 1;'''
             if dentro_estado:
                 mensagem += 'com CFOP para dentro do estado!'
             elif fora_pais:
-                mensagem += 'com CFOP para fora do país!'
+                mensagem += u'com CFOP para fora do país!'
             else:
                 mensagem += 'com CFOP para fora do estado!'
 
@@ -428,7 +428,7 @@ limit 1;'''
             if dentro_estado:
                 mensagem += 'com CFOP para dentro do estado!'
             elif fora_pais:
-                mensagem += 'com CFOP para fora do país!'
+                mensagem += u'com CFOP para fora do país!'
             else:
                 mensagem += 'com CFOP para fora do estado!'
 

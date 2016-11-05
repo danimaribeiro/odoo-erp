@@ -19,6 +19,7 @@ class Retorno(object):
         self.registros = []
         self.tipo = 'CNAB_400'
         self.linhas = []
+        self.codigo_ocorrencia = ''
 
     def arquivo_retorno(self, arquivo):
         if isinstance(arquivo, (str, unicode)):
@@ -36,6 +37,17 @@ class Retorno(object):
             codigo_banco= '085'
             if len(header) == 240:
                 self.tipo ="CNAB_240"
+                
+        elif header[:3] == '237':
+            
+            header_lote = self.linhas[1]
+                           
+            codigo_banco= '237'            
+            if header_lote[9:11] == '30':
+                if len(header) == 240:
+                    self.tipo ="FP_CNAB_240"
+            else:
+                codigo_banco = header[76:79]             
         else:
             codigo_banco = header[76:79]
 
@@ -65,6 +77,12 @@ class Retorno(object):
             banco.header_retorno_240(self)
                 
             banco.linha_retorno_240(self)
+    
+        elif self.tipo == "FP_CNAB_240":
+            
+            banco.fp_header_retorno_240(self)
+                
+            banco.fp_linha_retorno_240(self)
     
 
         return True

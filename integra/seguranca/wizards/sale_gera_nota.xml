@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_gera_nota_wizard" >
+            <field name="name">sale.gera.nota.wizard</field>
+            <field name="model">sale.gera_nota</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sped_sale.sale_gera_nota_wizard"/>
+            <field name="priority">2000</field>
+            <field name="arch" type="xml">
+                <field name="pedido_ids" position="replace">
+                    <field name="pedido_ids" colspan="4" nolabel="1" readonly="1" context="{'form_view_ref': 'seguranca.sale_order_seguranca_ordem_servico_form', 'tree_view_ref': 'seguranca.sale_order_seguranca_ordem_servico_tree', 'search_view_ref': 'seguranca.sale_order_seguranca_ordem_servico_search'}">
+                        <tree editable="top">
+                            <field name="company_id"/>
+                            <field name="name" string="Número" />
+                            <field name="date_order" />
+                            <field name="partner_id"/>
+                            <field name="operacao_fiscal_produto_id"/>
+                            <field name="operacao_fiscal_servico_id"/>
+                            <field name="vr_a_faturar" sum="Valor"/>
+                        </tree>
+                    </field>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

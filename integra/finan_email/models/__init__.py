@@ -4,4 +4,5 @@
 #from __future__ import division, print_function, unicode_literals
 
 
-from finan_email import*
+from finan_email import *
+from finan_lancamento import *

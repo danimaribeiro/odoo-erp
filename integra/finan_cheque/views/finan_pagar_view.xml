@@ -7,9 +7,10 @@
             <field name="model">finan.lancamento</field>
             <field name="type">form</field>
             <field name="inherit_id" ref="finan.finan_pagar_form"/>
+            <field name="priority" eval="50"/>
             <field name="arch" type="xml">
                  <page string="Baixa" position="after">
-                     <page string="Quitação com Cheques" attrs="{'invisible': [('situacao', '=', 'Baixado')]}" groups="finan.group_finan_treasury_manager,finan.group_finan_treasury_staff,finan.group_finan_manager">
+                     <page string="Quitação com Cheques" attrs="{'invisible': ['|', ('provisionado', '=', True), ('situacao', '=', 'Baixado')]}" groups="finan.group_finan_treasury_manager,finan.group_finan_treasury_staff,finan.group_finan_manager">
                         <group colspan="4">
                             <field name="data_quitacao_cheque" required="1" />
                         </group>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="frota_tipo_form">
+            <field name="name">frota.tipo.form</field>
+            <field name="model">frota.tipo</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="integra_frota.frota_tipo_form" />
+            <field name="arch" type="xml">
+                <field name="nome" position="after">
+                    <newline />
+                    <separator string="Manutenção preventiva" colspan="4"/>
+                    <newline />
+                    <field name="manutencao_ids" nolabel="1" colspan="4">
+                        <tree editable="top">
+                            <field name="servico_id" required="1" domain="[('parent_id', '!=', False), ('custo_ativo', '=', True)]" />
+                            <field name="km_a_cada" required="1" />
+                        </tree>
+                    </field>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

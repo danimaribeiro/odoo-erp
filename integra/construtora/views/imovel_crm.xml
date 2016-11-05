@@ -20,7 +20,31 @@
                     <field name="condominio" />
                     <field name="valor_venda" />
                     <field name="condicao_pagamento" />
-                    <button string="Incluir interesse" type="object" name="inclui_lead" icon="gtk-apply" />
+                    <button string="Incluir interesse" type="object" name="inclui_lead" icon="gtk-ok" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="imovel_crm_escolhido_tree">
+            <field name="name">imovel.crm.escolhido.tree</field>
+            <field name="model">const.imovel</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+<!--                    <field name="project_id" />
+                    <field name="tipo" />
+                    <field name="codigo" />
+                    <field name="descricao" />
+                    <field name="situacao" />
+                    <field name="propriedade" />-->
+                    <field name="endereco" />
+                    <field name="bairro" />
+                    <field name="municipio_id" />
+                    <field name="condominio" />
+                    <field name="valor_venda" />
+                    <field name="condicao_pagamento" />
+                    <field name="proposta_id" />
+                    <button string="Criar proposta" type="object" name="inclui_proposta" icon="gtk-ok" attrs="{'invisible': [('proposta_id', '!=', False)]}" />
                 </tree>
             </field>
         </record>
@@ -32,11 +56,11 @@
             <field name="arch" type="xml">
                 <form string="Imóveis">
                     <field name="tipo" invisible="1" />
-                    <button string="Incluir interesse" type="object" name="inclui_lead" />
+                    <button string="Incluir interesse" type="object" name="inclui_lead" icon="gtk-ok" />
                     <group col="4" colspan="4" attrs="{'readonly': 1}">
                         <group colspan="4" col="6" attrs="{'readonly': 1}">
                             <field name="project_id" colspan="6" />
-                            <field name="company_id" readonly="1" colspan="6" />                         
+                            <field name="company_id" readonly="1" colspan="6" />
                             <field name="codigo" colspan="2"  />
                             <field name="situacao" colspan="2" required="0" />
                             <field name="propriedade" colspan="2" required="0" />
@@ -410,6 +434,71 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="imovel_crm_fotos_form">
+            <field name="name">imovel.crm.fotos.form</field>
+            <field name="model">const.imovel</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Imóveis">
+                    <field name="tipo" invisible="1" />
+                    <button string="Incluir interesse" type="object" name="inclui_lead" />
+                    <group colspan="4" attrs="{'readonly': 1}">
+                        <separator string="Fotos do local" colspan="4" />
+                        <group colspan="4" col="6">
+                            <group colspan="2" col="2">
+                                <field name="foto_1" nolabel="1" widget="image" colspan="2"/>
+                                <field name="legenda_foto_1" nolabel="1" colspan="2"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="foto_2" nolabel="1" widget="image" colspan="2"/>
+                                <field name="legenda_foto_2" nolabel="1" colspan="2"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="foto_3" nolabel="1" widget="image" colspan="2"/>
+                                <field name="legenda_foto_3" nolabel="1" colspan="2"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="foto_4" nolabel="1" widget="image" colspan="2"/>
+                                <field name="legenda_foto_4" nolabel="1" colspan="2"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="foto_5" nolabel="1" widget="image" colspan="2"/>
+                                <field name="legenda_foto_5" nolabel="1" colspan="2"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="foto_6" nolabel="1" widget="image" colspan="2"/>
+                                <field name="legenda_foto_6" nolabel="1" colspan="2"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="foto_7" nolabel="1" widget="image" colspan="2"/>
+                                <field name="legenda_foto_7" nolabel="1" colspan="2"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="foto_8" nolabel="1" widget="image" colspan="2"/>
+                                <field name="legenda_foto_8" nolabel="1" colspan="2"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="foto_9" nolabel="1" widget="image" colspan="2"/>
+                                <field name="legenda_foto_9" nolabel="1" colspan="2"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="foto_10" nolabel="1" widget="image" colspan="2"/>
+                                <field name="legenda_foto_10" nolabel="1" colspan="2"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="foto_11" nolabel="1" widget="image" colspan="2"/>
+                                <field name="legenda_foto_11" nolabel="1" colspan="2"/>
+                            </group>
+                            <group colspan="2" col="2">
+                                <field name="foto_12" nolabel="1" widget="image" colspan="2"/>
+                                <field name="legenda_foto_12" nolabel="1" colspan="2"/>
+                            </group>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="imovel_crm_search">
             <field name="name">imovel.crm.search</field>
             <field name="model">const.imovel</field>
@@ -533,7 +622,7 @@
             <field name="view_id" ref="imovel_crm_tree" />
             <field name="search_view_id" ref="imovel_crm_search" />
             <field name="kanban_view_id" ref="imovel_crm_kanban" />
-            <field name="context">{'search_default_situacao': 'D', 'search_default_minha_selecao': True}</field>
+            <field name="context">{'search_default_situacao': 'D', 'search_default_minha_selecao': False}</field>
         </record>
 
         <menuitem

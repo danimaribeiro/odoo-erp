@@ -9,11 +9,16 @@
             <field name="priority">30</field>
             <field name="inherit_id" ref="product.product_normal_form_view"/>
             <field name="arch" type="xml">
+                <field name="variants" position="before">
+                    <field name="nome_generico" />
+                </field>
                 <page string="Information" position="after">
                     <page string="Monitoramento">
                         <field name="quantidade_pontos" attrs="{'invisible': [('type', '=', 'service')]}" />
                         <newline />
                         <field name="calcula_pontos_venda" attrs="{'invisible': [('type', '!=', 'service')]}" />
+                        <newline />
+                        <field name="agrupamento_id" colspan="4" />
                     </page>
                 </page>
             </field>
@@ -30,6 +35,10 @@
                 <field name="lst_price" position="replace">
                     <field name="lst_price" invisible="1" />
                 </field>
+                <field name="state" position="replace">
+                    <field name="state" invisible="1" />
+<!--                     <field name="product_image_readonly" widget="image" /> -->
+                </field>
             </field>
         </record>
 
@@ -44,5 +53,24 @@
             <field name="search_view_id" ref="product.product_search_form_view"/>
         </record>
 
+        <record model="ir.ui.view" id="product_product_acessorio_obrigatorio_form">
+            <field name="name">product.form</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="priority">30</field>
+            <field name="inherit_id" ref="integra_sale_kit_produto.product_form"/>
+            <field name="arch" type="xml">
+                <field name="acessorio_ids" position="before">
+                    <separator string="Acessórios obrigatórios" colspan="4" />
+                    <field name="acessorio_obrigatorio_ids" nolabel="1" colspan="4">
+                        <tree editable="bottom">
+                            <field name="acessorio_id" required="1"/>
+                            <field name="quantidade" required="1"/>
+                        </tree>
+                    </field>
+                    <separator string="Outros acessórios" colspan="4" />
+                </field>
+            </field>
+        </record>
     </data>
 </openerp>

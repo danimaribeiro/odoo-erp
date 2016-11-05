@@ -227,10 +227,12 @@ class finan_relatorio(osv.osv_memory):
         'somente_totais': fields.boolean(u'Imprimir Somente os Totais'),
         'imprime_cheque': fields.boolean(u'Imprimir Totais Cheque'),
         'dias_atraso': fields.integer(u'Dias de Atraso'),
-        'agrupa_data_vencimento': fields.boolean(u'Agrupar por Data de Vencimento?'),
+        'agrupa_data_vencimento': fields.boolean(u'Em ordem de dias de atraso?'),
         'conf_contabilidade': fields.boolean(u'Para Conferência Contabilidade?'),
-        'sem_projeto': fields.boolean(u'Somente Rateio Sem projeto?'),
-        'sem_centrocusto': fields.boolean(u'Somente Rateio Sem Centro de Custo?'),
+        'sem_projeto': fields.boolean(u'Sem Projeto?'),
+        'sem_centrocusto': fields.boolean(u'Sem Centro Custo?'),
+        'com_projeto': fields.boolean(u'Com Projeto?'),
+        'com_centrocusto': fields.boolean(u'Com Centro de Custo?'),
     }
 
     _defaults = {
@@ -2240,78 +2242,83 @@ class finan_relatorio(osv.osv_memory):
             coalesce(l.numero_documento, '') as numero_documento,
             coalesce(p.name, '') as parceiro_nome,
             coalesce(l.valor_documento, 0.00)  as valor_documento,
-            coalesce((
-            select
-                sum(coalesce(p.valor_desconto, 0) * coalesce(ldp.porcentagem, 1))
-            from
-                finan_lancamento p
-                left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = p.id and ldp.divida_id = l.id
-            where
-                p.tipo = '{tipo2}'
-                and (p.lancamento_id = l.id or p.lancamento_id = ldp.lote_id)
-                and p.data_quitacao <= '{data_final}'
-            ), 0) as valor_desconto,
-            coalesce(
-            case
-                when l.valor_juros = 0 and l.situacao not in ('Quitado', 'Conciliado', 'Baixado', 'Baixado parcial') then l.valor_juros_previsto
-            else
-                (
-                select
-                    sum(coalesce(p.valor_juros, 0) * coalesce(ldp.porcentagem, 1))
-                from
-                    finan_lancamento p
-                    left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = p.id and ldp.divida_id = l.id
-                where
-                    p.tipo = '{tipo2}'
-                    and (p.lancamento_id = l.id or p.lancamento_id = ldp.lote_id)
-                    and p.data_quitacao <= '{data_final}'
-                )
-            end, 0.00) as valor_juros,
+            -- coalesce((
+            -- select
+            --     sum(coalesce(p.valor_desconto, 0) * coalesce(ldp.porcentagem, 1))
+            -- from
+            --     finan_lancamento p
+            --     left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = p.id and ldp.divida_id = l.id
+            -- where
+            --     p.tipo = '{tipo2}'
+            --     and (p.lancamento_id = l.id or p.lancamento_id = ldp.lote_id)
+            --     and p.data_quitacao <= '{data_final}'
+            -- ), 0) as valor_desconto,
+            0 as valor_desconto,
+            --coalesce(
+            --case
+            --    when l.valor_juros = 0 and l.situacao not in ('Quitado', 'Conciliado', 'Baixado', 'Baixado parcial') then l.valor_juros_previsto
+            --else
+            --    (
+            --    select
+            --        sum(coalesce(p.valor_juros, 0) * coalesce(ldp.porcentagem, 1))
+            --    from
+            --        finan_lancamento p
+            --        left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = p.id and ldp.divida_id = l.id
+            --    where
+            --        p.tipo = '{tipo2}'
+            --        and (p.lancamento_id = l.id or p.lancamento_id = ldp.lote_id)
+            --        and p.data_quitacao <= '{data_final}'
+            --    )
+            --end, 0.00) as valor_juros,
+            0 as valor_juros,
 
-            coalesce(
-            case
-                when l.valor_multa = 0 and l.situacao not in ('Quitado', 'Conciliado', 'Baixado', 'Baixado parcial') then l.valor_multa_prevista
-            else
-                (
-                select
-                    sum(coalesce(p.valor_multa, 0) * coalesce(ldp.porcentagem, 1))
-                from
-                    finan_lancamento p
-                    left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = p.id and ldp.divida_id = l.id
-                where
-                    p.tipo = '{tipo2}'
-                    and (p.lancamento_id = l.id or p.lancamento_id = ldp.lote_id)
-                    and p.data_quitacao <= '{data_final}'
-                )
-            end, 0.00)  as valor_multa,
+            -- coalesce(
+            -- case
+            --     when l.valor_multa = 0 and l.situacao not in ('Quitado', 'Conciliado', 'Baixado', 'Baixado parcial') then l.valor_multa_prevista
+            -- else
+            --     (
+            --     select
+            --         sum(coalesce(p.valor_multa, 0) * coalesce(ldp.porcentagem, 1))
+            --     from
+            --         finan_lancamento p
+            --         left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = p.id and ldp.divida_id = l.id
+            --     where
+            --         p.tipo = '{tipo2}'
+            --         and (p.lancamento_id = l.id or p.lancamento_id = ldp.lote_id)
+            --         and p.data_quitacao <= '{data_final}'
+            --     )
+            -- end, 0.00)  as valor_multa,
+            0 as valor_multa,
 
-            coalesce((
-            select
-                sum(coalesce(p.valor, 0) * coalesce(ldp.porcentagem, 1))
-            from
-                finan_lancamento p
-                left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = p.id and ldp.divida_id = l.id
-            where
-                p.tipo = '{tipo2}'
-                and (p.lancamento_id = l.id or p.lancamento_id = ldp.lote_id)
-                and p.data_quitacao <= '{data_final}'
-            ), 0) as valor,
+            -- coalesce((
+            -- select
+            --     sum(coalesce(p.valor, 0) * coalesce(ldp.porcentagem, 1))
+            -- from
+            --     finan_lancamento p
+            --     left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = p.id and ldp.divida_id = l.id
+            -- where
+            --     p.tipo = '{tipo2}'
+            --     and (p.lancamento_id = l.id or p.lancamento_id = ldp.lote_id)
+            --     and p.data_quitacao <= '{data_final}'
+            -- ), 0) as valor,
+            0 as valor,
 
-            coalesce(case
-                    when l.lancamento_id is not null then l.valor_documento
-                else
-                    (
-                    select
-                        sum(coalesce(p.valor_documento, 0) * coalesce(ldp.porcentagem, 1))
-                    from
-                        finan_lancamento p
-                        left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = p.id and ldp.divida_id = l.id
-                    where
-                        p.tipo = '{tipo2}'
-                        and (p.lancamento_id = l.id or p.lancamento_id = ldp.lote_id)
-                        and p.data_quitacao <= '{data_final}'
-                    )
-            end, 0) as valor_pago,
+            -- coalesce(case
+            --         when l.lancamento_id is not null then l.valor_documento
+            --     else
+            --         (
+            --         select
+            --             sum(coalesce(p.valor_documento, 0) * coalesce(ldp.porcentagem, 1))
+            --         from
+            --             finan_lancamento p
+            --             left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = p.id and ldp.divida_id = l.id
+            --         where
+            --             p.tipo = '{tipo2}'
+            --             and (p.lancamento_id = l.id or p.lancamento_id = ldp.lote_id)
+            --             and p.data_quitacao <= '{data_final}'
+            --         )
+            -- end, 0) as valor_pago,
+            0 as valor_pago,
 
             (select c.id from res_partner_category c join res_partner_category_rel pc on pc.category_id = c.id and pc.partner_id = l.partner_id limit 1) as categoria_id,
             l.formapagamento_id,
@@ -2344,7 +2351,8 @@ class finan_relatorio(osv.osv_memory):
         order by
             resumo.tipo desc,
             periodo,
-            data_documento;
+            --data_documento,
+            resumo.valor_documento;
                 """
 
         filtro = {
@@ -2366,8 +2374,8 @@ class finan_relatorio(osv.osv_memory):
 
         if rel_obj.formapagamento_id:
             filtro['filtro_adicional'] += "and (resumo.formapagamento_id = '{formapagamento}')".format(formapagamento=rel_obj.formapagamento_id.id)
-        else:
-            filtro['filtro_adicional'] += "and (resumo.formapagamento_id is null)"
+        #else:
+            #filtro['filtro_adicional'] += "and (resumo.formapagamento_id is null)"
 
         if rel_obj.res_partner_bank_id:
             filtro['filtro_adicional'] += " and resumo.banco = {res_partner_bank_id}".format(res_partner_bank_id=rel_obj.res_partner_bank_id.id)
@@ -2375,6 +2383,7 @@ class finan_relatorio(osv.osv_memory):
 
 
         sql = sql.format(**filtro)
+        print(sql)
         data_final = parse_datetime(rel_obj.data_final).date()
 
         if tipo == 'R':
@@ -3435,11 +3444,10 @@ class finan_relatorio(osv.osv_memory):
                     l.data_quitacao,
                     coalesce(l.valor_documento, 0.00) * coalesce(ldp.porcentagem, 1) {rateio}  as valor_documento,
                     coalesce(l.valor_desconto, 0.00) * coalesce(ldp.porcentagem, 1) {rateio}  as valor_desconto,
-                    coalesce(l.valor_documento, 0.00) * coalesce(ldp.porcentagem, 1) as valor_documento,
-                    coalesce(l.valor_desconto, 0.00) * coalesce(ldp.porcentagem, 1) as valor_desconto,
-                    coalesce(l.valor_juros, 0) * coalesce(ldp.porcentagem, 1) as valor_juros,
-                    coalesce(l.valor_multa, 0) * coalesce(ldp.porcentagem, 1) as valor_multa,
-                    coalesce(l.valor, 0.00) * coalesce(ldp.porcentagem, 1) as valor,
+                    coalesce(l.valor_desconto, 0.00) * coalesce(ldp.porcentagem, 1) {rateio} as valor_desconto,
+                    coalesce(l.valor_juros, 0) * coalesce(ldp.porcentagem, 1) {rateio} as valor_juros,
+                    coalesce(l.valor_multa, 0) * coalesce(ldp.porcentagem, 1) {rateio} as valor_multa,
+                    coalesce(l.valor, 0.00) * coalesce(ldp.porcentagem, 1) {rateio} as valor,
                     coalesce(p.name, '') || ' - ' || coalesce(p.cnpj_cpf, '') as cliente,
                     coalesce(p.fone, '') || ' - ' || coalesce(p.celular, '') as contato,
                     c.name as unidade,
@@ -3521,29 +3529,39 @@ class finan_relatorio(osv.osv_memory):
                    and l.formapagamento_id = """ + str(rel_obj.formapagamento_id.id)
 
             if rel_obj.filtrar_rateio:
-                if rel_obj.centrocusto_id:
-                    sql_relatorio += """
-                       and lr.centrocusto_id = """ + str(rel_obj.centrocusto_id.id)
+
+                #
+                # Campo booleano usado na tela como sendo Rateio sem projeto ou sem centro de custo?
+                #
 
                 if rel_obj.project_id:
                     sql_relatorio += """
                        and lr.project_id = """ + str(rel_obj.project_id.id)
 
+                elif rel_obj.sem_projeto:
+                    sql_relatorio += """
+                        and lr.project_id is null"""
+
+                elif rel_obj.com_projeto:
+                    sql_relatorio += """
+                        and lr.project_id is not null"""
+
+                if rel_obj.centrocusto_id:
+                    sql_relatorio += """
+                       and l.centrocusto_id = """ + str(rel_obj.centrocusto_id.id)
+
+                elif rel_obj.sem_centrocusto:
+                    sql_relatorio += """
+                        and l.centrocusto_id is null"""
+
+                elif rel_obj.com_centrocusto:
+                    sql_relatorio += """
+                        and l.centrocusto_id is not null"""
+
                 if rel_obj.conta_id:
                     sql_relatorio += """
                        and cf.codigo_completo like '""" + rel_obj.conta_id.codigo_completo + """%'"""
 
-                #
-                # Campo booleano usado na tela como sendo Rateio sem projeto ou sem centro de custo?
-                #
-                if rel_obj.sem_projeto:
-                    sql_relatorio += """
-                        and lr.project_id is null 
-                    """
-                if rel_obj.sem_centrocusto:
-                    sql_relatorio += """
-                        and lr.centrocusto_id is null
-                    """
 
             sql_relatorio += """
                     order by c.name, fl.situacao, p.name, p.cnpj_cpf, fl.data_vencimento;"""
@@ -4403,11 +4421,11 @@ from
 
 
         union all
-        
+
         select
             b.partner_id as empresa_id,
             l.partner_id,
-            case                
+            case
                 when credito.data is not null then credito.data
                 else credito.data_quitacao
             end as data_documento,
@@ -4420,20 +4438,20 @@ from
             left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = credito.id
             left join finan_lancamento l on (ldp.divida_id is not null and l.id = ldp.divida_id) or (ldp.divida_id is null and l.id = credito.lancamento_id)
             {pagamento_nota}
-            join res_partner_bank b on b.id = credito.res_partner_bank_id             
+            join res_partner_bank b on b.id = credito.res_partner_bank_id
 
         where
             credito.tipo = '{tipo_lancamento}'
             and l.situacao not in ('Baixado','Baixado parcial')
             and credito.provisionado = False
             {documento_ids_saida}
-            
+
         union all
-        
+
         select
             b.partner_id as empresa_id,
             l.partner_id,
-            case                
+            case
                 when credito.data is not null then credito.data
                 else credito.data_quitacao
             end as data_documento,
@@ -4446,20 +4464,20 @@ from
             left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = credito.id
             left join finan_lancamento l on (ldp.divida_id is not null and l.id = ldp.divida_id) or (ldp.divida_id is null and l.id = credito.lancamento_id)
             {pagamento_nota}
-            join res_partner_bank b on b.id = credito.res_partner_bank_id             
+            join res_partner_bank b on b.id = credito.res_partner_bank_id
 
         where
             credito.tipo = '{tipo_lancamento}'
             and l.situacao not in ('Baixado','Baixado parcial')
             and credito.provisionado = False
             {documento_ids_saida}
-            
+
         union all
-        
+
         select
             b.partner_id as empresa_id,
             l.partner_id,
-            case                
+            case
                 when credito.data is not null then credito.data
                 else credito.data_quitacao
             end as data_documento,
@@ -4472,20 +4490,20 @@ from
             left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = credito.id
             left join finan_lancamento l on (ldp.divida_id is not null and l.id = ldp.divida_id) or (ldp.divida_id is null and l.id = credito.lancamento_id)
             {pagamento_nota}
-            join res_partner_bank b on b.id = credito.res_partner_bank_id             
+            join res_partner_bank b on b.id = credito.res_partner_bank_id
 
         where
             credito.tipo = '{tipo_lancamento}'
             and l.situacao not in ('Baixado','Baixado parcial')
             and credito.provisionado = False
             {documento_ids_saida}
-        
+
         union all
-        
+
         select
             b.partner_id as empresa_id,
             l.partner_id,
-            case                
+            case
                 when credito.data is not null then credito.data
                 else credito.data_quitacao
             end as data_documento,
@@ -4510,20 +4528,20 @@ from
             left join finan_lancamento_lote_divida_pagamento ldp on ldp.pagamento_id = credito.id
             left join finan_lancamento l on (ldp.divida_id is not null and l.id = ldp.divida_id) or (ldp.divida_id is null and l.id = credito.lancamento_id)
             {pagamento_nota}
-            join res_partner_bank b on b.id = credito.res_partner_bank_id             
+            join res_partner_bank b on b.id = credito.res_partner_bank_id
 
         where
             credito.tipo = '{tipo_lancamento}'
             and l.situacao not in ('Baixado','Baixado parcial')
             and credito.provisionado = False
             {documento_ids_saida}
-        
+
         union all
-            
+
         select distinct
             c.partner_id as empresa_id,
             fc.partner_id,
-            fc.data_documento as data_documento,
+            fc.data_baixa as data_documento,
             case
             when fc.numero_documento is not null then
             cast(fc.numero_documento as varchar)
@@ -4540,10 +4558,11 @@ from
             finan_lancamento as fc
             join res_company c on c.id = fc.company_id
             {pagamento_nota_baixa}
-            left join finan_motivobaixa mb on mb.id = fc.motivo_baixa_id 
- 
+            left join finan_motivobaixa mb on mb.id = fc.motivo_baixa_id
+
         where
-            fc.situacao in ('Baixado','Baixado parcial')
+            fc.tipo = '{tipo_lancamento}'
+            and fc.situacao in ('Baixado','Baixado parcial')
             and coalesce(fc.provisionado, False) = False
             {documento_ids_entrada}
 
@@ -4562,8 +4581,8 @@ order by
     razao.data_documento,
     cli.name,
     razao.historico,
-    razao.numero_documento        
-    
+    razao.numero_documento
+
 """
 
 
@@ -4592,7 +4611,7 @@ order by
 
                 for partner_id in rel_obj.partner_ids:
                     partner_ids.append(partner_id.id)
-                    
+
             documento_ids = []
             if len(rel_obj.documento_ids) > 0:
 
@@ -4612,7 +4631,7 @@ order by
 
             if len(partner_ids) > 0 :
                 filtro['partner_ids'] = """and razao.partner_id in """ +  str(tuple(partner_ids)).replace(',)', ')')
-                
+
             if len(documento_ids) > 0 :
                 filtro['documento_ids_entrada'] = """and fc.documento_id in """ +  str(tuple(documento_ids)).replace(',)', ')')
                 filtro['documento_ids_saida'] = """and l.documento_id in """ +  str(tuple(documento_ids)).replace(',)', ')')
@@ -4637,21 +4656,21 @@ order by
                 filtro['tipo_lancamento'] = 'PR'
                 filtro['tipo'] = 'R'
                 filtro['data_documento'] = 'fc.data_documento as data_documento'
-                
+
                 nome_relatorio = u'Razao_diario_Clientes_'
-            
+
             if rel_obj.conf_contabilidade:
                 filtro['nota_fical'] = """join sped_documento debito on debito.id = fc.sped_documento_id
                                           left join sped_documentoduplicata sdd on sdd.finan_lancamento_id = debito.id"""
-                                           
-                filtro['pagamento_nota'] = """join sped_documento sd on sd.id = l.sped_documento_id"""                                           
-                filtro['pagamento_nota_baixa'] = """join sped_documento sd on sd.id = fc.sped_documento_id"""                                           
-                                           
-                                           
+
+                filtro['pagamento_nota'] = """join sped_documento sd on sd.id = l.sped_documento_id"""
+                filtro['pagamento_nota_baixa'] = """join sped_documento sd on sd.id = fc.sped_documento_id"""
+
+
             else:
                 filtro['nota_fical'] = """left join sped_documento debito on debito.id = fc.sped_documento_id
                                           left join sped_documentoduplicata sdd on sdd.finan_lancamento_id = debito.id"""
-                
+
 
             sql_relatorio = self._SQL_RAZAO.format(**filtro)
 
@@ -5170,7 +5189,7 @@ order by
 
             return True
 
-    def gera_relatorio_fluxo_caixa_analitico(self, cr, uid, ids, context={}):
+    def sql_fluxo_caixa_analitico(self, cr, uid, ids, context={}):
         if not ids:
             return False
 
@@ -5180,8 +5199,6 @@ order by
 
         id = ids[0]
         rel_obj = self.browse(cr, uid, id)
-        data_inicial = parse_datetime(rel_obj.data_inicial).date()
-        data_final = parse_datetime(rel_obj.data_final).date()
 
         filtro = {
             'data_inicial': data_inicial,
@@ -5189,25 +5206,12 @@ order by
             'join_departamento': '',
         }
 
-        rel = Report('Fluxo de Caixa', cr, uid)
-        rel.parametros['DATA_INICIAL'] = str(data_inicial)[:10]
-        rel.parametros['DATA_FINAL'] = str(data_final)[:10]
-        rel.parametros['TIPO_ANALISE'] = rel_obj.opcoes_caixa
-
-        #if rel_obj.saldo_inicial:
-        rel.parametros['SALDO_INICIAL'] = float(rel_obj.saldo_inicial or 0)
-
-        rel.outputFormat = rel_obj.formato
-
         if rel_obj.opcoes_caixa == '1':
             filtro['tipo'] = "('Q')"
-            rel.parametros['TIPO'] = "('Q')"
         elif rel_obj.opcoes_caixa == '2':
             filtro['tipo'] = "('Q','V')"
-            rel.parametros['TIPO'] = "('Q','V')"
         else:
             filtro['tipo'] = "('V')"
-            rel.parametros['TIPO'] = "('V')"
 
         if rel_obj.periodo == '1':
             sql_relatorio = """
@@ -5217,11 +5221,13 @@ order by
                     c.raiz_cnpj,
                     rpc.name as empresa,
                     f.mes,
+                    f.mes_formatado,
             """
 
             sql_relatorio_SUB = """
                 select
                     f.mes,
+                    f.mes_formatado,
             """
         else:
             sql_relatorio = """
@@ -5231,6 +5237,7 @@ order by
                     c.raiz_cnpj,
                     rpc.name as empresa,
                     f.data,
+                    f.data,                    
             """
 
             sql_relatorio_SUB = """
@@ -5263,7 +5270,7 @@ order by
                         join finan_lancamento fl on fl.id = f.lancamento_id
                         left join res_partner rp on rp.id = fl.partner_id
                         left join finan_documento fd on fd.id = fl.documento_id
-                        join finan_conta fc on (fl.tipo != 'T' and fc.id = fl.conta_id) or (fl.tipo = 'T' and fc.id = f.id)
+                        join finan_conta fc on (fl.tipo != 'T' and fc.id = fl.conta_id) or (fl.tipo = 'T' and fc.id = f.conta_id)
                         {join_departamento}
 
                         join res_company c on c.id = fl.company_id
@@ -5277,7 +5284,7 @@ order by
                         join finan_lancamento fl on fl.id = f.lancamento_id
                         left join res_partner rp on rp.id = fl.partner_id
                         left join finan_documento fd on fd.id = fl.documento_id
-                        join finan_conta fc on (fl.tipo != 'T' and fc.id = fl.conta_id) or (fl.tipo = 'T' and fc.id = f.id)
+                        join finan_conta fc on (fl.tipo != 'T' and fc.id = fl.conta_id) or (fl.tipo = 'T' and fc.id = f.conta_id)
                         {join_departamento}
 
                         join res_company c on c.id = fl.company_id
@@ -5333,60 +5340,68 @@ order by
                     f.data between '{data_inicial}' and '{data_final}'
                     and f.tipo in {tipo}
         """
+        sql_saldo_inicial = ''
+        filtro_banco = ''
 
-        if len(rel_obj.company_ids) == 1:
-            filtro['company_id'] = rel_obj.company_ids[0].id
-            sql_relatorio += """
-                     and (
-                       c.id = {company_id}
-                       or c.parent_id = {company_id}
-                    )"""
-            sql_relatorio_SUB += """
-                     and (
-                       c.id = {company_id}
-                       or c.parent_id = {company_id}
-                    )"""
+        if len(rel_obj.company_ids) > 0 or  len(rel_obj.res_partner_bank_ids) > 0:
 
-        elif len(rel_obj.company_ids) > 1:
-            company_ids = []
-            for company_obj in rel_obj.company_ids:
-                company_ids.append(company_obj.id)
+            if len(rel_obj.company_ids) == 1:
+                filtro['company_id'] = rel_obj.company_ids[0].id
+                sql_relatorio += """
+                         and (
+                           c.id = {company_id}
+                           or c.parent_id = {company_id}
+                        )"""
+                sql_relatorio_SUB += """
+                         and (
+                           c.id = {company_id}
+                           or c.parent_id = {company_id}
+                        )"""
 
-            filtro['company_ids'] = str(tuple(company_ids)).replace(',)', ')')
-            sql_relatorio += """
-                     and (
-                       c.id in {company_ids}
-                       or c.parent_id in {company_ids}
-                    )"""
-            sql_relatorio_SUB += """
-                     and (
-                       c.id in {company_ids}
-                       or c.parent_id in {company_ids}
-                    )"""
+            elif len(rel_obj.company_ids) > 1:
+                company_ids = []
+                for company_obj in rel_obj.company_ids:
+                    company_ids.append(company_obj.id)
+
+                filtro['company_ids'] = str(tuple(company_ids)).replace(',)', ')')
+                sql_relatorio += """
+                         and (
+                           c.id in {company_ids}
+                           or c.parent_id in {company_ids}
+                        )"""
+                sql_relatorio_SUB += """
+                         and (
+                           c.id in {company_ids}
+                           or c.parent_id in {company_ids}
+                        )"""
+
+            if len(rel_obj.res_partner_bank_ids) == 1:
+                filtro['bank_id'] = rel_obj.res_partner_bank_ids[0].id
+                sql_relatorio += """
+                         and f.res_partner_bank_id = {bank_id}
+                """
+                sql_relatorio_SUB += """
+                         and f.res_partner_bank_id = {bank_id}
+                """
+                sql_saldo_inicial = """where  b.id = {bank_id}"""
+
+            elif len(rel_obj.res_partner_bank_ids) > 1:
+                bancos_ids = []
+                for banco_obj in rel_obj.res_partner_bank_ids:
+                    bancos_ids.append(banco_obj.id)
+                    filtro_banco += 'TIPO: ' + banco_obj.state + ' CONTA: ' + banco_obj.descricao + '    \    '
+
+                filtro['bank_ids'] = str(tuple(bancos_ids)).replace(',)', ')')
+                sql_relatorio += """
+                         and f.res_partner_bank_id in {bank_ids}
+                """
+                sql_relatorio_SUB += """
+                         and f.res_partner_bank_id in {bank_ids}
+                """
+                sql_saldo_inicial = """ where b.id in {bank_ids}"""
+
         else:
-            raise osv.except_osv(u'Atenção', u'É preciso selecionar pelo menos uma empresa!')
-
-        if len(rel_obj.res_partner_bank_ids) == 1:
-            filtro['bank_id'] = rel_obj.res_partner_bank_ids[0].id
-            sql_relatorio += """
-                     and f.res_partner_bank_id = {bank_id}
-            """
-            sql_relatorio_SUB += """
-                     and f.res_partner_bank_id = {bank_id}
-            """
-
-        elif len(rel_obj.res_partner_bank_ids) > 1:
-            bancos_ids = []
-            for banco_obj in rel_obj.res_partner_bank_ids:
-                bancos_ids.append(banco_obj.id)
-
-            filtro['bank_ids'] = str(tuple(bancos_ids)).replace(',)', ')')
-            sql_relatorio += """
-                     and f.res_partner_bank_id in {bank_ids}
-            """
-            sql_relatorio_SUB += """
-                     and f.res_partner_bank_id in {bank_ids}
-            """
+            raise osv.except_osv(u'Atenção', u'É preciso selecionar pelo menos uma Empresa ou Conta Bancária!')
 
         if rel_obj.nao_provisionado != rel_obj.provisionado:
             sql_relatorio += """
@@ -5472,7 +5487,8 @@ order by
                 group by
                     c.id,
                     rpc.name,
-                    f.mes
+                    f.mes,
+                    f.mes_formatado
 
                 order by
                     c.id,
@@ -5480,7 +5496,8 @@ order by
 
             sql_relatorio_SUB += """
                 group by
-                    f.mes
+                    f.mes,
+                    f.mes_formatado
 
                 order by
                     f.mes;"""
@@ -5529,10 +5546,72 @@ order by
                     valor_entrada desc,
                     valor_saida desc;"""
 
-
         sql = sql_relatorio.format(**filtro)
         print(sql)
         sql_relatorio_SUB = sql_relatorio_SUB.format(**filtro)
+
+        saldo_anterior = D(0)
+        if (not rel_obj.zera_saldo) and (cr.dbname.upper() != 'PATRIMONIAL' and cr.dbname.upper()[:5] != 'TESTE'):
+            #    select
+            #        sum(f.valor_entrada) - sum(f.valor_saida) as diferenca
+            #    from
+            #        finan_fluxo_mensal_diario f
+            #    where
+            #        f.data  < '{data_inicial}'
+            #        and f.tipo in {tipo}
+            #"""
+
+            sql_saldo = """
+            select
+                sum(coalesce((select ee.saldo
+                from finan_saldo_resumo_data_quitacao ee
+                where ee.data_quitacao < '{data_inicial}'
+                and ee.res_partner_bank_id = b.id
+                order by ee.data_quitacao desc limit 1), 0)) as saldo_anterior
+
+            from res_partner_bank b
+            """ + sql_saldo_inicial
+
+            sql_saldo = sql_saldo.format(**filtro)
+            #print(sql_saldo)
+            saldo_anterior = 0
+            cr.execute(sql_saldo)
+            dados = cr.fetchall()
+
+            if len(dados) > 0:
+                #print(dados)
+                if dados[0][0]:
+                    saldo_anterior += dados[0][0]
+
+        return sql, sql_relatorio_SUB, saldo_anterior, filtro, filtro_banco
+
+
+    def gera_relatorio_fluxo_caixa_analitico(self, cr, uid, ids, context={}):
+        if not ids:
+            return False
+
+        id = ids[0]
+        rel_obj = self.browse(cr, uid, id)
+        data_inicial = parse_datetime(rel_obj.data_inicial).date()
+        data_final = parse_datetime(rel_obj.data_final).date()
+        rel = Report('Fluxo de Caixa', cr, uid)
+        rel.parametros['DATA_INICIAL'] = str(data_inicial)[:10]
+        rel.parametros['DATA_FINAL'] = str(data_final)[:10]
+        rel.parametros['TIPO_ANALISE'] = rel_obj.opcoes_caixa
+        rel.parametros['SALDO_INICIAL'] = float(rel_obj.saldo_inicial or 0)
+        rel.outputFormat = rel_obj.formato
+
+        if rel_obj.opcoes_caixa == '1':
+            rel.parametros['TIPO'] = "('Q')"
+        elif rel_obj.opcoes_caixa == '2':
+            rel.parametros['TIPO'] = "('Q','V')"
+        else:
+            rel.parametros['TIPO'] = "('V')"
+
+        sql, sql_relatorio_SUB, saldo_anterior, filtro, filtro_banco = self.sql_fluxo_caixa_analitico(cr, uid, ids, context=context)
+
+        rel.parametros['SALDO_INICIAL'] = saldo_anterior
+
 
         if rel_obj.periodo == '1':
             rel.parametros['PERIODO'] = 'MENSAL'
@@ -5560,10 +5639,15 @@ order by
         else:
             rel.parametros['SALDO_BANCO'] = False
 
-        if rel_obj.zera_saldo:
-            rel.parametros['ZERA_SALDO'] = True
+        rel.parametros['ZERA_SALDO'] = True
+        if filtro_banco:
+            rel.parametros['BANCO_FILTRO'] = filtro_banco
         else:
-            rel.parametros['ZERA_SALDO'] = False
+            rel.parametros['BANCO_FILTRO'] = 'TODOS'
+        #if rel_obj.zera_saldo:
+            #rel.parametros['ZERA_SALDO'] = True
+        #else:
+            #rel.parametros['ZERA_SALDO'] = False
 
         if rel_obj.somente_totais:
             rel.parametros['SOMENTE_TOTAIS'] = True

@@ -1281,13 +1281,13 @@ class sale_order_line(osv.osv):
         if not uom2:
             uom2 = product_obj.uom_id
         compare_qty = float_compare(float(product_obj.virtual_available) * float(uom2.factor), float(qty) * float(product_obj.uom_id.factor), precision_rounding=product_obj.uom_id.rounding)
-        if (product_obj.type=='product') and int(compare_qty) == -1 \
-          and (product_obj.procure_method=='make_to_stock'):
-            warn_msg = _('You plan to sell %.2f %s but you only have %.2f %s available !\nThe real stock is %.2f %s. (without reservations)') % \
-                    (qty, uom2 and uom2.name or product_obj.uom_id.name,
-                     max(0,product_obj.virtual_available), product_obj.uom_id.name,
-                     max(0,product_obj.qty_available), product_obj.uom_id.name)
-            warning_msgs += _("Not enough stock ! : ") + warn_msg + "\n\n"
+        #if (product_obj.type=='product') and int(compare_qty) == -1 \
+          #and (product_obj.procure_method=='make_to_stock'):
+            #warn_msg = _('You plan to sell %.2f %s but you only have %.2f %s available !\nThe real stock is %.2f %s. (without reservations)') % \
+                    #(qty, uom2 and uom2.name or product_obj.uom_id.name,
+                     #max(0,product_obj.virtual_available), product_obj.uom_id.name,
+                     #max(0,product_obj.qty_available), product_obj.uom_id.name)
+            #warning_msgs += _("Not enough stock ! : ") + warn_msg + "\n\n"
         # get unit price
 
         if not pricelist:

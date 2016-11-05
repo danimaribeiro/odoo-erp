@@ -23,9 +23,9 @@
                 <form string="Modelos LibreOffice">
                     <group col="4" colspan="4">
                         <field name="nome" colspan="4" />
-                        <field name="tabela" colspan="4" />
-                        <field name="aviso_previo" colspan="4" />
+                        <field name="tabela" colspan="4" />                        
                         <field name="formato" colspan="4" />
+                        <field name="aviso_previo" colspan="4" />                     
                         <separator string="Arquivo do modelo" colspan="4" />
                         <field name="nome_arquivo" colspan="4" invisible="1"/>
                         <field name="arquivo" nolabel="1" filename="nome_arquivo" colspan="4"/>

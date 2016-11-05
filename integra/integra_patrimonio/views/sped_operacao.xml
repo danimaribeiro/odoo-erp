@@ -13,6 +13,7 @@
                         <group colspan="4">
                             <separator string="Integração com o patrimônio" colspan="10" />
                             <field name="baixa_patrimonio" />
+                            <field name="validar_quantidade_patrimonio" />
                         </group>
                     </page>
                 </page>
@@ -30,6 +31,7 @@
                         <group colspan="4">
                             <separator string="Integração com o patrimônio" colspan="10" />
                             <field name="baixa_patrimonio" />
+                            <field name="validar_quantidade_patrimonio" />
                         </group>
                     </page>
                 </page>
@@ -47,6 +49,7 @@
                         <group colspan="4">
                             <separator string="Integração com o patrimônio" colspan="10" />
                             <field name="baixa_patrimonio" />
+                            <field name="validar_quantidade_patrimonio" />
                         </group>
                     </page>
                 </page>

@@ -41,13 +41,12 @@ class sale_order_line_acessorio(osv.Model):
             select
                 pa.quantidade
             from
-                product_acessorio pa
+                product_acessorio_obrigatorio pa
             where
                 pa.product_id = {product_id}
                 and pa.acessorio_id = {acessorio_id};
             """
             sql = sql.format(product_id=linha_obj.line_id.product_id.id, acessorio_id=linha_obj.acessorio_id.id)
-            print(sql)
             cr.execute(sql)
             dados = cr.fetchall()
 
@@ -154,6 +153,7 @@ class sale_order_line(osv.Model):
     _columns = {
         'codigo_completo': fields.function(_get_codigo_completo, type='char', size=30, string=u'Código', store=True, select=True),
         'product_acessorio_ids': fields.related('product_id', 'acessorio_selecao_ids', type='many2many', relation='product.product', string=u'Acessórios originais', readonly=True),
+        'product_acessorio_obrigatorio_ids': fields.related('product_id', 'acessorio_obrigatorio_selecao_ids', type='many2many', relation='product.product', string=u'Acessórios obrigatórios', readonly=True),
 
         'acessorio_ids': fields.one2many('sale.order.line.acessorio', 'line_id', u'Acessórios'),
         'acessorio_selecao_ids': fields.many2many('product.product', 'sale_order_line_acessorio', 'line_id', 'acessorio_id', u'Acessórios'),

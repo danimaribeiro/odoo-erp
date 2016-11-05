@@ -230,10 +230,13 @@ public class JasperServer {
             }
         } else if( language.equalsIgnoreCase( "SQL")  ) {
             System.out.println("Language = " + language);
+            System.out.println( "JasperServer: Abrindo conexao com o BD" );
             System.out.println("ConnectionParameters = " + connectionParameters);
             Connection connection = getConnection( connectionParameters );
             this.printParams(parameters);
             jasperPrint = JasperFillManager.fillReport( report, parameters, connection );
+            connection.close();
+            System.out.println( "JasperServer: Fechou conexao com o BD" );
         } else {
             JREmptyDataSource dataSource = new JREmptyDataSource();
             jasperPrint = JasperFillManager.fillReport( report, parameters, dataSource );

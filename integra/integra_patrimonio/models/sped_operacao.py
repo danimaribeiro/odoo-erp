@@ -12,6 +12,7 @@ class sped_operacao(osv.Model):
 
     _columns = {
         'baixa_patrimonio': fields.boolean(u'Baixar patrimônios vinculados a esta nota?'),
+        'validar_quantidade_patrimonio': fields.boolean(u'Validar quantidade patrimônio?')
     }
 
 

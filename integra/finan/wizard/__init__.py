@@ -9,3 +9,4 @@ from finan_saldos import *
 from finan_recibo import *
 from finan_ajusta_rateio import *
 from finan_altera_vencimento import *
+from finan_atualiza_caixa import *

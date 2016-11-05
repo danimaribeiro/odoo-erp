@@ -9,8 +9,9 @@
         <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@string='Convert to Quote']" position="replace">
-                <button string="Converter para orçamento" icon="gtk-go-forward" name="criar_project_orcamento" type="object" attrs="{'invisible': [('project_orcamento_id', '!=', False)]}" />
-                <field name="project_orcamento_id" readonly="1" colspan="4" />
+                <button string="Converter para orçamento" icon="gtk-go-forward" name="criar_project_orcamento" type="object" attrs="{'invisible': ['|', ('project_orcamento_id', '!=', False), ('project_orcamento_modelo_id', '=', False)]}" />
+                <field name="project_orcamento_modelo_id" colspan="4" domain="[('project_id.name', 'ilike', 'MODELO')]" />
+                <field name="project_orcamento_id" colspan="4" readonly="1" />
             </xpath>
         </field>
     </record>

@@ -21,13 +21,11 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Modelo de veículo">
-                    <group col="10" colspan="10">
-                        <field name="marca" />
-                        <newline />
-                        <field name="modelo" />
-                        <newline />
-                        <field name="tipo_id" />
-                    </group>
+                    <field name="marca" colspan="4" />
+                    <newline />
+                    <field name="modelo" colspan="4" />
+                    <newline />
+                    <field name="tipo_id" colspan="4" />
                 </form>
             </field>
         </record>

@@ -34,14 +34,14 @@
             <field name="model">finan.centrocusto</field>
             <field name="type">tree</field>
             <field name="inherit_id" ref="finan.finan_rateio_tree"/>
-            <field name="arch" type="xml">                           
+            <field name="arch" type="xml">
                 <field name="nome" position="after">
-                    <field name="rateio_empreendimento" />                    
+                    <field name="rateio_empreendimento" />
                     <field name="rateio_finan_locacao" />
                 </field>
             </field>
         </record>
-        
+
         <record model="ir.ui.view" id="finan_rateio_item_tree">
             <field name="name">finan.rateio.item.tree</field>
             <field name="model">finan.rateio</field>
@@ -53,7 +53,19 @@
                     <field name="imovel_id" />
                 </field>
             </field>
-        </record>        
+        </record>
+
+        <record model="ir.ui.view" id="finan_centrocusto_form">
+            <field name="name">finan.centrocusto.form</field>
+            <field name="model">finan.centrocusto</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="finan.finan_centrocusto_form"/>
+            <field name="arch" type="xml">
+                <field name="nome" position="after">
+                    <field name="project_id" colspan="2" attrs="{'invisible': [('sintetico', '=', True)]}" string="Projeto/empreendimento" />
+                </field>
+            </field>
+        </record>
 
     </data>
 </openerp>

@@ -7,6 +7,7 @@
             <field name="model">finan.lancamento</field>
             <field name="inherit_id" ref="finan.finan_pagar_form"/>
             <field name="type">form</field>
+            <field name="priority" eval="20"/>
             <field name="arch" type="xml">
                 <xpath expr="//page[@string='Dados básicos']/group[1]" position="before">
                     <field name="sped_documento_id" readonly="1" colspan="4" />
@@ -32,7 +33,7 @@
                 </field>
 
                 <field name="partner_id" position="replace">
-                    <field name="partner_id" required="1" string="Fornecedor" attrs="{'readonly': [('sped_documento_id', '!=', False)]}" />
+                    <field name="partner_id" required="1" string="Fornecedor" attrs="{'readonly': [('sped_documento_id', '!=', False)]}" domain="[('cnpj_cpf', '!=', False)]" />
                 </field>
 
                 <field name="data_vencimento" position="replace">

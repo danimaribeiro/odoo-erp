@@ -19,16 +19,13 @@ class sped_documento(osv.Model):
     }
 
     def write(self, cr, uid, ids, dados, context={}):
-
         res = super(sped_documento, self).write(cr, uid, ids, dados, context=context)
 
         lancamento_pool = self.pool.get('finan.lancamento')
         bank_pool = self.pool.get('res.partner.bank')
 
         for doc_obj in self.browse(cr, uid, ids):
-
             if doc_obj.finalidade_nfe == FINALIDADE_NFE_DEVOLUCAO:
-
                 if not doc_obj.res_partner_bank_id:
                     raise osv.except_osv(u'Erro!', u'O campo Conta bancária para depósito é Obrigatório!')
 

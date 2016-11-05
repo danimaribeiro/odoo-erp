@@ -16,6 +16,10 @@
 <!--                     <field name="conciliado" /> -->
 <!--                     <field name="quantidade_geral" /> -->
 <!--                     <field name="quantidade_geral_conciliado" /> -->
+                    <field name="saldo_anterior" sum="Anterior" />
+                    <field name="total_geral_credito" sum="Crédito" />
+                    <field name="total_geral_debito" sum="Débito" />
+                    <field name="saldo_final" sum="Saldo" />
                 </tree>
             </field>
         </record>
@@ -31,9 +35,10 @@
                         <field name="res_partner_bank_id" colspan="4" required="1" on_change="onchange_res_partner_bank_id(res_partner_bank_id, data)"/>
                         <newline />
                         <field name="data" required="1" />
-                        <field name="fechado" readonly="1" />
+                        <field name="fechado" readonly="0" />
                         <newline />
                         <button icon="gtk-print" name="imprime_movimento" string="Imprimir" type="object" context="{'res_partner_bank_id': res_partner_bank_id, 'data': data}"/>
+                        <button string="Atualiza Caixa" type="object" name="atualizar_caixa" icon="gtk-refresh" attrs="{'invisible': [('fechado', '!=', False)]}"/>
                         <newline />
                         <notebook colspan="4">
                             <page string="Resumo">
@@ -241,7 +246,8 @@
                     <filter name="aberto" string="Aberto" icon="terp-go-month" domain="[('fechado','=', False)]" />
                     <filter name="fechado" string="Fechado" icon="terp-go-month" domain="[('fechado','=', True)]" />
                     <separator orientation="vertical" />
-                    <field name="res_partner_bank_id" select="1" />
+                    <field name="res_partner_bank_id" />
+                    <field name="res_partner_bank_state" />
                     <field name="data_from" string="Data de" filter_domain="[('data','&gt;=',self)]" widget="calendar" />
                     <field name="data_to" string="ate" filter_domain="[('data','&lt;=',self)]" widget="calendar" />
 <!--                     <field name="data" select="1" /> -->

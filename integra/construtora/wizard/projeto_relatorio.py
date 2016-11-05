@@ -1033,4 +1033,369 @@ order by
         return True
 
 
+    def gera_relatorio_projeto_orcamento_medicao(self, cr, uid, ids, context={}):
+        SQL_COLUNAS = u"""
+    ,
+    '{titulo}' as titulo_{coluna},
+    case
+        when tipo = 'E' then 0
+        else coalesce((
+            select
+                sum(coalesce(poc.quantidade_medida, 0))
+            from
+                project_orcamento_relatorio_medicao poc
+                join project_orcamento_arvore poa on poa.orcamento_item_id = poc.orcamento_item_id
+            where
+                poc.orcamento_id = po.orcamento_id
+                and poc.data = '{data}'
+                    and (po.tipo = 'E' or (po.tipo = 'I' and poc.orcamento_item_id = po.orcamento_item_id))
+                and (po.tipo = 'I' or poa.codigo like po.codigo ||  '%')
+        ), 0)
+    end as quantidade_{coluna},
+    coalesce((
+        select
+            sum(coalesce(poc.vr_produto_medido, 0))
+        from
+            project_orcamento_relatorio_medicao poc
+            join project_orcamento_arvore poa on poa.orcamento_item_id = poc.orcamento_item_id
+        where
+            poc.orcamento_id = po.orcamento_id
+            and poc.data = '{data}'
+            and (po.tipo = 'E' or (po.tipo = 'I' and poc.orcamento_item_id = po.orcamento_item_id))
+            and (po.tipo = 'I' or (po.tipo = 'E' and poa.codigo like po.codigo ||  '%'))
+    ), 0) as vr_produto_{coluna}
+        """
+
+        SQL_COLUNAS_TOTAL = u"""
+    ,
+    '{titulo}' as titulo_{coluna},
+    case
+        when tipo = 'E' then 0
+        else coalesce((
+            select
+                sum(coalesce(poc.quantidade_medida, 0))
+            from
+                project_orcamento_relatorio_medicao poc
+                join project_orcamento_arvore poa on poa.orcamento_item_id = poc.orcamento_item_id
+            where
+                poc.orcamento_id = po.orcamento_id
+                and poc.data between '{data_inicial}' and '{data_final}'
+                    and (po.tipo = 'E' or (po.tipo = 'I' and poc.orcamento_item_id = po.orcamento_item_id))
+                and (po.tipo = 'I' or poa.codigo like po.codigo ||  '%')
+        ), 0)
+    end as quantidade_{coluna},
+    coalesce((
+        select
+            sum(coalesce(poc.vr_produto_medido, 0))
+        from
+            project_orcamento_relatorio_medicao poc
+            join project_orcamento_arvore poa on poa.orcamento_item_id = poc.orcamento_item_id
+        where
+            poc.orcamento_id = po.orcamento_id
+            and poc.data between '{data_inicial}' and '{data_final}'
+            and (po.tipo = 'E' or (po.tipo = 'I' and poc.orcamento_item_id = po.orcamento_item_id))
+            and (po.tipo = 'I' or (po.tipo = 'E' and poa.codigo like po.codigo ||  '%'))
+    ), 0) as vr_produto_{coluna}
+        """
+
+        SQL_COLUNAS_DIFERENCA = u"""
+    ,
+    '{titulo}' as titulo_{coluna},
+    case
+        when tipo = 'E' then 0
+        else po.quantidade - coalesce((
+            select
+                sum(coalesce(poc.quantidade_medida, 0))
+            from
+                project_orcamento_relatorio_medicao poc
+                join project_orcamento_arvore poa on poa.orcamento_item_id = poc.orcamento_item_id
+            where
+                poc.orcamento_id = po.orcamento_id
+                and poc.data between '{data_inicial}' and '{data_final}'
+                    and (po.tipo = 'E' or (po.tipo = 'I' and poc.orcamento_item_id = po.orcamento_item_id))
+                and (po.tipo = 'I' or poa.codigo like po.codigo ||  '%')
+        ), 0)
+    end as quantidade_{coluna},
+    po.vr_produto - coalesce((
+        select
+            sum(coalesce(poc.vr_produto_medido, 0))
+        from
+            project_orcamento_relatorio_medicao poc
+            join project_orcamento_arvore poa on poa.orcamento_item_id = poc.orcamento_item_id
+        where
+            poc.orcamento_id = po.orcamento_id
+            and poc.data between '{data_inicial}' and '{data_final}'
+            and (po.tipo = 'E' or (po.tipo = 'I' and poc.orcamento_item_id = po.orcamento_item_id))
+            and (po.tipo = 'I' or (po.tipo = 'E' and poa.codigo like po.codigo ||  '%'))
+    ), 0) as vr_produto_{coluna}
+        """
+
+        SQL_RELATORIO = u"""
+select
+    po.projeto,
+    po.orcamento,
+    po.codigo,
+    po.descricao,
+    po.tipo,
+    po.orcamento_id,
+    po.orcamento_item_id,
+    po.quantidade,
+    po.vr_produto
+    {colunas}
+
+from
+    project_orcamento_arvore po
+
+where
+    po.orcamento_id = {orcamento_id}
+
+order by
+    po.codigo;
+        """
+
+        rel_obj = self.browse(cr, uid, ids[0])
+        colunas = u''
+
+        #
+        # Vamos buscar as medições que ocorreram no período
+        #
+        sql_medicoes = """
+        select distinct
+            om.data
+
+        from
+            project_orcamento_medicao om
+
+        where
+            om.orcamento_id = {orcamento_id}
+
+        order by
+            om.data;
+        """
+        data_inicial = parse_datetime(str(rel_obj.ano).zfill(4) + '-' + rel_obj.mes + '-01').date()
+        data_final = data_inicial + relativedelta(months=+36)
+        filtro = {
+            'orcamento_id': rel_obj.orcamento_id.id
+        }
+        sql_medicoes = sql_medicoes.format(**filtro)
+        cr.execute(sql_medicoes)
+        dados = cr.fetchall()
+        datas = []
+        numero_medicao = []
+        for i in range(len(dados)):
+            data = dados[i][0]
+
+            if data >= str(data_inicial) and data <= str(data_final):
+                datas.append(data)
+                numero_medicao.append(i + 1)
+
+        if len(datas) == 0:
+            raise osv.except_osv(u'Atenção', u'Não há dados para gerar o relatório, com base nos parâmetros informados!')
+
+        data_inicial = datas[0]
+        data_final = datas[-1]
+        periodo_meses = int(rel_obj.periodo_meses)
+        for i in range(36):
+            filtro = {
+                'coluna': str(i + 1).zfill(2),
+                'titulo': '',
+                'data': '2000-01-01',
+                'data_inicial': '2000-01-01',
+                'data_final': '2000-01-01',
+            }
+
+            if i < len(datas):
+                filtro['data'] = datas[i]
+                filtro['data_inicial'] = data_inicial
+                filtro['data_final'] = data_final
+                filtro['titulo'] = str(numero_medicao[i]).zfill(2) + ' - ' + formata_data(datas[i])
+
+            colunas += SQL_COLUNAS.format(**filtro)
+
+        filtro = {
+            'titulo': 'Total',
+            'coluna': 'total',
+            'data_inicial': data_inicial,
+            'data_final': data_final,
+        }
+        colunas += SQL_COLUNAS_TOTAL.format(**filtro)
+
+        filtro = {
+            'titulo': u'Diferença',
+            'coluna': 'diferenca',
+            'data_inicial': data_inicial,
+            'data_final': data_final,
+        }
+        colunas += SQL_COLUNAS_DIFERENCA.format(**filtro)
+
+        filtro = {
+            'orcamento_id': rel_obj.orcamento_id.id,
+            'colunas': colunas,
+        }
+
+        sql = SQL_RELATORIO.format(**filtro)
+        #print(sql)
+        cr.execute(sql)
+        dados = cr.fetchall()
+
+        if len(dados) == 0:
+            raise osv.except_osv(u'Atenção', u'Não há dados para gerar o relatório, com base nos parâmetros informados!')
+
+        linhas = []
+        valor = 0
+        valor_total = 0
+        for (projeto,orcamento,codigo,descricao,tipo,orcamento_id,orcamento_item_id,quantidade,vr_produto,
+            titulo_01,quantidade_01,vr_produto_01,
+            titulo_02,quantidade_02,vr_produto_02,
+            titulo_03,quantidade_03,vr_produto_03,
+            titulo_04,quantidade_04,vr_produto_04,
+            titulo_05,quantidade_05,vr_produto_05,
+            titulo_06,quantidade_06,vr_produto_06,
+            titulo_07,quantidade_07,vr_produto_07,
+            titulo_08,quantidade_08,vr_produto_08,
+            titulo_09,quantidade_09,vr_produto_09,
+            titulo_10,quantidade_10,vr_produto_10,
+            titulo_11,quantidade_11,vr_produto_11,
+            titulo_12,quantidade_12,vr_produto_12,
+            titulo_13,quantidade_13,vr_produto_13,
+            titulo_14,quantidade_14,vr_produto_14,
+            titulo_15,quantidade_15,vr_produto_15,
+            titulo_16,quantidade_16,vr_produto_16,
+            titulo_17,quantidade_17,vr_produto_17,
+            titulo_18,quantidade_18,vr_produto_18,
+            titulo_19,quantidade_19,vr_produto_19,
+            titulo_20,quantidade_20,vr_produto_20,
+            titulo_21,quantidade_21,vr_produto_21,
+            titulo_22,quantidade_22,vr_produto_22,
+            titulo_23,quantidade_23,vr_produto_23,
+            titulo_24,quantidade_24,vr_produto_24,
+            titulo_25,quantidade_25,vr_produto_25,
+            titulo_26,quantidade_26,vr_produto_26,
+            titulo_27,quantidade_27,vr_produto_27,
+            titulo_28,quantidade_28,vr_produto_28,
+            titulo_29,quantidade_29,vr_produto_29,
+            titulo_30,quantidade_30,vr_produto_30,
+            titulo_31,quantidade_31,vr_produto_31,
+            titulo_32,quantidade_32,vr_produto_32,
+            titulo_33,quantidade_33,vr_produto_33,
+            titulo_34,quantidade_34,vr_produto_34,
+            titulo_35,quantidade_35,vr_produto_35,
+            titulo_36,quantidade_36,vr_produto_36,
+            titulo_total,quantidade_total,vr_produto_total,
+            titulo_diferenca,quantidade_diferenca,vr_produto_diferenca,
+            ) in dados:
+
+            linha = DicionarioBrasil()
+            #linha['projeto'] = projeto
+            linha['orcamento'] = rel_obj.orcamento_id.descricao
+            linha['codigo'] = codigo
+            linha['descricao'] = descricao
+            linha['tipo'] = tipo
+            #linha['orcamento_id'] = orcamento_id
+            #linha['orcamento_item_id'] = orcamento_item_id
+            linha['quantidade'] = formata_valor(D(quantidade or 0))
+            linha['vr_produto'] = formata_valor(D(vr_produto or 0))
+
+            linha['titulo_01'], linha['quantidade_01'], linha['vr_produto_01'] = titulo_01.decode('utf-8'), formata_valor(D(quantidade_01 or 0)), formata_valor(D(vr_produto_01 or 0))
+            linha['titulo_02'], linha['quantidade_02'], linha['vr_produto_02'] = titulo_02.decode('utf-8'), formata_valor(D(quantidade_02 or 0)), formata_valor(D(vr_produto_02 or 0))
+            linha['titulo_03'], linha['quantidade_03'], linha['vr_produto_03'] = titulo_03.decode('utf-8'), formata_valor(D(quantidade_03 or 0)), formata_valor(D(vr_produto_03 or 0))
+            linha['titulo_04'], linha['quantidade_04'], linha['vr_produto_04'] = titulo_04.decode('utf-8'), formata_valor(D(quantidade_04 or 0)), formata_valor(D(vr_produto_04 or 0))
+            linha['titulo_05'], linha['quantidade_05'], linha['vr_produto_05'] = titulo_05.decode('utf-8'), formata_valor(D(quantidade_05 or 0)), formata_valor(D(vr_produto_05 or 0))
+            linha['titulo_06'], linha['quantidade_06'], linha['vr_produto_06'] = titulo_06.decode('utf-8'), formata_valor(D(quantidade_06 or 0)), formata_valor(D(vr_produto_06 or 0))
+            linha['titulo_07'], linha['quantidade_07'], linha['vr_produto_07'] = titulo_07.decode('utf-8'), formata_valor(D(quantidade_07 or 0)), formata_valor(D(vr_produto_07 or 0))
+            linha['titulo_08'], linha['quantidade_08'], linha['vr_produto_08'] = titulo_08.decode('utf-8'), formata_valor(D(quantidade_08 or 0)), formata_valor(D(vr_produto_08 or 0))
+            linha['titulo_09'], linha['quantidade_09'], linha['vr_produto_09'] = titulo_09.decode('utf-8'), formata_valor(D(quantidade_09 or 0)), formata_valor(D(vr_produto_09 or 0))
+            linha['titulo_10'], linha['quantidade_10'], linha['vr_produto_10'] = titulo_10.decode('utf-8'), formata_valor(D(quantidade_10 or 0)), formata_valor(D(vr_produto_10 or 0))
+            linha['titulo_11'], linha['quantidade_11'], linha['vr_produto_11'] = titulo_11.decode('utf-8'), formata_valor(D(quantidade_11 or 0)), formata_valor(D(vr_produto_11 or 0))
+            linha['titulo_12'], linha['quantidade_12'], linha['vr_produto_12'] = titulo_12.decode('utf-8'), formata_valor(D(quantidade_12 or 0)), formata_valor(D(vr_produto_12 or 0))
+            linha['titulo_13'], linha['quantidade_13'], linha['vr_produto_13'] = titulo_13.decode('utf-8'), formata_valor(D(quantidade_13 or 0)), formata_valor(D(vr_produto_13 or 0))
+            linha['titulo_14'], linha['quantidade_14'], linha['vr_produto_14'] = titulo_14.decode('utf-8'), formata_valor(D(quantidade_14 or 0)), formata_valor(D(vr_produto_14 or 0))
+            linha['titulo_15'], linha['quantidade_15'], linha['vr_produto_15'] = titulo_15.decode('utf-8'), formata_valor(D(quantidade_15 or 0)), formata_valor(D(vr_produto_15 or 0))
+            linha['titulo_16'], linha['quantidade_16'], linha['vr_produto_16'] = titulo_16.decode('utf-8'), formata_valor(D(quantidade_16 or 0)), formata_valor(D(vr_produto_16 or 0))
+            linha['titulo_17'], linha['quantidade_17'], linha['vr_produto_17'] = titulo_17.decode('utf-8'), formata_valor(D(quantidade_17 or 0)), formata_valor(D(vr_produto_17 or 0))
+            linha['titulo_18'], linha['quantidade_18'], linha['vr_produto_18'] = titulo_18.decode('utf-8'), formata_valor(D(quantidade_18 or 0)), formata_valor(D(vr_produto_18 or 0))
+            linha['titulo_19'], linha['quantidade_19'], linha['vr_produto_19'] = titulo_19.decode('utf-8'), formata_valor(D(quantidade_19 or 0)), formata_valor(D(vr_produto_19 or 0))
+            linha['titulo_20'], linha['quantidade_20'], linha['vr_produto_20'] = titulo_20.decode('utf-8'), formata_valor(D(quantidade_20 or 0)), formata_valor(D(vr_produto_20 or 0))
+            linha['titulo_21'], linha['quantidade_21'], linha['vr_produto_21'] = titulo_21.decode('utf-8'), formata_valor(D(quantidade_21 or 0)), formata_valor(D(vr_produto_21 or 0))
+            linha['titulo_22'], linha['quantidade_22'], linha['vr_produto_22'] = titulo_22.decode('utf-8'), formata_valor(D(quantidade_22 or 0)), formata_valor(D(vr_produto_22 or 0))
+            linha['titulo_23'], linha['quantidade_23'], linha['vr_produto_23'] = titulo_23.decode('utf-8'), formata_valor(D(quantidade_23 or 0)), formata_valor(D(vr_produto_23 or 0))
+            linha['titulo_24'], linha['quantidade_24'], linha['vr_produto_24'] = titulo_24.decode('utf-8'), formata_valor(D(quantidade_24 or 0)), formata_valor(D(vr_produto_24 or 0))
+            linha['titulo_25'], linha['quantidade_25'], linha['vr_produto_25'] = titulo_25.decode('utf-8'), formata_valor(D(quantidade_25 or 0)), formata_valor(D(vr_produto_25 or 0))
+            linha['titulo_26'], linha['quantidade_26'], linha['vr_produto_26'] = titulo_26.decode('utf-8'), formata_valor(D(quantidade_26 or 0)), formata_valor(D(vr_produto_26 or 0))
+            linha['titulo_27'], linha['quantidade_27'], linha['vr_produto_27'] = titulo_27.decode('utf-8'), formata_valor(D(quantidade_27 or 0)), formata_valor(D(vr_produto_27 or 0))
+            linha['titulo_28'], linha['quantidade_28'], linha['vr_produto_28'] = titulo_28.decode('utf-8'), formata_valor(D(quantidade_28 or 0)), formata_valor(D(vr_produto_28 or 0))
+            linha['titulo_29'], linha['quantidade_29'], linha['vr_produto_29'] = titulo_29.decode('utf-8'), formata_valor(D(quantidade_29 or 0)), formata_valor(D(vr_produto_29 or 0))
+            linha['titulo_30'], linha['quantidade_30'], linha['vr_produto_30'] = titulo_30.decode('utf-8'), formata_valor(D(quantidade_30 or 0)), formata_valor(D(vr_produto_30 or 0))
+            linha['titulo_31'], linha['quantidade_31'], linha['vr_produto_31'] = titulo_31.decode('utf-8'), formata_valor(D(quantidade_31 or 0)), formata_valor(D(vr_produto_31 or 0))
+            linha['titulo_32'], linha['quantidade_32'], linha['vr_produto_32'] = titulo_32.decode('utf-8'), formata_valor(D(quantidade_32 or 0)), formata_valor(D(vr_produto_32 or 0))
+            linha['titulo_33'], linha['quantidade_33'], linha['vr_produto_33'] = titulo_33.decode('utf-8'), formata_valor(D(quantidade_33 or 0)), formata_valor(D(vr_produto_33 or 0))
+            linha['titulo_34'], linha['quantidade_34'], linha['vr_produto_34'] = titulo_34.decode('utf-8'), formata_valor(D(quantidade_34 or 0)), formata_valor(D(vr_produto_34 or 0))
+            linha['titulo_35'], linha['quantidade_35'], linha['vr_produto_35'] = titulo_35.decode('utf-8'), formata_valor(D(quantidade_35 or 0)), formata_valor(D(vr_produto_35 or 0))
+            linha['titulo_36'], linha['quantidade_36'], linha['vr_produto_36'] = titulo_36.decode('utf-8'), formata_valor(D(quantidade_36 or 0)), formata_valor(D(vr_produto_36 or 0))
+            linha['titulo_total'], linha['quantidade_total'], linha['vr_produto_total'] = titulo_total.decode('utf-8'), formata_valor(D(quantidade_total or 0)), formata_valor(D(vr_produto_total or 0))
+            linha['titulo_diferenca'], linha['quantidade_diferenca'], linha['vr_produto_diferenca'] = titulo_diferenca.decode('utf-8'), formata_valor(D(quantidade_diferenca or 0)), formata_valor(D(vr_produto_diferenca or 0))
+
+            linhas.append(linha)
+
+
+        ###rel = FinanRelatorioAutomaticoPaisagem()
+        ###rel.title = u'Orçado x Realizado (compras)'
+        ###rel.colunas = [
+            ###['orcamento' , 'C', 60, u'Orçamento', False],
+            ###['codigo'    , 'C', 20, u'Código', False],
+            ###['descricao' , 'C', 60, u'Descrição', False],
+            ###['quantidade', 'F', 15, u'Qtd. orçada', False],
+            ###['vr_produto', 'F', 15, u'Valor orçado', False],
+        ###]
+
+        ###linha_titulo = u'Orçamento;Código;Descrição;Qtd. orçada;Valor orçado'
+
+        ###for i in range(12):
+            ###rel.colunas.append(['quantidade_' + str(i + 1).zfill(2), 'F', 15, u'Qtd. ' + linha['titulo_' + str(i + 1).zfill(2)], False])
+            ###rel.colunas.append(['vr_produto_' + str(i + 1).zfill(2), 'F', 15, u'Vr. ' + linha['titulo_' + str(i + 1).zfill(2)], False])
+
+            ###linha_titulo += u';Qtd. ' + linha['titulo_' + str(i + 1).zfill(2)]
+            ###linha_titulo += u';Vr. ' + linha['titulo_' + str(i + 1).zfill(2)]
+
+        ###rel.monta_detalhe_automatico(rel.colunas)
+
+        ####rel.grupos = [
+            ####['projeto', u'Projeto', False],
+        ####]
+
+        ####rel.monta_grupos(rel.grupos)
+
+        ###rel.band_page_header.elements[-1].text = u'Orçamento: ' + rel_obj.orcamento_id.descricao
+
+        ####pdf = gera_relatorio(rel, linhas)
+        ###csv = gera_relatorio_csv(rel, linhas)
+        ###csv = linha_titulo.encode('iso-8859-1') + '\n\r' + csv
+
+        dados = {
+            'titulo': u'Orçado × Medido',
+            'orcamento': rel_obj.orcamento_id,
+            'linha_titulo': linhas[0],
+            'linhas': linhas,
+            'hoje': formata_data(hoje(), '%d/%m/%Y'),
+            'agora': formata_data(agora(), '%d/%m/%Y %H:%M:%S'),
+        }
+
+        if rel_obj.periodo_meses == '12':
+            nome_arquivo = JASPER_BASE_DIR + 'project_orcamento_orcado_medido.ods'
+        elif rel_obj.periodo_meses == '24':
+            nome_arquivo = JASPER_BASE_DIR + 'project_orcamento_orcado_medido_24.ods'
+        elif rel_obj.periodo_meses == '36':
+            nome_arquivo = JASPER_BASE_DIR + 'project_orcamento_orcado_medido_36.ods'
+
+        planilha = self.pool.get('lo.modelo').gera_modelo_novo_avulso(cr, uid, nome_arquivo, dados, formato='xlsx')
+
+        dados = {
+            'nome': 'orcado_medido.xlsx',
+            'arquivo': planilha
+        }
+        rel_obj.write(dados)
+
+        return True
+
+
 projeto_relatorio()

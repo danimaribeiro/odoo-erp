@@ -187,11 +187,11 @@ class sale_order(osv.Model):
             #'produtos_objs': sale_obj.order_line,           
         }
 
-        nome_arquivo = JASPER_BASE_DIR + 'di_pedido_venda_msw.ods'
+        nome_arquivo = JASPER_BASE_DIR + 'di_pedido_venda.ods'
 
         planilha = self.pool.get('lo.modelo').gera_modelo_novo_avulso(cr, uid, nome_arquivo, dados)
         
-        nome = u'pedido_venda_msw.xlsx'
+        nome = u'pedido_venda.xlsx'
                 
         attachment_pool = self.pool.get('ir.attachment')
         attachment_ids = attachment_pool.search(cr, uid, [('res_model', '=', 'sale.order'), ('res_id', '=', id), ('name', '=', nome)])

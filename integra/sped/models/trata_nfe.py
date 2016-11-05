@@ -17,7 +17,7 @@ from mako.template import Template
 from sped.constante_tributaria import *
 from decimal import Decimal as D
 from pybrasil.valor import formata_valor
-from pybrasil.data import parse_datetime, agora, data_hora_horario_brasilia, UTC
+from pybrasil.data import parse_datetime, agora, data_hora_horario_brasilia, UTC, formata_data
 
 #
 #
@@ -108,13 +108,25 @@ def monta_nfe(self, cr, uid, doc_obj):
     #
     # Notas referenciadas
     #
+    obs_ref = u''
     for docref_obj in doc_obj.documentoreferenciado_ids:
         docref = NFRef_310()
         if docref_obj.modelo == '55':
             if docref_obj.documentoreferenciado_id:
                 docref.refNFe.valor = docref_obj.documentoreferenciado_id.chave or ''
+                obs_ref += 'Referente à NF-e nº '
+                obs_ref += formata_valor(docref_obj.documentoreferenciado_id.numero, casas_decimais=0)
+                obs_ref += ' do dia '
+                obs_ref += formata_data(docref_obj.documentoreferenciado_id.data_emissao)
+                obs_ref += ', chave '
+                obs_ref += docref_obj.documentoreferenciado_id.chave
+                obs_ref += '\n'
+
             else:
                 docref.refNFe.valor = docref_obj.chave or ''
+                obs_ref += 'Referente a NF-e chave '
+                obs_ref += docref_obj.chave
+                obs_ref += '\n'
 
         elif docref_obj.modelo == '57':
             if docref_obj.documentoreferenciado_id:
@@ -207,7 +219,8 @@ def monta_nfe(self, cr, uid, doc_obj):
             nfe.infNFe.ide.idDest.valor = '2'
 
     nfe.infNFe.dest.enderDest.fone.valor    = limpa_formatacao(doc_obj.partner_id.fone or '')
-    nfe.infNFe.dest.email.valor = doc_obj.partner_id.email_nfe or ''
+    email_dest = doc_obj.partner_id.email_nfe or ''
+    nfe.infNFe.dest.email.valor = email_dest[:60]
 
     nfe.infNFe.dest.indIEDest.valor = doc_obj.partner_id.contribuinte or '9'
 
@@ -321,15 +334,20 @@ def monta_nfe(self, cr, uid, doc_obj):
                 di.tpViaTransp.valor = di_obj.via_trans_internacional
                 di.vAFRMM.valor = D('%.2f' % di_obj.vr_afrmm) or '0.00'
                 di.tpIntermedio.valor = di_obj.forma_importacao
-                di.CNPJ.valor = limpa_formatacao(di_obj.partner_id.cnpj_cpf)
-                di.UFTerceiro.valor = di_obj.partner_id.estado
-                di.cExportador.valor = limpa_formatacao(di_obj.partner_id.cnpj_cpf)
+
+                if di_obj.partner_id:
+                    di.CNPJ.valor = limpa_formatacao(di_obj.partner_id.cnpj_cpf)
+                    di.UFTerceiro.valor = di_obj.partner_id.estado
+                    di.cExportador.valor = limpa_formatacao(di_obj.partner_id.cnpj_cpf)
 
                 for adi_obf in di_obj.declaracao_adicao_ids:
                     adi = Adi_310()
                     adi.nAdicao.valor = adi_obf.numero_adicao
                     adi.nSeqAdic.valor = adi_obf.sequencial
-                    adi.cFabricante.valor = limpa_formatacao(di_obj.partner_id.cnpj_cpf)
+
+                    if di_obj.partner_id:
+                        adi.cFabricante.valor = limpa_formatacao(di_obj.partner_id.cnpj_cpf)
+
                     adi.vDescDI.valor = D('%.2f' % adi_obf.vr_desconto) or '0.00'
                     adi.nDraw.valor = adi_obf.numero_drawback
 
@@ -579,6 +597,9 @@ def monta_nfe(self, cr, uid, doc_obj):
     template = Template(infcomplementar.encode('utf-8'), imports=template_imports, input_encoding='utf-8', output_encoding='utf-8', strict_undefined=True)
     infcomplementar = template.render(**dados)
     nfe.infNFe.infAdic.infCpl.valor = infcomplementar.decode('utf-8')
+
+    if obs_ref:
+        nfe.infNFe.infAdic.infCpl.valor += u'\n' + obs_ref
 
     #
     # Informação adicional para o fisco
@@ -888,6 +909,12 @@ def corrige_nfe(self, cr, uid, cce_obj, doc_obj):
     evento.infEvento.CNPJ.valor = procNFe.NFe.infNFe.emit.CNPJ.valor
     evento.infEvento.chNFe.valor = procNFe.NFe.chave
     evento.infEvento.dhEvento.valor = agora()
+    #
+    # Correção ASP - Cláudia copiou e colou e veio esse caracter esquisito
+    #
+    if cce_obj.correcao:
+        cce_obj.correcao = cce_obj.correcao.replace(u'\u200b', ' ')
+
     evento.infEvento.detEvento.xCorrecao.valor = cce_obj.correcao or ''
     evento.infEvento.nSeqEvento.valor = cce_obj.sequencia or 1
 
@@ -967,6 +994,23 @@ def gera_danfe(self, cr, uid, doc_obj):
         processador.danfe.procEventoCancNFe = None
 
     processador.danfe.salvar_arquivo = False
+
+    empresa = doc_obj.company_id.partner_id
+    caminho_empresa = os.path.expanduser('~/sped')
+
+    if not empresa.cnpj_cpf:
+        #
+        # Pega a empresa ativa no momento
+        #
+        empresa_id = self.pool.get('res.company')._company_default_get(cr, uid, 'sped.documento')
+        empresa = self.pool.get('res.company').browse(cr, uid, empresa_id)
+        empresa = empresa.partner_id
+
+    caminho_empresa = os.path.join(caminho_empresa, limpa_formatacao(empresa.cnpj_cpf))
+
+    if os.path.exists(os.path.join(caminho_empresa, 'logo_caminho.txt')):
+        processador.danfe.logo = open(os.path.join(caminho_empresa, 'logo_caminho.txt')).read().strip()
+
     processador.danfe.gerar_danfe()
     grava_danfe(self, cr, uid, doc_obj, nfe, processador.danfe.conteudo_pdf)
 

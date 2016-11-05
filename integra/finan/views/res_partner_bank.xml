@@ -20,14 +20,14 @@
                         <field name="acc_number" string="Conta" colspan="2" />
                         <field name="conta_digito" colspan="2"/>
                         <field name="saldo_inicial"/>
-                        <field name="data_saldo_inicial"/>
+                        <field name="data_saldo_inicial" string="Data de FECHAMENTO do saldo inicial" />
                         <newline/>
                         <field name="conta_id" domain="[('sintetica', '=', False)]" />
                     </group>
                 </field>
-                <field name="bank_bic" position="after">                    
+                <field name="bank_bic" position="after">
                     <field name="codigo_convenio" />
-                </field>                
+                </field>
             </field>
         </record>
 
@@ -59,9 +59,9 @@
                     <group string="Agrupado por">
                         <filter string="Empresa" name="Empresa" icon="terp-partner" domain = "[]" context="{'group_by':'company_id'}"/>
                         <filter string="Titular" name="Titular" icon="terp-partner" domain = "[]" context="{'group_by':'partner_id'}"/>
-                        <filter string="Nome Titular" name="Nome Titular"  icon="terp-personal" domain = "[]" context="{'group_by':'owner_name'}"/>                         
+                        <filter string="Nome Titular" name="Nome Titular"  icon="terp-personal" domain = "[]" context="{'group_by':'owner_name'}"/>
                         <filter string="Tipo" name="Tipo"  icon="terp-personal" domain = "[]" context="{'group_by':'state'}"/>
-                    </group>                 
+                    </group>
                 </field>
             </field>
         </record>

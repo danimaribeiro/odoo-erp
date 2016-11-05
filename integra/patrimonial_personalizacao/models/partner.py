@@ -68,6 +68,7 @@ class res_partner(orm.Model):
             where
                 l.tipo = 'R'
                 and l.situacao = 'Vencido'
+                and coalesce(l.provisionado, False) = False
                 and (current_date - l.data_vencimento) >= 10
                 and l.partner_id = {partner_id};
             """

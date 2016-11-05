@@ -15,9 +15,9 @@
                     <field name="data" />
                     <field name="somente_cnpj" />
                     <field name="sintetica" />
-                    <field name="create_uid" />                    
-                    <field name="write_uid" />                    
-                    <field name="write_date" />                  
+                    <field name="create_uid" />
+                    <field name="write_uid" />
+                    <field name="write_date" />
                 </tree>
             </field>
         </record>
@@ -39,24 +39,24 @@
                         <field name="data_final" required="1" />
                         <newline />
                         <field name="data" readonly="1" />
-                        <field name="formato" required="1" />                        
+                        <field name="formato" required="1" />
                          <newline/>
-                        <field name="somente_cnpj" />     
-                        <field name="sintetica" />     
+                        <field name="somente_cnpj" />
+                        <field name="sintetica" />
                         <newline />
-                        <field name="nome" invisible="1"/>                        
-                        <button icon="gtk-execute" string="Gerar arquivo" name="gera_analise" type="object" colspan="4" />                                              
+                        <field name="nome" invisible="1"/>
+                        <button icon="gtk-execute" string="Gerar arquivo" name="gera_analise" type="object" colspan="4" />
                     </group>
                     <group col="4" colspan="4">
                         <separator string="Itens do D.R.E" colspan="4"/>
                         <field name="item_ids_view" readonly="1" colspan="4" nolabel="1" context="{'conta_simples': True}">
                             <tree colors="red:valor &lt; 0">
                                 <field name="codigo_completo" string="Sequência" />
-                                <field name="nome_estrutura" />                                                                                               
-                                <field name="valor_nivel_4" />
+                                <field name="nome_estrutura" />
+<!--                                <field name="valor_nivel_4" />
                                 <field name="valor_nivel_3" />
                                 <field name="valor_nivel_2" />
-                                <field name="valor_nivel_1" />
+                                <field name="valor_nivel_1" />-->
                                 <field name="valor"  />
                             </tree>
                         </field>
@@ -87,13 +87,13 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('tipo_demonstrativo', '=', 'DREG')]</field>
-            <field name="context">{'tipo_demonstrativo': 'DREG', 'default_tipo_demonstrativo': 'DREG'}</field>            
+            <field name="context">{'tipo_demonstrativo': 'DREG', 'default_tipo_demonstrativo': 'DREG'}</field>
             <field name="view_id" ref="finan_analise_dre_tree" />
         </record>
 
         <menuitem action="finan_analise_dre_acao"
             id="menu_finan_analise_dre"
-            name="D.R.E Gerencial" 
+            name="D.R.E Gerencial"
             parent="finan.menu_finan_relatorios"
             sequence="20" />
 

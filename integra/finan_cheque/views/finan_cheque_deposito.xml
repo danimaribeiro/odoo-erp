@@ -27,15 +27,15 @@
             <field name="arch" type="xml">
                 <form string="Depósito de cheques">
                     <field name="tipo" invisible="1" />
-                    <group colspan="4">
-                        <field name="company_id" colspan="4"  required="1" attrs="{'readonly': [('confirmado', '!=', False)]}" />
-                        <field name="res_partner_bank_id" string="Retirar de" colspan="4"  required="1" domain="[('company_id', '=', company_id)]" attrs="{'readonly': [('confirmado', '!=', False)]}" />
-                        <field name="res_partner_bank_creditar_id" string="Depositar em" colspan="4"  required="1" domain="[('company_id', '=', company_id)]" attrs="{'readonly': [('confirmado', '!=', False)]}" />
-                        <field name="data" required="1" />
+                    <group colspan="4" col="4">
+                        <group colspan="4" col="4">
+                            <field name="company_id" colspan="4"  required="1" attrs="{'readonly': [('confirmado', '!=', False)]}" />
+                            <field name="res_partner_bank_id" string="Retirar de" colspan="4"  required="1" domain="[('company_id', '=', company_id)]" attrs="{'readonly': [('confirmado', '!=', False)]}" />
+                            <field name="res_partner_bank_creditar_id" string="Depositar em" colspan="4"  required="1" domain="[('company_id', '=', company_id)]" attrs="{'readonly': [('confirmado', '!=', False)]}" />
+                            <field name="data" required="1" />
+                        </group>
                         <newline />
                         <field name="confirmado" invisible="1" />
-                        <group colspan="4" col="4" attrs="{'invisible': [('confirmado', '=', False)]}">
-                        </group>
                         <group colspan="4" col="4" attrs="{'invisible': [('confirmado', '!=', False)]}">
                             <button colspan="4" type="object" name="confirmar" string="Registrar depósito" />
                         </group>

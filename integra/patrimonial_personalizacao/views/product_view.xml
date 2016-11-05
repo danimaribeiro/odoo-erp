@@ -44,6 +44,8 @@
                 <field name="qty_available" position="replace">
                     <field name="qty_available" string="Quantidade na mão venda" />
                     <field name="qty_locacao" />
+                    <field name="qty_novo" />
+                    <field name="qty_usado" />
                 </field>
                 <field name="virtual_available" position="replace">
                     <field name="virtual_available" string="Quantidade disponível venda" />

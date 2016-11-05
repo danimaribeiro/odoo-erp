@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_controle_cobranca_tree">
+            <field name="name">finan.controle.cobranca.tree</field>
+            <field name="model">finan.controle.cobranca</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id" />
+                    <field name="raiz_cnpj" invisible="1" />
+                    <field name="partner_id" />                    
+                    <field name="data" />
+                    <field name="cobrador_id" />                                                                        
+                    <field name="data_agendamento" />                
+                </tree>
+            </field>
+        </record>
+        
+        
+         <record model="ir.ui.view" id="finan_controle_cobranca_item_tree">
+            <field name="name">finan.controle.cobranca.item.tree</field>
+            <field name="model">finan_cobranca_itens</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_id"  />
+                    <field name="partner_id" invisible="1"/>                 
+                    <field name="numero_documento"  />
+                    <field name="data_documento"  />
+                    <field name="valor_documento" sum="Total" />                 
+                    <field name="valor_saldo" sum="Total" />                
+                </tree>
+            </field>
+        </record>
+        
+
+        <record model="ir.ui.view" id="finan_controle_cobranca_form">
+            <field name="name">finan.controle.cobranca.form</field>
+            <field name="model">finan.controle.cobranca</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Controle de Cobrança">
+                    <separator string="Informações básicas" colspan="4" />                        
+                    <group colspan="4" col="8">
+                        <group colspan="4" col="4">
+                            <field name="company_id" colspan="4" />
+                            <field name="raiz_cnpj" invisible="1" colspan="4" />
+                            <field name="partner_id" required="1" colspan="4" />                        
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="data" required="1"  />                                                                        
+                            <field name="create_uid" readonly="1" />                                                                                                                                                                      
+                            <field name="vr_total"  />                                                                        
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="data_agendamento" />                                                                                                                                             
+                            <field name="cobrador_id" required="1" />                                                                                                                                                                    
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Títulos a Cobrar">                        
+                            <field name="lancamento_ids" colspan="4" domain="[('partner_id','=', partner_id), ('tipo', '=', 'R'), ('provisionado', '=', False),('situacao','in',('Vencido','Vence hoje','A vencer'))]" nolabel="1" attrs="{'readonly': [('partner_id', '=', False)]}">                
+                                <tree>
+                                    <field name="company_id"  />
+                                    <field name="partner_id" invisible="1"/>                 
+                                    <field name="numero_documento"  />
+                                    <field name="data_documento"  />
+                                    <field name="data_vencimento"  />
+                                    <field name="valor_documento" sum="Total" />                 
+                                    <field name="valor_saldo" sum="Total" />                 
+                                </tree>
+                            </field>
+                       </page>                       
+                       <page string="Observaçao">                        
+                           <field name="obs" nolabel="1"/>                 
+                       </page>                       
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+
+        <record model="ir.actions.act_window" id="finan_controle_cobranca_acao">
+            <field name="name">Controle de Cobrança</field>
+            <field name="res_model">finan.controle.cobranca</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="finan_controle_cobranca_tree" />
+        </record>
+
+        <menuitem
+            action="finan_controle_cobranca_acao"
+            id="menu_finan_controle_cobranca"
+            name="Controle de Cobrança"
+            sequence="20"
+            parent="finan.menu_finan_conta_receber"/>
+
+        <record model="ir.actions.act_window.view" id="finan_controle_cobranca_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_controle_cobranca_form"/>
+            <field name="act_window_id" ref="finan_controle_cobranca_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_controle_cobranca_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_controle_cobranca_tree"/>
+            <field name="act_window_id" ref="finan_controle_cobranca_acao"/>
+        </record>
+
+    </data>
+</openerp>

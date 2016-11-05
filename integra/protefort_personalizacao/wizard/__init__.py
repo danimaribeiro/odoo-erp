@@ -1,2 +1,2 @@
 
-#from hr_relatorio import *
+from hr_relatorio import *

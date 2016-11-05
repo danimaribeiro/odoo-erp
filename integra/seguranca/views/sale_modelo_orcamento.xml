@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_modelo_orcamento_tree">
+            <field name="name">sale.modelo.orcamento.tree</field>
+            <field name="model">lo.modelo</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nome" />
+                    <field name="tabela" />
+                    <field name="formato" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_modelo_orcamento_form">
+            <field name="name">sale.modelo.orcamento.form</field>
+            <field name="model">lo.modelo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Modelos de Orçamento">
+                    <group col="4" colspan="4">
+                        <field name="nome" colspan="4" />
+                        <field name="tabela" colspan="4" invisible="1" /> 
+                        <field name="formato" colspan="4" />                       
+                        <separator string="Arquivo do modelo" colspan="4" />
+                        <field name="nome_arquivo" colspan="4" invisible="1"/>
+                        <field name="arquivo" nolabel="1" filename="nome_arquivo" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sale_modelo_orcamento_acao">
+            <field name="name">Modelos de Orçamento</field>
+            <field name="res_model">lo.modelo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tabela','=','sale.order.orcamento')]</field>
+            <field name="context">{'tabela':'sale.order.orcamento','default_tabela':'sale.order.orcamento'}</field>                      
+        </record>
+
+        <menuitem action="sale_modelo_orcamento_acao"
+            id="menu_sale_modelo_orcamento" 
+            name="Modelos de Orçamento" 
+            parent="base.menu_sale_config_sales"
+            sequence="51" />
+        
+        <record model="ir.actions.act_window.view" id="sale_modelo_orcamento_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_modelo_orcamento_form"/>
+            <field name="act_window_id" ref="sale_modelo_orcamento_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sale_modelo_orcamento_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sale_modelo_orcamento_tree"/>
+            <field name="act_window_id" ref="sale_modelo_orcamento_acao"/>
+        </record>
+                         
+    </data>
+</openerp>

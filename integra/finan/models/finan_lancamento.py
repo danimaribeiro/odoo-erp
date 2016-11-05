@@ -41,8 +41,8 @@ TIPO_LANCAMENTO = (
     ('T', u'TRANSFERÊNCIA'),
     ('E', u'ENTRADA'),
     ('S', u'SAÍDA'),
-    ('PR', u'PAGAMENTO RECEBIDO'),
-    ('PP', u'PAGAMENTO EFETUADO'),
+    ('PR', u'RECEBIMENTO'),
+    ('PP', u'PAGAMENTO'),
     ('LR', u'LOTE RECEBIMENTO'),
     ('LP', u'LOTE PAGAMENTO'),
     ('AR', u'ADIANTAMENTO RECEBIDO'),
@@ -803,10 +803,24 @@ class finan_lancamento(orm.Model):
                         padrao['imovel_id'] = lancamento_obj.contrato_id.imovel_id.id
                         padrao['project_id'] = lancamento_obj.contrato_id.imovel_id.project_id.id
 
+                        #
+                        # A prioridade do projeto no rateio é do centro de custo vinculado ao imóvel, e não
+                        # o projeto do próprio imóvel
+                        #
+                        if lancamento_obj.contrato_id.imovel_id.centrocusto_id and lancamento_obj.contrato_id.imovel_id.centrocusto_id.project_id:
+                            padrao['project_id'] = lancamento_obj.contrato_id.imovel_id.centrocusto_id.project_id.id
+
                 if getattr(lancamento_obj, 'contrato_imovel_id', False):
                     padrao['contrato_id'] = lancamento_obj.contrato_imovel_id.id
                     padrao['imovel_id'] = lancamento_obj.contrato_imovel_id.imovel_id.id
                     padrao['project_id'] = lancamento_obj.contrato_imovel_id.imovel_id.project_id.id
+
+                    #
+                    # A prioridade do projeto no rateio é do centro de custo vinculado ao imóvel, e não
+                    # o projeto do próprio imóvel
+                    #
+                    if lancamento_obj.contrato_imovel_id.imovel_id.centrocusto_id and lancamento_obj.contrato_imovel_id.imovel_id.centrocusto_id.project_id:
+                        padrao['project_id'] = lancamento_obj.contrato_imovel_id.imovel_id.centrocusto_id.project_id.id
 
             rateio = {}
             rateio = self.pool.get('finan.centrocusto').realiza_rateio(cr, uid, [centrocusto_id], context=context, rateio=rateio, padrao=padrao, valor=valor_documento)
@@ -977,6 +991,8 @@ class finan_lancamento(orm.Model):
         #
         if (not 'data_quitacao' in vals) and (not 'valor' in vals) and (not 'res_partner_bank_id' in vals):
             return
+
+        print(vals)
 
         if 'res_partner_bank_id' in vals:
             res_partner_bank_id = vals['res_partner_bank_id']
@@ -1283,10 +1299,13 @@ class finan_lancamento(orm.Model):
         boleto = Boleto()
 
         if lancamento_obj.carteira_id.res_partner_bank_id.bank_bic == '104':
-            boleto.local_pagamento = u'PREFERENCIALMENTE NAS CASAS LOTÉRICAS ATÉ O VALOR LIMITE'
+            boleto.local_pagamento = u'Preferencialmente nas casas lotéricas até o valor limite'
 
         elif lancamento_obj.carteira_id.res_partner_bank_id.bank_bic == '085':
             boleto.local_pagamento = u'Pagar preferencialmente nas cooperativas do Sistema CECRED'
+
+        elif lancamento_obj.carteira_id.res_partner_bank_id.bank_bic == '136':
+            boleto.local_pagamento = u'Pagável preferencialmente na rede Bradesco ou Bradesco Expresso'
 
         #
         # Banco
@@ -1309,6 +1328,31 @@ class finan_lancamento(orm.Model):
         boleto.beneficiario.cidade = beneficiario_obj.municipio_id.nome or ''
         boleto.beneficiario.estado = beneficiario_obj.municipio_id.estado_id.uf or ''
         boleto.beneficiario.cep = beneficiario_obj.cep or ''
+
+        #
+        # Se houver sacado, o beneficiário é o sacado, e o sacado é o beneficiário (trocam de lugar)
+        #
+        if lancamento_obj.carteira_id.sacado_id:
+            sacado_obj = lancamento_obj.carteira_id.sacado_id
+            boleto.beneficiario.nome = sacado_obj.razao_social or sacado_obj.name or ''
+            boleto.beneficiario.cnpj_cpf = sacado_obj.cnpj_cpf or ''
+            boleto.beneficiario.endereco = sacado_obj.endereco or ''
+            boleto.beneficiario.numero = sacado_obj.numero or ''
+            boleto.beneficiario.complemento = sacado_obj.complemento or ''
+            boleto.beneficiario.bairro = sacado_obj.bairro or ''
+            boleto.beneficiario.cidade = sacado_obj.municipio_id.nome or ''
+            boleto.beneficiario.estado = sacado_obj.municipio_id.estado_id.uf or ''
+            boleto.beneficiario.cep = sacado_obj.cep or ''
+
+            boleto.sacador.nome = beneficiario_obj.razao_social or beneficiario_obj.name or ''
+            boleto.sacador.cnpj_cpf = beneficiario_obj.cnpj_cpf or ''
+            boleto.sacador.endereco = beneficiario_obj.endereco or ''
+            boleto.sacador.numero = beneficiario_obj.numero or ''
+            boleto.sacador.complemento = beneficiario_obj.complemento or ''
+            boleto.sacador.bairro = beneficiario_obj.bairro or ''
+            boleto.sacador.cidade = beneficiario_obj.municipio_id.nome or ''
+            boleto.sacador.estado = beneficiario_obj.municipio_id.estado_id.uf or ''
+            boleto.sacador.cep = beneficiario_obj.cep or ''
 
         boleto.beneficiario.agencia.numero = lancamento_obj.carteira_id.res_partner_bank_id.agencia or ''
         boleto.beneficiario.agencia.digito = lancamento_obj.carteira_id.res_partner_bank_id.agencia_digito or ''
@@ -1552,6 +1596,17 @@ ${ pagador.cep }<br/>
         if lancamento_obj.carteira_id.instrucao:
             boleto.instrucoes.append(lancamento_obj.carteira_id.instrucao)
 
+        #if lancamento_obj.carteira_id.sacado_id:
+            #sacador = u'Sacador/Avalista: '
+            #sacador += boleto.sacador.nome
+            #sacador += u' - CNPJ: '
+            #sacador += boleto.sacador.cnpj_cpf
+            #boleto.instrucoes.append('')
+            #boleto.instrucoes.append(sacador)
+
+            #sacador = boleto.sacador.endereco_completo_uma_linha
+            #boleto.instrucoes.append(sacador)
+
         template_imports = [
             'from pybrasil.base import (tira_acentos, primeira_maiuscula)',
             'from pybrasil.data import (DIA_DA_SEMANA, DIA_DA_SEMANA_ABREVIADO, MES, MES_ABREVIADO, data_por_extenso, dia_da_semana_por_extenso, dia_da_semana_por_extenso_abreviado, mes_por_extenso, mes_por_extenso_abreviado, seculo, seculo_por_extenso, hora_por_extenso, hora_por_extenso_aproximada, formata_data, ParserInfoBrasil, parse_datetime, UTC, HB, fuso_horario_sistema, data_hora_horario_brasilia, agora, hoje, ontem, amanha, mes_passado, mes_que_vem, ano_passado, ano_que_vem, semana_passada, semana_que_vem, primeiro_dia_mes, ultimo_dia_mes, idade)',
@@ -1730,12 +1785,15 @@ ${ pagador.cep }<br/>
         carteira_pool = self.pool.get('finan.carteira')
 
         if not ids:
-            ids = lancamento_pool.search(cr, 1, [('situacao', 'in', ['Vencido', 'A vencer', 'Vence hoje'])])
+            #ids = lancamento_pool.search(cr, 1, [('situacao', 'in', ['Vencido', 'A vencer', 'Vence hoje'])])
+            return
 
         #print(ids)
 
         if not isinstance(ids, (list, tuple)):
             ids = [ids]
+
+        dia_semana = hoje().weekday()
 
         for id in ids:
             #cr.execute(SQL_AJUSTA_QUITACAO.replace('%d', str(id)))
@@ -1762,7 +1820,34 @@ ${ pagador.cep }<br/>
 
             nova_situacao = situacao
 
-            mantem_vence_hoje = (hoje().weekday == 0) and (parse_datetime(data_vencimento).date().weekday >= 5)
+            #
+            # Mantém vence hoje para títulos vencidos no segunda, sábado e domingo
+            #
+            dv = parse_datetime(data_vencimento).date()
+            mantem_vence_hoje = False
+            if dia_semana in [0, 5, 6] and dv.weekday() in [0, 5, 6] and dv <= hoje():
+                dias_vencidos = hoje() - dv
+                dias_vencidos = dias_vencidos.days
+
+                #
+                # Segunda: Vence hoje até 2 dias do vencimento (sábado e domingo)
+                #
+                if dia_semana == 0:
+                    mantem_vence_hoje = dias_vencidos <= 2
+
+                #
+                # Sábado: Vence hoje somente o sábado
+                #
+                elif dia_semana == 5:
+                    mantem_vence_hoje = dias_vencidos == 0
+
+                #
+                # Domingo: Vence hoje o sábado e o domingo
+                #
+                elif dia_semana == 6:
+                    mantem_vence_hoje = dias_vencidos <= 1
+
+                #print('mantem_vence_hoje', mantem_vence_hoje, dv, dias_vencidos)
 
             if tipo in ['T', 'LP', 'LR'] and conciliado:
                 nova_situacao = u'Conciliado'
@@ -1964,3 +2049,60 @@ class finan_pagamento_resumo(osv.Model):
     }
 
 finan_pagamento_resumo()
+
+
+class mail_compose_message(osv.osv_memory):
+    """Generic E-mail composition wizard. This wizard is meant to be inherited
+       at model and view level to provide specific wizard features.
+
+       The behavior of the wizard can be modified through the use of context
+       parameters, among which are:
+
+         * mail.compose.message.mode: if set to 'reply', the wizard is in
+                      reply mode and pre-populated with the original quote.
+                      If set to 'mass_mail', the wizard is in mass mailing
+                      where the mail details can contain template placeholders
+                      that will be merged with actual data before being sent
+                      to each recipient. Recipients will be derived from the
+                      records determined via  ``context['active_model']`` and
+                      ``context['active_ids']``.
+         * active_model: model name of the document to which the mail being
+                        composed is related
+         * active_id: id of the document to which the mail being composed is
+                      related, or id of the message to which user is replying,
+                      in case ``mail.compose.message.mode == 'reply'``
+         * active_ids: ids of the documents to which the mail being composed is
+                      related, in case ``mail.compose.message.mode == 'mass_mail'``.
+    """
+
+    _name = 'mail.compose.message'
+    _inherit = 'mail.compose.message'
+
+    def get_value(self, cr, uid, model, res_id, context={}):
+        res = super(mail_compose_message, self).get_value(cr, uid, model, res_id, context=context)
+
+        if model == 'finan.lancamento':
+            lanc_obj = self.pool.get('finan.lancamento').browse(cr, uid, res_id)
+
+            #
+            # Verificamos se tem modelo pré-definido
+            #
+            if lanc_obj.tipo == 'R':
+                template_pool = self.pool.get('email.template')
+                template_ids = template_pool.search(cr, 1, [('name', '=', 'Boleto emitido'), ('model_id.model', '=', 'finan.lancamento')])
+
+                if template_ids:
+                    dados = template_pool.generate_email(cr, 1, template_ids[0], lanc_obj.id, context=context)
+                    dados.update({
+                        'email_to': lanc_obj.partner_id.email_nfe or '',
+                    })
+
+                    if 'attachment_ids' in dados:
+                        del dados['attachment_ids']
+
+                    res.update(dados)
+
+        return res
+
+
+mail_compose_message()

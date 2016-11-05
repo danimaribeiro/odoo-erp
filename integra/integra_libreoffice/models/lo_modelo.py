@@ -24,12 +24,16 @@ TABELAS = (
     ('hr.payslip', u'RH - Pagamento/Rescisão/Férias/13º'),
     ('finan.contrato', u'Finan - Contratos'),
     ('sale.order', u'Vendas - Contratos'),
+    ('sale.order.os', u'Modelo de O.S.'),
+    ('sale.order.orcamento', u'Modelo de Orçamento'),
 )
 
 FORMATOS = (
     ('doc', u'Microsoft Word (.doc)'),
     ('odt', u'Open Document Text (.odt)'),
     ('pdf', u'PDF (.pdf)'),
+    ('xls', u'Microsoft Excel (.xls)'),
+    ('odr', u'Open Document Spreadsheet (.ods)'),
 )
 
 AVISO_PREVIO = (
@@ -196,37 +200,41 @@ class lo_modelo(orm.Model):
 
     def gera_modelo_novo(self, cr, uid, ids, dados, formato='doc', novas_variaveis={}, context={}):
         modelo_obj = self.browse(cr, uid, ids[0])
-        print('arquivo lido', modelo_obj.nome)
 
-        if modelo_obj.formato:
-            formato = modelo_obj.formato
+        temp_nome = '/tmp/' + cr.dbname + '.odt'
+
+        #if modelo_obj.formato:
+        #    formato = modelo_obj.formato
 
         arq = StringIO()
         arq.write(base64.decodestring(modelo_obj.arquivo))
 
-        t = Template_Novo(arq, '/tmp/novo.odt')
+        t = Template_Novo(arq, temp_nome)
         t.render(dados)
-        print(dados)
 
-        sh.libreoffice('--headless', '--invisible', '--convert-to', formato, '--outdir', '/tmp', '/tmp/novo.odt')
+        sh.libreoffice('--headless', '--invisible', '--convert-to', formato, '--outdir', '/tmp', temp_nome)
 
-        arq = file('/tmp/novo.' + formato, 'r').read()
+        arq = file('/tmp/' + cr.dbname + '.' + formato, 'r').read()
 
-        os.remove('/tmp/novo.odt')
-        os.remove('/tmp/novo.' + formato)
+        os.remove('/tmp/' + cr.dbname + '.odt')
+        os.remove('/tmp/'  + cr.dbname + '.' + formato)
 
         return base64.encodestring(arq)
 
     def gera_modelo_novo_avulso(self, cr, uid, nome_arquivo, dados, formato='xlsx', context={}):
-        t = Template_Novo(nome_arquivo, '/tmp/novo.odt')
+
+        temp_nome = '/tmp/' + cr.dbname + '.odt'
+
+        t = Template_Novo(nome_arquivo, temp_nome)
         t.render(dados)
 
-        sh.libreoffice('--headless', '--invisible', '--convert-to', formato, '--outdir', '/tmp', '/tmp/novo.odt')
+        sh.libreoffice('--headless', '--invisible', '--convert-to', formato, '--outdir', '/tmp', temp_nome)
 
-        arq = file('/tmp/novo.' + formato, 'r').read()
+        arq = file('/tmp/' +  cr.dbname + '.' + formato, 'r').read()
 
-        os.remove('/tmp/novo.odt')
-        os.remove('/tmp/novo.' + formato)
+        os.remove('/tmp/' + cr.dbname + '.odt')
+        os.remove('/tmp/'  + cr.dbname + '.' + formato)
+
 
         return base64.encodestring(arq)
 

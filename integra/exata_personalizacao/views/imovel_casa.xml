@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="imovel_casa_form">
+            <field name="name">imovel.casa.form</field>
+            <field name="model">const.imovel</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="construtora.imovel_casa_form"/>
+            <field name="arch" type="xml">
+                <field name="imovel_chave" position="replace" />
+
+                <field name="imovel_ocupado" position="after">
+                    <newline />
+                    <separator string="Controle de Chaves" colspan="6" />
+                    <field name="imovel_chave" />
+                    <field name="posicao" attrs="{'required': [('imovel_chave','!=', False)]}" colspan="2"/>
+                    <button string="Imprimir Etiqueta" name="imprime_etiqueta" type="object" icon="gtk-print" colspan="2" />
+                    <newline />
+                    <field name="chaves_ids" nolabel="1" colspan="6" attrs="{'invisible': [('imovel_chave','=', False)]}">
+                        <tree editable="top">
+                            <field name="corretor_id" required="1" domain="[('eh_corretor','=', True)]"/>
+                            <field name="data_retirada" required="1"/>
+                            <field name="data_entrega" />
+                        </tree>
+                    </field>
+                </field>
+                <field name="res_partner_bank_id" position="after">
+                    <field name="conta_id" colspan="4"/>
+                    <field name="centrocusto_id" colspan="4"/>
+                </field>
+                <page string="Prospecção" position="after">
+                    <page string="Reservas">
+                        <field name="reserva_ids" nolabel="1" readonly="1" colspan="6">
+                            <tree editable="top">
+                                <field name="contrato_id" />
+                                <field name="corretor_id" />
+                                <field name="partner_id" />
+                                <field name="data_reserva" />
+                                <field name="data_inicial" />
+                                <field name="data_final" />
+                            </tree>
+                        </field>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

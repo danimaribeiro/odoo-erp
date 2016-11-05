@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="imovel_apartamento_form">
+            <field name="name">imovel.apartamento.form</field>
+            <field name="model">const.imovel</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="construtora.imovel_apartamento_form"/>
+            <field name="arch" type="xml">
+                <field name="imovel_chave" position="replace">
+                    <newline />
+                    <separator string="Controle de Chaves" colspan="6" />
+                    <field name="imovel_chave" />
+                    <field name="posicao" attrs="{'required': [('imovel_chave','!=', False)]}" colspan="2"/>
+                    <button string="Imprimir Etiqueta" name="imprime_etiqueta" type="object" icon="gtk-print" colspan="2" />
+                    <newline />
+                    <field name="chaves_ids" nolabel="1" colspan="6" attrs="{'invisible': [('imovel_chave','=', False)]}">
+                        <tree editable="top">
+                            <field name="corretor_id" required="1" domain="[('eh_corretor','=', True)]"/>
+                            <field name="data_retirada" required="1"/>
+                            <field name="data_entrega" />
+                        </tree>
+                    </field>
+                </field>
+                <field name="res_partner_bank_id" position="after">
+                    <field name="conta_id" colspan="4"/>
+                    <field name="centrocusto_id" colspan="4"/>
+                </field>
+                <page string="Prospecção" position="after">
+                    <page string="Reservas">
+                        <field name="reserva_ids" nolabel="1" colspan="6">
+                            <tree editable="top">
+                                <field name="contrato_id" readonly="1" />
+                                <field name="corretor_id" readonly="1" />
+                                <field name="partner_id" readonly="1" />
+                                <field name="data_inicial" readonly="1"/>
+                                <field name="data_final" />
+                            </tree>
+                        </field>
+                    </page>
+                </page>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-sped_finan.sped_gas_recebida_form
+# -*- coding: utf-8 -*-
 
 
 # from __future__ import division, print_function, unicode_literals

@@ -42,14 +42,18 @@ class finan_centrocusto(orm.Model):
             tabela_pool = self.pool.get('finan.centrocusto')
 
         for cc_obj in tabela_pool.browse(cr, uid, ids):
+            if getattr(cc_obj, 'project_id', False):
+                if not padrao.get('project_id', False):
+                    padrao['project_id'] = cc_obj.project_id.id
+
             return super(finan_centrocusto, self).realiza_rateio(cr, uid, ids, context=context, valor=valor, campos=campos, padrao=padrao, rateio=rateio, tabela_pool=tabela_pool)
-        
+
             #
             # Comentado para ser usado o rateio por imóvel somente na contabilidade
             #
             ####if not getattr(cc_obj, 'rateio_empreendimento', False):
                 ####return super(finan_centrocusto, self).realiza_rateio(cr, uid, ids, context=context, valor=valor, campos=campos, padrao=padrao, rateio=rateio, tabela_pool=tabela_pool)
-            
+
             ####else:
                 #####
                 ##### Seleciona os imóveis e suas áreas
@@ -57,10 +61,10 @@ class finan_centrocusto(orm.Model):
                 ####sql = """
                 ####select
                     ####ci.id, coalesce(ci.area_total, 0) as area_total
-                
+
                 ####from const_imovel ci
 
-                ####where 
+                ####where
                     ####ci.project_id = {project_id}
                     ####and ci.situacao_contabil = 'D';
                 ####"""
@@ -89,14 +93,14 @@ class finan_centrocusto(orm.Model):
                     ####p['centrocusto_id'] = False
                     ####p['imovel_id'] = imovel_id
                     ####p['project_id'] = cc_obj.project_id.id
-                    
+
                     ####if imovel_ids[imovel_id]:
                         ####percentual = imovel_ids[imovel_id] / area_total * 100
                     ####else:
                         ####percentual = 0
-                        
+
                     ####cc_pool._realiza_rateio(valor, percentual, campos, p, rateio)
-                    
+
             ####print(rateio)
 
             return rateio

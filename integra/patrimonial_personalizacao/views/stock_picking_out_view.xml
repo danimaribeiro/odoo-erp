@@ -33,7 +33,7 @@
                 <field name="move_lines" position="before">
                     <group colspan="4">
                         <separator string="Romaneio" colspan="4" />
-                        <field name="operacao_id" colspan="4" on_change="onchange_operacao_id(operacao_id, company_id)" domain="['|', ('tipo', '=', 'S'), ('tipo', '=', 'E')]" />
+                        <field name="operacao_id" colspan="4" on_change="onchange_operacao_id(operacao_id, company_id)" domain="['|', ('tipo', '=', 'S'), ('tipo', '=', 'E'), ('tipo', '=', 'O')]" />
                         <field name="location_id" colspan="4" readonly="0" invisible="0" />
                         <field name="location_dest_id" colspan="4" readonly="0" invisible="0" />
                         <newline />
@@ -165,6 +165,8 @@
                         <field name="state"/>
                         <button name="action_process" states="assigned" string="Process" type="object" icon="gtk-go-forward"/>
                         <field name="operacao_id" />
+                        <field name="saldo_zero" />
+                        <field name="vendedor_id" />
                     </tree>
                 </tree>
             </field>
@@ -179,8 +181,9 @@
                 <search string="Picking list" position="replace">
                     <search string="Ordens de entrega">
                         <group>
-                            <filter icon="terp-check" name="available" string="Ready" domain="[('state','=','assigned')]" help="Assigned Delivery Orders"/>
+                            <filter icon="terp-document-new" name="new" string="Novo" domain="[('state','=','draft')]" />
                             <filter icon="terp-camera_test" name="confirmed" string="Waiting" domain="[('state','=','confirmed')]" help="Confirmed Delivery Orders"/>
+                            <filter icon="terp-check" name="available" string="Ready" domain="[('state','=','assigned')]" help="Assigned Delivery Orders"/>
                             <filter icon="terp-dialog-close" name="done" string="Done" domain="[('state','=','done')]" help="Delivery orders already processed"/>
                             <separator orientation="vertical"/>
 <!--                             <filter icon="terp-accessories-archiver-minus" string="Back Orders" domain="[('backorder_id', '!=', False)]" help="Is a Back Order" groups="base.group_extended"/> -->
@@ -194,6 +197,7 @@
                             <newline />
                             <field name="partner_id"/>
                             <field name="operacao_id"/>
+                            <field name="vendedor_id"/>
                         </group>
                         <newline/>
                         <group expand="0" string="Group By...">

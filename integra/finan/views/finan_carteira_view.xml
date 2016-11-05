@@ -35,6 +35,8 @@
                         <newline />
                         <field name="beneficiario" />
                         <field name="beneficiario_digito" />
+                        <newline />
+                        <field name="sacado_id" colspan="4" />
                     </group>
                     <group col="4" colspan="4">
                         <separator string="Boletos e remessas" colspan="4"/>

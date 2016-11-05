@@ -4,7 +4,7 @@
         <record id="sped_energia_recebida_form" model="ir.ui.view">
             <field name="name">sped.energia.recebida.form</field>
             <field name="model">sped.documento</field>
-            <field name="inherit_id" ref="sped.sped_energia_recebida_form"/>
+            <field name="inherit_id" ref="sped_finan.sped_energia_recebida_form"/>
             <field name="priority">20</field>
             <field name="type">form</field>
             <field name="arch" type="xml">

@@ -10,6 +10,8 @@
                 <tree>
                     <field name="company_id" />
                     <field name="data_reajuste" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
                     <field name="data_confirmacao" />
                     <field name="partner_id" string="Cliente" />
                 </tree>
@@ -24,10 +26,13 @@
                 <form string="Reajuste de Contratos">
                     <field name="natureza" invisible="1" />
                     <group colspan="4">
-                        <field name="currency_id" colspan="4" required="1" />
+                        <field name="currency_id" colspan="2" required="1" />
+                        <field name="ignorar_centavos" colspan="2" />
                         <field name="company_id" colspan="4" required="1" />
                         <field name="partner_id" colspan="4" />
                         <newline />
+                        <field name="data_inicial" colspan="2" required="1" />
+                        <field name="data_final" colspan="2" required="1" />
                         <field name="data_reajuste" colspan="2" />
                         <field name="data_confirmacao" colspan="2" />
                         <field name="confirmado" invisible="1" />
@@ -64,6 +69,8 @@
                     <field name="company_id" select="1" />
                     <field name="partner_id" select="1" string="Cliente" />
                     <field name="data_reajuste" string="Data do reajuste" />
+                    <field name="data_inicial" />
+                    <field name="data_final" />
                 </search>
             </field>
         </record>

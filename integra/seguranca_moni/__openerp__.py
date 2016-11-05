@@ -19,6 +19,8 @@
     'update_xml': [
         'views/importa_moni.xml',
         'views/finan_contrato_receber_view.xml',
+        'views/finan_contrato_terceirizado_view.xml',
+        'views/res_partner_view.xml',
     ],
     'installable': True,
     'application': False,

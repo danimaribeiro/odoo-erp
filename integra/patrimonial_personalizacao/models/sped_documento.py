@@ -51,6 +51,7 @@ class sped_documento(osv.Model):
     _columns = {
         #'vr_custo_estoque': fields.function(_get_soma_custo_estoque_funcao, type='float', string=u'Valor Custo Estoque', store=GRAVA_RELATED, digits=(18, 2)),
         'vr_custo_estoque': fields.function(_get_soma_custo_estoque_funcao, type='float', string=u'Valor Custo Estoque', store=True, digits=(18, 2)),
+        'stock_picking_id': fields.many2one('stock.picking', u'Lista de separação'),
     }
 
 

@@ -139,6 +139,7 @@ def gera_relatorio_csv(relatorio, queryset):
     csv_texto = csv_texto.replace(u'\u2014', u'-')
     csv_texto = csv_texto.replace(u'\u2015', u'-')
     csv_texto = csv_texto.replace(u' ', u' ')
+    csv_texto = csv_texto.replace(u'\u200b', u' ')
     csv_texto = csv_texto.encode('iso-8859-1')
 
     return csv_texto

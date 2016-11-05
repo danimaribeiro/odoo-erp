@@ -8,6 +8,7 @@ import socket
 from pkcs7 import PKCS7Encoder
 from pybrasil.valor.decimal import Decimal as D
 from pybrasil.inscricao import limpa_formatacao
+from pybrasil.base import tira_acentos
 
 
 class Moni(object):
@@ -132,8 +133,8 @@ class Moni(object):
 
     def cadastra_cliente(self):
         #mensagem = str(self.contrato_id).ljust(20)
-        mensagem = str(self.numero_contrato).ljust(20)
-        mensagem += str(self.moni_id).ljust(10)
+        mensagem = unicode(self.numero_contrato).ljust(20)
+        mensagem += unicode(self.moni_id).ljust(10)
         mensagem += self.fantasia.ljust(100)[:100]
         mensagem += self.razao_social.ljust(100)[:100]
         mensagem += self.tipo.ljust(1)[0]
@@ -180,6 +181,8 @@ class Moni(object):
 
         cabecalho = self.cabecalho(mensagem)
         cabecalho = self._criptografa(cabecalho)
+
+        mensagem = mensagem.encode('iso-8859-1')
 
         mensagem = self._criptografa(mensagem)
 

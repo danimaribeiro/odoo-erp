@@ -186,8 +186,8 @@
                                 <newline/>
                                 <separator string="Excluir as seguintes categorias" colspan="4" />
                                 <field name="exclui_categoria_ids" nolabel="1" colspan="4" />
-                                <field name="incluir_vigilancia" string="Incluir serviços de vigilância?" />
-                                <field name="incluir_somente_vigilancia" string="Incluir SOMENTE serviços de vigilância?" />
+<!--                                 <field name="incluir_vigilancia" string="Incluir serviços de vigilância?" /> -->
+<!--                                 <field name="incluir_somente_vigilancia" string="Incluir SOMENTE serviços de vigilância?" /> -->
                             </page>
                             <page string="Contratos novos">
                                 <field name="contrato_novo_ids" nolabel="1" colspan="4" readonly="1">

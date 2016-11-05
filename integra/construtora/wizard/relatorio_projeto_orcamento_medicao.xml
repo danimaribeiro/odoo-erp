@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="relatorio_projeto_orcamento_medicao_form" >
+            <field name="name">relatorio.projeto.orcamento.medicao.form</field>
+            <field name="model">projeto.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório Orçamento x Medição">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <field name="orcamento_id" colspan="4" required="1" />
+                        <newline/>
+                        <field name="mes" colspan="2" required="1" string="A partir de" />
+                        <field name="ano" colspan="2" required="1" string="de" />
+<!--                         <field name="formato" required="1" colspan="2" /> -->
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-execute" string="Gerar relatório" name="gera_relatorio_projeto_orcamento_medicao" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="relatorio_projeto_orcamento_medicao_acao">
+            <field name="name">Orçado x Medição</field>
+            <field name="res_model">projeto.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="relatorio_projeto_orcamento_medicao_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="relatorio_projeto_orcamento_medicao_form"/>
+            <field name="act_window_id" ref="relatorio_projeto_orcamento_medicao_acao"/>
+        </record>
+
+        <menuitem
+            action="relatorio_projeto_orcamento_medicao_acao"
+            id="menu_relatorio_projeto_orcamento_medicao"
+            name="Orçado x Medição"
+            parent="menu_relatorio_projeto"
+            sequence="6" />
+
+   </data>
+</openerp>

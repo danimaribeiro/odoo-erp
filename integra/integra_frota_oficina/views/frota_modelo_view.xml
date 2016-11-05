@@ -2,39 +2,23 @@
 <openerp>
     <data>
 
-        <record model="ir.ui.view" id="frota_modelo_tree">
-            <field name="name">frota.modelo.tree</field>
-            <field name="model">frota.modelo</field>
-            <field name="type">tree</field>
-            <field name="inherit_id" ref="integra_frota.frota_modelo_tree" />
-            <field name="arch" type="xml">
-                <field name="modelo" position="after">
-                    <field name="ano" />
-                    <field name="combustivel" />
-                    <field name="detalhes" />
-                </field>
-            </field>
-        </record>
-
         <record model="ir.ui.view" id="frota_modelo_form">
             <field name="name">frota.modelo.form</field>
             <field name="model">frota.modelo</field>
             <field name="type">form</field>
             <field name="inherit_id" ref="integra_frota.frota_modelo_form" />
             <field name="arch" type="xml">
-                <field name="modelo" position="after">
-                        <field name="ano" />
-                        <newline />
-                        <field name="combustivel" />
-                        <newline />
-                        <field name="detalhes" />
-                </field>
-                <field name="tipo_id" position="after">
+                <field name="tipo_id" position="replace">
+                    <field name="tipo_id" colspan="4" on_change="onchange_tipo_id(tipo_id)" />
                     <newline />
-                    <group colspan="4">
-                        <separator string="Produtos e serviços" colspan="4"/>
-                        <field name="product_ids" nolabel="1" />
-                    </group>
+                    <separator string="Manutenção preventiva" colspan="4"/>
+                    <newline />
+                    <field name="manutencao_ids" nolabel="1" colspan="4">
+                        <tree editable="top">
+                            <field name="servico_id" required="1" domain="[('parent_id', '!=', False), ('custo_ativo', '=', True)]" />
+                            <field name="km_a_cada" required="1" />
+                        </tree>
+                    </field>
                 </field>
             </field>
         </record>

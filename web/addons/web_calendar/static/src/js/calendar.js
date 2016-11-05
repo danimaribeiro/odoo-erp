@@ -225,9 +225,25 @@ openerp.web_calendar.CalendarView = openerp.web.View.extend({
         this.dataset.read_ids([id], _.keys(this.fields)).then(this.on_events_loaded);
     },
     get_color: function(key) {
+        // alert(key);
+
+        if (key == 'Em atraso') {
+            return '#ff0000';
+        }
+        else if (key == 'Executada') {
+            return '#0066ff';
+        }
+        else if (key == 'Cancelada') {
+            return '#333333';
+        }
+        else if (key == 'A executar') {
+            return '#009933';
+        }
+
         if (this.color_map[key]) {
             return this.color_map[key];
         }
+
         var index = _.keys(this.color_map).length % this.COLOR_PALETTE.length;
         var color = this.COLOR_PALETTE[index];
         this.color_map[key] = color;

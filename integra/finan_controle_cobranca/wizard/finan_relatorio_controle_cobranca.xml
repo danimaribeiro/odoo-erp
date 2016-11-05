@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_relatorio_controle_cobranca_form" >
+            <field name="name">finan.relatorio.controle.cobranca</field>
+            <field name="model">finan.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Controle de Cobrança">
+                    <group colspan="4">
+                        <field name="company_id" colspan="4"/>
+                        <newline/>
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />
+                        <newline/>
+                        <field name="provisionado" string="Período agendado?" />
+                        <newline/>
+                        <field name="partner_id" colspan="4"/>
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <button icon="gtk-print" string="Gerar relatório" name="gera_relatorio_controle_cobranca" type="object" colspan="2" />
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="2"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_relatorio_controle_cobranca_acao">
+            <field name="name">"Controle de Cobrança</field>
+            <field name="res_model">finan.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_relatorio_controle_cobranca_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_relatorio_controle_cobranca_form"/>
+            <field name="act_window_id" ref="finan_relatorio_controle_cobranca_acao"/>
+        </record>
+
+        <menuitem action="finan_relatorio_controle_cobranca_acao"
+              id="menu_finan_relatorio_controle_cobranca"
+              name="Controle de Cobrança"
+              parent="finan.menu_rel_conta_receber"
+              sequence="20" />
+
+    </data>
+</openerp>

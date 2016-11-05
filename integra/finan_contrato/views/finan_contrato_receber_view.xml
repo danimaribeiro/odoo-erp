@@ -19,6 +19,8 @@
                     <field name="hr_department_id" />
                     <field name="res_partner_category_id" />
                     <field name="grupo_economico_id" />
+                    <field name="carteira_id" />
+                    <field name="operacao_fiscal_servico_id" />
                     <field name="valor_mensal" sum="Valor mensal" />
                     <field name="valor_faturamento" sum="Valor faturamento" />
                     <field name="valor" sum="Valor" />
@@ -66,7 +68,9 @@
                             <newline />
                             <group colspan="4">
                                 <separator string="Características e período" colspan="10" />
-                                <field name="data_inicio" required="1" />
+                                <group colspan="2" col="2">
+                                    <field name="data_inicio" required="1" />
+                                </group>
                                 <field name="pro_rata" required="1" />
                                 <field name="dia_vencimento"  required="1" />
                                 <group colspan="2" attrs="{'invisible': [('pro_rata', '=', False)]}">
@@ -135,6 +139,7 @@
                                         <field name="valor" sum="Valor" />
                                         <field name="nf_numero" />
                                         <field name="nf_data" />
+                                        <field name="nosso_numero" readonly="1" />
                                     </tree>
                                 </field>
                             </group>
@@ -151,7 +156,8 @@
                                 <separator string="Produtos e serviços para faturamento em todos os meses" colspan="4" />
                                 <field name="contrato_produto_mensal_ids" widget="many2one_list" nolabel="1" colspan="4">
                                     <tree editable="top">
-                                        <field name="product_id" domain="[('type', '=', 'service')]" />
+<!--                                         <field name="product_id" domain="[('type', '=', 'service')]" /> -->
+                                        <field name="product_id" />
                                         <field name="quantidade"  required="1" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario)" />
                                         <field name="vr_unitario" required="1" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario)" />
                                         <field name="vr_total" sum="Valor " required="1" />
@@ -161,7 +167,8 @@
                                 <field name="contrato_produto_eventual_ids" widget="many2one_list" nolabel="1" colspan="4">
                                     <tree editable="top">
                                         <field name="data"  required="1" />
-                                        <field name="product_id" domain="[('type', '=', 'service')]" />
+<!--                                         <field name="product_id" domain="[('type', '=', 'service')]" /> -->
+                                        <field name="product_id" />
                                         <field name="quantidade"  required="1" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario)" />
                                         <field name="vr_unitario" required="1" on_change="onchange_quantidade_vr_unitario(quantidade, vr_unitario)" />
                                         <field name="vr_total" sum="Valor " required="1" />
@@ -237,8 +244,8 @@
                     <filter name="inativo" string="Inativo" icon="terp-go-month" domain="[('ativo', '=', False)]" />
                     <filter name="suspenso" string="Suspenso" icon="terp-go-month" domain="[('suspenso', '=', True)]" />
                     <separator orientation="vertical" />
-                    <filter string="Sem lançamentos" icon="terp-go-month" domain="[('gerou_lancamentos', '=', 0)]" />
-                    <filter string="Faturamento ≠" icon="terp-go-month" domain="[('faturamento_diferente', '=', False)]" />
+                    <filter string="Sem lançamentos" icon="terp-go-month" domain="[('gerou_lancamentos', '=', False)]" />
+                    <filter string="Faturamento ≠" icon="terp-go-month" domain="[('faturamento_diferente', '!=', False)]" />
                     <separator orientation="vertical" />
                     <field name="company_id" select="1" />
                     <field name="partner_id" select="1" string="Cliente" />
@@ -247,6 +254,7 @@
                     <field name="hr_department_id" />
                     <field name="res_partner_category_id" />
                     <field name="grupo_economico_id" />
+                    <field name="operacao_fiscal_servico_id" />
                     <newline/>
 
                     <group expand="0" string="Agrupado por...">
@@ -257,6 +265,8 @@
                         <filter string="Posto" icon="terp-project" domain="[]" context="{'group_by': 'hr_department_id'}" />
                         <filter string="Categoria" icon="terp-project" domain="[]" context="{'group_by': 'res_partner_category_id'}" />
                         <filter string="Grupo econômico" icon="terp-project" domain="[]" context="{'group_by': 'grupo_economico_id'}" />
+                        <filter string="Carteira" icon="terp-project" domain="[]" context="{'group_by': 'carteira_id'}" />
+                        <filter string="Operação fiscal" icon="terp-project" domain="[]" context="{'group_by': 'operacao_fiscal_servico_id'}" />
                         <filter string="Cliente" icon="terp-project" domain="[]" context="{'group_by': 'partner_id'}" />
                         <filter string="Município" icon="terp-project" domain="[]" context="{'group_by': 'partner_municipio_id'}" />
                         <filter string="Bairro" icon="terp-project" domain="[]" context="{'group_by': 'partner_bairro'}" />
@@ -280,8 +290,12 @@
             <field name="search_view_id" ref="finan_contrato_receber_search" />
         </record>
 
-        <menuitem action="finan_contrato_receber_acao"
-            id="menu_finan_contrato_cobranca" name="Contratos de cobrança" parent="menu_finan_contratos" />
+        <menuitem
+            parent="menu_finan_contratos"
+            sequence="-1"
+            id="menu_finan_contrato_cobranca"
+            name="Contratos de cobrança"
+            action="finan_contrato_receber_acao" />
 
         <record model="ir.actions.act_window.view" id="finan_contrato_receber_form_acao">
             <field eval="2" name="sequence"/>

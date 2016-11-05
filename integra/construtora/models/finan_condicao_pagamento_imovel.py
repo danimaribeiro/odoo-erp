@@ -320,6 +320,14 @@ class finan_contrato_condicao(osv.Model):
             print(lista_vencimentos)
 
             for parcela_obj in condpag_obj.parcela_ids:
+                #
+                # CUIDADO!!!!!
+                #
+                # A linha abaixo, que exclui os lançamento financeiros vinculados ao contrato
+                # PRECISA ser removida quando entrar em produção.
+                #
+                cr.execute('delete from finan_lancamento l where l.contrato_imovel_id = {contrato_id};'.format(contrato_id=condpag_obj.contrato_id.id))
+
                 parcela_obj.unlink()
 
             print('pronto, apagou todas')
@@ -470,7 +478,8 @@ class finan_contrato_condicao(osv.Model):
                     if parcela_data.data.date() < hoje():
                         indice_obj = currency_pool.browse(cr, uid, condicao_obj.currency_id.id, context={'date': str(ultimo_dia_mes(mes_passado(parcela_data.data)))})
                         indice = D(indice_obj.rate or 0)
-                        valor_parcela = currency_pool.compute(cr, uid, REAIS_ID, condicao_obj.currency_id.id, valor_parcela, context={'date': str(ultimo_dia_mes(mes_passado(parcela_data.data)))})
+                        valor_parcela = currency_pool.converte(cr, uid, REAIS_ID, condicao_obj.currency_id.id, valor_parcela, context={'date': str(ultimo_dia_mes(mes_passado(parcela_data.data)))})
+                        #valor_parcela = currency_pool.compute(cr, uid, REAIS_ID, condicao_obj.currency_id.id, valor_parcela, context={'date': str(ultimo_dia_mes(mes_passado(parcela_data.data)))})
                         #valor_parcela = currency_pool.compute(cr, uid, REAIS_ID, condicao_obj.currency_id.id, valor_parcela, context={'date': str(ultimo_dia_mes(hoje()))})
 
                     valor_capital_juros_correcao = valor_parcela
@@ -514,10 +523,11 @@ class finan_contrato_condicao(osv.Model):
 
                     valor_parcela = parcela.valor
                     indice = 0
-                    if parcela.data.date() < hoje():
+                    if parcela.data < hoje():
                         indice_obj = currency_pool.browse(cr, uid, condicao_obj.currency_id.id, context={'date': str(ultimo_dia_mes(mes_passado(parcela.data)))})
                         indice = D(indice_obj.rate or 0)
-                        valor_parcela = currency_pool.compute(cr, uid, REAIS_ID, condicao_obj.currency_id.id, valor_parcela, context={'date': str(ultimo_dia_mes(mes_passado(parcela.data)))})
+                        valor_parcela = currency_pool.converte(cr, uid, REAIS_ID, condicao_obj.currency_id.id, valor_parcela, context={'date': str(ultimo_dia_mes(mes_passado(parcela.data)))})
+                        #valor_parcela = currency_pool.compute(cr, uid, REAIS_ID, condicao_obj.currency_id.id, valor_parcela, context={'date': str(ultimo_dia_mes(mes_passado(parcela.data)))})
                         #valor_parcela = currency_pool.compute(cr, uid, REAIS_ID, condicao_obj.currency_id.id, valor_parcela, context={'date': str(ultimo_dia_mes(hoje()))})
 
                     valor_capital_juros_correcao = valor_parcela
@@ -619,6 +629,9 @@ class finan_contrato_condicao(osv.Model):
                 meses = idade_meses(data_base, data_parcela)
 
             parcela.data = data_parcela
+
+            if isinstance(parcela.data, datetime):
+                parcela.data = parcela.data.date()
 
             if taxa_juros:
                 if condicao_obj.tipo_taxa == JUROS_SIMPLES:

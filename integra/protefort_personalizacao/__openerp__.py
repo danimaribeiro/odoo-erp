@@ -22,7 +22,7 @@
         'integra_rh',
     ],
     'update_xml': [
-        #'wizard/hr_relatorio_sindicato.xml',
+        'wizard/hr_relatorio_sindicato_versao2.xml',
         #'wizard/hr_relatorio_listagem_ferias_vencidas.xml',
 
     ],

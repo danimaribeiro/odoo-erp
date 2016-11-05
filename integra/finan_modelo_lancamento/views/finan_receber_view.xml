@@ -7,10 +7,11 @@
             <field name="model">finan.lancamento</field>
             <field name="inherit_id" ref="finan.finan_receber_form"/>
             <field name="type">form</field>
+            <field name="priority" eval="200"/>
             <field name="arch" type="xml">
                 <field name="valor_documento" position="before">
                     <field name="modelo_id" on_change="onchange_modelo(modelo_id,company_id,valor_documento)" domain="[('tipo', '=', 'MR')]" attrs="{'readonly': ['|',('contrato_id', '!=', False),('sped_documento_id', '!=', False)], 'invisible': [('valor_documento', '=', False)]}"/>
-                </field>                  
+                </field>
             </field>
         </record>
 

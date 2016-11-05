@@ -2,6 +2,7 @@
 
 
 from openerp.osv import osv, fields
+from sale_etapa import TIPO
 
 
 class sale_order_referencia(osv.Model):
@@ -9,6 +10,7 @@ class sale_order_referencia(osv.Model):
     _description = u'Orçamento de referência'
 
     _columns = {
+        'tipo': fields.selection(TIPO, string=u'Tipo', select=True),
         'pricelist_id': fields.many2one('product.pricelist', u'Tipo de orçamento', ondelete='restrict'),
         'name': fields.char(u'Referência', size=60),
 
@@ -20,8 +22,9 @@ class sale_order_referencia(osv.Model):
         'item_mensalidade_ids': fields.one2many('sale.order.line.referencia', 'order_id', string=u'Mensalidades', domain=[['tipo_item', '=', 'M']]),
     }
 
-    #_defaults = {
-    #}
+    _defaults = {
+        'tipo': 'V',
+    }
 
 
 

@@ -169,7 +169,7 @@ class res_partner_bank(orm.Model):
         'nome': fields.function(_get_nome_funcao, type='char', string=u'Nome', store=True, select=True),  #, fnct_search=_procura_nome),
         'descricao': fields.function(_get_nome_funcao, type='char', string=u'Descrição', store=True, fnct_search=_procura_nome),
         'saldo_inicial': fields.float(u'Saldo inicial'),
-        'data_saldo_inicial': fields.date(u'Data do saldo inicial'),
+        'data_saldo_inicial': fields.date(u'Data de FECHAMENTO do saldo inicial'),
         'cnpj_cpf': fields.related('partner_id', 'cnpj_cpf', type='char', string=u'CNPJ/CPF', store=True, select=True),
         'raiz_cnpj': fields.function(_get_raiz_cnpj, type='char', string=u'Raiz do CNPJ', size=10, store=True, method=True, select=True),
         'name': fields.char(u'Nome', size=64, required=True, translate=False, select=True),

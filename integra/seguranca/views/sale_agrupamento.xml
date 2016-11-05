@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_agrupamento_tree">
+            <field name="name">sale.agrupamento.tree</field>
+            <field name="model">sale.agrupamento</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Agrupamentos no orçamento">
+                    <field name="ordem" />
+                    <field name="nome" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_agrupamento_form">
+            <field name="name">sale.agrupamento.form</field>
+            <field name="model">sale.agrupamento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Categoria de prospectos">
+                    <group col="4" colspan="4">
+                        <field name="ordem" required="1" />
+                        <field name="nome" required="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="sale_agrupamento_search" model="ir.ui.view">
+            <field name="name">sale.agrupamento.search</field>
+            <field name="model">sale.agrupamento</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Agrupamentos no orçamento">
+                    <field name="ordem" />
+                    <field name="nome" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sale_agrupamento_acao">
+            <field name="name">Agrupamentos no orçamento</field>
+            <field name="res_model">sale.agrupamento</field>
+            <field name="view_type">form</field>
+<!--            <field name="domain">[('tipo', '=', 'O')]</field>
+            <field name="context">{'default_prioridade': 'O'}</field>-->
+            <field name="view_id" ref="sale_agrupamento_tree" />
+            <field name="search_view_id" ref="sale_agrupamento_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            action="sale_agrupamento_acao"
+            id="menu_sale_agrupamento"
+            name="Agrupamentos no orçamento"
+            parent="base.menu_sale_config_sales"
+            sequence="36" />
+
+        <record model="ir.actions.act_window.view" id="sale_agrupamento_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_agrupamento_form"/>
+            <field name="act_window_id" ref="sale_agrupamento_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sale_agrupamento_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sale_agrupamento_tree"/>
+            <field name="act_window_id" ref="sale_agrupamento_acao"/>
+        </record>
+
+    </data>
+</openerp>

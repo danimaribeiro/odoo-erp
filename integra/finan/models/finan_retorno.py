@@ -191,7 +191,7 @@ class finan_retorno(osv.Model):
 
                     #print('lancamento id', lancamento_obj.id, 'data_quitacao', str(boleto.data_ocorrencia)[:10], 'data_credito', str(boleto.data_credito)[:10])
 
-                lancamento_obj.write(dados)
+                lancamento_obj.write(dados, context={'baixa_boleto': True})
 
                 if comando in ('B'):
                     pass
@@ -222,8 +222,8 @@ class finan_retorno(osv.Model):
                         dados_pagamento['data'] = str(boleto.data_credito)[:10]
                         dados_pagamento['conciliado'] = True
 
-                    pr_id = lancamento_pool.create(cr, uid, dados_pagamento)
-                    #print('pagamento id', pr_id, 'data_quitacao', str(boleto.data_ocorrencia)[:10], 'data_credito', str(boleto.data_credito)[:10])
+                    pr_id = lancamento_pool.create(cr, uid, dados_pagamento, context={'baixa_boleto': True})
+                    print('pagamento id', pr_id, 'data_quitacao', str(boleto.data_ocorrencia)[:10], 'data_credito', str(boleto.data_credito)[:10])
 
             cr.commit()
 

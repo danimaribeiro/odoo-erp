@@ -11,7 +11,7 @@
         <menuitem
             id="menu_relatorio_cheque"
             name="Relatórios"
-            sequence="04"
+            sequence="100"
             parent="menu_finan_cheque" />
 
         <record model="ir.ui.view" id="finan_cheque_tree">
@@ -37,6 +37,27 @@
                 </tree>
             </field>
         </record>
+
+        <record model="ir.ui.view" id="finan_cheque_search">
+            <field name="name">finan.cheque.search</field>
+            <field name="model">finan.cheque</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Cheques">
+                    <field name="company_id" />
+                    <field name="res_partner_bank_id" />
+                    <field name="partner_id" />
+                    <field name="titular_nome" />
+                    <field name="situacao" />
+                    <newline />
+                    <field name="numero_cheque" />
+                    <field name="data" />
+                    <field name="data_pre_datado" />
+                    <field name="data_recebimento" />
+                </search>
+            </field>
+        </record>
+
 
         <record model="ir.ui.view" id="finan_cheque_receber_form">
             <field name="name">finan.cheque.receber.form</field>
@@ -112,6 +133,68 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="finan_cheque_geral_form">
+            <field name="name">finan.cheque.geral.form</field>
+            <field name="model">finan.cheque</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Cheque">
+                    <group colspan="4">
+                        <field name="company_id" colspan="4"  required="1" />
+                        <field name="raiz_cnpj" invisible="1" />
+                        <field name="res_partner_bank_id" colspan="4" domain="['|', ('state', 'ilike', 'caixa'), ('state', 'ilike', 'bank'), ('company_id', '=', company_id)]" />
+                        <field name="partner_id" colspan="4" required="1" on_change="onchange_partner_id(partner_id)" />
+                        <field name="data_recebimento" required="1" />
+                        <newline />
+                        <field name="codigo_barra" colspan="4" on_change="onchange_codigo_barra(codigo_barra)" />
+                        <field name="data" required="1" />
+                        <field name="data_pre_datado" required="1"/>
+                        <field name="bank_id" required="1" />
+                        <field name="numero_cheque" required="1" />
+                        <field name="agencia" required="1" />
+                        <field name="conta_corrente" required="1" />
+                        <field name="titular_nome" required="1" />
+                        <field name="titular_cnpj_cpf" on_change="onchange_cnpj_cpf(titular_cnpj_cpf)" required="1" />
+                        <field name="valor" required="1" />
+                        <field name="situacao" required="1" />
+                        <field name="data_devolucao" required="1" attrs="{'invisible': [('situacao', '!=', 'DF')]}"/>
+                        <newline />
+                        <field name="motivo_sfundo" colspan="4" attrs="{'invisible': [('situacao', '!=', 'DF')]}" />
+                        <newline />
+                        <separator string="Lançamentos financeiros" colspan="4" />
+                        <field name="receber_id" colspan="4" string="Recebido em" readonly="1" />
+                        <field name="lancamento_ids" colspan="4" readonly="1" nolabel="1">
+                            <tree editable="top">
+                                <field name="tipo" />
+                                <field name="lancamento_id" />
+                                <field name="company_id" />
+                                <field name="partner_id" />
+                                <field name="cnpj_cpf" invisible="1"  readonly="1" />
+                                <field name="raiz_cnpj" invisible="1" />
+                                <field name="formapagamento_id" required="1" on_change="onchange_formapagamento(forma_pagamento_id)" />
+                                <field name="exige_numero" invisible="1" />
+                                <field name="data_vencimento" />
+                                <field name="data_quitacao" />
+                                <field name="documento_id" />
+                                <field name="numero_documento" />
+                                <field name="complemento" />
+                                <field name="valor_documento" />
+                                <field name="valor_juros" />
+                                <field name="valor_multa" />
+                                <field name="valor_desconto" />
+                                <field name="outros_acrescimos" />
+                                <field name="valor" />
+                                <field name="res_partner_bank_id" />
+                                <field name="conciliado" />
+                                <field name="data" string="Data de crédito/débito na conta" />
+                            </tree>
+                        </field>
+                        <newline />
+                    </group>
+                </form>
+            </field>
+        </record>
+
         <record model="ir.actions.act_window" id="finan_cheque_acao">
             <field name="name">Administracao de Cheques</field>
             <field name="res_model">finan.cheque</field>
@@ -130,7 +213,7 @@
         <record model="ir.actions.act_window.view" id="finan_cheque_form_acao">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="finan_cheque_pagar_form"/>
+            <field name="view_id" ref="finan_cheque_geral_form"/>
             <field name="act_window_id" ref="finan_cheque_acao"/>
         </record>
 

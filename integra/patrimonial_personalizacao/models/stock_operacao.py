@@ -12,6 +12,7 @@ TIPO_OPERACAO = (
     ('T', u'Transferência'),
     ('V', u'Entrada de inventário'),
     ('E', u'Ordem de entrega de EPI'),
+    ('O', u'Outras saídas'),
 )
 
 

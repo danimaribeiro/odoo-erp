@@ -21,7 +21,16 @@ def calcula_digito_nosso_numero(self, boleto):
 
 
 def carteira_nosso_numero(self, boleto):
-    return '%s%s' % (str(boleto.beneficiario.codigo_beneficiario.numero).zfill(7), str(boleto.nosso_numero).zfill(10))
+    #return '%s%s' % (str(boleto.beneficiario.codigo_beneficiario.numero).zfill(7), str(boleto.nosso_numero).zfill(10))
+
+    if len(boleto.beneficiario.conta.convenio) == 4:
+        return '%s%s-%s' % (str(boleto.beneficiario.conta.convenio).zfill(4)[:4], str(boleto.nosso_numero).zfill(7), boleto.digito_nosso_numero)
+
+    elif len(boleto.beneficiario.conta.convenio) == 6:
+        return '%s%s-%s' % (str(boleto.beneficiario.conta.convenio).zfill(6)[:6], str(boleto.nosso_numero).zfill(5), boleto.digito_nosso_numero)
+
+    elif len(boleto.beneficiario.conta.convenio) == 7:
+        return '%s%s' % (str(boleto.beneficiario.conta.convenio).zfill(7)[:7], str(boleto.nosso_numero).zfill(10))
 
 
 def agencia_conta(self, boleto):
@@ -38,9 +47,26 @@ def fator_vencimento(self, boleto):
 
 def campo_livre(self, boleto):
     campo_livre = ''.zfill(6)
-    campo_livre += boleto.beneficiario.codigo_beneficiario.numero.zfill(7)[:7]
-    campo_livre += str(boleto.nosso_numero).zfill(10)[:10]
-    campo_livre += str(boleto.banco.carteira).zfill(2)[:2]
+    #campo_livre += boleto.beneficiario.codigo_beneficiario.numero.zfill(7)[:7]
+
+    if len(boleto.beneficiario.conta.convenio) == 4:
+        campo_livre += str(boleto.beneficiario.conta.convenio).zfill(6)[:6]
+        campo_livre += str(boleto.nosso_numero).zfill(5)[:5]
+        campo_livre += str(boleto.beneficiario.agencia.numero).zfill(4)[:4]
+        campo_livre += str(boleto.beneficiario.conta.numero).zfill(8)[:8]
+        campo_livre += str(boleto.banco.carteira).zfill(2)[:2]
+
+    elif len(boleto.beneficiario.conta.convenio) == 6:
+        campo_livre += str(boleto.beneficiario.conta.convenio).zfill(6)[:6]
+        campo_livre += str(boleto.nosso_numero).zfill(5)[:5]
+        campo_livre += str(boleto.beneficiario.agencia.numero).zfill(4)[:4]
+        campo_livre += str(boleto.beneficiario.conta.numero).zfill(8)[:8]
+        campo_livre += str(boleto.banco.carteira).zfill(2)[:2]
+
+    elif len(boleto.beneficiario.conta.convenio) == 7:
+        campo_livre += str(boleto.beneficiario.conta.convenio).zfill(7)[:7]
+        campo_livre += str(boleto.nosso_numero).zfill(10)[:10]
+        campo_livre += str(boleto.banco.carteira).zfill(2)[:2]
 
     return campo_livre
 

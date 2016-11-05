@@ -24,16 +24,18 @@
                         <field name="total_empresa" />
                         <newline/>
                         <field name="filtrar_rateio" />
-                        <newline/>
-                        <field name="sem_projeto" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}"  />
-                        <newline/>
-                        <field name="sem_centrocusto" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
                         <field name="res_partner_bank_ids" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}"/>
 <!--                         <field name="res_partner_bank_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}"/> -->
                         <newline/>
                         <field name="centrocusto_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
                         <field name="project_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
                         <field name="conta_id" colspan="4" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
+                        <newline/>
+                        <field name="sem_projeto" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}"  />
+                        <field name="com_projeto" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}"  />
+                        <newline/>
+                        <field name="sem_centrocusto" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
+                        <field name="com_centrocusto" attrs="{'invisible': [('filtrar_rateio', '!=', True)]}" />
                         <newline/>
                         <field name="nome" invisible="1"/>
                         <field name="nome_csv" invisible="1"/>

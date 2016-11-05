@@ -131,63 +131,10 @@
                             </field>
                         </page>
                         <page string="Condições de pagamento" attrs="{'invisible': [('parcelas_manual', '!=', False)]}">
-                            <separator string="Condições de pagamento" colspan="4" />
-                            <field name="condicao_ids" nolabel="1" colspan="4" context="{'default_data_inicio': data_inicio}"/>
-<!--                            <field name="condicao_ids" nolabel="1" colspan="4" context="{'default_data_inicio': data_inicio}">
-                                <tree>
-                                    <field name="tipo_mes"/>
-                                    <field name="valor_parcela" />
-                                    <field name="vezes" />
-                                    <field name="valor_principal" sum="Valor" string="Valor total" />
-                                    <field name="data_inicio" string="Data 1ª parcela" />
-                                    <field name="currency_id"/>
-                                    <field name="obs"/>
-                                </tree>
-                                <form>
-                                    <field name="entrada" />
-                                    <newline />
-                                    <field name="tipo_mes" required="1" />
-                                    <newline />
-                                    <field name="valor_parcela" required="1" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" />
-                                    <field name="vezes" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" attrs="{'invisible': [('entrada', '!=', False)], 'required': True}" />
-                                    <newline />
-                                    <field name="valor_principal" string="Valor total" attrs="{'invisible': [('entrada', '!=', False)], 'required': True}" />
-                                    <newline />
-                                    <field name="data_inicio" required="1" string="Data 1ª parcela" />
-                                    <field name="currency_id" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" />
-                                    <newline />
-                                    <field name="data_base" />
-                                    <field name="tipo_mes_correcao" />
-                                    <field name="obs" colspan="4" />
-                                    <separator string="Cobrança e juros" colspan="4" />
-                                    <field name="carteira_id" colspan="4" invisible="1" />
-                                    <field name="taxa_juros" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" />
-                                    <field name="tipo_taxa" on_change="onchange_valor_parcela(valor_parcela, vezes, tipo_taxa, taxa_juros, currency_id)" />
-                                    <field name="taxa_iof" />
-                                    <field name="taxa_administracao" />
-                                    <field name="taxa_seguro" />
-                                    <newline />
-                                    <separator string="Parcelas" colspan="4" />
-                                    <field name="parcela_ids" nolabel="1" colspan="4">
-                                        <tree editable="top">
-                                            <field name="parcela" />
-                                            <field name="data_vencimento" />
-                                            <field name="valor" sum="valor" />
-                                            <field name="juros" sum="juros" />
-                                            <field name="amortizacao" />
-                                            <field name="divida_amortizada" />
-                                            <field name="saldo_devedor" />
-                                            <field name="entrada" />
-                                            <field name="obs" />
-                                            <field name="currency_id" string="Índice" />
-                                            <field name="data_base" />
-                                            <field name="tipo_mes_correcao" />
-                                        </tree>
-                                    </field>
-                                    <separator string="Cheques" colspan="4" />
-                                    <field name="cheque_ids" nolabel="1" colspan="4" />
-                                </form>
-                            </field>-->
+                            <separator string="Condições de pagamento originais" colspan="4" />
+                            <field name="condicao_original_ids" nolabel="1" colspan="4" context="{'default_data_inicio': data_inicio, 'form_view_ref': 'construtora.finan_contrato_condicao_form', 'tree_view_ref': 'construtora.finan_contrato_condicao_tree', 'default_tipo': 'O'}" />
+                            <separator string="Renegociações" colspan="4" />
+                            <field name="condicao_renegociacao_ids" nolabel="1" colspan="4" context="{'default_data_inicio': data_inicio, 'form_view_ref': 'construtora.finan_contrato_condicao_renegociacao_form', 'tree_view_ref': 'construtora.finan_contrato_condicao_renegociacao_tree', 'default_tipo': 'R'}" />
                         </page>
                         <page string="Parcelas">
                             <field name="parcelas_manual" colspan="4" />

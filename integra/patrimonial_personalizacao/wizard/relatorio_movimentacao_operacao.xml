@@ -11,7 +11,8 @@
                     <group colspan="4">
                         <separator string="Filtros do Relatório" colspan="4" />
                         <newline/>                        
-                        <field name="operacao_id" required="1" colspan="4" />
+                        <field name="operacao_id"  colspan="4" />
+                        <field name="sped_operacao_id" colspan="4" domain="[('stock_operacao_id', '!=', False)]"/>
                         <newline/>                        
                         <field name="data_inicial" required="1" colspan="2" string="Data" />
                         <field name="data_final" required="1" colspan="2" string="Data" />

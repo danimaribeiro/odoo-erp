@@ -99,6 +99,20 @@
 							<newline />
 							<field name="arquivo_texto_retorno" nolabel="1" colspan="4" />
 						</page>
+						<page string="Holerites do retorno">
+						    <field name="retorno_ocorrencia"/>
+						    <field name="retorno_item_ids" colspan="4" mode="tree" readonly="1" nolabel="1">                            
+                                <tree>                                    
+                                    <field name="codigo_ocorrencia"/>
+                                    <field name="slip_id" />
+                                    <field name="mes" />
+                                    <field name="ano" />                                    
+                                    <field name="data_credito"/>
+                                    <field name="valor" sum="Valor Pago" />
+                                    <field name="nosso_numero"/>
+                                </tree>
+                            </field>
+				        </page>						
 					</notebook>
 				</form>
 			</field>

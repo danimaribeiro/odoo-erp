@@ -9,8 +9,8 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <page string="Comunicação e histórico" position="before">
-                     <page string="Contabilização">
-                        <group string="Gera Partidas Receber">                            
+                    <page string="Contabilização" attrs="{'invisible': [('provisionado', '=', True)]}">
+                        <group string="Gera Partidas Receber">
                             <button name="gera_contabilizacao" type="object" string="Gera partidas dobradas" context="{'tipo': 'R'}" />
                             <field name="contabilizacao_entrada_ids" nolabel="1" colspan="4" readonly="1" domain="[('tipo','=', 'R')]">
                                 <tree>
@@ -25,9 +25,9 @@
                                     <field name="historico" />
                                 </tree>
                             </field>
-                        </group> 
+                        </group>
                         <newline />
-                        <group string="Gera Partidas Recebimento">                            
+                        <group string="Gera Partidas Recebimento">
                             <button name="gera_contabilizacao" type="object" string="Gera partidas dobradas" context="{'tipo': 'PR'}" />
                             <field name="contabilizacao_pagamento_ids" nolabel="1" colspan="4" readonly="1"  domain="[('tipo','=', 'PR')]">
                                 <tree>
@@ -42,7 +42,7 @@
                                     <field name="historico" />
                                 </tree>
                             </field>
-                        </group> 
+                        </group>
                     </page>
                 </page>
             </field>

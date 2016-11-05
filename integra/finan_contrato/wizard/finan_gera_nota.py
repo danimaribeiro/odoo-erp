@@ -67,11 +67,16 @@ class finan_gera_nota(osv.osv_memory):
                 contrato_id = gera_nota_obj.contrato_id.id
             else:
                 contrato_id = False
-                
+
             if gera_nota_obj.grupo_economico_id:
                 grupo_economico_id = gera_nota_obj.grupo_economico_id.id
             else:
                 grupo_economico_id = False
+
+            if hasattr(gera_nota_obj, 'tipo_faturamento_id') and gera_nota_obj.tipo_faturamento_id:
+                tipo_faturamento_id = gera_nota_obj.tipo_faturamento_id.id
+            else:
+                tipo_faturamento_id = False
 
         else:
             if 'data_inicial' not in context or 'data_final' not in context:
@@ -86,6 +91,7 @@ class finan_gera_nota(osv.osv_memory):
             company_id = context.get('company_id', False)
             operacao_id = context.get('operacao_id', False)
             grupo_economico_id = context.get('grupo_economico_id', False)
+            tipo_faturamento_id = context.get('tipo_faturamento_id', False)
 
 
         sql = """
@@ -98,12 +104,17 @@ class finan_gera_nota(osv.osv_memory):
 
             where
               l.tipo = 'R'
+              and (c.natureza != 'TR')
               and (c.suspenso = False or c.suspenso is null)
               and l.sped_documento_id is null
               and l.situacao in ('A vencer', 'Vencido', 'Vence hoje')
               and c.operacao_fiscal_servico_id is not null
               and l.data_vencimento between '{data_inicial}' and '{data_final}'
         """
+        filtro = {
+            'data_inicial': data_inicial,
+            'data_final': data_final,
+        }
 
         if company_id:
             sql += """
@@ -111,27 +122,38 @@ class finan_gera_nota(osv.osv_memory):
             or e.parent_id = {company_id}
             or cc.id = {company_id})
             """
+            filtro['company_id'] = company_id
 
         if operacao_id:
             sql += """
             and c.operacao_fiscal_servico_id = {operacao_id}
             """
+            filtro['operacao_id'] = operacao_id
 
         if contrato_id:
             sql += """
             and c.id = {contrato_id}
             """
+            filtro['contrato_id'] = contrato_id
 
         if partner_id:
             sql += """
             and l.partner_id = {partner_id}
             """
-            
+            filtro['partner_id'] = partner_id
+
         if grupo_economico_id:
             sql += """
             and c.grupo_economico_id = {grupo_economico_id}
             """
-            
+            filtro['grupo_economico_id'] = grupo_economico_id
+
+        if tipo_faturamento_id:
+            sql += """
+            and c.tipo_faturamento_id = {tipo_faturamento_id}
+            """
+            filtro['tipo_faturamento_id'] = tipo_faturamento_id
+
         sql += """
         order by
             p.razao_social,
@@ -139,7 +161,7 @@ class finan_gera_nota(osv.osv_memory):
             l.valor_documento desc
         """
 
-        sql = sql.format(data_inicial=data_inicial, data_final=data_final, company_id=company_id, operacao_id=operacao_id, contrato_id=contrato_id, partner_id=partner_id,grupo_economico_id=grupo_economico_id)
+        sql = sql.format(**filtro)
         print(sql)
         cr.execute(sql)
         dados = cr.fetchall()
@@ -182,7 +204,7 @@ class finan_gera_nota(osv.osv_memory):
                 contrato_id = gera_nota_obj.contrato_id.id
             else:
                 contrato_id = False
-                
+
             if gera_nota_obj.grupo_economico_id:
                 grupo_economico_id = gera_nota_obj.grupo_economico_id.id
             else:
@@ -258,7 +280,7 @@ and c.natureza = 'R'
         'ignora_erros': fields.boolean(u'Ignorar mensagens de falta de configuração fiscal?'),
         'lancamento_ids': fields.function(_get_lancamento_ids, method=True, type='one2many', string=u'Contratos', relation='finan.lancamento'),  # , fnct_inv=_set_input_ids),
         'contrato_sem_vencimento_ids': fields.function(_get_contrato_sem_vencimento_ids, method=True, type='one2many', string=u'Contratos', relation='finan.contrato'),  # , fnct_inv=_set_input_ids),
-        'grupo_economico_id': fields.many2one('finan.grupo.economico', u'Grupo econômico', ondelese='restrict'),        
+        'grupo_economico_id': fields.many2one('finan.grupo.economico', u'Grupo econômico', ondelese='restrict'),
     }
 
     _defaults = {

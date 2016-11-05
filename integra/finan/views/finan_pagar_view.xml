@@ -72,7 +72,7 @@
                                 <field name="data_documento" required="1" />
                                 <field name="valor_documento" required="1" />
                                 <field name="valor" invisible="1" />
-                                <field name="partner_id" required="1" string="Fornecedor" />
+                                <field name="partner_id" required="1" string="Fornecedor" domain="[('cnpj_cpf', '!=', False)]"/>
                                 <field name="data_vencimento" required="1" />
                                 <button icon="terp-calendar" string="Alterar vencimento" name="solicita_alteracao_vencimento" type="object" colspan="2" />
                             </group>
@@ -92,7 +92,7 @@
                                 <field name="rateio_ids" widget="many2one_list" nolabel="1" colspan="4" context="{'default_company_id': company_id, 'default_conta_id': conta_id, 'tree_view_ref': 'finan.finan_pagar_rateio_tree'}"/>
                             </group>
                         </page>
-                        <page string="Quitação" attrs="{'invisible': [('situacao', 'in', ['Baixado'])]}">
+                        <page string="Quitação" attrs="{'invisible': ['|', ('provisionado', '=', True), ('situacao', 'in', ['Baixado'])]}">
                             <field name="sugestao_bank_id" string="Previsão de débito na conta" domain="['|', ('raiz_cnpj', '=', raiz_cnpj),('cnpj_cpf', '=', False)]" />
                             <field name="lancamento_id" invisible="1" string="Lote de pagamento" />
                             <group colspan="4" attrs="{'invisible': [('lancamento_id', '!=', False)]}">
@@ -112,7 +112,7 @@
                                 <field name="lote_pagamento_ids" nolabel="1" colspan="4" readonly="1" domain="[('tipo', '=', 'PP')]" context="{'tree_view_ref': 'finan.finan_pagamento_tree'}" mode="tree" />
                             </group>
                         </page>
-                        <page string="Baixa" attrs="{'invisible': ['|',('situacao', 'in', ['Quitado', 'Sem informação de vencimento']),('valor', '=', True)]}"
+                        <page string="Baixa" attrs="{'invisible': ['|', ('provisionado', '=', True), '|',('situacao', 'in', ['Quitado', 'Sem informação de vencimento']),('valor', '=', True)]}"
                               groups="finan.group_finan_treasury_manager,finan.group_finan_treasury_staff,finan.group_finan_manager">
                             <separator string="Confirmar data de baixa" colspan="2" />
                             <separator string="Motivo da baixa" colspan="2" />
@@ -181,7 +181,7 @@
                     <field name="res_partner_bank_id"  />
                     <field name="sugestao_bank_id"  />
                     <field name="carteira_id"  />
-                    <field name="partner_id"  />
+                    <field name="partner_id" domain="[('cnpj_cpf', '!=', False)]"/>
                     <newline />
                     <field name="documento_id"  />
                     <field name="numero_documento" />

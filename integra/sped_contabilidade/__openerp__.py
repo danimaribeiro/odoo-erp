@@ -19,7 +19,6 @@
         'sped',
         'sped_base',
         'finan',
-        'finan_contrato'
     ],
     'update_xml': [
         'views/account_view.xml',

@@ -72,6 +72,7 @@ class sale_order(osv.Model):
             res[order.id]['amount_tax'] = total_impostos
             res[order.id]['amount_untaxed'] = valor_sem_impostos
             res[order.id]['amount_total'] = valor_com_impostos
+            res[order.id]['vr_a_faturar'] = valor_com_impostos
 
         return res
 
@@ -229,6 +230,8 @@ class sale_order(osv.Model):
             #},
             multi='sums', help="The total amount."),
 
+        'vr_a_faturar': fields.function(_amount_all, digits=(18, 2), string=u'Valor a faturar', store=False, multi='sums'),
+
         'sale_order_original_id': fields.many2one('sale.order', u'Pedido original'),
         'desconto_a_autorizar': fields.boolean(u'Desconto a autorizar?'),
         'desconto_autorizado': fields.boolean(u'Desconto autorizado?'),
@@ -349,11 +352,18 @@ class sale_order(osv.Model):
                 if 'stock_picking_id' in contexto_item and contexto_item['stock_picking_id']:
                     print('ponto 5')
                     sql = '''
-                    select product_qty
-                    from stock_move m
+                    select
+                        m.id,
+                        m.location_id,
+                        m.location_dest_id,
+                        m.product_qty
+                    from
+                        stock_move m
                     where
                         m.picking_id = {stock_picking_id}
-                        and m.product_id = {product_id};
+                        and m.product_id = {product_id}
+                        and m.sped_documentoitem_id is null
+                        and m.state = 'done';
                     '''
                     sql = sql.format(stock_picking_id=contexto_item['stock_picking_id'], product_id=pedido_item_obj.product_id.id)
                     cr.execute(sql)
@@ -368,8 +378,11 @@ class sale_order(osv.Model):
                     if not len(qtd_separada):
                         continue
 
-                    dados['quantidade'] = qtd_separada[0][0]
-                    dados['quantidade_tributacao'] = qtd_separada[0][0]
+                    dados['stock_move_id'] = qtd_separada[0][0]
+                    dados['stock_location_id'] = qtd_separada[0][1]
+                    dados['stock_location_dest_id'] = qtd_separada[0][2]
+                    dados['quantidade'] = qtd_separada[0][3]
+                    dados['quantidade_tributacao'] = qtd_separada[0][3]
 
                 #
                 # Não é mais simulação?
@@ -649,6 +662,7 @@ class sale_order(osv.Model):
     def gera_notas(self, cr, uid, ids, context={}):
         res = {}
         documento_pool = self.pool.get('sped.documento')
+        item_pool = self.pool.get('sale.order.line')
 
         temporario = context.get('temporario', False)
         notas_1_N_pedidos = context.get('notas_1_N_pedidos', False)
@@ -656,6 +670,10 @@ class sale_order(osv.Model):
         nota_servico_obj = context.get('nota_produto_obj', None)
         stock_picking_id = context.get('stock_picking_id', False)
         soh_servicos = context.get('soh_servicos', False)
+        seguranca = context.get('seguranca', False)
+
+        print('seguranca', seguranca)
+        print('soh_servicos', soh_servicos)
 
         if not temporario:
             ajusta_valor_venda = False
@@ -668,13 +686,23 @@ class sale_order(osv.Model):
             # Verifica se tem produtos para a nota de produtos, e serviços
             # para a nota de serviços
             #
-            produto_ids = self.pool.get('sale.order.line').search(cr, uid, [('order_id', '=', pedido_obj.id), ('product_id.type', '!=', 'service'), '|', ('product_id.active', '=', False), ('product_id.active', '=', True)])
-            servico_ids = self.pool.get('sale.order.line').search(cr, uid, [('order_id', '=', pedido_obj.id), ('product_id.type', '=', 'service'), '|', ('product_id.active', '=', False), ('product_id.active', '=', True)])
+            if seguranca:
+                if soh_servicos:
+                    produto_ids = []
 
-            #print('pedido_id', pedido_obj.id)
-            #print('context', context)
-            #print('produto_ids', produto_ids)
-            #print('servico_ids', servico_ids)
+                else:
+                    produto_ids = item_pool.search(cr, uid, [('order_id', '=', pedido_obj.id), ('tipo_item', '=', 'P'), ('cobrar', '=', True)])
+
+                servico_ids = item_pool.search(cr, uid, [('order_id', '=', pedido_obj.id), ('tipo_item', '=', 'S'), ('cobrar', '=', True)])
+
+            else:
+                produto_ids = item_pool.search(cr, uid, [('order_id', '=', pedido_obj.id), ('product_id.type', '!=', 'service')])
+                servico_ids = item_pool.search(cr, uid, [('order_id', '=', pedido_obj.id), ('product_id.type', '=', 'service')])
+
+            print('pedido_id', pedido_obj.id)
+            print('context', context)
+            print('produto_ids', produto_ids)
+            print('servico_ids', servico_ids)
 
             if produto_ids and not pedido_obj.operacao_fiscal_produto_id:
                 break
@@ -812,14 +840,26 @@ class sale_order(osv.Model):
                     #
                     # Ajusta a condição de pagamento e as duplicatas
                     #
-                    if hasattr(pedido_obj, 'simulacao_parcelas_ids'):
-                        for parcela_obj in pedido_obj.simulacao_parcelas_ids:
+                    print('vai gerar parcelas', seguranca)
+                    if seguranca:
+                        if len(servico_ids) == 0:
+                            porcentagem_produto = 1
+                        else:
+                            porcentagem_produto = D(pedido_obj.vr_total_produtos).quantize(D('0.01')) / D(pedido_obj.amount_total).quantize(D('0.01'))
+
+                        parcelas = self.pool.get('sale.order').browse(cr, 1, pedido_obj.id)
+                        print('porcentagem', porcentagem_produto, parcelas.simulacao_parcelas_ids)
+
+                        for parcela_obj in parcelas.simulacao_parcelas_ids:
                             dup = {
                                 'documento_id': nota_obj.id,
                                 'numero': parcela_obj.numero,
                                 'data_vencimento': parcela_obj.data,
-                                'valor': parcela_obj.valor
                             }
+
+                            valor = D(parcela_obj.valor) * porcentagem_produto
+                            dup['valor'] = valor.quantize(D('0.01'))
+
                             self.pool.get('sped.documentoduplicata').create(cr, uid, dup)
 
                         nota_obj.botao_regera_duplicatas()
@@ -841,8 +881,6 @@ class sale_order(osv.Model):
                             nota_obj.write(dados['value'])
 
                 #lancamento_obj.write({'sped_documento_id': nota_obj.id, 'valor_documento': nota_obj.vr_fatura, 'provisionado': False})
-
-            servico_ids = self.pool.get('sale.order.line').search(cr, uid, [('order_id', '=', pedido_obj.id), ('product_id.type', '=', 'service')])
 
             #
             # Quando há o faturamento direto da mão de obra, não há emissão de NFS-e somente dos itens de mão-de-obra
@@ -925,7 +963,7 @@ class sale_order(osv.Model):
                 contexto_item['default_emissao'] = nota_obj.emissao
                 contexto_item['default_data_emissao'] = nota_obj.data_emissao
 
-                #print('vai gerar itens de serviço', servico_ids)
+                print('vai gerar itens de serviço', servico_ids)
                 self._gera_itens_nota(cr, uid, nota_obj, servico_ids, contexto_item, temporario)
 
                 if not temporario:
@@ -948,6 +986,61 @@ class sale_order(osv.Model):
                 #impostos['vr_previdencia'] += D(str(nota_obj.vr_previdencia))
                 #impostos['vr_iss_retido'] += D(str(nota_obj.vr_iss_retido))
                 total_nf_servico = D(str(nota_obj.vr_nf))
+
+                #
+                #
+                #
+                if not temporario:
+                    #
+                    # Ajusta a forma de pagamento
+                    #
+                    if pedido_obj.finan_formapagamento_id:
+                        nota_obj.write({'finan_formapagamento_id': pedido_obj.finan_formapagamento_id.id})
+                    #
+                    # Ajusta a condição de pagamento e as duplicatas
+                    #
+                    if seguranca:
+                        if soh_servicos or len(produto_ids) == 0:
+                            porcentagem_produto = D(1)
+
+                        else:
+                            porcentagem_produto = D(pedido_obj.vr_total_servicos).quantize(D('0.01')) / D(pedido_obj.amount_total).quantize(D('0.01'))
+
+                        parcelas = self.pool.get('sale.order').browse(cr, 1, pedido_obj.id)
+                        print('porcentagem', porcentagem_produto, parcelas.simulacao_parcelas_ids)
+
+                        for parcela_obj in parcelas.simulacao_parcelas_ids:
+                            dup = {
+                                'documento_id': nota_obj.id,
+                                'numero': parcela_obj.numero,
+                                'data_vencimento': parcela_obj.data,
+                            }
+
+                            valor = D(parcela_obj.valor) * porcentagem_produto
+                            dup['valor'] = valor.quantize(D('0.01'))
+
+                            self.pool.get('sped.documentoduplicata').create(cr, uid, dup)
+
+                        nota_obj.botao_regera_duplicatas()
+
+                    else:
+                        cond_pag_obj = None
+                        #print(pedido_obj.payment_term, 'condicao de pagamento do pedido')
+                        if pedido_obj.payment_term:
+                            cond_pag_obj = pedido_obj.payment_term
+                            nota_obj.write({'payment_term_id': cond_pag_obj.id})
+
+                        elif operacao_obj.payment_term_id:
+                            cond_pag_obj = operacao_obj.payment_term_id
+
+                        #print(cond_pag_obj, 'condicao de pagamento')
+
+                        if cond_pag_obj:
+                            dados = nota_obj.onchange_payment_term(cond_pag_obj.id, nota_obj.vr_fatura, nota_obj.vr_nf, nota_obj.data_emissao, [], context={'sale_obj': pedido_obj})
+                            nota_obj.write(dados['value'])
+
+                #lancamento_obj.write({'sped_documento_id': nota_obj.id, 'valor_documento': nota_obj.vr_fatura, 'provisionado': False})
+
 
             total_imposto = D('0')
             total_imposto += impostos['vr_icms_proprio']
@@ -1348,11 +1441,11 @@ class sale_order(osv.Model):
 
                 if 'value' in dados_produto:
                     dados_produto = dados_produto['value']
-                    if item_obj.product_id.id == 1520:
-                        print('dados_produto')
-                        print(dados_produto['price_unit'])
-                        print(dados_produto)
-                        print(dados_produto['price_unit'])
+                    #if item_obj.product_id.id == 1520:
+                        #print('dados_produto')
+                        #print(dados_produto['price_unit'])
+                        #print(dados_produto)
+                        #print(dados_produto['price_unit'])
                     dados_produto['product_uom_qty'] = quantidade
                     dados_produto['usa_unitario_minimo'] = usa_unitario_minimo
                     dados_produto['margem'] = 0

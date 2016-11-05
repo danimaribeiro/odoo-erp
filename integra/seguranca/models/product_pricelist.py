@@ -11,6 +11,7 @@ class product_pricelist(osv.Model):
         'name': fields.char(u'Nome da lista de preços',size=64, required=True, translate=False),
         'meses_retorno_locacao': fields.integer(u'Meses para retorno'),
         'tipo_os_id': fields.many2one('sale.tipo.os', u'Tipo da OS'),
+        'contrato_terceirizado': fields.boolean(u'Gera contrato terceirizado?'),
     }
 
     _defaults = {

@@ -279,7 +279,7 @@ class hr_payslip(osv.osv):
                 nome += ' a ' + data_fim_periodo_aquisitivo.strftime('%d/%m/%Y')
 
             elif holerite_obj.tipo == 'C':
-                nome = u'Auxílio doença/acidente de trabalho de %s' % holerite_obj.employee_id.nome
+                nome = u'Médias do período anterior ao afastamento de %s' % holerite_obj.employee_id.nome
                 data_inicio_periodo_aquisitivo = parse_datetime(holerite_obj.data_inicio_periodo_aquisitivo)
                 data_fim_periodo_aquisitivo = parse_datetime(holerite_obj.data_fim_periodo_aquisitivo)
                 nome += ' de ' + data_inicio_periodo_aquisitivo.strftime('%d/%m/%Y')
@@ -409,6 +409,7 @@ class hr_payslip(osv.osv):
         'proporcional': fields.boolean(u'Proporcional?'),
         'vencida': fields.boolean(u'Vencida?'),
         'pagamento_dobro': fields.boolean(u'Em dobro?'),
+        'pagamento_dobro_dias': fields.integer(u'Dias em dobro'),
         'programacao': fields.boolean(u'Férias programadas?'),
     }
 
@@ -429,6 +430,7 @@ class hr_payslip(osv.osv):
         'provisao': False,
         'abono_pecuniario_ferias': False,
         'media_inclui_mes': False,
+        'pagamento_dobro_dias': 0,
     }
 
     def efetivar_simulacao(self, cr, uid, ids, context={}):
@@ -883,6 +885,8 @@ class hr_payslip(osv.osv):
                         elif proximas_ferias_obj.avos == 12:
                             data_fim_periodo_aquisitivo = parse_datetime(proximas_ferias_obj.data_final_periodo_aquisitivo_cheio).date()
                             valores['dias_ferias'] = D(proximas_ferias_obj.saldo_dias)
+                            valores['pagamento_dobro'] = proximas_ferias_obj.pagamento_dobro
+                            valores['pagamento_dobro_dias'] = proximas_ferias_obj.pagamento_dobro_dias
 
                         else:
                             data_fim_periodo_aquisitivo = parse_datetime(proximas_ferias_obj.data_final_periodo_aquisitivo).date()
@@ -1020,7 +1024,7 @@ class hr_payslip(osv.osv):
 
         return res
 
-    def onchange_datas(self, cr, uid, ids, tipo, employee_id, contract_id, date_from, date_to, data_inicio_periodo_aquisitivo=None, data_fim_periodo_aquisitivo=None, data_aviso_previo=None, aviso_previo_indenizado=True, afastamento_imediato=False, dispensa_empregador=False, simulacao=False, aviso_previo_trabalhado_parcial=False, struct_id=False, saldo_dias=False):
+    def onchange_datas(self, cr, uid, ids, tipo, employee_id, contract_id, date_from, date_to, data_inicio_periodo_aquisitivo=None, data_fim_periodo_aquisitivo=None, data_aviso_previo=None, aviso_previo_indenizado=True, afastamento_imediato=False, dispensa_empregador=False, simulacao=False, aviso_previo_trabalhado_parcial=False, struct_id=False, saldo_dias=False, pagamento_dobro=False):
         #print('entrou aqui')
         # if tipo == 'F':
             # if date_from:
@@ -1216,6 +1220,26 @@ class hr_payslip(osv.osv):
 
             data_final = parse_datetime(date_to).date()
             valores['dias_ferias'] = data_final.toordinal() - data_inicial.toordinal() + 1
+
+            data_final_periodo_concessivo = parse_datetime(data_fim_periodo_aquisitivo).date()
+            data_final_periodo_concessivo += relativedelta(years=+1)
+
+            #if data_final > data_final_periodo_concessivo:
+                #pagamento_dobro_dias = data_final - data_final_periodo_concessivo
+
+                #print('dias para dobra das ferias')
+                #print(data_final)
+                #print(data_final_periodo_concessivo)
+                #print(pagamento_dobro_dias)
+
+                #if pagamento_dobro_dias.days >= 30:
+                    #valores['pagamento_dobro'] = True
+                    #valores['pagamento_dobro_dias'] = 30
+                #else:
+                    #valores['pagamento_dobro'] = True
+                    #valores['pagamento_dobro_dias'] = pagamento_dobro_dias.days
+
+                #print(pagamento_dobro, valores['pagamento_dobro'], valores['pagamento_dobro_dias'])
 
             valores_novos = self.pool.get('hr.payslip')._ajusta_ferias(cr, uid, ids, tipo, date_from, date_to, contrato_obj, struct_id)
 
@@ -1667,6 +1691,7 @@ class hr_payslip(osv.osv):
             'afastamento': afastamento_obj,
             'medias': media_obj,
             'PROVENTO_TRIBUTADO': categoria_pool.browse(cr, uid, categoria_pool.search(cr, uid, [['code', '=', 'PROV']])[0]),
+            'PROVENTO_SOBRE_PROVENTO': categoria_pool.browse(cr, uid, categoria_pool.search(cr, uid, [['code', '=', 'PROV_PROV']])[0]),
             'PROVENTO_NAO_TRIBUTADO': categoria_pool.browse(cr, uid, categoria_pool.search(cr, uid, [['code', '=', 'PROV_NAO_TRIBUTADO']])[0]),
         }
 
@@ -2447,7 +2472,7 @@ class hr_payslip(osv.osv):
                         if holerite_obj.tipo == 'F' and holerite_obj.abono_pecuniario_ferias:
                             valores_abono = copy(valores)
 
-                            if media.tipo_media == 'quantidade':
+                            if rule.tipo_media == 'quantidade':
                                 valores['quantity'] *= holerite_obj.dias_ferias / D(30)
                             #elif media.tipo_media == 'valor':
                             else:
@@ -2482,7 +2507,7 @@ class hr_payslip(osv.osv):
                         valores_abono['sequence'] -= D('0.01')
                         result_dict[valores_abono['code'] + '-' + str(contract.id)] = valores_abono
 
-                        if valores['category_id'] == localdict['PROVENTO_TRIBUTADO'].id:
+                        if valores['category_id'] in [localdict['PROVENTO_TRIBUTADO'].id, localdict['PROVENTO_SOBRE_PROVENTO'].id]:
                             valores_abono['category_id'] = localdict['PROVENTO_NAO_TRIBUTADO'].id
                             localdict = _sum_salary_rule_category(localdict, localdict['PROVENTO_NAO_TRIBUTADO'], valores_abono['total'])
 
@@ -2503,6 +2528,12 @@ class hr_payslip(osv.osv):
 
                 for key in result_dict:
                     if '_anterior' in key:
+                        continue
+
+                    #
+                    # As rubricas de abono foram somadas nos proventos não tributados mais acima
+                    #
+                    if key[-6:] == '_ABONO' in key:
                         continue
 
                     linha = result_dict[key]

@@ -73,9 +73,13 @@ class finan_saldo(osv.Model):
             if nome_campo == 'transferencia_credito_ids':
                 lancamento_ids = self.pool.get('finan.lancamento').search(cr, uid, ['&', ('tipo', '=', tipo), '&', ('res_partner_bank_creditar_id', '=', saldo_obj.res_partner_bank_id.id), (tipo_data, '=', saldo_obj.data)])
             elif nome_campo == 'extrato_ids':
-                lancamento_ids = self.pool.get('finan.extrato').search(cr, uid, [('res_partner_bank_id', '=', saldo_obj.res_partner_bank_id.id), ('data_quitacao', '=', saldo_obj.data)])
+                lancamento_ids = self.pool.get('finan.extrato').search(cr, uid, [('res_partner_bank_id', '=', saldo_obj.res_partner_bank_id.id), ('data_compensacao', '=', saldo_obj.data)])
             else:
-                lancamento_ids = self.pool.get('finan.lancamento').search(cr, uid, ['&', ('tipo', '=', tipo), '&', ('res_partner_bank_id', '=', saldo_obj.res_partner_bank_id.id), (tipo_data, '=', saldo_obj.data)])
+                if tipo == 'PR' or tipo == 'PP':
+                    lancamento_ids = self.pool.get('finan.lancamento').search(cr, uid, ['&', ('tipo', '=', tipo), '&', ('res_partner_bank_id', '=', saldo_obj.res_partner_bank_id.id), '|', ('data', '=', saldo_obj.data), '&', ('data', '=', False), ('data_quitacao', '=', saldo_obj.data)])
+
+                else:
+                    lancamento_ids = self.pool.get('finan.lancamento').search(cr, uid, ['&', ('tipo', '=', tipo), '&', ('res_partner_bank_id', '=', saldo_obj.res_partner_bank_id.id), (tipo_data, '=', saldo_obj.data)])
 
             res[saldo_obj.id] = lancamento_ids
 
@@ -296,8 +300,19 @@ class finan_saldo(osv.Model):
 
         return res
 
+    def _bank_type_get(self, cr, uid, context=None):
+        bank_type_obj = self.pool.get('res.partner.bank.type')
+
+        result = []
+        type_ids = bank_type_obj.search(cr, 1, [])
+        bank_types = bank_type_obj.browse(cr, 1, type_ids, context=context)
+        for bank_type in bank_types:
+            result.append((bank_type.code, bank_type.name))
+        return result
+
     _columns = {
         'res_partner_bank_id': fields.many2one('res.partner.bank', u'Conta Bancária', select=True),
+        'res_partner_bank_state': fields.related('res_partner_bank_id', 'state', type='selection', selection=_bank_type_get, string=u'Tipo de conta bancária', store=True),
         'data': fields.date(u'Data', select=True),
         'conciliado': fields.function(_conciliado, string=u'Conciliado', method=True, type='boolean', store=False),
 
@@ -355,6 +370,7 @@ class finan_saldo(osv.Model):
         #
         'data_from': fields.function(lambda *a, **k: {}, method=True, type='date', string=u'Data de'),
         'data_to': fields.function(lambda *a, **k: {}, method=True, type='date', string=u'até'),
+        'recalculo': fields.integer(u'Campo para obrigar o recalculo dos itens'),
     }
 
     _default = {
@@ -365,6 +381,9 @@ class finan_saldo(osv.Model):
         ('res_partner_bank_id_data_unique', 'unique(res_partner_bank_id, data)',
             u'O banco e a data não podem se repetir!'),
     ]
+
+    def atualizar_caixa(self, cr, uid, ids, context):
+        return True
 
     def gera_assinatura(self, cr, uid, ids, context):
         assinatura_pool = self.pool.get('finan.saldo.assinatura')

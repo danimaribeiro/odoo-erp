@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sped_nfse_emitida_tree">
+            <field name="name">sped.nfse.emitida.tree</field>
+            <field name="model">sped.documento</field>
+            <field name="inherit_id" ref="sped.sped_nfse_emitida_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="operacao_id" position="after">
+                    <field name="tipo_faturamento_id" invisible="1" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sped_nfse_emitida_search">
+            <field name="name">sped.nfse.emitida.search</field>
+            <field name="model">sped.documento</field>
+            <field name="inherit_id" ref="sped.sped_nfse_emitida_search"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <field name="operacao_id" position="after">
+                    <field name="tipo_faturamento_id" />
+                </field>
+                <xpath expr="//filter[@string='Operação fiscal']" position="after">
+                    <filter string="Tipo de Faturamento" icon="terp-project" domain="[]" context="{'group_by': 'tipo_faturamento_id'}" />
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

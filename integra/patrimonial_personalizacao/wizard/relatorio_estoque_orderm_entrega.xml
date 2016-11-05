@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="relatorio_ordem_entrega_form" >
+            <field name="name">estoque.relatorio.ordem.entrega.form</field>
+            <field name="model">estoque.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Ordem de Entrega">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />                        
+                        <field name="company_id" required="1" colspan="4" />                     
+                        <newline/>
+                        <field name="data_inicial" colspan="2" required="1"/>
+                        <field name="data_final" colspan="2" required="1"/>
+                        <newline/>
+                        <field name="operacao_id" colspan="4" />                        
+                        <newline/>
+                        <field name="saldo_zero" colspan="2" required="1" />
+                        <field name="vendedor_id" colspan="2" attrs="{'invisible': [('saldo_zero','!=', 'S')]}"/>
+                        <field name="formato" required="1" colspan="2" />
+                        <newline/>
+                        <newline/>                        
+                        <field name="nome" invisible="1"/>                        
+                        <newline/>
+                        <button icon="gtk-print" string="Gerar relatório" name="gera_relatorio_ordem_entrega" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>                        
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="relatorio_ordem_entrega_acao">
+            <field name="name">Ordem de Entrega</field>
+            <field name="res_model">estoque.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="relatorio_ordem_entrega_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="relatorio_ordem_entrega_form"/>
+            <field name="act_window_id" ref="relatorio_ordem_entrega_acao"/>
+        </record>
+
+        <menuitem action="relatorio_ordem_entrega_acao"
+                  id="menu_relatorio_ordem_entrega"
+                  name="Ordem de Entrega"
+                  parent="sped_stock.menu_estoque_relatorio"
+                  sequence="10" />
+
+    </data>
+</openerp>

@@ -26,6 +26,8 @@ NATUREZA = (
     ('IR', 'Inclusão de contrato a Receber'),
     ('IP', 'Inclusão de contrato a Pagar'),
     ('RI', 'Recebimento de imoveis'),
+
+    ('TR', 'Terceirizado a Receber'),
 )
 
 DIAS_VENCIMENTO = [
@@ -160,19 +162,20 @@ class finan_contrato(osv.Model):
         res = {}
 
         for contrato_obj in self.browse(cr, uid, ids):
-            vm = D(0)
-            soma = D(0)
-            for itens_obj in contrato_obj.contrato_produto_ids:
-                valor = D(str(itens_obj.quantidade)) * D(str(itens_obj.vr_unitario))
-                soma += valor.quantize(D('0.01'))
-            soma = soma.quantize(D('0.01'))
+            res[contrato_obj.id] = contrato_obj.valor_faturamento != contrato_obj.valor_mensal
+            #vm = D(0)
+            #soma = D(0)
+            #for itens_obj in contrato_obj.contrato_produto_ids:
+                #valor = D(str(itens_obj.quantidade)) * D(str(itens_obj.vr_unitario))
+                #soma += valor.quantize(D('0.01'))
+            #soma = soma.quantize(D('0.01'))
 
-            if contrato_obj.valor_mensal:
-                vm = D(str(contrato_obj.valor_mensal))
-                vm = vm.quantize(D('0.01'))
+            #if contrato_obj.valor_mensal:
+                #vm = D(str(contrato_obj.valor_mensal))
+                #vm = vm.quantize(D('0.01'))
 
-            #print(soma, vm)
-            res[contrato_obj.id] = soma != vm
+            ##print(soma, vm)
+
 
         return res
 
@@ -230,7 +233,7 @@ class finan_contrato(osv.Model):
 
         'contrato_antigo_ids': fields.many2many('finan.contrato', 'finan_contrato_antigo', 'contrato_id', 'antigo_id', string=u'Contratos antigos'),
 
-        'data_inicio': fields.date(u'Data de início da cobrança'),
+        'data_inicio': fields.date(u'Data do primeiro vencimento após o início do serviço'),
         'duracao': fields.integer(u'Duração em meses'),
         'carencia_texto': fields.char(u'Carência em meses', size=5),
         'carencia': fields.function(_get_carencia_funcao, type='integer', string=u'Carência em meses', store=True),
@@ -344,7 +347,7 @@ class finan_contrato(osv.Model):
         if (not 'natureza' in context):
             return ''
 
-        if context['natureza'] != 'R' and context['natureza'] != 'IR' and context['natureza'] != 'RI':
+        if context['natureza'] != 'R' and context['natureza'] != 'IR' and context['natureza'] != 'RI' and context['natureza'] != 'TR':
             return ''
 
         #cr.execute("select coalesce(max(numero), '') from finan_contrato where natureza = 'R' and company_id = " + str(company_id) + ';')
@@ -402,7 +405,7 @@ class finan_contrato(osv.Model):
         carencia = contrato_obj.carencia
         ciclos = 0
 
-        if contrato_obj.natureza in ('R', 'P') and data_inicio <= hoje:
+        if contrato_obj.natureza in ('R', 'P', 'TR') and data_inicio <= hoje:
             #
             # Vamos ver quantos meses tem de diferença entre a data de início e a data
             # de hoje; se houver menos do que os meses de duração do contrato, assume
@@ -606,7 +609,7 @@ class finan_contrato(osv.Model):
                 #
                 # Calcula o pro-rata do 1º mês
                 #
-                print(renovacao, parcela)
+                #print(renovacao, parcela)
 
                 if contrato_obj.pro_rata and renovacao == 0:
                     if parcela == 1:
@@ -772,8 +775,8 @@ class finan_contrato(osv.Model):
             data_vencimento_distrato += relativedelta(months=+1)
             data_vencimento_distrato = str(data_vencimento_distrato)
 
-            print('data_vencimento_distrato')
-            print(data_vencimento_distrato)
+            #print('data_vencimento_distrato')
+            #print(data_vencimento_distrato)
 
             vencimento_anterior = None
             vencimento_posterior = None
@@ -940,7 +943,7 @@ class finan_contrato(osv.Model):
         if 'active_ids' in context:
             ids = context.get('active_ids', [])
 
-        contrato_ids = self.search(cr, uid, [('ativo', '=', True),('id', 'in', ids)])
+        contrato_ids = self.search(cr, uid, [('ativo', '=', True),('id', 'in', ids)], order='numero')
 
         i = 1
         for contrato_obj in contrato_pool.browse(cr, uid, contrato_ids):

@@ -24,6 +24,9 @@
                         </field>
                     </page>
                 </page>
+                <field name="validar_quantidade_patrimonio" position="after">
+                    <!--<field name="stock_operacao_id" colspan="4"/>-->
+                </field>
             </field>
         </record>
 

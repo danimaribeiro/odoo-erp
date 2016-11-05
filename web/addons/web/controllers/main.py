@@ -98,6 +98,8 @@ html_template = """<!DOCTYPE html>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <title>ERP Integra</title>
         <link rel="shortcut icon" href="/web/static/src/img/favicon.ico" type="image/x-icon"/>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i&amp;subset=latin-ext" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,700,700i&amp;subset=latin-ext" rel="stylesheet"/>
         %(css)s
         %(js)s
         <script type="text/javascript">

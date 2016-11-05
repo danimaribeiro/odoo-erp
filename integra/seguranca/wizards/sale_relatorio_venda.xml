@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="sale_relatorio_venda_form" >
+            <field name="name">sale.relatorio.venda.form</field>
+            <field name="model">sale.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório de Vendas">
+                    <group colspan="2" col="4">
+                        <field name="company_id" colspan="4" />
+                        <newline/>
+                        <field name="data_inicial" required="1" />
+                        <field name="data_final" required="1" />
+                        <newline/>
+                        <field name="etapa_ids" colspan="4" />
+                        <newline/>
+                        <field name="rentabilidade" colspan="4" />
+                        <newline/>
+                        <field name="nome" invisible="1"/>
+                        <newline/>
+                        <button icon="gtk-print" string="Gerar relatório" name="gera_relatorio_vendas" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="sale_relatorio_venda_acao">
+            <field name="name">Relatório de Vendas</field>
+            <field name="res_model">sale.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="sale_relatorio_venda_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_relatorio_venda_form"/>
+            <field name="act_window_id" ref="sale_relatorio_venda_acao"/>
+        </record>
+
+        <menuitem
+            id="menu_sale_relatorio_vendas"
+            action="sale_relatorio_venda_acao"
+            name="Relatório de Vendas"
+            parent="sped_sale.menu_sale_relatorio"
+            sequence="12"/>
+
+    </data>
+</openerp>

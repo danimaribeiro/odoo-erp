@@ -141,6 +141,7 @@ class finan_gera_nota(osv.osv_memory):
         'operacao_produto_id': fields.many2one('sped.operacao', u'Operação fiscal para produtos'),
         'operacao_servico_id': fields.many2one('sped.operacao', u'Operação fiscal para serviços'),
         'pedido_ids': fields.function(_get_pedido_ids, method=True, type='one2many', string=u'Pedidos', relation='sale.order'),  # , fnct_inv=_set_input_ids),
+        'stock_picking_id': fields.many2one('stock.picking', u'Lista de separação'),
     }
 
     def onchange_get_operacao_produto_id(self, cr, uid, ids, context={}):
@@ -189,6 +190,8 @@ class finan_gera_nota(osv.osv_memory):
         pedidos = context['pedido_ids']
         pedido_ids = []
 
+        gera_nota_obj = self.browse(cr, uid, ids[0])
+
         for operacao, pedido_id, valores in pedidos:
             pedido_ids += [pedido_id]
 
@@ -210,7 +213,12 @@ class finan_gera_nota(osv.osv_memory):
             if len(pedidos_cliente[cnpj]) == 1:
                 pedido_obj = pedidos_cliente[cnpj][0]
                 print('cnpj', cnpj)
-                pedido_obj.gera_notas()
+
+                if gera_nota_obj.stock_picking_id:
+                    pedido_obj.gera_notas(context={'stock_picking_id': gera_nota_obj.stock_picking_id.id})
+                else:
+                    pedido_obj.gera_notas()
+
             else:
                 pass
 

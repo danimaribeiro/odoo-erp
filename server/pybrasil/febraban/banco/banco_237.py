@@ -188,9 +188,52 @@ def header_retorno_240(self, retorno):
     beneficiario.conta.numero = header[58:70]
     beneficiario.conta.digito = header[70]
     beneficiario.nome = header[72:102]
-    retorno.data_hora = parse_datetime(header[143:151] + ' ' + header[151:157]).date()
+    retorno.data_hora = parse_datetime(header[143:151])
     retorno.sequencia = int(header[157:163])
+    
+def fp_header_retorno_240(self, retorno):
+    header = retorno.linhas[0]
 
+    beneficiario = retorno.beneficiario
+
+    beneficiario.cnpj_cpf = header[18:32]
+    beneficiario.agencia.numero = header[52:57]
+    beneficiario.agencia.digito = header[57]
+    beneficiario.conta.numero = header[58:70]
+    beneficiario.conta.digito = header[70]
+    beneficiario.nome = header[72:102]
+    retorno.data_hora = parse_datetime(header[143:151])
+    retorno.sequencia = int(header[157:163])
+    
+    
+def fp_linha_retorno_240(self, retorno):
+    beneficiario = retorno.beneficiario
+    linha = retorno.linhas[1]
+
+    #
+    # Beneficiario
+    #    
+    beneficiario.codigo_beneficiario.numero = linha[64:71]
+    beneficiario.conta.digito = linha[71]
+    retorno.codigo_ocorrencia =  linha[230:240]
+
+    for i in range(2, len(retorno.linhas) - 1):
+        linha = retorno.linhas[i]
+                
+        if linha[13] == 'A':                    
+            boleto = Boleto()           
+            boleto.pagador.nome = linha[43:73] 
+            boleto.identificacao = linha[73:93].replace('id ','ID_')            
+            boleto.nosso_numero = linha[134:155]
+            boleto.data_credito = parse_datetime(linha[154:162])
+            boleto.valor_recebido = D(linha[163:177]) / D('100') 
+            boleto.comando = linha[230:240]           
+            retorno.boletos.append(boleto)
+            
+        elif linha[13] == 'B':
+            boleto.pagador.cnpj_cpf = linha[21:32] 
+            continue        
+            
 
 DESCRICAO_COMANDO_REMESSA = {
     '01': 'Registro de título',
@@ -702,7 +745,7 @@ def linha_remessa_240(self, remessa, funcionario):
     texto += '3' # 8-8 Tipo do registro
     texto += str(funcionario.registro).zfill(5) # 9-13 Nº seqüencial do registro no lote
     texto += 'A' # 14-14 Código de segmento do reg. detalhe
-    texto += '1'.zfill(1) # 15-15 Tipo de movimento ** verifica com empresa
+    texto += '0'.zfill(1) # 15-15 Tipo de movimento ** verifica com empresa
     texto += '00'.zfill(2) # 16-17 Código da instrução p/ movimento ** verifica com empresa
     texto += ''.zfill(3) # 18-20 Código da câmara centralizadora
     texto += '237'.zfill(3) # 21-23 Código do banco do favorecido
@@ -754,16 +797,123 @@ def linha_remessa_240(self, remessa, funcionario):
     texto += ''.ljust(8) # 118-122 CEP
     texto += ''.ljust(2) # 126-127 Sigla Estado
     texto += remessa.data_hora.strftime(b'%d%m%Y') # 128-135 Data do vencimento (nominal)     
-    texto += str(int(funcionario.valor_creditar * 100)).zfill(13)[:13] # 136-150 Valor documeneto
-    texto += ''.zfill(13)[:13] # 151-165 Valor do abatimento
-    texto += ''.zfill(13) # 166-180 Valor do desconto
-    texto += ''.zfill(13) # 181-195 Valor da mora
-    texto += ''.zfill(13) # 196-210 Valor da multa
-    texto += ''.ljust(13) # 211-225 Código/documento do favorecido
-    texto += ''.zfill(13) # 226-226  Aviso ao favorecido
-    texto += ''.zfill(15) # 227-232 Uso exclusivo para o SIAPE
-    texto += ''.ljust(15) # 233-240 Uso exclusivo bradesco
+    texto += str(int(funcionario.valor_creditar * 100)).zfill(15)[:15] # 136-150 Valor documeneto
+    texto += ''.zfill(15) # 151-165 Valor do abatimento
+    texto += ''.zfill(15) # 166-180 Valor do desconto
+    texto += ''.zfill(15) # 181-195 Valor da mora
+    texto += ''.zfill(15) # 196-210 Valor da multa    
+    texto += ''.ljust(15) # 211-225 Código/documento do favorecido    
+    texto += ''.ljust(15) # 211-225 Código/documento do favorecido        
 
     return self.tira_acentos(texto.upper())
 
+
+CODIGO_RETORNO_FP = {
+    '00': u'Crédito ou Débito Efetivado - Este código indica que o pagamento foi confirmado',
+    '01': u'Insuficiência de Fundos - Débito Não Efetuado',
+    '02': u'Crédito ou Débito Cancelado pelo Pagador/Credor',
+    '03': u'Débito Autorizado pela Agência - Efetuado',
+    'AA': u'Controle Inválido',
+    'AB': u'Tipo de Operação Inválido',
+    'AC': u'Tipo de Serviço Inválido',
+    'AD': u'Forma de Lançamento Inválida',
+    'AE': u'Tipo/Número de Inscrição Inválido',
+    'AF': u'Código de Convênio Inválido',
+    'AG': u'Agência/Conta Corrente/DV Inválido',
+    'AH': u'Nº Seqüencial do Registro no Lote Inválido',
+    'AI': u'Código de Segmento de Detalhe Inválido',
+    'AJ': u'Tipo de Movimento Inválido',
+    'AK': u'Código da Câmara de Compensação do Banco Favorecido/Depositário Inválido',
+    'AL': u'Código do Banco Favorecido ou Depositário Inválido',
+    'AM': u'Agência Mantenedora da Conta Corrente do Favorecido Inválida',
+    'AN': u'Conta Corrente/DV do Favorecido Inválido',
+    'AO': u'Nome do Favorecido Não Informado',
+    'AP': u'Data Lançamento Inválido',
+    'AQ': u'Tipo/Quantidade da Moeda Inválido',
+    'AR': u'Valor do Lançamento Inválido',
+    'AS': u'Aviso ao Favorecido - Identificação Inválida',
+    'AT': u'Tipo/Número de Inscrição do Favorecido Inválido',
+    'AU': u'Logradouro do Favorecido Não Informado',
+    'AV': u'Nº do Local do Favorecido Não Informado',
+    'AW': u'Cidade do Favorecido Não Informada',
+    'AX': u'CEP/Complemento do Favorecido Inválido',
+    'AY': u'Sigla do Estado do Favorecido Inválida',
+    'AZ': u'Código/Nome do Banco Depositário Inválido',
+    'BA': u'Código/Nome da Agência Depositária Não Informado',
+    'BB': u'Seu Número Inválido',
+    'BC': u'Nosso Número Inválido',
+    'BD': u'Inclusão Efetuada com Sucesso',
+    'BE': u'Alteração Efetuada com Sucesso',
+    'BF': u'Exclusão Efetuada com Sucesso',
+    'BG': u'Agência/Conta Impedida Legalmente',
+    'BH': u'Empresa não pagou salário',
+    'BI': u'Falecimento do mutuário',
+    'BJ': u'Empresa não enviou remessa do mutuário',
+    'BK': u'Empresa não enviou remessa no vencimento',
+    'BL': u'Valor da parcela inválida',
+    'BM': u'Identificação do contrato inválida',
+    'BN': u'Operação de Consignação Incluída com Sucesso',
+    'BO': u'Operação de Consignação Alterada com Sucesso',
+    'BP': u'Operação de Consignação Excluída com Sucesso',
+    'BQ': u'Operação de Consignação Liquidada com Sucesso',
+    'CA': u'Código de Barras - Código do Banco Inválido',
+    'CB': u'Código de Barras - Código da Moeda Inválido',
+    'CC': u'Código de Barras - Dígito Verificador Geral Inválido',
+    'CD': u'Código de Barras - Valor do Título Inválido',
+    'CE': u'Código de Barras - Campo Livre Inválido',
+    'CF': u'Valor do Documento Inválido',
+    'CG': u'Valor do Abatimento Inválido',
+    'CH': u'Valor do Desconto Inválido',
+    'CI': u'Valor de Mora Inválido',
+    'CJ': u'Valor da Multa Inválido',
+    'CK': u'Valor do IR Inválido',
+    'CL': u'Valor do ISS Inválido',
+    'CM': u'Valor do IOF Inválido',
+    'CN': u'Valor de Outras Deduções Inválido',
+    'CO': u'Valor de Outros Acréscimos Inválido',
+    'CP': u'Valor do INSS Inválido',
+    'HA': u'Lote Não Aceito',
+    'HB': u'Inscrição da Empresa Inválida para o Contrato',
+    'HC': u'Convênio com a Empresa Inexistente/Inválido para o Contrato',
+    'HD': u'Agência/Conta Corrente da Empresa Inexistente/Inválido para o Contrato',
+    'HE': u'Tipo de Serviço Inválido para o Contrato',
+    'HF': u'Conta Corrente da Empresa com Saldo Insuficiente',
+    'HG': u'Lote de Serviço Fora de Seqüência',
+    'HH': u'Lote de Serviço Inválido',
+    'HI': u'Arquivo não aceito',
+    'HJ': u'Tipo de Registro Inválido',
+    'HK': u'Código Remessa / Retorno Inválido',
+    'HL': u'Versão de layout inválida',
+    'HM': u'Mutuário não identificado',
+    'HN': u'Tipo do beneficio não permite empréstimo',
+    'HO': u'Beneficio cessado/suspenso',
+    'HP': u'Beneficio possui representante legal',
+    'HQ': u'Beneficio é do tipo PA (Pensão alimentícia)',
+    'HR': u'Quantidade de contratos permitida excedida',
+    'HS': u'Beneficio não pertence ao Banco informado',
+    'HT': u'Início do desconto informado já ultrapassado',
+    'HU': u'Número da parcela inválida',
+    'HV': u'Quantidade de parcela inválida',
+    'HW': u'Margem consignável excedida para o mutuário dentro do prazo do contrato',
+    'HX': u'Empréstimo já cadastrado',
+    'HY': u'Empréstimo inexistente',
+    'HZ': u'Empréstimo já encerrado',
+    'H1': u'Arquivo sem trailer',
+    'H2': u'Mutuário sem crédito na competência',
+    'H3': u'Não descontado – outros motivos',
+    'H4': u'Retorno de Crédito não pago',
+    'H5': u'Cancelamento de empréstimo retroativo',
+    'H6': u'Outros Motivos de Glosa',
+    'H7': u'Margem consignável excedida para o mutuário acima do prazo do contrato',
+    'H8': u'Mutuário desligado do empregador',
+    'H9': u'Mutuário afastado por licença',
+    'TA': u'Lote Não Aceito - Totais do Lote com Diferença',
+    'YA': u'Título Não Encontrado',
+    'YB': u'Identificador Registro Opcional Inválido',
+    'YC': u'Código Padrão Inválido',
+    'YD': u'Código de Ocorrência Inválido',
+    'YE': u'Complemento de Ocorrência Inválido',
+    'YF': u'Alegação já Informada',
+    '  ': u'',
+}
 

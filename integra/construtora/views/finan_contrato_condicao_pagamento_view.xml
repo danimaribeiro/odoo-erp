@@ -8,6 +8,7 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="Condição de pagamento">
+                    <field name="tipo" invisible="1" />
                     <field name="tipo_mes"/>
                     <field name="valor_parcela" />
                     <field name="vezes" />
@@ -25,6 +26,7 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Condição de pagamento">
+                    <field name="tipo" invisible="1" />
                     <field name="entrada" />
                     <newline />
                     <field name="tipo_mes" required="1" />

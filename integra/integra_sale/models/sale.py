@@ -60,48 +60,49 @@ class sale_order(osv.Model):
     }
 
     def verifica_limite_credito(self, cr, uid, ids, dados={}, context={}):
-        user_pool = self.pool.get('res.users')
-        usuario_obj = user_pool.browse(cr, 1, uid)
-        nivel_usuario = usuario_obj.nivel_aprovacao_comercial or 0
+        pass
+        #user_pool = self.pool.get('res.users')
+        #usuario_obj = user_pool.browse(cr, 1, uid)
+        #nivel_usuario = usuario_obj.nivel_aprovacao_comercial or 0
 
-        print('dados', dados)
+        #print('dados', dados)
 
-        if ('state' not in dados) or (dados['state'] != 'manual'):
-            return
+        #if ('state' not in dados) or (dados['state'] != 'manual'):
+            #return
 
-        for sale_order_obj in self.browse(cr, uid, ids):
-            cr.execute('update sale_order set bloqueado_limite_credito = 0 where id = {id};'.format(id=sale_order_obj.id))
+        #for sale_order_obj in self.browse(cr, uid, ids):
+            #cr.execute('update sale_order set bloqueado_limite_credito = 0 where id = {id};'.format(id=sale_order_obj.id))
 
-            if sale_order_obj.partner_id.credit_limit:
-                print('limite do cliente', sale_order_obj.partner_id.credit_limit)
-                print('valor da venda', sale_order_obj.vr_total_venda_impostos)
-                bloqueado_limite_credito = D(0)
-                total = sale_order_obj.vr_total_venda_impostos or sale_order_obj.amount_total or 0
+            #if sale_order_obj.partner_id.credit_limit:
+                #print('limite do cliente', sale_order_obj.partner_id.credit_limit)
+                #print('valor da venda', sale_order_obj.vr_total_venda_impostos)
+                #bloqueado_limite_credito = D(0)
+                #total = sale_order_obj.vr_total_venda_impostos or sale_order_obj.amount_total or 0
 
-                if sale_order_obj.partner_id.credit_limit < total:
-                    bloqueado_limite_credito = D(total) / D(sale_order_obj.partner_id.credit_limit)
-                    bloqueado_limite_credito -= 1
-                    bloqueado_limite_credito *= 100
+                #if sale_order_obj.partner_id.credit_limit < total:
+                    #bloqueado_limite_credito = D(total) / D(sale_order_obj.partner_id.credit_limit)
+                    #bloqueado_limite_credito -= 1
+                    #bloqueado_limite_credito *= 100
 
-                    #
-                    # Agora, busca o nível mais baixo de usuário que pode aprovar este pedido
-                    #
-                    cr.execute("""
-                        select
-                            coalesce(min(oga.nivel), 0) as nivel
-                        from
-                            orcamento_grupo_aprovacao oga
-                        where
-                           oga.percentual_limite_credito >= {bloqueado_limite_credito};
-                        """.format(bloqueado_limite_credito=bloqueado_limite_credito))
-                    niveis = cr.fetchone()
-                    nivel = 0
-                    if len(niveis):
-                        nivel = niveis[0]
+                    ##
+                    ## Agora, busca o nível mais baixo de usuário que pode aprovar este pedido
+                    ##
+                    #cr.execute("""
+                        #select
+                            #coalesce(min(oga.nivel), 0) as nivel
+                        #from
+                            #orcamento_grupo_aprovacao oga
+                        #where
+                           #oga.percentual_limite_credito >= {bloqueado_limite_credito};
+                        #""".format(bloqueado_limite_credito=bloqueado_limite_credito))
+                    #niveis = cr.fetchone()
+                    #nivel = 0
+                    #if len(niveis):
+                        #nivel = niveis[0]
 
-                    if (nivel_usuario < nivel) or (nivel_usuario == 0) or (nivel == 0):
-                        cr.execute('update sale_order set bloqueado_limite_credito = {bloqueado_limite_credito} where id = {id};'.format(id=sale_order_obj.id, bloqueado_limite_credito=bloqueado_limite_credito))
-                        raise osv.except_osv(u'Erro', u'Você não tem permissão de realizer essa operação, pois o limite de crédito do cliente foi ultrapassado!')
+                    #if (nivel_usuario < nivel) or (nivel_usuario == 0) or (nivel == 0):
+                        #cr.execute('update sale_order set bloqueado_limite_credito = {bloqueado_limite_credito} where id = {id};'.format(id=sale_order_obj.id, bloqueado_limite_credito=bloqueado_limite_credito))
+                        #raise osv.except_osv(u'Erro', u'Você não tem permissão de realizer essa operação, pois o limite de crédito do cliente foi ultrapassado!')
 
 
     def create(self, cr, uid, dados, context={}):

@@ -8,6 +8,7 @@ class crm_lead(osv.Model):
     _inherit = 'crm.lead'
 
     _columns = {
+        'project_orcamento_modelo_id': fields.many2one('project.orcamento', u'Orçamento modelo'),
         'project_orcamento_id': fields.many2one('project.orcamento', u'Orçamento'),
     }
 
@@ -16,7 +17,6 @@ class crm_lead(osv.Model):
 
         for lead_obj in self.browse(cr, uid, ids, context=context):
             dados = {
-                'versao': lead_obj.name,
                 'crm_lead_id': lead_obj.id,
                 'partner_id': lead_obj.partner_id.id if lead_obj.partner_id else False,
             }
@@ -24,8 +24,7 @@ class crm_lead(osv.Model):
             if lead_obj.project_id:
                 dados['project_id'] = lead_obj.project_id.id
 
-            orcamento_id = orcamento_pool.create(cr, uid, dados)
-
+            orcamento_id = orcamento_pool.copy(cr, uid, lead_obj.project_orcamento_modelo_id.id, dados, context=context)
             lead_obj.write({'project_orcamento_id': orcamento_id})
 
         return

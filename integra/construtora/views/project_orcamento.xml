@@ -7,7 +7,7 @@
             <field name="model">project.orcamento</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree colors="blue:situacao == 'A';red: situacao == 'C'">
                     <field name="project_id"/>
                     <field name="versao" />
                     <field name="vr_produto" />
@@ -140,9 +140,14 @@
                     <filter name="pendente" string="Pendente" icon="terp-go-month" domain="[('situacao','!=','A')]" />
                     <field name="project_id" />
                     <field name="versao" />
-                    <newline />
                     <field name="mes" />
                     <field name="ano" />
+
+                    <newline />
+                    <group expand="0" string="Agrupado por...">
+                        <filter string="Projeto" icon="terp-project" domain="[]" context="{'group_by': 'project_id'}" />
+                        <filter string="Situação" icon="terp-project" domain="[]" context="{'group_by': 'situacao'}" />
+                    </group>
                 </search>
             </field>
         </record>

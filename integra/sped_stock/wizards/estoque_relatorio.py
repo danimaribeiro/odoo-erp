@@ -88,7 +88,7 @@ case
 end as documento
 
 from
-custo_medio({company_id}, {local_id}, {produto_id}) cm
+custo_medio('{company_id}', {local_id}, {produto_id}) cm
 join stock_location l on l.id = cm.location_id and usage = 'internal'
 join product_product p on p.id = cm.product_id
 join stock_move m on m.id = cm.move_id
@@ -96,7 +96,7 @@ join res_company c on c.id = cm.company_id
 left join stock_picking pp on pp.id = m.picking_id
 
 where
-cm.data between '{data_inicial}' and '{data_final}'
+cast(cm.data at time zone 'UTC' at time zone 'America/Sao_Paulo' as date) between '{data_inicial}' and '{data_final}'
 --and cast(p.id as varchar) like '{produto_id}'
 --and cast(l.id as varchar) like '{local_id}'
 --and cast(c.id as varchar) like '{company_id}'
@@ -130,6 +130,7 @@ m.id;
                 filtro['company_id'] = '%'
 
             cr.execute(sql.format(**filtro))
+            print(sql.format(**filtro))
             dados = cr.fetchall()
 
             saldo_inicial = {}
@@ -151,7 +152,7 @@ m.id;
                     select
                     cm.quantidade,
                     cm.vr_total
-                    from custo_medio({company_id}, {local_id}, {produto_id}) cm
+                    from custo_medio('{company_id}', {local_id}, {produto_id}) cm
                     --join stock_move m on m.id = cm.move_id
                     --join res_company c on c.id = m.company_id
                     where --cm.product_id = {produto_id}
@@ -263,7 +264,7 @@ m.id;
                         join res_company c on c.id = m.company_id
                         join product_product p on p.id = cm.product_id
                     where
-                        cm.data < '{data_final}'
+                        cast(cm.data at time zone 'UTC' at time zone 'America/Sao_Paulo' as date) <= '{data_final}'
                     order by
                         cm.data desc, cm.entrada_saida desc, cm.move_id desc;
                         '''
@@ -283,13 +284,15 @@ m.id;
                         join product_product p on p.id = cm.product_id
                     where
                         cm.location_id = {local_id}
-                        and cm.data < '{data_final}'
+                        and cast(cm.data at time zone 'UTC' at time zone 'America/Sao_Paulo' as date) <= '{data_final}'
                         and cast(cm.product_id as varchar) like '{produto_id}'
                         and cast(c.id as varchar) like '{company_id}'
                     order by
                         cm.data desc, cm.entrada_saida desc, cm.move_id desc;
                         '''
 
+            sql = sql.format(**filtro)
+            print(sql)
             cr.execute(sql.format(**filtro))
             dados = cr.fetchall()
 
@@ -310,7 +313,7 @@ m.id;
                             cm.vr_total
                         from custo_medio({company_id}, {local_id}, {produto_id}) cm
                         where
-                            cm.data < '{data_final}'
+                            cast(cm.data at time zone 'UTC' at time zone 'America/Sao_Paulo' as date) <= '{data_final}'
                         order by
                             cm.data desc, cm.entrada_saida desc, cm.move_id desc limit 1;
                             '''
@@ -325,7 +328,7 @@ m.id;
                             join stock_move m on m.id = cm.move_id
                             join res_company c on c.id = m.company_id
                         where cm.location_id = {local_id}
-                            and cm.data < '{data_final}'
+                            and cast(cm.data at time zone 'UTC' at time zone 'America/Sao_Paulo' as date) <= '{data_final}'
                             and cm.product_id = {produto_id}
                             and cast(c.id as varchar) like '{company_id}'
                         order by
@@ -384,7 +387,7 @@ m.id;
 
             rel_obj.data_final = parse_datetime(rel_obj.data_final).date()
             rel_obj.data_final += relativedelta(days=-1)
-            rel.band_page_header.elements[-1].text = u'Data ' + formata_data(rel_obj.data_final)
+            rel.band_page_header.elements[-1].text = u'Data ' + formata_data(rel_obj.data_inicial)
             if rel_obj.company_id:
                 rel.band_page_header.elements[-1].text += u'; Unidade ' + rel_obj.company_id.name
             if rel_obj.location_id:
@@ -1065,14 +1068,14 @@ m.id;
     def gera_custo_unidade_local(self, cr, uid, ids, context={}):
         if not ids:
             return {}
-        
+
         item_pool = self.pool.get('custo.unidade.local.item')
         print(context)
         location_ids = context['location_ids']
         self.write(cr, uid, ids, {'location_ids': location_ids})
-        
-        for rel_obj in self.browse(cr, uid, ids):            
-            
+
+        for rel_obj in self.browse(cr, uid, ids):
+
             cr.execute('delete from custo_unidade_local_item where relatorio_id = {id}'.format(id=rel_obj.id))
 
             lista_location_ids = []
@@ -1151,7 +1154,7 @@ m.id;
             custo_venda = {}
             produtos_acumulados = {}
             for company_id, unidade, local_pai_id, local_pai, location_id, local, product_id, produto in dados:
-                
+
                 if product_id == 483:
                     print()
 
@@ -1213,7 +1216,7 @@ m.id;
                     cr.execute(sql)
                     dados_custo = cr.fetchall()
                     if len(dados_custo):
-                        vr_unitario_custo = dados_custo[0][0]                        
+                        vr_unitario_custo = dados_custo[0][0]
 
                 if location_id == 27:
                     custo_locacao[product_id] = D(vr_unitario_custo or 0)
@@ -1268,26 +1271,26 @@ m.id;
                 linha['vr_total'] = D(vr_total or 0)
 
                 linhas.append(linha)
-                
+
             if len(linhas) == 0:
                 raise osv.except_osv(u'Atenção', u'Não há dados para gerar o relatório, com base nos parâmetros informados!')
-                
-            for linha in linhas:                
+
+            for linha in linhas:
                 item_pool.create(cr, uid, linha)
-                    
-                                
+
+
         return True
-            
-    
+
+
     def gera_relatorio_custo_unidade_local(self, cr, uid, ids, context={}):
         if not ids:
             return {}
-        
+
         for rel_obj in self.browse(cr, uid, ids):
-              
+
             rel = Report('Relatório Panorâmico de Estoque Custo Unidade Local', cr, uid)
-            rel.caminho_arquivo_jasper = os.path.join(JASPER_BASE_DIR, 'estoque_custo_unidade_local.jrxml')     
-            rel.parametros['RELATORIO_ID'] = rel_obj.id           
+            rel.caminho_arquivo_jasper = os.path.join(JASPER_BASE_DIR, 'estoque_custo_unidade_local.jrxml')
+            rel.parametros['RELATORIO_ID'] = rel_obj.id
             rel.outputFormat = rel_obj.formato
 
             pdf, formato = rel.execute()
@@ -1296,40 +1299,37 @@ m.id;
                 'nome': u'custo_estoque_unidade_local_' + str(agora())[:16].replace(' ','_' ).replace('-','_') + '.' + rel_obj.formato,
                 'arquivo': base64.encodestring(pdf)
             }
-            rel_obj.write(dados)        
-                                
+            rel_obj.write(dados)
+
         return True
-    
+
     def gera_relatorio_projeto_orcamento_compras(self, cr, uid, ids, context={}):
-        
         product_pool = self.pool.get('product.product').broswe(cr,ids)
-        
-        product_ids = product_pool.search(cr,uid)        
-        
+        product_ids = product_pool.search(cr,uid)
+
         linhas = []
-        for product_obj in product_pool.browse(cr,uid, product_ids):        
-        
+        for product_obj in product_pool.browse(cr,uid, product_ids):
             linha = DicionarioBrasil()
             linha['codigo'] = product_obj.default_code
             linha['descricao'] = product_obj.name
             linha['nome_generio'] = product_obj.nome_generio
             linha['subtipos'] = product_obj.variants
-            
+
             if product_obj.state == 'draft':
-                linha['situacao'] = 'Em Desenvolvimento'                               
+                linha['situacao'] = 'Em Desenvolvimento'
             elif product_obj.state == 'sellable':
-                linha['situacao'] = 'Normal'                
+                linha['situacao'] = 'Normal'
             elif product_obj.state == 'end':
-                linha['situacao'] = 'Fim do ciclo de vida'                
+                linha['situacao'] = 'Fim do ciclo de vida'
             else:
                 linha['situacao'] = 'Obsoleto'
-                
+
             linha['unidade_medida'] = product_obj.uom_id.name
-            
+
             linha['vr_unitario_venda'] = D(product_obj.custo_ultima_compra or 0)
             linha['vr_unitario_locacao'] = D(product_obj.custo_ultima_compra_locacao or 0)
             linhas.append(linha)
-        
+
         dados = {
             'titulo': u'Produtos em Estoque',
             'data': formata_data(agora()),
@@ -1353,19 +1353,19 @@ estoque_relatorio()
 
 class custo_unidade_local_item(osv.osv_memory):
     _name = 'custo.unidade.local.item'
-    _description = u'Custo Unidade local Item'   
-    
+    _description = u'Custo Unidade local Item'
+
     _columns = {
-        'relatorio_id': fields.many2one('estoque.relatorio', u'Relatorio de estoque'),        
+        'relatorio_id': fields.many2one('estoque.relatorio', u'Relatorio de estoque'),
         'company_id': fields.many2one('res.company', u'Empresa'),
-        'local_pai_id': fields.many2one('stock.location', u'Local do Estoque Pai'),                
-        'local_id': fields.many2one('stock.location', u'Local do Estoque'),        
+        'local_pai_id': fields.many2one('stock.location', u'Local do Estoque Pai'),
+        'local_id': fields.many2one('stock.location', u'Local do Estoque'),
         'data_inicial': fields.date(u'Data inicial'),
-        'data_final': fields.date(u'Data final'),        
-        'product_id': fields.many2one('product.product', u'Produto'),        
+        'data_final': fields.date(u'Data final'),
+        'product_id': fields.many2one('product.product', u'Produto'),
         'quantidade': fields.float(u'Quantidade'),
         'vr_unitario_custo': fields.float(u'Vlr. Unitário de Custo'),
-        'vr_total': fields.float(u'Vlr. Unitário de Custo'),        
+        'vr_total': fields.float(u'Vlr. Unitário de Custo'),
     }
-    
-custo_unidade_local_item() 
+
+custo_unidade_local_item()

@@ -78,7 +78,7 @@
                     </group>
                 </page>
                 <page string="Imóveis">
-                    <field name="imovel_ids" nolabel="1" colspan="4" context="{'form_view_ref' : 'construtora.imovel_crm_form', 'tree_view_ref' : 'construtora.imovel_crm_tree', 'search_view_ref': 'construtora.imovel_crm_search'}" />
+                    <field name="imovel_busca_ids" nolabel="1" colspan="4" context="{'form_view_ref' : 'construtora.imovel_crm_form', 'tree_view_ref' : 'construtora.imovel_crm_tree', 'search_view_ref': 'construtora.imovel_crm_search'}" />
                 </page>
                 <page string="Comunicação e Histórico">
                 <group colspan="4">

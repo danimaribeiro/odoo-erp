@@ -153,7 +153,7 @@ def processa_municipio(self, cr, uid, endpartnfe):
     codigo_municipio = unicode(endpartnfe.cMun.valor)
     #nome_municipio = endpartnfe.xMun.valor
 
-    if codigo_pais != '1058':
+    if codigo_pais != '1058' and codigo_pais != '':
         codigo_municipio = '9999999' + codigo_pais
     else:
         codigo_municipio = codigo_municipio + '0000'

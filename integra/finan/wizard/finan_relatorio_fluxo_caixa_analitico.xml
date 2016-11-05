@@ -12,7 +12,7 @@
                         <separator string="Filtros do Relatório" colspan="4" />
                         <newline/>
                         <field name="company_id" invisible="1" colspan="4" />
-                        <field name="company_ids" required="1" colspan="4" />
+                        <field name="company_ids" colspan="4" />
                         <newline/>
                         <field name="data_inicial" required="1" />
                         <field name="data_final" required="1" />

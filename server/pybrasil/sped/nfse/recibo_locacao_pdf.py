@@ -164,6 +164,34 @@ class ImpressoReciboLocacao(Relato):
         self.band_page_footer = Rodape()
 
 
+class LogoEmpresa(Image):
+    def __init__(self, *args, **kwargs):
+        super(LogoEmpresa, self).__init__(*args, **kwargs)
+        self.cache_logo = {}
+
+    def _get_image(self):
+        try:
+            import Image as PILImage
+        except ImportError:
+            from PIL import Image as PILImage
+
+        if get_attr_value(self.instance, 'nfse.prestador.arquivo_logo'):
+            nome_arq_logo = get_attr_value(self.instance, 'nfse.prestador.arquivo_logo')
+
+            if nome_arq_logo not in self.cache_logo or not self.cache_logo[nome_arq_logo]:
+                self.cache_logo[nome_arq_logo] = open(nome_arq_logo, 'rb').read()
+
+            arq = StringIO(self.cache_logo[nome_arq_logo])
+            self._image = PILImage.open(arq)
+
+        return self._image
+
+    def _set_image(self, value):
+        self._image = value
+
+    image = property(_get_image, _set_image)
+
+
 class Cabecalho(BandaRelato):
     def __init__(self):
         super(Cabecalho, self).__init__()
@@ -180,6 +208,11 @@ class Cabecalho(BandaRelato):
         lbl, fld = self.inclui_campo_numerico(nome='data', titulo='Data', conteudo='nfse.data_emissao_formatada', top=0.8*cm, left=15.4*cm, width=4*cm, margem_direita=True)
 
         self.height = 1.6*cm
+
+        img = LogoEmpresa()
+        img.top = 0.1 * cm
+        img.left = 0.1 * cm
+        self.elements.append(img)
 
 
 class Prestador(BandaRelato):
@@ -292,8 +325,12 @@ class Rodape(BandaRelato):
         self.height = 3*cm
 
 
-def gera_recibo_locacao_pdf(lista_nfses, arquivo_unico=False):
+def gera_recibo_locacao_pdf(lista_nfses, arquivo_unico=False, titulo_fatura=False):
     impresso_nfse = ImpressoReciboLocacao()
+
+    if titulo_fatura:
+        impresso_nfse.title = u'Fatura de Locação'
+        impresso_nfse.band_page_header.elements[1].text = u'Fatura de Locação'
 
     #
     # Prepara as notas

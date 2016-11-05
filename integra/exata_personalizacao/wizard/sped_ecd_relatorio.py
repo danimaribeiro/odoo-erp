@@ -22,8 +22,8 @@ class sped_ecd_relatorio(osv.osv_memory):
     _inherit = 'sped.ecd.relatorio'
         
     _columns = {
-        'centrocusto_ids': fields.many2many('finan.centrocusto','ecd_centrocusto_rateio', 'ecd_relatorio_id','centrocusto_id', u'Centro de custo'),        
-        'project_ids': fields.many2many('project.project','ecd_projeto_rateio','ecd_relatorio_id','project_id', u'Projetos'),
+        'centrocusto_ids': fields.many2many('finan.centrocusto','relatorio_ecd_centrocusto_rateio', 'ecd_relatorio_id','centrocusto_id', u'Centro de custo'),        
+        'project_ids': fields.many2many('project.project','relatorio_ecd_projeto_rateio','ecd_relatorio_id','project_id', u'Projetos'),
                              
     }
 
@@ -124,11 +124,11 @@ class sped_ecd_relatorio(osv.osv_memory):
         if rel_obj.somente_cnpj:
             sql += """
                 and l.cnpj_cpf = '{cnpj_cpf}' """
-            company_cnpj = 'rp.cnpj_cpf = ' +  "'" + str(rel_obj.company_id.partner_id.cnpj_cpf) + "'"
+            company_cnpj = 'es.cnpj_cpf = ' +  "'" + str(rel_obj.company_id.partner_id.cnpj_cpf) + "'"
         else:
             sql += """
                 and l.company_id = """ + str(rel_obj.company_id.id)
-            company_cnpj = 'cs.id = ' + str(rel_obj.company_id.id)
+            company_cnpj = 'es.id = ' + str(rel_obj.company_id.id)
 
         if len(conta_ids) > 0:  
             sql += """

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+    <record model="ir.ui.view" id="crm_meeting_os_agenda_situacao_form">
+        <field name="name">crm.meeting.os.agenda.situacao.form</field>
+        <field name="model">crm.meeting</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Agendamento">
+                <group col="6" colspan="4">
+                    <field name="sale_order_id" string="OS" required="1" colspan="6" domain="[('etapa_id.tipo', '=', 'O'), ('etapa_seguinte_ids', '!=', False)]" />
+                    <newline />
+                    <field name="allday" on_change="onchange_dates(date,False,False,allday)" invisible="1" />
+                    <field name="date" string="Start Date" required="1" on_change="onchange_dates(date,duration,False,allday)" />
+<!--                     <newline /> -->
+                    <field name="duration" widget="float_time" on_change="onchange_dates(date,duration,False,allday)" />
+<!--                     <newline /> -->
+                    <field name="date_deadline" string="End Date" required="1" on_change="onchange_dates(date,False,date_deadline)" />
+                    <newline />
+                    <field name="location" colspan="4" />
+                    <newline />
+                    <field name="alarm_id" string="Reminder" widget="selection" />
+                </group>
+                <group colspan="4" col="4">
+                    <group col="2" colspan="2">
+                        <separator colspan="2" string="Assignment"/>
+                        <field name="user_id" string="Técnico" />
+                        <field name="organizer" invisible="1" />
+                        <separator colspan="2" string="Visibilidade"/>
+                        <field name="class" string="Privacidade" groups="base.group_extended"/>
+                        <field name="show_as" string="Mostrar como" groups="base.group_extended"/>
+                        <field name="rrule" invisible="1" readonly="1"/>
+                        <field name="recurrent_id" invisible="1"/>
+                        <field name="recurrent_uid" invisible="1"/>
+                    </group>
+                    <group col="2" colspan="2">
+                        <separator colspan="2" string="Contatos"/>
+                        <field name="partner_id" string="Cliente" on_change="onchange_partner_id(partner_id)" />
+                        <field name="partner_address_id" string="Contato" on_change="onchange_partner_address_id(partner_address_id, email_from)" />
+                        <field name="email_from"/>
+                    </group>
+                    <group col="2" colspan="2">
+                        <separator string="Descrição" colspan="2" />
+                        <field name="description" nolabel="1" colspan="2" />
+                    </group>
+                    <group col="2" colspan="2">
+                        <separator string="Serviços prestados" colspan="2" />
+                        <field name="servico_ids" nolabel="1" colspan="2">
+                            <tree editable="top">
+                                <field name="product_id" string="Serviço" required="1" domain="[('type', '=', 'service'), ('categ_id.name', '!=', 'Mensalidade')]" />
+                                <field name="quantidade" string="quantidade" required="1" />
+                            </tree>
+                        </field>
+                    </group>
+                    <separator colspan="4"/>
+                    <group col="8" colspan="4" groups="base.group_extended">
+                        <field name="state" />
+                        <button name="case_close" string="Done" states="open" type="object" icon="gtk-jump-to" />
+                        <button name="case_reset" string="Reset to Unconfirmed" states="open,done" type="object" icon="gtk-convert" />
+                        <button name="case_open" string="Confirm" states="draft" type="object" icon="gtk-go-forward" />
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="crm_meeting_os_agenda_situacao_tree">
+        <field name="name">crm.meeting.os.agenda.situacao.tree</field>
+        <field name="model">crm.meeting</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Agendamentos por situação"
+                colors="red:situacao=='Em atraso'">
+                <field name="user_id" string="Técnico" />
+                <field name="date"/>
+                <field name="situacao"/>
+                <field name="duration" />
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="crm_meeting_os_agenda_situacao_calendar">
+        <field name="name">crm.meeting.os.agenda.situacao.calendar</field>
+        <field name="model">crm.meeting</field>
+        <field name="type">calendar</field>
+        <field name="arch" type="xml">
+            <calendar string="Agendamentos por situação" date_start="date" color="situacao" date_stop="date_deadline" date_delay="duration" mode="week">
+                <field name="descricao_agenda_situacao"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="crm_meeting_os_agenda_situacao_acao">
+        <field name="name">Agenda por situação</field>
+        <field name="res_model">crm.meeting</field>
+        <field name="view_type">form</field>
+        <field name="domain">[('sale_order_id', '!=', False)]</field>
+        <field name="view_id" ref="crm_meeting_os_agenda_situacao_tree" />
+<!--         <field name="search_view_id" ref="crm_meeting_os_agenda_situacao_search"/> -->
+        <field name="view_mode">calendar,tree,form</field>
+    </record>
+
+    <menuitem
+        action="crm_meeting_os_agenda_situacao_acao"
+        id="menu_crm_meeting_os_agenda_situacao"
+        name="Agenda por situação"
+        parent="menu_ordem_servico"
+        sequence="4" />
+
+    <record model="ir.actions.act_window.view" id="crm_meeting_os_agenda_situacao_calendar_acao">
+        <field eval="1" name="sequence"/>
+        <field name="view_mode">calendar</field>
+        <field name="view_id" ref="crm_meeting_os_agenda_situacao_calendar"/>
+        <field name="act_window_id" ref="crm_meeting_os_agenda_situacao_acao"/>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="crm_meeting_os_agenda_situacao_tree_acao">
+        <field eval="2" name="sequence"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="crm_meeting_os_agenda_situacao_tree"/>
+        <field name="act_window_id" ref="crm_meeting_os_agenda_situacao_acao"/>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="crm_meeting_os_agenda_situacao_form_acao">
+        <field eval="3" name="sequence"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="crm_meeting_os_agenda_situacao_form"/>
+        <field name="act_window_id" ref="crm_meeting_os_agenda_situacao_acao"/>
+    </record>
+
+    </data>
+</openerp>

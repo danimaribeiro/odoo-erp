@@ -9,7 +9,7 @@ from datetime import datetime
 from pybrasil.base import tira_acentos
 from pybrasil.valor.decimal import Decimal as D
 from integra_rh.constantes_rh import *
-from pybrasil.data import parse_datetime, primeiro_dia_mes, ultimo_dia_mes
+from pybrasil.data import parse_datetime, primeiro_dia_mes, ultimo_dia_mes, hoje
 
 
 TIPO_MEDIA = [
@@ -287,6 +287,7 @@ result = 0.0''',
         localdict['primeiro_dia_mes'] = primeiro_dia_mes
         localdict['ultimo_dia_mes'] = ultimo_dia_mes
         localdict['parse_datetime'] = parse_datetime
+        localdict['hoje'] = hoje
 
         #
         # Inicializa retornos
@@ -329,7 +330,7 @@ result = 0.0''',
             if rule.amount_select == 'manual':
                 rule.amount_python_compute = 'result = variavel.%s.valor' % rule.code.strip()
 
-            #print('vai calcular', rule.code, rule.id)
+            print('vai calcular', rule.code, rule.id)
             eval(rule.amount_python_compute, localdict, mode='exec', nocopy=True)
             #try:
                 #eval(rule.amount_python_compute, localdict, mode='exec', nocopy=True)
@@ -339,7 +340,11 @@ result = 0.0''',
             valor = D(localdict.get('result', localdict.get('retorna_valor', D(0))))
 
             if localdict.get('holerite', False) and getattr(localdict['holerite'], 'pagamento_dobro', False) and rule.sinal == '+' and rule.code != 'FERIAS_1_3':
-                valor = valor * 2
+                if getattr(localdict['holerite'], 'pagamento_dobro_dias', 30) != 30:
+                    pagamento_dobro_dias = D(getattr(localdict['holerite'], 'pagamento_dobro_dias', 30) or 0) / D(30)
+                    valor += (valor * pagamento_dobro_dias)
+                else:
+                    valor = valor * 2
 
             quantidade = D(localdict.get('result_qty', localdict.get('retorna_quantidade', D(1))))
             porcentagem = D(localdict.get('result_rate', localdict.get('retorna_porcentagem', D(100))))
@@ -384,7 +389,7 @@ result = 0.0''',
             if rule.condition_select == 'manual':
                 rule.condition_python = 'result = variavel.%s and variavel.%s.valor > 0' % (rule.code, rule.code)
 
-            #print('vai avaliar', rule.code, rule.id)
+            print('vai avaliar', rule.code, rule.id)
             eval(rule.condition_python, localdict, mode='exec', nocopy=True)
             #try:
                 #eval(rule.condition_python, localdict, mode='exec', nocopy=True)

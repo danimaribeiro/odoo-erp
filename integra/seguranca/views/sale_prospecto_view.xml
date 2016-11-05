@@ -37,7 +37,8 @@
                         <field name="operacao_ativo_id" invisible="1" />
                         <field name="operacao_faturamento_antecipado_id" invisible="1" />
 
-                        <field name="pricelist_id" colspan="4" invisible="1" required="0" string="Tipo do prospecto" domain="[('type', '=', 'sale'), ('tipo_os_id', '!=', False)]" on_change="onchange_pricelist_id(pricelist_id, vr_total_produtos)" />
+                        <field name="pricelist_id" colspan="4" invisible="1" required="0" string="Tipo do prospecto" domain="[('type', '=', 'sale'), ('tipo_os_id', '!=', False)]" on_change="onchange_pricelist_id(pricelist_id, vr_total_produtos, vr_total_servicos, vr_total_mensalidades)" />
+                        <field name="contrato_terceirizado" invisible="1" />
                         <field name="name" string="Código" invisible="1" />
                         <field name="date_order" />
                         <field name="user_id" string="Vendedor" colspan="4" required="1" />
@@ -49,10 +50,10 @@
                             </group>
                             <group col="2" colspan="2" string="Etapa">
                                 <field name="etapa_seguinte_ids"  invisible="1"/>
-                                <field name="etapa_id" invisible="1" />
+                                <field name="etapa_id" groups="seguranca.group_surpote_integra" />
                                 <field name="etapa_id_readonly" />
                                 <field name="proxima_etapa_id" domain="[('id', 'in', etapa_seguinte_ids)]" />
-                                <button name="avanca_etapa" string="Avançar Etapa" icon="gtk-go-forward" type="object" colspan="2" />
+                                <button name="avanca_etapa" string="Avançar Etapa" icon="gtk-go-forward" type="object" colspan="2" attrs="{'invisible': [('proxima_etapa_id', '=', False)]}" />
                                 <field name="codigo" readonly="1" invisible="1"/>
                                 <field name="filtro_etapa" readonly="1" invisible="1"/>
                             </group>

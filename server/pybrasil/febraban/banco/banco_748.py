@@ -41,7 +41,7 @@ def fator_vencimento(self, boleto):
 
 
 def campo_livre(self, boleto):
-    boleto.banco.carteira = str(boleto.banco.carteira).zfill(1)
+    boleto.banco.carteira = str(int(boleto.banco.carteira)).zfill(1)
     boleto.beneficiario.agencia.numero = str(boleto.beneficiario.agencia.numero).zfill(4)
     boleto.banco.modalidade = str(boleto.banco.modalidade).zfill(2)
     boleto.beneficiario.codigo_beneficiario.numero = str(boleto.beneficiario.codigo_beneficiario.numero).zfill(5)
@@ -88,7 +88,7 @@ def header_remessa_400(self, remessa):
     texto += beneficiario.cnpj_cpf_numero.zfill(14)
     texto += ''.ljust(31)
     texto += '748'
-    texto += 'Sicredi'.ljust(15)
+    texto += 'SICREDI'.ljust(15)
     texto += remessa.data_hora.strftime(b'%Y%m%d')
     texto += ''.ljust(8)
     texto += str(remessa.sequencia).zfill(7)
@@ -158,7 +158,8 @@ def linha_remessa_400(self, remessa, boleto):
     texto += str(int(boleto.valor_multa / boleto.documento.valor * 100)).zfill(4)
     texto += ''.ljust(12)
     texto += boleto.comando or '01'
-    texto += str(boleto.documento.numero).ljust(10)[:10]
+    #texto += str(boleto.documento.numero).ljust(10)[:10]
+    texto += str(boleto.identificacao).replace('_', '').ljust(10)[:10]
     texto += boleto.data_vencimento.strftime('%d%m%y')
     texto += str(int(boleto.documento.valor * 100)).zfill(13)
     texto += ''.ljust(9)
@@ -191,7 +192,7 @@ def linha_remessa_400(self, remessa, boleto):
     else:
         texto += '1'
 
-    texto += ' '
+    texto += '0'
 
     texto += pagador.cnpj_cpf_numero.zfill(14)
     texto += pagador.nome[:40].ljust(40)
@@ -200,7 +201,8 @@ def linha_remessa_400(self, remessa, boleto):
     texto += ''.zfill(6)  # Filler
     texto += ' '  # Filler
     texto += pagador.cep.replace('-', '').zfill(8)
-    texto += str(boleto.identificacao).replace('id_', '').zfill(5)[:5]
+    #texto += str(boleto.identificacao).replace('id_', '').zfill(5)[:5]
+    texto += ''.zfill(5)[:5]
 
     #
     # Sacador
@@ -209,7 +211,7 @@ def linha_remessa_400(self, remessa, boleto):
     texto += ''.ljust(41)
     texto += str(len(remessa.registros) + 1).zfill(6)  # nº do registro
 
-    return self.tira_acentos(texto)
+    return self.tira_acentos(texto).upper()
 
 
 def header_retorno_400(self, retorno):

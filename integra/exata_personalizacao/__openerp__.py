@@ -31,15 +31,25 @@
         'views/finan_contrato_receber_view.xml',
         'views/finan_contrato_proposta.xml',
 
+        'views/imovel_casa.xml',
+        'views/imovel_apartamento.xml',
+        'views/imovel_terreno.xml',
+        'views/imovel_chacara.xml',
+
         'views/cadastro_view.xml',
 
+        'views/crm_lead_prospecto.xml',
+
+        'wizard/finan_relatorio_pagar.xml',
+        'wizard/finan_relatorio_receber.xml',
         'wizard/finan_relatorio_fluxo_caixa_analitico.xml',
         'wizard/finan_fechamento_caixa_wizard.xml',
         'wizard/sped_ecd_relatorio_razao_financeiro.xml',
-        'wizard/finan_recibos_wizard.xml',
         'wizard/finan_relatorio_segurado.xml',
-        'wizard/finan_relatorio_lote_recibos.xml',
         'wizard/finan_relatorio_demonstrativo_parcela.xml',
+        'wizard/finan_recibos_wizard.xml',
+        'wizard/finan_relatorio_lote_recibos.xml',
+        'wizard/sale_relatorio_imovel_projeto.xml',
 
     ],
     'installable': True,

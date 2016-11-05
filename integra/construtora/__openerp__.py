@@ -14,6 +14,7 @@
     'website': 'http://www.ERPIntegra.com.br',
     'depends': [
         'base',
+        'sale',
         'sped_base',
         'sped',
         'project',
@@ -31,6 +32,8 @@
         'share',
     ],
     'update_xml': [
+        'security/groups.xml',
+
         'views/mail_compose_message_negociacao_view.xml',
 
         'views/project_task.xml',
@@ -81,6 +84,10 @@
         'views/finan_contrato_analise_juridico.xml',
         'views/finan_contrato_receber_view.xml',
 
+        'views/sale_dashboard_view.xml',
+        'views/crm_lead_prospecto_dashboard.xml',
+        'views/finan_contrato_proposta_dashboard.xml',
+
         'views/finan_centrocusto_view.xml',
         'views/finan_pagar_view.xml',
         'views/finan_receber_view.xml',
@@ -98,6 +105,7 @@
         'wizard/relatorio_projeto_tarefa.xml',
         'wizard/relatorio_projeto_orcamento.xml',
         'wizard/relatorio_projeto_orcamento_compras.xml',
+        'wizard/relatorio_projeto_orcamento_medicao.xml',
         'wizard/relatorio_orcamento_prefeitura.xml',
         'wizard/relatorio_cronograma_desembolso.xml',
         'wizard/relatorio_cronograma_fisico_gantt.xml',

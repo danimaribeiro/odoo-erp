@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="imovel_chacara_form">
+            <field name="name">imovel.chacara.form</field>
+            <field name="model">const.imovel</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="construtora.imovel_chacara_form"/>
+            <field name="arch" type="xml">                                                  
+                <field name="res_partner_bank_id" position="after">
+                    <field name="conta_id" colspan="4"/>                    
+                    <field name="centrocusto_id" colspan="4"/>                    
+                </field>
+                <page string="Prospecção" position="after">
+                    <page string="Reservas">                        
+                        <field name="reserva_ids" nolabel="1" readonly="1" colspan="6">                                                    
+                            <tree editable="top">
+                                <field name="contrato_id" />
+                                <field name="corretor_id" />
+                                <field name="partner_id" />
+                                <field name="data_reserva" />
+                                <field name="data_inicial" />
+                                <field name="data_final" />                           
+                            </tree>
+                        </field>
+                    </page>            
+                </page>            
+            </field>                
+        </record>
+   
+
+    </data>
+</openerp>

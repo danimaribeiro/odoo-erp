@@ -3265,7 +3265,7 @@ class BaseModel(object):
             for line in self._sql.split(';'):
                 line2 = line.replace('\n', '').strip()
                 if line2:
-                    cr.execute(line2)
+                    cr.execute(line)
                     cr.commit()
 
     #

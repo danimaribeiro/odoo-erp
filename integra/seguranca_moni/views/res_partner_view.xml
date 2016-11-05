@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="res_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="priority">1000</field>
+            <field name="inherit_id" ref="finan.res_partner_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Financeiro" position="after">
+                    <page string="Integração MONI">
+                        <separator string="Contratos no MONI" colspan="6"/>
+                        <field name="moni_ids" colspan="6" nolabel="1" context="{'form_view_ref': 'seguranca_moni.importa_moni_form', 'tree_view_ref': 'seguranca_moni.importa_moni_tree', 'search_view_ref': 'seguranca_moni.importa_moni_search'}" readonly="1" />
+                    </page>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</openerp>

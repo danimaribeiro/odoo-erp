@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_cheque_deposito_estorno_repasse_tree">
+            <field name="name">finan.cheque.deposito.estorno.repasse.tree</field>
+            <field name="model">finan.cheque.deposito</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="tipo" invisible="1" />
+                    <field name="company_id" />
+                    <field name="data" />
+                    <field name="valor" />
+                    <field name="res_partner_bank_id" string="Estornado de" />
+                    <field name="res_partner_bank_creditar_id" string="Retornado em" />
+                    <field name="confirmado_user_id" />
+                    <field name="confirmado_data" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_cheque_deposito_estorno_repasse_form">
+            <field name="name">finan.cheque.deposito.estorno.repasse.form</field>
+            <field name="model">finan.cheque.deposito</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Estorno de cheques repassados">
+                    <field name="tipo" invisible="1" />
+                    <field name="tipo_devolucao" invisible="1" />
+                    <group col="4" colspan="4">
+                        <group colspan="4" col="4">
+                            <field name="company_id" colspan="4"  required="1" attrs="{'readonly': [('confirmado', '!=', False)]}" />
+                            <field name="res_partner_bank_id" string="Estornar para" colspan="4"  required="1" domain="[('company_id', '=', company_id)]" attrs="{'readonly': [('confirmado', '!=', False)]}" />
+                            <field name="data" required="1" />
+                            <newline />
+                            <field name="modelo_receber_id" required="1" colspan="4" context="{'form_view_ref': 'finan_modelo_lancamento.finan_receber_modelo_form', 'tree_view_ref': 'finan_modelo_lancamento.finan_receber_modelo_tree', 'search_view_ref': 'finan_modelo_lancamento.finan_receber_modelo_search'}" />
+                        </group>
+                        <newline />
+                        <field name="confirmado" invisible="1" />
+                        <group colspan="4" col="4" attrs="{'invisible': [('confirmado', '!=', False)]}">
+                            <button colspan="4" type="object" name="confirmar" string="Registrar estorno" />
+                        </group>
+                        <separator string="Cheques a estornar" colspan="4" />
+                        <field nolabel="1" colspan="4" name="cheque_ids" domain="[('company_id', '=', company_id), ('res_partner_bank_id', '=', False), ('situacao', '=', 'RP')]" attrs="{'readonly': [('confirmado', '!=', False)]}" />
+                        <group colspan="4" col="4" attrs="{'invisible': [('confirmado', '=', False)]}">
+                            <separator string="Lançamentos de estorno" colspan="4" />
+                            <field nolabel="1" colspan="4" name="lancamento_ids" readonly="1" context="{'form_view_ref': 'finan.finan_transacaoentrada_form', 'tree_view_ref': 'finan.finan_transacaoentrada_tree'}" />
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_cheque_deposito_estorno_repasse_search">
+            <field name="name">finan.cheque.deposito.estorno.repasse.search</field>
+            <field name="model">finan.cheque.deposito</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Estornos de cheques repassados">
+                    <field name="company_id" />
+                    <field name="res_partner_bank_id" string="Estornar de" />
+                    <field name="res_partner_bank_creditar_id" string="Retornar em" />
+                    <field name="data" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_cheque_deposito_estorno_repasse_acao">
+            <field name="name">Estorno de cheques repassados</field>
+            <field name="res_model">finan.cheque.deposito</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_tipo': 'E', 'default_tipo_devolucao': 'RP'}</field>
+            <field name="domain">[('tipo', '=', 'E'), ('tipo_devolucao', '=', 'RP')]</field>
+            <field name="view_id" ref="finan_cheque_deposito_estorno_repasse_tree" />
+            <field name="search_view_id" ref="finan_cheque_deposito_estorno_repasse_search" />
+        </record>
+
+        <menuitem
+            action="finan_cheque_deposito_estorno_repasse_acao"
+            id="menu_finan_cheque_deposito_estorno_repasse"
+            name="Estorno de cheques repassados"
+            sequence="4"
+            parent="finan_cheque.menu_finan_cheque" />
+
+        <record model="ir.actions.act_window.view" id="finan_cheque_deposito_estorno_repasse_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_cheque_deposito_estorno_repasse_form"/>
+            <field name="act_window_id" ref="finan_cheque_deposito_estorno_repasse_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_cheque_deposito_estorno_repasse_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_cheque_deposito_estorno_repasse_tree"/>
+            <field name="act_window_id" ref="finan_cheque_deposito_estorno_repasse_acao"/>
+        </record>
+
+    </data>
+</openerp>

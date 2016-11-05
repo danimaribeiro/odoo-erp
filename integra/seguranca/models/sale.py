@@ -3,7 +3,7 @@
 
 from openerp.osv import osv, fields
 from decimal import Decimal as D, ROUND_UP
-from pybrasil.data import parse_datetime, data_hora_horario_brasilia, data_hora, hoje, formata_data, agora
+from pybrasil.data import parse_datetime, data_hora_horario_brasilia, data_hora, hoje, formata_data, agora, data_por_extenso
 from pybrasil.valor import formata_valor
 from copy import copy
 from pybrasil.base import DicionarioBrasil
@@ -118,7 +118,7 @@ class sale_order(osv.Model):
                         valor = D(sale_obj.vr_margem_contribuicao_produtos or 0) / vr_produtos
                         valor *= 100
 
-            elif nome_campo in CAMPOS_SERVICOS:
+            if nome_campo in CAMPOS_SERVICOS:
                 for item_obj in sale_obj.item_servico_ids:
                     if nome_campo == 'vr_total_servicos' or nome_campo == 'vr_total_servicos_sem_desconto':
                         valor += D(item_obj.vr_total_venda_impostos or 0)
@@ -135,7 +135,7 @@ class sale_order(osv.Model):
                         valor = D(sale_obj.vr_margem_contribuicao_servicos or 0) / vr_servicos
                         valor *= 100
 
-            elif nome_campo in CAMPOS_MENSALIDADES:
+            if nome_campo in CAMPOS_MENSALIDADES:
                 for item_obj in sale_obj.item_mensalidade_ids:
                     if nome_campo in ('vr_total_mensalidades', 'vr_mensal_total', 'vr_total_mensalidades_sem_desconto'):
                         valor += D(item_obj.vr_total_venda_impostos or 0)
@@ -170,10 +170,12 @@ class sale_order(osv.Model):
                 'amount_untaxed': D(0),
                 'amount_tax': D(0),
                 'amount_total': D(0),
+                'vr_a_faturar': D(0),
             }
             valor_sem_impostos = D(0)
             valor_com_impostos = D(0)
             total_impostos = D(0)
+            vr_a_faturar = D(0)
 
             currency_obj = sale_obj.pricelist_id.currency_id
 
@@ -187,6 +189,10 @@ class sale_order(osv.Model):
                 percentual_impostos = D(item_obj.total_imposto or 0) / D(item_obj.price_subtotal or 1)
                 total_impostos += D(item_obj.vr_total_venda_impostos or 0) *  percentual_impostos
 
+                if item_obj.tipo_item == 'S' or (not item_obj.order_id.pricelist_id.meses_retorno_locacao):
+                    if item_obj.cobrar:
+                        vr_a_faturar += D(item_obj.vr_total_venda_impostos or 0)
+
             #if sale_obj.vr_desconto_rateio:
                 #valor_com_impostos -= D(sale_obj.vr_desconto_rateio)
 
@@ -196,19 +202,49 @@ class sale_order(osv.Model):
             res[sale_obj.id]['amount_tax'] = total_impostos
             res[sale_obj.id]['amount_untaxed'] = valor_sem_impostos
             res[sale_obj.id]['amount_total'] = valor_com_impostos
+            res[sale_obj.id]['vr_a_faturar'] = vr_a_faturar
 
         return res
 
     def _simulacao_parcelas(self, cr, uid, ids, nome_campo, arg=None, context={}):
         res = {}
-
+        #print(ids)
         for sale_obj in self.browse(cr, uid, ids, context=context):
             parcelas = False
 
             if sale_obj.payment_term and sale_obj.amount_total:
-                dados = sale_obj.onchange_payment_term(sale_obj.payment_term.id, sale_obj.amount_total, sale_obj.vr_total_servicos, sale_obj.meses_retorno_locacao_original, sale_obj.vr_entrada)
+                if sale_obj.simulacao_parcelas_livre:
+                    parcelas = [[5, False, {}]]
 
-                parcelas = dados['value']['simulacao_parcelas_ids']
+                    for parcela_obj in sale_obj.simulacao_parcelas_ids:
+                        dados = {
+                            'numero': parcela_obj.numero,
+                            'data': parcela_obj.data,
+                            'valor': parcela_obj.valor,
+                        }
+                        parcelas.append([0, False, dados])
+
+                else:
+                    dados = sale_obj.onchange_payment_term(sale_obj.payment_term.id, sale_obj.amount_total, sale_obj.vr_total_servicos, sale_obj.meses_retorno_locacao_original, sale_obj.vr_entrada)
+                    #print('parcela', dados)
+
+                    if 'simulacao_parcelas_ids' in dados['value']:
+                        if 'salva_dados' in context:
+                            if sale_obj.id and 'value' in dados and 'simulacao_parcelas_ids' in dados['value']:
+                                cr.execute('delete from sale_simulacao_parcelas where sale_id = ' + str(sale_obj.id) + ';')
+                                sql = "insert into sale_simulacao_parcelas (create_uid, create_date, sale_id, numero, data, valor) values (1, current_timestamp, {sale_id}, '{numero}', '{data}', {valor});"
+
+                                for comando, sale_id, parc in dados['value']['simulacao_parcelas_ids']:
+                                    if comando != 0:
+                                        continue
+
+                                    if 'data' not in parc or not parc['data']:
+                                        continue
+
+                                    parc['sale_id'] = sale_obj.id
+                                    cr.execute(sql.format(**parc))
+
+                        parcelas = dados['value']['simulacao_parcelas_ids']
 
             res[sale_obj.id] = parcelas
 
@@ -502,6 +538,7 @@ class sale_order(osv.Model):
         'meses_retorno_locacao': fields.float(u'Meses para retorno', digits=(21, 11)),
         'meses_retorno_locacao_excedido': fields.boolean(u'Excedeu o limite de meses pra retorno?'),
         'finan_contrato_id': fields.many2one('finan.contrato', u'Contrato'),
+        'finan_contrato_pai_id': fields.many2one('finan.contrato', u'Contrato pai'),
         'vr_mensal_atual': fields.float(u'Mensalidade atual', digits=(18,2)),
 
         #
@@ -511,6 +548,7 @@ class sale_order(osv.Model):
         'vr_entrada': fields.float(u'Entrada', digits=(18, 2)),
         'simulacao_parcelas_readonly_ids': fields.function(_simulacao_parcelas, type='one2many', relation='sale.simulacao.parcelas', string=u'Simulação de parcelas'),
         'simulacao_parcelas_ids': fields.one2many('sale.simulacao.parcelas', 'sale_id', string=u'Simulação de parcelas'),
+        'simulacao_parcelas_livre': fields.boolean(u'Simulação das parcelas livre?'),
 
         #
         # Novo controle de etapas do orçamento
@@ -547,6 +585,7 @@ class sale_order(osv.Model):
         'veiculo_id': fields.many2one('frota.veiculo', u'Veículo'),
         'tecnico_id': fields.many2one('res.users', u'Técnico'),
         'tipo_os_id': fields.many2one('sale.tipo.os', u'Tipo da OS'),
+        'tipo_os_tipo': fields.related('tipo_os_id', 'tipo', type='char', string=u'Tipo da OS (venda, locação, OS)'),
         'prioridade_id': fields.many2one('sale.prioridade.os', u'Prioridade'),
         'prioridade_dias': fields.related('prioridade_id', 'dias', string=u'Dias', type='integer'),
         'defeito_id': fields.many2one('sale.defeito.os', u'Defeito'),
@@ -558,6 +597,7 @@ class sale_order(osv.Model):
         'estoque_alimentado': fields.boolean(u'Estoque alimentado?'),
         'faturado': fields.boolean(u'Faturado?'),
         'finan_contrato_gerado_id': fields.many2one('finan.contrato', u'Contrato novo'),
+        'contrato_terceirizado': fields.boolean(u'Gera contrato terceirizado?'),
 
         #
         # Orçamento de referência
@@ -577,6 +617,8 @@ class sale_order(osv.Model):
         'stock_location_saida_id': fields.related('tipo_os_id', 'stock_location_saida_id', type='many2one', relation='stock.location', string=u'Local de saída'),
         'stock_location_entrada_id': fields.related('tipo_os_id', 'stock_location_entrada_id', type='many2one', relation='stock.location', string=u'Local de entrada'),
         'lo_modelo_id': fields.many2one('lo.modelo',u'Modelo de Contrato',  domain=[['tabela', '=', 'sale.order']]),
+        'lo_modelo_os_id': fields.many2one('lo.modelo', u'Modelo O.S.', domain=[('tabela','=','sale.order.os')]),
+        'lo_modelo_orcamento_id': fields.many2one('lo.modelo', u'Modelo Orçamento', domain=[('tabela','=','sale.order.orcamento')]),
     }
 
     _defaults = {
@@ -588,7 +630,7 @@ class sale_order(osv.Model):
         'partner_id': lambda self, cr, uid, context: self.pool.get('res.company').browse(cr, uid, self.pool.get('res.company')._company_default_get(cr, uid, 'sped.documento', context=context)).partner_id.id if context.get('default_modelo', False) else False,
     }
 
-    def onchange_pricelist_id(self, cr, uid, ids, pricelist_id, vr_total_produtos, context={}):
+    def onchange_pricelist_id(self, cr, uid, ids, pricelist_id, vr_total_produtos, vr_total_servicos, vr_total_mensalidades, context={}):
         if not pricelist_id:
             return {}
 
@@ -599,6 +641,7 @@ class sale_order(osv.Model):
         res['value'] = valores
         valores['meses_retorno_locacao_original'] = pricelist_obj.meses_retorno_locacao
         valores['meses_retorno_locacao'] = pricelist_obj.meses_retorno_locacao
+        valores['contrato_terceirizado'] = pricelist_obj.contrato_terceirizado
 
         if pricelist_obj.meses_retorno_locacao:
             valores['finan_contrato_id'] = False
@@ -608,7 +651,16 @@ class sale_order(osv.Model):
         if pricelist_obj.tipo_os_id:
             valores['tipo_os_id'] = pricelist_obj.tipo_os_id.id
 
-        valores['lista_precos_alterada'] = True
+            if pricelist_obj.tipo_os_id.lo_modelo_os_id:
+                valores['lo_modelo_os_id'] = pricelist_obj.tipo_os_id.lo_modelo_os_id.id
+
+            if pricelist_obj.tipo_os_id.lo_modelo_orcamento_id:
+                valores['lo_modelo_orcamento_id'] = pricelist_obj.tipo_os_id.lo_modelo_orcamento_id.id
+
+        if vr_total_produtos or vr_total_servicos or vr_total_mensalidades:
+            valores['lista_precos_alterada'] = True
+        else:
+            valores['lista_precos_alterada'] = False
 
         return res
 
@@ -751,8 +803,12 @@ class sale_order(osv.Model):
             simulacao_parcelas_ids.append([0, False, dados] )
             i += 1
 
-        valores['simulacao_parcelas_readonly_ids'] = simulacao_parcelas_ids
-        valores['simulacao_parcelas_ids'] = simulacao_parcelas_ids
+        if len(simulacao_parcelas_ids) > 1:
+            valores['simulacao_parcelas_readonly_ids'] = simulacao_parcelas_ids
+            valores['simulacao_parcelas_ids'] = simulacao_parcelas_ids
+            valores['simulacao_parcelas_livre'] = False
+        else:
+            valores['simulacao_parcelas_livre'] = True
 
         return res
 
@@ -912,6 +968,7 @@ class sale_order(osv.Model):
                     dados_item[chave] = dados['value'][chave]
 
             dados_item['tipo_item'] = 'P'
+            dados_item['product_id'] = item_obj.product_id.id
             produto_ids.append([0, False, dados_item])
 
         valores['item_produto_ids'] = produto_ids
@@ -928,6 +985,7 @@ class sale_order(osv.Model):
                     dados_item[chave] = dados['value'][chave]
 
             dados_item['tipo_item'] = 'S'
+            dados_item['product_id'] = item_obj.product_id.id
             servico_ids.append([0, False, dados_item])
 
         valores['item_servico_ids'] = servico_ids
@@ -944,6 +1002,7 @@ class sale_order(osv.Model):
                     dados_item[chave] = dados['value'][chave]
 
             dados_item['tipo_item'] = 'M'
+            dados_item['product_id'] = item_obj.product_id.id
             mensalidade_ids.append([0, False, dados_item])
 
         valores['item_mensalidade_ids'] = mensalidade_ids
@@ -1022,11 +1081,15 @@ class sale_order(osv.Model):
                 'valor_mensal': sale_obj.vr_mensal_total,
             }
 
+            if sale_obj.contrato_terceirizado:
+                dados['natureza'] = 'TR'
+                dados['parent_id'] = sale_obj.finan_contrato_pai_id.id
+
             contrato_id = contrato_pool.create(cr, uid, dados)
             sale_obj.write({'finan_contrato_gerado_id': contrato_id})
 
 
-    def _gerar_orcamento(self, cr, uid, ids, mostra_margem_contribuicao=False, context={}):
+    def _gerar_orcamento_antigo(self, cr, uid, ids, mostra_margem_contribuicao=False, context={}):
         attachment_pool = self.pool.get('ir.attachment')
 
         for sale_obj in self.browse(cr, uid, ids, context=context):
@@ -1039,6 +1102,7 @@ class sale_order(osv.Model):
 
             if sale_obj.etapa_id.tipo != 'O':
                 if mostra_margem_contribuicao:
+
                     nome = u'OrcamentoEspelho_' + sale_obj.name.replace(' ', '_') + '.pdf'
                 else:
                     nome = u'Orcamento_' + sale_obj.name.replace(' ', '_') + '.pdf'
@@ -1063,6 +1127,280 @@ class sale_order(osv.Model):
 
         return ids
 
+    def monta_dados_orcamento(self, cr, uid, ids, context={}):
+
+        context['salva_dados'] = True
+
+        for sale_obj in self.browse(cr, uid, ids, context=context):
+
+            sale_obj.data_emissao = formata_data(sale_obj.date_order)
+            sale_obj.data_validade = formata_data(sale_obj.dt_validade)
+            sale_obj.data_extenso = data_por_extenso(sale_obj.date_order)
+            sale_obj.data_extenso_hoje = data_por_extenso(hoje())
+            sale_obj.numero = sale_obj.name
+
+            sale_obj.vr_total_produtos = formata_valor(sale_obj.vr_total_produtos or 0)
+            sale_obj.vr_desconto_produtos = formata_valor(sale_obj.vr_desconto_rateio_servicos or 0)
+            sale_obj.al_desconto_produtos = formata_valor(sale_obj.al_desconto_rateio_servicos or 0)
+
+            sale_obj.vr_total_servicos = formata_valor(sale_obj.vr_total_servicos or 0)
+            sale_obj.vr_desconto_servicos = formata_valor(sale_obj.vr_desconto_rateio or 0)
+            sale_obj.al_desconto_servicos = formata_valor(sale_obj.al_desconto_rateio or 0)
+
+            sale_obj.vr_total_mensalidades = formata_valor(sale_obj.vr_total_mensalidades or 0)
+
+            sale_obj.vr_desconto_total = formata_valor(D(sale_obj.vr_desconto_rateio_servicos or 0) + D(sale_obj.vr_desconto_rateio or 0))
+            sale_obj.vr_total_venda = formata_valor(sale_obj.amount_total or 0)
+            sale_obj.vr_total = formata_valor(sale_obj.amount_total or 0)
+
+            sale_obj.defeito_obs = sale_obj.defeito_obs or ''
+            sale_obj.obs = sale_obj.defeito_obs
+
+
+            grupos_agrupamento_produto = {}
+            agrupamento_produtos = []
+            agrupamento_produto_anterior = None
+
+            for i in range(len(sale_obj.item_produto_ids)):
+                agrupamento_produto = sale_obj.item_produto_ids[i].agrupamento_id.nome or ''
+
+                sale_obj.item_produto_ids[i].quantidade = formata_valor(sale_obj.item_produto_ids[i].product_uom_qty or 0)
+                sale_obj.item_produto_ids[i].vr_unitario = formata_valor(sale_obj.item_produto_ids[i].vr_unitario or 0)
+                sale_obj.item_produto_ids[i].vr_total = formata_valor(sale_obj.item_produto_ids[i].vr_total_venda_impostos or 0)
+                sale_obj.item_produto_ids[i].unidade = sale_obj.item_produto_ids[i].product_id.uom_id.name or ''
+                sale_obj.item_produto_ids[i].descricao = sale_obj.item_produto_ids[i].name
+
+                if agrupamento_produto != agrupamento_produto_anterior:
+                    agrupamento = DicionarioBrasil()
+                    agrupamento['nome'] = agrupamento_produto
+                    agrupamento['total'] = D(0)
+                    agrupamento['produtos'] = [sale_obj.item_produto_ids[i]]
+                    agrupamento_produtos.append(agrupamento)
+                    grupos_agrupamento_produto[agrupamento_produto] = agrupamento
+                    agrupamento_produto_anterior = agrupamento_produto
+                else:
+                    agrupamento = grupos_agrupamento_produto[agrupamento_produto]
+                    agrupamento.produtos.append(sale_obj.item_produto_ids[i])
+
+            for agrupamento in agrupamento_produtos:
+
+                for produto in agrupamento.produtos:
+                    agrupamento.total += D(produto.vr_total_venda_impostos or 0)
+
+                agrupamento.total = formata_valor(agrupamento.total)
+
+            grupos_agrupamento_servico = {}
+            agrupamento_servicos = []
+            agrupamento_servico_anterior = None
+
+            for i in range(len(sale_obj.item_servico_ids)):
+                agrupamento_servico = sale_obj.item_servico_ids[i].agrupamento_id.nome or ''
+
+                sale_obj.item_servico_ids[i].quantidade = formata_valor(sale_obj.item_servico_ids[i].product_uom_qty or 0)
+                sale_obj.item_servico_ids[i].vr_unitario = formata_valor(sale_obj.item_servico_ids[i].vr_unitario or 0)
+                sale_obj.item_servico_ids[i].vr_total = formata_valor(sale_obj.item_servico_ids[i].vr_total_venda_impostos or 0)
+                sale_obj.item_servico_ids[i].unidade = sale_obj.item_servico_ids[i].product_id.uom_id.name or ''
+                sale_obj.item_servico_ids[i].descricao = sale_obj.item_servico_ids[i].name
+
+                if agrupamento_servico != agrupamento_servico_anterior:
+                    agrupamento = DicionarioBrasil()
+                    agrupamento['nome'] = agrupamento_servico
+                    agrupamento['total'] = D(0)
+                    agrupamento['servicos'] = [sale_obj.item_servico_ids[i]]
+                    agrupamento_servicos.append(agrupamento)
+                    grupos_agrupamento_servico[agrupamento_servico] = agrupamento
+                    agrupamento_produto_anterior = agrupamento_servico
+                else:
+                    agrupamento = grupos_agrupamento_servico[agrupamento_servico]
+                    agrupamento.servicos.append(sale_obj.item_servico_ids[i])
+
+            for agrupamento in agrupamento_servicos:
+
+                for servico in agrupamento.servicos:
+                    agrupamento.total += D(servico.vr_total_venda_impostos or 0)
+
+                agrupamento.total = formata_valor(agrupamento.total)
+
+
+            for i in range(len(sale_obj.item_mensalidade_ids)):
+                sale_obj.item_mensalidade_ids[i].quantidade = formata_valor(sale_obj.item_mensalidade_ids[i].product_uom_qty or 0)
+                sale_obj.item_mensalidade_ids[i].vr_unitario = formata_valor(sale_obj.item_mensalidade_ids[i].vr_unitario or 0)
+                sale_obj.item_mensalidade_ids[i].vr_total = formata_valor(sale_obj.item_mensalidade_ids[i].vr_total_venda_impostos or 0)
+                sale_obj.item_mensalidade_ids[i].unidade = sale_obj.item_mensalidade_ids[i].product_id.uom_id.name or ''
+                sale_obj.item_mensalidade_ids[i].descricao = sale_obj.item_mensalidade_ids[i].name
+
+            for i in range(len(sale_obj.simulacao_parcelas_ids)):
+                sale_obj.simulacao_parcelas_ids[i].numero = sale_obj.simulacao_parcelas_ids[i].numero or ''
+                sale_obj.simulacao_parcelas_ids[i].data = formata_data(sale_obj.simulacao_parcelas_ids[i].data)
+                sale_obj.simulacao_parcelas_ids[i].valor = formata_valor(sale_obj.simulacao_parcelas_ids[i].valor or 0)
+
+            #
+            # Dados do cliente
+            #
+            partner = sale_obj.partner_id
+            endereco = partner.endereco or u''
+            endereco += u', '
+            endereco += partner.numero or u''
+
+            if partner.complemento:
+                endereco += u' – '
+                endereco += partner.complemento
+
+            endereco += u' — '
+            endereco += partner.bairro or ''
+
+            endereco += u' — '
+            endereco += partner.cidade or ''
+            endereco += u' – '
+            endereco += partner.estado or ''
+
+            endereco += u' — '
+            endereco += partner.cep or ''
+
+            sale_obj.partner_id.endereco_completo = endereco
+
+            if not sale_obj.partner_id.razao_social:
+                sale_obj.partner_id.razao_social = sale_obj.partner_id.name
+
+            sale_obj.partner_id.razao_social = sale_obj.partner_id.razao_social or sale_obj.partner_id.name or ''
+            sale_obj.partner_id.endereco = sale_obj.partner_id.endereco or ''
+            sale_obj.partner_id.numero = sale_obj.partner_id.numero or ''
+            sale_obj.partner_id.complemento = sale_obj.partner_id.complemento or ''
+            sale_obj.partner_id.bairro = sale_obj.partner_id.bairro or ''
+            sale_obj.partner_id.cidade = sale_obj.partner_id.cidade or ''
+            sale_obj.partner_id.estado = sale_obj.partner_id.estado or ''
+            sale_obj.partner_id.cep = sale_obj.partner_id.cep or ''
+            sale_obj.partner_id.fone = sale_obj.partner_id.fone or ''
+            sale_obj.partner_id.celular = sale_obj.partner_id.celular or ''
+            sale_obj.partner_id.email = sale_obj.partner_id.email or ''
+            sale_obj.partner_id.cnpj_cpf = sale_obj.partner_id.cnpj_cpf or ''
+            sale_obj.partner_id.ie = sale_obj.partner_id.ie or ''
+
+            #
+            # Dados da empresa
+            #
+            partner = sale_obj.company_id.partner_id
+            endereco = partner.endereco or u''
+            endereco += u', '
+            endereco += partner.numero or u''
+
+            if partner.complemento:
+                endereco += u' - '
+                endereco += partner.complemento
+
+            endereco += u' - '
+            endereco += partner.bairro or ''
+
+            endereco += u' - '
+            endereco += partner.cidade or ''
+            endereco += u'-'
+            endereco += partner.estado or ''
+
+            endereco += u' - '
+            endereco += partner.cep or ''
+
+            sale_obj.company_id.partner_id.endereco_completo = endereco
+            sale_obj.company_id.partner_id.razao_social = sale_obj.company_id.partner_id.razao_social or sale_obj.company_id.partner_id.name or ''
+            sale_obj.company_id.partner_id.endereco = sale_obj.company_id.partner_id.endereco or ''
+            sale_obj.company_id.partner_id.numero = sale_obj.company_id.partner_id.numero or ''
+            sale_obj.company_id.partner_id.complemento = sale_obj.company_id.partner_id.complemento or ''
+            sale_obj.company_id.partner_id.bairro = sale_obj.company_id.partner_id.bairro or ''
+            sale_obj.company_id.partner_id.cidade = sale_obj.company_id.partner_id.cidade or ''
+            sale_obj.company_id.partner_id.estado = sale_obj.company_id.partner_id.estado or ''
+            sale_obj.company_id.partner_id.cep = sale_obj.company_id.partner_id.cep or ''
+            sale_obj.company_id.partner_id.fone = sale_obj.company_id.partner_id.fone or ''
+            sale_obj.company_id.partner_id.celular = sale_obj.company_id.partner_id.celular or ''
+            sale_obj.company_id.partner_id.email = sale_obj.company_id.partner_id.email or ''
+            sale_obj.company_id.partner_id.cnpj_cpf = sale_obj.company_id.partner_id.cnpj_cpf or ''
+            sale_obj.company_id.partner_id.ie = sale_obj.company_id.partner_id.ie or ''
+
+            vendedor = DicionarioBrasil()
+            vendedor['nome'] = sale_obj.user_id.name or ''
+            vendedor['fone'] = sale_obj.user_id.fone or ''
+            vendedor['celular'] = sale_obj.user_id.mobile or ''
+            vendedor['email'] = sale_obj.user_id.user_email or ''
+            
+            tecnico = DicionarioBrasil()
+            tecnico['nome'] = sale_obj.tecnico_id.name or ''
+            tecnico['fone'] = sale_obj.tecnico_id.fone or ''
+            tecnico['celular'] = sale_obj.tecnico_id.mobile or ''
+            tecnico['email'] = sale_obj.tecnico_id.user_email or ''
+
+            dados = {
+                'orcamento': sale_obj,
+                'venda': sale_obj,
+                'pedido': sale_obj,
+                'os': sale_obj,
+                'cliente': sale_obj.partner_id,
+                'empresa': sale_obj.company_id.partner_id,
+                'vendedor': vendedor,
+                'tecnico': tecnico,
+                'produtos': sale_obj.item_produto_ids,
+                'agrupamento_produtos': agrupamento_produtos,
+                'servicos': sale_obj.item_servico_ids,
+                'agrupamento_servicos': agrupamento_servicos,
+                'mensalidades': sale_obj.item_mensalidade_ids,
+                'parcelas': sale_obj.simulacao_parcelas_ids,
+            }
+
+        return dados
+
+    def _gerar_orcamento(self, cr, uid, ids, mostra_margem_contribuicao=False, context={}):
+        attachment_pool = self.pool.get('ir.attachment')
+
+        for sale_obj in self.browse(cr, uid, ids, context=context):
+            if not sale_obj.lo_modelo_orcamento_id and not sale_obj.lo_modelo_os_id:
+                self._gerar_orcamento_antigo(cr, uid, ids, context=context)
+                return
+
+            dados = self.monta_dados_orcamento(cr, uid, ids, context=context)
+
+            if not mostra_margem_contribuicao:
+                if sale_obj.etapa_id.tipo == 'V':
+
+                    if not sale_obj.lo_modelo_orcamento_id:
+                        raise osv.except_osv(u'Erro!', u'O.S. sem modelo de Impresão!')
+
+                    nome = u'Orcamento_' + sale_obj.name.replace(' ', '_') + '.pdf'
+                    pdf = sale_obj.lo_modelo_orcamento_id.gera_modelo_novo(dados, formato='pdf')
+
+                else:
+                    if not sale_obj.lo_modelo_os_id:
+                        raise osv.except_osv(u'Erro!', u'O.S. sem modelo de Impresão!')
+
+                    nome = u'OS_' + sale_obj.name.replace(' ', '_') + '.pdf'
+                    pdf = sale_obj.lo_modelo_os_id.gera_modelo_novo(dados, formato='pdf')
+
+            else:
+                rel = Report('Orcamento Seguranca', cr, uid)
+                rel.caminho_arquivo_jasper = os.path.join(JASPER_BASE_DIR, 'seguranca_orcamento.jrxml')
+                rel.parametros['OS_ID'] = sale_obj.id
+                rel.parametros['MOSTRA_MARGEM_CONTRIBUICAO'] = mostra_margem_contribuicao
+                nome = u'OrcamentoEspelho_' + sale_obj.name.replace(' ', '_') + '.pdf'
+
+                pdf, formato = rel.execute()
+                pdf = base64.encodestring(pdf)
+
+            attachment_ids = attachment_pool.search(cr, uid, [('res_model', '=', 'sale.order'), ('res_id', '=', sale_obj.id), ('name', '=', nome)])
+            #
+            # Apaga os recibos anteriores com o mesmo nome
+            #
+            attachment_pool.unlink(cr, uid, attachment_ids)
+
+            dados = {
+                #'datas': base64.encodestring(pdf),
+                'datas': pdf,
+                'name': nome,
+                'datas_fname': nome,
+                'res_model': 'sale.order',
+                'res_id': sale_obj.id,
+                'file_type': 'application/pdf',
+            }
+            attachment_pool.create(cr, uid, dados)
+
+        return ids
+
+
     def imprime_orcamento(self, cr, uid, ids, context={}):
         return self._gerar_orcamento(cr, uid, ids, mostra_margem_contribuicao=False, context=context)
 
@@ -1078,11 +1416,7 @@ class sale_order(osv.Model):
             if sale_obj.lo_modelo_id:
                 modelo_obj = sale_obj.lo_modelo_id
 
-                dados = {
-                    'sale_obj': sale_obj,
-                    'cliente': sale_obj.partner_id,
-                    'produtos': sale_obj.item_produto_ids,
-                }
+                dados = self.monta_dados_orcamento(cr, uid, ids, context=context)
 
                 nome_arquivo = modelo_obj.nome_arquivo.split('.')[0]
                 nome_arquivo += '_' + sale_obj.name
@@ -1193,5 +1527,23 @@ class sale_order(osv.Model):
     def atualiza_lista_precos(self, cr, uid, ids, context={}):
         self.recalcula_fora_validade(cr, uid, ids, context=context)
         return self.write(cr, uid, ids, {'lista_precos_alterada': False}, context=context)
+
+    def onchange_tipo_os_id(self, cr, uid, ids, tipo_os_id, pricelist_id, context={}):
+        res = {}
+        valores = {}
+        res['value'] = valores
+
+        if not tipo_os_id:
+            return res
+
+        tipo_os_obj = self.pool.get('sale.tipo.os').browse(cr, uid, tipo_os_id)
+
+        valores['tipo_os_tipo'] = tipo_os_obj.tipo
+
+        if not pricelist_id and tipo_os_obj.pricelist_id:
+            valores['pricelist_id'] = tipo_os_obj.pricelist_id.id
+
+        return res
+
 
 sale_order()

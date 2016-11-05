@@ -154,6 +154,7 @@ class finan_relatorio(osv.osv_memory):
                 filtro['filtro_adicional'] = 'and l.partner_id in (' + str(partner_ids).replace('[', '').replace(']', '') + ')'
 
             sql = sql.format(**filtro)
+            print(sql)
             cr.execute(sql)
             dados = cr.fetchall()
 
@@ -414,12 +415,12 @@ class finan_relatorio(osv.osv_memory):
 
                    coalesce(l.valor_saldo, 0.00) {rateio} as valor_saldo,
                    coalesce(l.nosso_numero, '') as nosso_numero,
-                   case 
-                   when fc.contrato_atualizado = true then 
-                   'CT.ATT. ' || coalesce(p.razao_social, '') || ' | ' || coalesce(p.name, '') || ' | ' || coalesce(p.cnpj_cpf, '')
+                   case
+                   when fc.contrato_atualizado = true then
+                   'CT.AT. ' || coalesce(p.razao_social, '') || ' | ' || coalesce(p.name, '') || ' | ' || coalesce(p.cnpj_cpf, '')
                    else
                    coalesce(p.razao_social, '') || ' | ' || coalesce(p.name, '') || ' | ' || coalesce(p.cnpj_cpf, '')
-                   end as cliente,                   
+                   end as cliente,
                    coalesce(p.fone, '') || ' - ' || coalesce(p.celular, '') as contato,
                    coalesce(p.email_nfe, '') as email_nfe,
                    c.name as unidade,
@@ -635,7 +636,7 @@ class finan_relatorio(osv.osv_memory):
             rel_obj.write(dados)
 
         return True
-    
+
     def gera_relatorio_cliente_duvidosos(self, cr, uid, ids, context={}, tipo='R'):
         company_id = context['company_id']
         data_inicial = context['data_inicial']
@@ -679,23 +680,23 @@ class finan_relatorio(osv.osv_memory):
         for rel_obj in self.browse(cr, uid, ids):
             rel = RHRelatorioAutomaticoRetrato()
             rel.title = u'Relatório de Clientes Duvidosos'
-            
+
             rel.colunas = [
                 ['data_vencimento', 'D', 10, u'Data venc.', False],
-                ['data_documento', 'D', 10, u'Data doc.', False],                            
+                ['data_documento', 'D', 10, u'Data doc.', False],
                 ['numero_documento', 'C', 15, u'Nº doc.', False],
                 ['cliente', 'C', 50, u'Cliente', False],
                 ['valor_documento', 'F', 10, u'Valor orig.', True],
                 ['dias_atraso', 'I', 6, u'Atraso', True],
-            ]   
+            ]
             rel.monta_detalhe_automatico(rel.colunas)
-    
+
             rel.grupos = [
                 ['unidade', u'Unidade', True],
                 ['situacao', u'Situação', False],
             ]
-            rel.monta_grupos(rel.grupos)          
-            
+            rel.monta_grupos(rel.grupos)
+
             if len(rel_obj.res_partner_bank_ids):
                 texto_filtro = u''
                 bancos_ids = []
@@ -732,14 +733,14 @@ class finan_relatorio(osv.osv_memory):
 
                    case
                    when l.valor = 0 and l.situacao not in ('Quitado', 'Conciliado', 'Baixado') then
-                   coalesce(l.valor_documento, 0) + coalesce(l.valor, 0) 
+                   coalesce(l.valor_documento, 0) + coalesce(l.valor, 0)
                    else
                    coalesce(l.valor, 0.00) end as valor,
 
                    coalesce(l.valor_saldo, 0.00) as valor_saldo,
                    coalesce(l.nosso_numero, '') as nosso_numero,
                    coalesce(p.name, '') as cliente,
-                  
+
                    c.name as unidade,
                    coalesce(l.situacao, '') as situacao,
                    coalesce(cf.codigo_completo, '') as conta_codigo,
@@ -749,7 +750,7 @@ class finan_relatorio(osv.osv_memory):
                    when l.data_vencimento < current_date then
                    current_date - l.data_vencimento
                    else
-                   0 end as data_atraso"""          
+                   0 end as data_atraso"""
 
             sql_relatorio += """
                    from finan_lancamento l
@@ -759,7 +760,7 @@ class finan_relatorio(osv.osv_memory):
                    left join res_company ccc on ccc.id = cc.parent_id
                    left join finan_conta cf on cf.id = l.conta_id
                    left join finan_conta pfc on pfc.id = cf.parent_id"""
-            
+
             if situacao < '5':
                 sql_relatorio += """
                    where l.tipo = '{tipo}'
@@ -768,7 +769,7 @@ class finan_relatorio(osv.osv_memory):
 
                 if len(rel_obj.res_partner_bank_ids):
                     sql_relatorio += 'and l.sugestao_bank_id in '  +  str(tuple(bancos_ids)).replace(',)', ')')
-                    
+
             elif situacao == '5':
                 sql_relatorio += """
                    where l.tipo = '{tipo}'
@@ -786,7 +787,7 @@ class finan_relatorio(osv.osv_memory):
 
                 if len(rel_obj.res_partner_bank_ids):
                     sql_relatorio += 'and l.res_partner_bank_id in'   +  str(tuple(bancos_ids)).replace(',)', ')')
-                    
+
             else:
                 sql_relatorio += """
                    where l.tipo = '{tipo}'
@@ -796,7 +797,7 @@ class finan_relatorio(osv.osv_memory):
             if rel_obj.dias_atraso:
                 sql_relatorio +="""
                     and current_date - l.data_vencimento = """ + str(rel_obj.dias_atraso)
-           
+
             if rel_obj.company_id:
                 sql_relatorio += """
                    and (
@@ -825,7 +826,7 @@ class finan_relatorio(osv.osv_memory):
                 order by c.name, l.situacao, p.razao_social, p.name, p.cnpj_cpf, l.data_vencimento desc, cf.codigo_completo desc, b;"""
 
             sql_relatorio = sql_relatorio.format(**filtro)
-            
+
             print(sql_relatorio)
             cr.execute(sql_relatorio)
             dados = cr.fetchall()
@@ -834,8 +835,8 @@ class finan_relatorio(osv.osv_memory):
                 raise osv.except_osv(u'Atenção', u'Não há dados para gerar o relatório, com base nos parâmetros informados!')
 
             linhas = []
-            
-            for id, numero_documento, data_documento, data_vencimento, data_quitacao, valor_documento, valor_desconto, valor_juros, valor_multa, valor, valor_saldo, nosso_numero, cliente,  unidade, situacao, conta_codigo, conta_nome, provisionado, data_atraso in dados:            
+
+            for id, numero_documento, data_documento, data_vencimento, data_quitacao, valor_documento, valor_desconto, valor_juros, valor_multa, valor, valor_saldo, nosso_numero, cliente,  unidade, situacao, conta_codigo, conta_nome, provisionado, data_atraso in dados:
                 linha = DicionarioBrasil()
                 linha['id'] = id
                 linha['numero_documento'] = numero_documento
@@ -873,7 +874,7 @@ class finan_relatorio(osv.osv_memory):
             if rel_obj.company_id:
                 rel.band_page_header.elements[-1].text += u', empresa/unidade '
                 rel.band_page_header.elements[-1].text += rel_obj.company_id.name
-           
+
             if rel_obj.partner_id:
                 if tipo == 'R':
                     rel.band_page_header.elements[-1].text += u', do cliente '
@@ -890,15 +891,15 @@ class finan_relatorio(osv.osv_memory):
 
             dados = {
                 'nome': 'Cliente_Duvidosos.pdf.pdf',
-                'arquivo': base64.encodestring(pdf),                
+                'arquivo': base64.encodestring(pdf),
             }
             rel_obj.write(dados)
 
     def gera_relatorio_contrato_suspenso(self, cr, uid, ids, context={}):
-        
+
         for rel_obj in self.browse(cr, uid, ids):
             sql = """
-            select 
+            select
                 rp.name as empresa,
                 cli.numero,
                 coalesce(cli.razao_social, cli.name) as nome_cliente,
@@ -914,10 +915,10 @@ class finan_relatorio(osv.osv_memory):
                 join res_partner rp on rp.id = c.partner_id
                 join res_partner cli on cli.id = cf.partner_id
                 left join res_partner_address rpa on rpa.id = cf.endereco_prestacao_id
-                join finan_contrato_suspensao cp on cp.contrato_id = cf.id                
+                join finan_contrato_suspensao cp on cp.contrato_id = cf.id
             where
-                (cp.data_suspensao between '{data_inicial}' and '{data_final}' 
-                  or 
+                (cp.data_suspensao between '{data_inicial}' and '{data_final}'
+                  or
                   cp.data_liberacao between '{data_inicial}' and '{data_final}')
                 and (
                     c.id = {company_id}
@@ -931,7 +932,7 @@ class finan_relatorio(osv.osv_memory):
             filtro = {
                 'data_inicial': rel_obj.data_inicial,
                 'data_final': rel_obj.data_final,
-                'company_id': rel_obj.company_id.id,                
+                'company_id': rel_obj.company_id.id,
             }
 
             sql = sql.format(**filtro)
@@ -952,12 +953,12 @@ class finan_relatorio(osv.osv_memory):
                 linha['endereco_cliente'] = endereco_cliente
                 linha['endereco_fato'] = endereco_fato
                 linha['data_suspensao'] = data_suspensao
-                linha['data_liberacao'] = data_liberacao                
+                linha['data_liberacao'] = data_liberacao
                 linhas.append(linha)
 
-            rel = RHRelatorioAutomaticoPaisagem()            
+            rel = RHRelatorioAutomaticoPaisagem()
             rel.title = u'Relatório Contrato Suspensos'
-            
+
             rel.colunas = [
                 ['numero', 'C', 10, u'Número', False],
                 ['nome_cliente', 'C', 40, u'Clientes', False],

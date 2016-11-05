@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <tree string="Integração MONI">
                     <field name="importado" invisible="1" />
-                    <field name="codigo_cliente" />
+                    <field name="codigo_cliente" invisible="1" />
                     <field name="codigo_moni" />
                     <field name="fantasia" />
                     <field name="razao_social" />
@@ -54,7 +54,7 @@
                         </group>
                         <button type="object" name="importa_arquivo" string="Importar dados" />
                         <newline />
-                        <field name="codigo_cliente" readonly="1" />
+                        <field name="codigo_cliente" readonly="1" invisible="1" />
                         <field name="codigo_moni" readonly="1" />
                         <newline />
                         <field name="fantasia" colspan="4" readonly="1" />

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record forcecreate="True" model="ir.cron" id="eytanmagal_bi_demorada_atualiza_bi_cron">
+            <field name="name">Atualiza BI eytanmagal</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field eval="True" name="active" />
+            <field eval="False" name="doall" />
+            <field eval="'project.task'" name="model" />
+            <field eval="'bi_eytanmagal'" name="function" />
+            <field eval="'()'" name="args" />
+        </record>
+
+        <record forcecreate="True" model="ir.actions.server" id="eytanmagal_bi_demorada_atualiza_bi_server_action">
+            <field name="name">Atualiza BI eytanmagal</field>
+            <field name="model_id" ref="model_project_task"/>
+            <field name="state">code</field>
+            <field name="code">action = obj.bi_eytanmagal(context=context)</field>
+        </record>
+
+    </data>
+</openerp>
+

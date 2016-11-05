@@ -27,6 +27,9 @@
                         <field name="modelo_comissao_pagar_agenciador_id" colspan="4" domain="[('tipo', '=', 'MP')]" context="{'default_tipo': 'MP', 'form_view_ref': 'finan_modelo_lancamento.finan_pagar_modelo_form', 'tree_view_ref': 'finan_modelo_lancamento.finan_pagar_modelo_tree'}"/>
                         <field name="modelo_comissao_pagar_corretor_id" colspan="4" domain="[('tipo', '=', 'MP')]" context="{'default_tipo': 'MP', 'form_view_ref': 'finan_modelo_lancamento.finan_pagar_modelo_form', 'tree_view_ref': 'finan_modelo_lancamento.finan_pagar_modelo_tree'}"/>
                         <field name="modelo_comissao_pagar_outros_id" colspan="4" domain="[('tipo', '=', 'MP')]" context="{'default_tipo': 'MP', 'form_view_ref': 'finan_modelo_lancamento.finan_pagar_modelo_form', 'tree_view_ref': 'finan_modelo_lancamento.finan_pagar_modelo_tree'}"/>
+                        <separator string="Modelos de lançamentos financeiros - Terceiro Associado" colspan="4" />
+                        <field name="modelo_terceiro_associado_receber_id" colspan="4" domain="[('tipo', '=', 'MR')]" context="{'default_tipo': 'MR', 'form_view_ref': 'finan_modelo_lancamento.finan_modelo_receber_view'}" />                     
+                        <field name="modelo_terceiro_associado_pagar_id" colspan="4" domain="[('tipo', '=', 'MP')]" context="{'default_tipo': 'MP', 'form_view_ref': 'finan_modelo_lancamento.finan_pagar_modelo_form', 'tree_view_ref': 'finan_modelo_lancamento.finan_pagar_modelo_tree'}"/>
                     </page>
                     <page string="Condomínio">
                         <field name="eh_condominio" />

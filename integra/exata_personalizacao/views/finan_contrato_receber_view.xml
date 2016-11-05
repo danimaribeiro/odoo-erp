@@ -7,6 +7,13 @@
             <field name="inherit_id" ref="construtora.finan_contrato_receber_imovel_form"/>
             <field name="type">form</field>  
             <field name="arch" type="xml">
+                <field name="imovel_res_partner_bank_id" position="after">
+                    <field name="imovel_conta_id" readonly="1" colspan="4"/>             
+                    <field name="imovel_centrocusto_id" readonly="1" colspan="4"/>             
+                </field>                
+                <field name="condicao_original_ids" position="replace">
+                    <field name="condicao_original_ids" nolabel="1" colspan="4" context="{'default_data_inicio': data_inicio, 'default_conta_id': imovel_conta_id, 'default_centrocusto_id': imovel_centrocusto_id, 'form_view_ref': 'construtora.finan_contrato_condicao_form', 'tree_view_ref': 'construtora.finan_contrato_condicao_tree', 'default_tipo': 'O'}" />
+                </field>      
                 <field name="valor_comissao" position="before">
                     <field name="data_comissao" colspan="2"/>
                     <field name="vezes" colspan="2"/>

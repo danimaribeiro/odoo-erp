@@ -10,7 +10,7 @@
 .openerp .dhx_cal_container, .openerp .dhx_cal_event {
     background-position:0 24px;
     background-repeat:repeat-x;
-    font-family: Ubuntu, Helvetica, sans-serif;
+    font-family: Roboto, Helvetica, sans-serif;
     position:relative;
     overflow:hidden;
 }
@@ -23,7 +23,7 @@
 }
 
 .openerp .dhx_cal_navline{
-    height:20px; 
+    height:20px;
     position:absolute;
     z-index:1;
     width:750px;
@@ -313,7 +313,7 @@ background-color:#ECECEC;
 }
 
 .openerp .dhx_multi_day_icon, .openerp .dhx_multi_day_icon_small{
-    background-position:center center; 
+    background-position:center center;
     background-repeat:no-repeat;
     border-left:0px;
 }
@@ -321,7 +321,7 @@ background-color:#ECECEC;
 .openerp .dhtmlxLayoutPolyContainer_dhx_skyblue .dhx_cal_container{background-color:none;}
 
 .openerp .dhx_cal_event div{
-    font-family: Ubuntu, Helvetica, sans-serif;
+    font-family: Roboto, Helvetica, sans-serif;
     background-color:#FFE763;
     border:1px solid #a73636;
     color:#887A2E;
@@ -373,7 +373,7 @@ background-color:#ECECEC;
 .openerp .dhx_cal_event .dhx_footer{
     height:2px;
     margin-left:2px;
-    border-width:0 1px 1px 1px; 
+    border-width:0 1px 1px 1px;
     cursor:s-resize;
     overflow:auto;
 }
@@ -394,7 +394,7 @@ The old one
 }*/
 
 .openerp .dhx_cal_event_clear, .openerp .dhx_cal_event_line{
-    font-family:Ubuntu, Helvetica, sans-serif;
+    font-family: Roboto, Helvetica, sans-serif;
     font-size:95%;
     height:15px;
     line-height:15px;
@@ -665,7 +665,7 @@ font-size:11px;line-height:24px;}
 
 .openerp .div .dhx_cal_editor{background-color:#FFE4AB;}
 
-.openerp .dhx_month_body{ 
+.openerp .dhx_month_body{
     border-left:1px solid #E9E9E9;
     border-bottom:1px solid #E9E9E9;
 }
@@ -681,7 +681,7 @@ font-size:11px;line-height:24px;}
 .openerp .dhx_custom_button{margin-top:-2px;}
 .openerp .dhx_cal_lsection .dhx_fullday{color:#000;}
 .openerp .dhx_cal_lsection .dhx_cal_checkbox{height:16px;line-height:18px;}
-.openerp .dhx_cal_light_wide 
+.openerp .dhx_cal_light_wide
 .openerp .dhx_cal_lsection .dhx_cal_checkbox{height:20px;}
 .openerp .dhx_cal_checkbox label{vertical-align:top;}
 .openerp .dhx_cal_light_wide .dhx_cal_lsection{color:black;}
@@ -730,7 +730,7 @@ font-size:11px;line-height:24px;}
     color: #000102;
     border:1px solid #b7a543;
 }
-    
+
 .openerp .dhx_cal_light select {
     color: #000102;
 }
@@ -762,7 +762,7 @@ font-size:11px;line-height:24px;}
 .openerp .dhx_scale_bar_last {
     border-right: none;
 }
-    
+
 .openerp .dhx_year_body .dhx_before .dhx_month_head, .openerp .dhx_year_body .dhx_after .dhx_month_head, .openerp .dhx_year_body .dhx_before .dhx_month_head a, .openerp .dhx_year_body .dhx_after .dhx_month_head a {
     color:#bbb;
 }
@@ -770,11 +770,11 @@ font-size:11px;line-height:24px;}
     color:white;
     text-shadow:none;
 }
-    
+
 .openerp .dhx_tooltip {
     background-image:url("/web_calendar/static/lib/dhtmlxScheduler/codebase/imgs/databg.png");
 }
-    
+
 .openerp .dhx_cal_event div .dhx_menu_head {
     border:none;
 }
@@ -908,7 +908,7 @@ div.openerp .dhx_cal_editor textarea {
 
 /* .openerp .dhx_year_week{
     background-image:url("./imgs/top-days-bg.png");
-} 
+}
 
 .openerp .dhx_month_head.openerp .dhx_year_event{
     background-color:#ff8d8d;
@@ -988,7 +988,7 @@ div.openerp .dhx_cal_editor textarea {
     border-bottom: 1px dotted #8894A3;
 }
 
-/*All*/  
+/*All*/
 /* increase width of lightbox */
 .openerp .dhx_cal_light_wide .dhx_cal_lsection{
     background-image:url(/web_calendar/static/lib/dhtmlxScheduler/codebase/imgs/multi-days-bg.png);

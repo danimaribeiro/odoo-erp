@@ -110,27 +110,28 @@
                         <button string="Atualizar" type="object" name="nada" icon="gtk-apply" colspan="4" />
                         <notebook colspan="4">
                             <page string="Busca">
-                                <field name="imovel_busca_ids" nolabel="1" colspan="4" context="{'form_view_ref' : 'construtora.imovel_crm_form', 'tree_view_ref' : 'construtora.imovel_crm_tree', 'search_view_ref': 'construtora.imovel_crm_search', 'search_default_desativar': True, 'prospecto': id}" />
+                                <field name="imovel_busca_ids" readonly="1" nolabel="1" colspan="4" context="{'form_view_ref' : 'construtora.imovel_crm_fotos_form', 'tree_view_ref' : 'construtora.imovel_crm_tree', 'search_view_ref': 'construtora.imovel_crm_search', 'search_default_desativar': True, 'prospecto': id}" />
                             </page>
                             <page string="Detalhamento">
                                 <field name="imovel_exibe_busca_ids" nolabel="1" colspan="4" context="{'form_view_ref' : 'construtora.imovel_crm_form', 'tree_view_ref' : 'construtora.imovel_crm_tree', 'search_view_ref': 'construtora.imovel_crm_search', 'search_default_desativar': True, 'prospecto': id}" mode="form,tree" widget="one2many_list" readonly="1" />
                             </page>
                         </notebook>
                     </page>
-                    <page string="Imóveis com interesse">
+                    <page string="Ficha de Visita">
                         <button string="Atualizar" type="object" name="nada" icon="gtk-apply" colspan="4" />
                         <notebook colspan="4">
                             <page string="Simples">
-                                <field name="imovel_ids" nolabel="1" colspan="4" context="{'form_view_ref' : 'construtora.imovel_crm_form', 'tree_view_ref' : 'construtora.imovel_crm_tree', 'search_view_ref': 'construtora.imovel_crm_search', 'search_default_desativar': True}" />
+                                <field name="imovel_ids" nolabel="1" colspan="4" context="{'form_view_ref' : 'construtora.imovel_crm_form', 'tree_view_ref' : 'construtora.imovel_crm_escolhido_tree', 'search_view_ref': 'construtora.imovel_crm_search', 'search_default_desativar': True, 'partner_id': partner_id, 'corretor_id': user_id, 'crm_lead_id': id}" />
                             </page>
                             <page string="Detalhamento">
-                                <field name="imovel_exibe_ids" nolabel="1" colspan="4" context="{'form_view_ref' : 'construtora.imovel_crm_form', 'tree_view_ref' : 'construtora.imovel_crm_tree', 'search_view_ref': 'construtora.imovel_crm_search', 'search_default_desativar': True}" mode="form,tree" widget="one2many_list" readonly="1" />
+                                <field name="imovel_exibe_ids" nolabel="1" colspan="4" context="{'form_view_ref' : 'construtora.imovel_crm_form', 'tree_view_ref' : 'construtora.imovel_crm_escolhido_tree', 'search_view_ref': 'construtora.imovel_crm_search', 'search_default_desativar': True}" mode="form,tree" widget="one2many_list" readonly="1" />
                             </page>
                         </notebook>
+                        <label string="" name="ficha_visita" />
                     </page>
                     <page string="Comunicação e Histórico">
                     <group colspan="4">
-                        <field colspan="4" name="email_cc" widget="char" size="512"/>
+                        <field colspan="4" name="email_cc" widget="char" size="512" invisible="1" />
                     </group>
                         <field name="message_ids" colspan="4" nolabel="1" mode="tree" readonly="1">
                             <tree string="Histórico">
@@ -151,7 +152,7 @@
                             name="%(mail.action_email_compose_message_wizard)d"
                             icon="terp-mail-message-new" type="action"/>
                     </page>
-                    <page string="Informações adicionais">
+                    <page string="Informações Adicionais">
                         <group colspan="2" col="2">
                             <separator string="Categorization" colspan="2" col="2"/>
                             <field name="company_id" widget="selection" colspan="2" />
@@ -185,6 +186,7 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Prospectos"  colors="blue:state=='pending';grey:state in ('cancel', 'done')">
+                <field name="id" invisible="1"/>
                 <field name="date_deadline" invisible="1"/>
                 <field name="categ_id" invisible="1"/>
                 <field name="type_id" invisible="1"/>

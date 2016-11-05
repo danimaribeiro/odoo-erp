@@ -15,6 +15,7 @@ class sped_operacao(osv.Model):
     _columns = {
         'bonifica_pedido': fields.boolean(u'Vincula a orçamento de bonificação?'),
         'nota_locacao_ids': fields.one2many('sped.operacao.nota.locacao', 'operacao_id', u'Configurações para notas de locação'),
+        'stock_operacao_id': fields.many2one('stock.operacao', u'Operação de Estoque'),
     }
 
 

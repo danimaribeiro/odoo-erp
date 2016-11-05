@@ -18,6 +18,7 @@
                         <field name="data_final" required="1"/>
                         <field name="partner_id" colspan="4"/>
                         <field name="pedido_id" colspan="4" domain="[('partner_id', '=', partner_id), ('state', '=', 'done')]"/>
+                        <field name="stock_picking_id" colspan="4" domain="[('sale_id', '=', pedido_id)]" attrs="{'invisible': [('pedido_id', '=', False)]}" />
                         <newline/>
                         <button icon="gtk-execute" name="busca_pedidos" context="{'data_inicial': data_inicial, 'data_final': data_final, 'company_id': company_id, 'partner_id': partner_id, 'pedido_id': pedido_id}" string="Buscar pedidos" type="object" colspan="2"/>
                         <button icon="gtk-execute" name="gera_notas" context="{'data_inicial': data_inicial, 'data_final': data_final, 'company_id': company_id, 'partner_id': partner_id, 'pedido_id': pedido_id, 'pedido_ids': pedido_ids}" string="Gerar notas" type="object" colspan="2"/>
@@ -32,7 +33,7 @@
                                 <field name="operacao_fiscal_produto_id"/>
                                 <field name="operacao_fiscal_servico_id"/>
 <!--                                 <field name="vr_total_venda_impostos" sum="Valor"/> -->
-                                <field name="amount_total" sum="Valor"/>
+                                <field name="vr_a_faturar" sum="Valor"/>
                             </tree>
                         </field>
                     </group>

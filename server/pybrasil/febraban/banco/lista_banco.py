@@ -62,6 +62,15 @@ def _monta_dicionario_codigo():
 
             if hasattr(modulo, 'linha_retorno_240'):
                 b.linha_retorno_240 = types.MethodType(getattr(modulo, 'linha_retorno_240'), b)
+                
+            if hasattr(modulo, 'fp_header_retorno_240'):
+                b.fp_header_retorno_240 = types.MethodType(getattr(modulo, 'fp_header_retorno_240'), b)
+
+            if hasattr(modulo, 'fp_trailler_retorno_240'):
+                b.fp_trailler_retorno_240 = types.MethodType(getattr(modulo, 'fp_trailler_retorno_240'), b)
+
+            if hasattr(modulo, 'fp_linha_retorno_240'):
+                b.fp_linha_retorno_240 = types.MethodType(getattr(modulo, 'fp_linha_retorno_240'), b)
             
             if hasattr(modulo, 'header_remessa_400'):
                 b.header_remessa_400 = types.MethodType(getattr(modulo, 'header_remessa_400'), b)

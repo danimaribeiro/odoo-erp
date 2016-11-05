@@ -48,10 +48,11 @@
                             <field name="vencida" />
                             <field name="proporcional" />
                             <field name="pagamento_dobro" />
+                            <field name="pagamento_dobro_dias" attrs="{'invisible': [('pagamento_dobro', '=', False)]}" />
                         </group>
                         <group string="Período de gozo">
-                            <field name="date_from" nolabel="1" required="1" on_change="onchange_datas(tipo, employee_id, contract_id, date_from, date_to, data_inicio_periodo_aquisitivo, data_fim_periodo_aquisitivo, False, False, False, False, simulacao, False, struct_id, dias_ferias)" />
-                            <field name="date_to" nolabel="1" required="1" on_change="onchange_datas(tipo, employee_id, contract_id, date_from, date_to, data_inicio_periodo_aquisitivo, data_fim_periodo_aquisitivo, False, False, False, False, simulacao, False, struct_id, dias_ferias)" />
+                            <field name="date_from" nolabel="1" required="1" on_change="onchange_datas(tipo, employee_id, contract_id, date_from, date_to, data_inicio_periodo_aquisitivo, data_fim_periodo_aquisitivo, False, False, False, False, simulacao, False, struct_id, dias_ferias, pagamento_dobro)" />
+                            <field name="date_to" nolabel="1" required="1" on_change="onchange_datas(tipo, employee_id, contract_id, date_from, date_to, data_inicio_periodo_aquisitivo, data_fim_periodo_aquisitivo, False, False, False, False, simulacao, False, struct_id, dias_ferias, pagamento_dobro)" />
                             <newline/>
                             <field name="abono_pecuniario_ferias" on_change="abono_pecuniario_ferias_change(abono_pecuniario_ferias, date_from, date_to)" />
                             <newline/>

@@ -53,11 +53,11 @@ class finan_gera_nota(osv.osv_memory):
             left join sped_documento d on d.id = sosd.sped_documento_id
 
         where
-            (coalesce(lp.meses_retorno_locacao, 0) = 0)
+            (coalesce(lp.meses_retorno_locacao, 0) = 0 or coalesce(so.vr_total_servicos, 0) > 0)
             and so.libera_faturamento_contrato = True
             and (sosd.sale_order_id is null or d.situacao not in ('00', '01'))
         '''
-        #(coalesce(lp.meses_retorno_locacao, 0) = 0 or coalesce(so.vr_total_servicos, 0) > 0)
+        #(coalesce(lp.meses_retorno_locacao, 0) = 0)
 
         if pedido_id:
             sql += '''
@@ -82,6 +82,7 @@ class finan_gera_nota(osv.osv_memory):
         pedido_pool = self.pool.get('sale.order')
 
         cr.execute(sql)
+        print(sql)
         dados = cr.fetchall()
         pedido_ids = []
         for pedido_id, in dados:
@@ -111,7 +112,8 @@ class finan_gera_nota(osv.osv_memory):
         # Agrupa os pedidos por cliente
         #
         pedidos_cliente = {}
-        for pedido_obj in self.pool.get('sale.order').browse(cr, uid, pedido_ids):
+        for pedido_obj in self.pool.get('sale.order').browse(cr, uid, pedido_ids, context={'salva_dados': True}):
+            pedido_obj._simulacao_parcelas('simulacao_parcelas_readonly_ids', context={'salva_dados': True})
             cnpj = pedido_obj.partner_id.cnpj_cpf
             if cnpj not in pedidos_cliente:
                 pedidos_cliente[cnpj] = [pedido_obj]
@@ -130,6 +132,8 @@ class finan_gera_nota(osv.osv_memory):
                     context['soh_servicos'] = True
                 else:
                     context['soh_servicos'] = False
+
+                context['seguranca'] = True
 
                 pedido_obj.gera_notas(context=context)
 

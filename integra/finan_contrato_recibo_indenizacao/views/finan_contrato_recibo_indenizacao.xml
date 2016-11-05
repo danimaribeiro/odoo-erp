@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="finan_contrato_recibo_indenizacao_tree">
+            <field name="name">finan.recibo.indenizacao.tree</field>
+            <field name="model">finan.recibo.indenizacao</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="numero" />
+                    <field name="contrato_id" />
+                    <field name="data" />
+                    <field name="valor" />
+                    <field name="confirmado" />                    
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_recibo_indenizacao_form">
+            <field name="name">finan.recibo.indenizacao.form</field>
+            <field name="model">finan.recibo.indenizacao</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Recibo de Indenização">                                           
+                    <group col="4" colspan="4" string="Contrato">
+                        <field name="contrato_id" required="1" colspan="4" on_change="onchange_contrato_id(contrato_id)"/>
+                        <field name="company_id" readonly="1" colspan="4"/>
+                        <field name="partner_id" readonly="1" colspan="4"/>
+                        <field name="carteira_id" readonly="1" colspan="4" />                        
+                        <field name="cnpj_cpf" invisible="1"/>
+                    </group>
+                    <separator string="Dados do Recibo" colspan="4" />
+                    <group col="8" colspan="4">                    
+                        <group col="4" colspan="4">                    
+                            <field name="modelo_id" required="1" colspan="4" domain="[('tipo','=','MR')]" />                        
+                            <field name="sped_documento_id" colspan="4" domain="[('company_id', '=', company_id), ('partner_id', '=', partner_id), ('modelo', '=', '55')]" />
+                            <button name="confirmar" colspan="4" type="object" string="Confirmar Recibo" icon="gtk-apply" attrs="{'invisible': [('confirmado','!=',False)]}" />                    
+                        </group>
+                        <group col="2" colspan="2">                    
+                            <field name="data" required="1" />                        
+                            <field name="data_vencimento" required="1" />                        
+                            <field name="valor" required="1" />                        
+                        </group>
+                        <group col="2" colspan="2">                    
+                            <field name="confirmado" />                        
+                            <field name="data_confirmacao" />                        
+                            <field name="usuario_confirmacao_id" /> 
+                            <field name="numero" readonly="1" />                        
+                        </group>
+                    </group>
+                    <separator string="Lançamento" colspan="4" />
+                    <field name="lancamento_id" nolabel="1" colspan="4" readonly="1" context="{'form_view_ref': 'finan.finan_receber_form', 'tree_view_ref': 'finan.finan_receber_tree'}" />                                        
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_contrato_recibo_indenizacao_search">
+            <field name="name">finan.recibo.indenizacao.search</field>
+            <field name="model">finan.recibo.indenizacao</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Recibo de Indenização">
+                    <field name="numero" />
+                    <field name="contrato_id" />
+                    <field name="data" />
+                    <field name="valor" />
+                    <field name="confirmado" />  
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="finan_contrato_recibo_indenizacao_acao">
+            <field name="name">Recibo de Indenização</field>
+            <field name="res_model">finan.recibo.indenizacao</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>            
+            <field name="view_id" ref="finan_contrato_recibo_indenizacao_tree" />
+            <field name="search_view_id" ref="finan_contrato_recibo_indenizacao_search" />
+        </record>
+
+        <menuitem action="finan_contrato_recibo_indenizacao_acao"
+            id="menu_finan_contrato_recibo_indenizacao"
+            name="Recibo de Indenização"
+            parent="finan_contrato.menu_finan_contratos"
+            sequence="01"/>
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_recibo_indenizacao_form_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="finan_contrato_recibo_indenizacao_form"/>
+            <field name="act_window_id" ref="finan_contrato_recibo_indenizacao_acao"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="finan_contrato_recibo_indenizacao_tree_acao">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="finan_contrato_recibo_indenizacao_tree"/>
+            <field name="act_window_id" ref="finan_contrato_recibo_indenizacao_acao"/>
+        </record>
+
+    </data>
+</openerp>

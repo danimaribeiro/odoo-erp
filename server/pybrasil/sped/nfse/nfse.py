@@ -142,6 +142,7 @@ class Prestador(Participante):
     def __init__(self, **kwargs):
         super(Prestador, self).__init__(**kwargs)
         self.incentivador_cultural = False
+        self.arquivo_logo = ''
 
     @property
     def optante_simples_nacional(self):

@@ -64,6 +64,7 @@
         'wizard/hr_relatorio_funcionario_ativos_sexo_categoria.xml',
         'wizard/hr_relatorio_quadro_lotacao.xml',
         'wizard/relatorio_estoque_minimo.xml',
+        'wizard/relatorio_estoque_orderm_entrega.xml',
 
         'wizard/relatorio_movimentacao_operacao.xml',
         'wizard/relatorio_orcamento_comissao.xml',

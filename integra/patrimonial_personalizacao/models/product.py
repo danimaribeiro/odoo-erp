@@ -320,17 +320,20 @@ limit 1;'''
             #
             # Regra da Segurança; local 500, id 21
             #
-            if user_obj.company_id.partner_id.cnpj_cpf[:10] == '82.891.805':
+            #@if user_obj.company_id.partner_id.cnpj_cpf[:10] == '82.891.805':
+            if nome_campo == 'qty_novo':
                 sql = """
                     select
                         coalesce(es.quantidade, 0) as quantidade
                     from stock_saldo es
-                    join stock_location lo on lo.id = es.location_id
+                        join stock_location lo on lo.id = es.location_id
+                        join res_company c on c.id = es.company_id
 
                     where
                         es.product_id = {product_id}
                         and es.location_id = 21
                         and es.data <= current_date
+                        and c.raiz_cnpj = '82.891.805'
                     order by
                         es.data desc
                     limit 1;
@@ -376,7 +379,8 @@ limit 1;'''
             #
             # Regra da Segurança; local 503, id 1457
             #
-            if user_obj.company_id.partner_id.cnpj_cpf[:10] == '82.891.805':
+            #if user_obj.company_id.partner_id.cnpj_cpf[:10] == '82.891.805':
+            if nome_campo == 'qty_usado':
                 sql = """
                     select
                         coalesce(es.quantidade, 0) as quantidade
@@ -384,11 +388,13 @@ limit 1;'''
                     from
                         stock_saldo es
                         join stock_location lo on lo.id = es.location_id
+                        join res_company c on c.id = es.company_id
 
                     where
                         es.product_id = {product_id}
                         and es.location_id = 1457
                         and es.data <= current_date
+                        and c.raiz_cnpj = '82.891.805'
 
                     order by
                         es.data desc
@@ -431,6 +437,7 @@ limit 1;'''
                 res[product_obj.id] = 0
 
         return res
+   
 
     def _get_quantidade_disponivel_venda(self, cr, uid, ids, nome_campo, args=None, context={}):
         res = {}
@@ -611,8 +618,10 @@ limit 1;'''
         'valor_acessorios_id': fields.many2one('product.product', u'Item para valor de acessórios'),
         'custo_ultima_compra': fields.function(_custo_ultima_compra, string=u'Custo da última compra/atualização de tabela', method=True, type='float'),
         'custo_ultima_compra_locacao': fields.function(_custo_ultima_compra_locacao, string=u'Custo da última compra/atualização de tabela', method=True, type='float'),
-        'qty_available': fields.function(_get_quantidade_venda, type='float', string='Quantidade na mão venda'),
+        'qty_available': fields.function(_get_quantidade_venda, type='float', string='Quantidade na mão venda'),        
         'qty_locacao': fields.function(_get_quantidade_locacao, type='float', string='Quantidade na mão locação'),
+        'qty_novo': fields.function(_get_quantidade_venda, type='float', string='Quantidade na mão novo'),
+        'qty_usado': fields.function(_get_quantidade_locacao, type='float', string='Quantidade na mão usado'),
         'virtual_available': fields.function(_get_quantidade_disponivel_venda, type='float', string='Quantidade disponível venda'),
         'quantidade_disponivel_locacao': fields.function(_get_quantidade_disponivel_locacao, type='float', string='Quantidade disponível locação'),
     }

@@ -16,7 +16,7 @@
                         <field name="data_inicial" required="1" />
                         <field name="data_final" required="1" />
                         <newline/>
-                        <field name="nome" invisible="1"/>                        
+                        <field name="nome" invisible="1"/>
                         <button icon="gtk-execute" string="Gerar relatório" name="gerar_lote_recibos_exata" type="object"  colspan="4"/>
                         <newline/>
                         <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
@@ -33,14 +33,17 @@
         </record>
 
         <record model="ir.actions.act_window.view" id="finan_relatorio_lote_recibos_form_acao">
-            <field eval="2" name="sequence"/>
+            <field eval="3" name="sequence"/>
             <field name="view_mode">form</field>
             <field name="view_id" ref="finan_relatorio_lote_recibos_form"/>
             <field name="act_window_id" ref="finan_relatorio_lote_recibos_acao"/>
         </record>
 
-        <menuitem action="finan_relatorio_lote_recibos_acao"
-                  id="menu_finan_relatorio_lote_recibos" name="Lote Recibos de Clientes" parent="finan.menu_rel_conta_receber" sequence="10" />
+        <menuitem
+            action="finan_relatorio_lote_recibos_acao"
+            id="menu_finan_relatorio_lote_recibos"
+            name="Lote Recibos de Clientes"
+            parent="finan.menu_rel_conta_receber" sequence="10" />
 
     </data>
 </openerp>

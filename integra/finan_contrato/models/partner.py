@@ -42,7 +42,7 @@ class res_partner(osv.Model):
                 qualificacao += u', inscrita no CNPJ sob o nº '
                 qualificacao += partner_obj.cnpj_cpf or u''
 
-                if len(partner_obj.sociedade_ids):
+                if hasattr(partner_obj, 'sociedade_ids') and len(partner_obj.sociedade_ids):
                     qualificacao += u', neste ato representada por '
 
                     socio_obj = partner_obj.sociedade_ids[0]

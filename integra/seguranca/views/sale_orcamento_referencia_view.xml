@@ -8,6 +8,7 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="Orçamentos de referência">
+                    <field name="tipo" invisible="1" />
                     <field name="name" string="Referência" />
                     <field name="pricelist_id" string="Tipo de orçamento" />
                 </tree>
@@ -20,6 +21,7 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Orçamento de referência">
+                    <field name="tipo" invisible="1" />
                     <group colspan="4" col="4">
                         <field name="pricelist_id" colspan="4" string="Tipo do orçamento" domain="[('type', '=', 'sale')]" required="1" />
                         <field name="name" string="Referência" />
@@ -94,6 +96,8 @@
             <field name="view_id" ref="sale_order_seguranca_orcamento_referencia_tree" />
             <field name="search_view_id" ref="sale_order_seguranca_orcamento_referencia_search"/>
             <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo', '=', 'V')]</field>
+            <field name="context">{'tipo': 'V', 'default_tipo': 'V'}</field>
         </record>
 
         <menuitem

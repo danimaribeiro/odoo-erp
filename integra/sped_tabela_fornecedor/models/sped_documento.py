@@ -54,6 +54,7 @@ class sped_documento(osv.Model):
             linhas = txt.split('\n')
 
             novos_itens = []
+            itens_nao_encontrados = u''
 
             for linha in linhas:
                 if not linha:
@@ -94,9 +95,10 @@ class sped_documento(osv.Model):
                 #
                 # Não encontrou o produto
                 #
-                if not produto_ids:
-                    print('nao achou o produto', codigo, ncm, produto_ids)
+                if not produto_ids:                    
+                    itens_nao_encontrados += linha                                       
                     continue
+                
                 print('achou o produto', codigo, ncm)
                 produto_ids = produto_ids[0]
 
@@ -179,6 +181,24 @@ class sped_documento(osv.Model):
                 item_pool.write(cr, 1, [item_id], copy(dados_item['value']))
                 cr.commit()
 
+            if itens_nao_encontrados:                
+                nome = 'produtos_nao_encontrados.txt'               
+                attachment_pool = self.pool.get('ir.attachment')
+                attachment_ids = attachment_pool.search(cr, uid, [('res_model', '=', 'sped.documento'), ('res_id', '=', nota_obj.id), ('name', '=', nome)])
+                attachment_pool.unlink(cr, uid, attachment_ids)
+    
+                itens = itens_nao_encontrados.encode('utf-8')
+                
+                dados = {
+                    'datas': base64.encodestring(itens),
+                    'name': nome,
+                    'datas_fname': nome,
+                    'res_model': 'sped.documento',
+                    'res_id': nota_obj.id,
+                    'file_type': 'application/pdf',
+                }
+                attachment_pool.create(cr, uid, dados)
+                 
             ##
             ## Exclui todos os itens anteriores, que tenham sido importados sem o custo
             ##

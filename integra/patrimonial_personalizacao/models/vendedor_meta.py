@@ -65,7 +65,7 @@ from dateutil.relativedelta import relativedelta
 
 class comercial_meta(osv.Model):
     _name = 'comercial.meta'
-    _order = 'data_inicial desc, name'
+    _order = 'data_inicial desc, fechado desc, name'
     _rec_name = 'descricao'
 
     def _descricao(self, cursor, user_id, ids, fields, arg, context=None):
@@ -311,7 +311,7 @@ class comercial_meta(osv.Model):
         'percentual_atingido_retencao_carteira_organica': fields.float(u'Perc. atingido de retenção da carteira'),
         'percentual_repres_retencao_carteira_organica': fields.float(u'Perc. respres. de retenção da carteira'),
         'vr_variavel_retencao_carteira_organica': fields.float(u'Variável de retenção da carteira'),
-        
+
         'input_ids': fields.one2many('hr.payslip.input', 'meta_id', u'Entradas variáveis'),
     }
 
@@ -339,6 +339,7 @@ class comercial_meta(osv.Model):
             'carteira_inicial3': False,
             'carteira': False,
             'meta_percentual_retencao_carteira': False,
+            'input_ids': False,
         }
 
         return super(comercial_meta, self).copy(cr, uid, id, default=default, context=context)
@@ -380,7 +381,7 @@ class comercial_meta(osv.Model):
                 meta_vr_novos_real += deficit
 
                 meta_pool.write(cr, uid, [proxima_meta_obj.id], {'meta_vr_novos_deficit': deficit * -1, 'meta_vr_novos_real': meta_vr_novos_real, 'meta_vr_novos_superavit': superavit, 'carteira_inicial': meta_obj.carteira, 'carteira_inicial_organica': meta_obj.carteira_organica})
-            
+
             sql = """
                 select distinct
                     co.id
@@ -388,35 +389,35 @@ class comercial_meta(osv.Model):
                     join resource_resource rr on rr.user_id = u.id
                     join hr_employee e on e.resource_id = rr.id
                     join hr_contract co on co.employee_id = e.id
-                where 
+                where
                 co.date_end is null
-                and u.id = {id}                
+                and u.id = {id}
                 limit 1""".format(id=meta_obj.vendedor_id.id)
-                
+
             cr.execute(sql)
             dados = cr.fetchall()
-            
+
             linhas = []
             if not dados:
                 continue
             else:
                 contrato_obj = contract_pool.browse(cr, uid, dados[0][0])
-                
+
                 valor_comissao = D(meta_obj.vr_variavel) + D(meta_obj.vr_variavel_organica)
-                dados = {                   
+                dados = {
                     'meta_id': meta_obj.id,
                     'company_id': contrato_obj.company_id.id,
-                    'contract_id': contrato_obj.id, 
+                    'contract_id': contrato_obj.id,
                     'employee_id': contrato_obj.employee_id.id,
-                    'rule_id': 11,                                                         
-                    'data_inicial': meta_obj.data_inicial,
-                    'data_final': meta_obj.data_final,                    
-                    'amount': valor_comissao or 0                    
-                }                    
-                input_pool.create(cr,uid, dados)     
-                
-        return True          
-            
+                    'rule_id': 11,
+                    'data_inicial': str(primeiro_dia_mes(meta_obj.data_final)),
+                    'data_final': meta_obj.data_final,
+                    'amount': valor_comissao or 0
+                }
+                input_pool.create(cr,uid, dados)
+
+        return True
+
 
     def monta_filtro(self, cr, uid, meta_obj, filtro_faturamento=False, filtro_transferencia=False):
         data_inicial = parse_datetime(meta_obj.data_inicial).date()
@@ -445,7 +446,16 @@ class comercial_meta(osv.Model):
             data_final_competencia_anterior = ultimo_dia_mes(data_final_competencia_anterior)
 
         else:
-            meses = idade_meses_sem_dia(data_inicial, data_final)
+            ##
+            ## Muda a data final para o dia 24, para ajustar as coisas que nãom sabe dizer como fazer....
+            ## Passaram a controlar do dia 1º ao dia 30, mas não sabem dizer o que o sistema tem que fazer
+            ## a apuração considerando 35 dias e não 1 mês
+            ##
+            #if data_final == ultimo_dia_mes(data_final):
+                #data_final += relativedelta(day=24)
+
+            #meses = idade_meses_sem_dia(data_inicial, data_final)
+            meses = 1
 
             data_inicial_anterior = data_inicial + relativedelta(months=-meses)
             data_final_anterior = data_final + relativedelta(months=-meses)
@@ -1045,6 +1055,35 @@ class comercial_meta(osv.Model):
                 }
                 self.pool.get('comercial.meta.contrato.transferido').create(cr, uid, item)
 
+            #
+            # Excluímos os contratos que entraram e saíram
+            #
+            sql = """
+            select
+                ct.numero_contrato
+            from
+                comercial_meta_contrato_transferido ct
+            where
+                ct.meta_id = {meta_id}
+            group by
+                ct.numero_contrato
+            having
+                count(*) > 1;
+            """
+            sql = sql.format(meta_id=meta_obj.id)
+            cr.execute(sql)
+            ct_repetidos = cr.fetchall()
+
+            for ct_repetido_numero, in ct_repetidos:
+                sql = """
+                delete from comercial_meta_contrato_transferido ct
+                where
+                    ct.meta_id = {meta_id}
+                    and ct.numero_contrato = '{numero}';
+                """
+                sql = sql.format(meta_id=meta_obj.id, numero=ct_repetido_numero)
+                cr.execute(sql)
+
         #cr.execute('update comercial_meta set carteira_transferida = ' + str(carteira_transferida) + ' where id = ' + str(meta_obj.id) + ';')
         ####
         #### Valores agrupados para indicadores - BAIXADOS
@@ -1076,6 +1115,19 @@ class comercial_meta(osv.Model):
     def acumula_indicadores(self, cr, uid, ids, context={}):
         self._acumula_indicadores_organica(cr, uid, ids, context=context)
         self._acumula_indicadores(cr, uid, ids, context=context)
+        meta_pool = self.pool.get('comercial.meta')
+
+        uid = 1
+        for meta_obj in self.browse(cr, uid, ids):
+            if meta_obj.fechado:
+                continue
+
+            #
+            # Se meta de orgânica, traz os contratos da orgânica DEPOIS DE ACUMULADOS e calculados os variaveis
+            #
+            if meta_obj.carteira_inicial_organica:
+                meta_obj.incluir_vigilancia = True
+                meta_pool.guarda_dados_indicadores(cr, uid, meta_obj)
 
     def _acumula_indicadores(self, cr, uid, ids, context={}):
         meta_pool = self.pool.get('comercial.meta')

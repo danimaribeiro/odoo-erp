@@ -2,6 +2,39 @@
 <openerp>
     <data>
 
+        <record model="ir.ui.view" id="finan_receber_tree">
+            <field name="name">finan.receber.tree</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_tree"/>
+            <field name="priority" eval="100"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="provisionado" position="after">
+                    <field name="liberado_pagamento_administracao" invisible="1" />
+                    <field name="liberado_pagamento_comissao" invisible="1" />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="finan_receber_search">
+            <field name="name">finan.receber.search</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="finan.finan_receber_search"/>
+            <field name="priority" eval="100"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="replace">
+                    <field name="partner_id" />
+                </field>
+
+                <filter name="baixado" position="after">
+                    <separator orientation="vertical" />
+                    <filter name="liberado_pagamento_comissao" string="Liberados?" icon="terp-gtk-jump-to-rtl" domain="['|', ('liberado_pagamento_administracao','!=',False), ('liberado_pagamento_comissao','!=',False)]" />
+                    <filter name="bloqueado_pagamento_comissao" string="Bloqueados?" icon="terp-gtk-jump-to-rtl" domain="['|', ('liberado_pagamento_administracao','=',False), ('liberado_pagamento_comissao','=',False)]" />
+                </filter>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="finan_receber_form">
             <field name="name">finan.receber.form</field>
             <field name="model">finan.lancamento</field>
@@ -19,8 +52,32 @@
                     <field name="tipo_conta" required="0" />
                     <field name="conta_id" required="1" domain="[('sintetica', '=', False), ('tipo', '=', tipo_conta)]" on_change="onchange_conta_id(conta_id, company_id, centrocusto_id, valor_documento, valor, partner_id, data_vencimento, data_documento)"/>
                 </field>
+
+                <field name="valor_saldo" position="replace">
+                    <group colspan="4" col="6">
+                        <field name="finan_contrato_condicao_parcela_valor_capital" string="Valor original" readonly="1" />
+                        <field name="finan_contrato_condicao_parcela_correcao" readonly="1" string="Correções dos contratos" />
+                        <field name="valor_saldo" readonly="1" />
+                    </group>
+                </field>
+
             </field>
         </record>
+
+        <record model="ir.ui.view" id="finan_receber_contrato_form">
+            <field name="name">finan.receber.contrato.form</field>
+            <field name="model">finan.lancamento</field>
+            <field name="inherit_id" ref="sped_finan.finan_receber_contrato_form"/>
+            <field name="priority" eval="100"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="replace">
+<!--                     <field name="partner_id" required="1" string="Cliente" attrs="{'readonly': [('sped_documento_id', '!=', False)]}" domain="[('cnpj_cpf', '!=', False)]"/> -->
+                    <field name="partner_id" required="1" string="Cliente" attrs="{'readonly': [('sped_documento_id', '!=', False)]}" />
+                </field>
+            </field>
+        </record>
+
 
     </data>
 </openerp>

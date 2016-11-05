@@ -43,7 +43,9 @@
                             <newline />
                             <group colspan="4">
                                 <separator string="Características e período" colspan="10" />
-                                <field name="data_inicio" required="1" />
+                                <group colspan="2" col="2">
+                                    <field name="data_inicio" required="1" />
+                                </group>
                                 <field name="pro_rata" required="1" />
                                 <field name="dia_vencimento"  required="1" />
                                 <field name="diferenca_meses_referencia" />

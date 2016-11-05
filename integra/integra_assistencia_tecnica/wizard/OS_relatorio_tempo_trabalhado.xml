@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="relatorio_assistencia_tempo_trabalhado_form" >
+            <field name="name">assistencia.relatorio.tempo.trabalhado.form</field>
+            <field name="model">assistencia.relatorio</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Relatório Tempo de Trabalhado">
+                    <group colspan="4">
+                        <separator string="Filtros do Relatório" colspan="4" />
+                        <field name="company_id" required="1" colspan="4" />
+                        <newline/>                                               
+                        <field name="data_inicial" required="1" />                          
+                        <field name="data_final" required="1" />                          
+                        <newline/>
+                        <field name="nome" invisible="1"/>                        
+                        <newline/>
+                        <button icon="gtk-print" string="Gerar relatório" name="gera_tempo_trabalhado" type="object" colspan="4" />
+                        <newline/>
+                        <field name="arquivo" nolabel="1" readonly="1" filename="nome" colspan="4"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="relatorio_assistencia_tempo_trabalhado_acao">
+            <field name="name">Relatório Tempo de Trabalhado</field>
+            <field name="res_model">assistencia.relatorio</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="relatorio_assistencia_tempo_trabalhadoform_acao">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="relatorio_assistencia_tempo_trabalhado_form"/>
+            <field name="act_window_id" ref="relatorio_assistencia_tempo_trabalhado_acao"/>
+        </record>
+
+        <menuitem action="relatorio_assistencia_tempo_trabalhado_acao"
+                  id="menu_relatorio_assistencia_tempo_trabalhado"
+                  name="Tempo de Trabalhado"
+                  parent="menu_assistencia_relatorio"
+                  sequence="02"/>
+
+    </data>
+</openerp>

@@ -8,15 +8,22 @@ from pybrasil.valor.decimal import Decimal as D
 
 
 class product_acessorio(osv.Model):
-    _name = 'product.acessorio'    
+    _name = 'product.acessorio'
     _description = u'Acessório do produto'
-    
-        
-    _columns = {                        
+
+
+    _columns = {
         'product_id': fields.many2one('product.product', u'Produto', ondelete='restrict'),
         'acessorio_id': fields.many2one('product.product', u'Acessório'),
-        'quantidade': fields.float(u'Quantidade'),                    
-    }    
-    
+        'quantidade': fields.float(u'Quantidade'),
+    }
+
 
 product_acessorio()
+
+
+class product_acessorio_obrigatorio(osv.Model):
+    _name = 'product.acessorio.obrigatorio'
+    _inherit = 'product.acessorio'
+
+product_acessorio_obrigatorio()

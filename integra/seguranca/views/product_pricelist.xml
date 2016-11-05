@@ -36,6 +36,7 @@
                     <field name="meses_retorno_locacao" string="Meses para retorno em locação" />
                     <newline />
                     <field name="tipo_os_id" />
+                    <field name="contrato_terceirizado" />
                 </field>
             </field>
         </record>

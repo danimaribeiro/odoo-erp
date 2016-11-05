@@ -8,8 +8,11 @@
             <field name="type">form</field>
             <field name="inherit_id" ref="finan.finan_relatorio_contas_pagar"/>
             <field name="arch" type="xml">
-                <button name="gera_relatorio_contas_pagar_rateio" position="after">
+                <button name="gera_relatorio_contas_pagar" position="after">
+                    <field name="nome_csv" invisible="1"/>
                     <button icon="gtk-execute" string="Gerar relatório versão 2" name="gera_relatorio_contas_versao2" type="object" colspan="4" />
+                    <newline />                 
+                    <field name="arquivo_csv" nolabel="1" readonly="1" filename="nome_csv" colspan="4" attrs="{'invisible': [('arquivo_csv', '=', False)]}"/>                 
                 </button>
             </field>
         </record>

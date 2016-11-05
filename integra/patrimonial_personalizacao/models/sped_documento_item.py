@@ -61,7 +61,7 @@ class sped_documentoitem(osv.Model):
                            custo_medio({company_id}, {location_id}, {product_id}) cm
 
                        where
-                           cm.data <= '{data}'
+                           cast(cm.data at time zone 'UTC' at time zone 'America/Sao_Paulo' as date) <= '{data}'
 
                        order by
                            cm.data desc, cm.entrada_saida desc, cm.move_id desc
@@ -70,12 +70,12 @@ class sped_documentoitem(osv.Model):
                     """
 
                     if item_obj.company_id.matriz_id:
-                        sql_saldo = sql_saldo.format(company_id=item_obj.company_id.matriz_id.id, location_id=location_id, product_id=item_obj.produto_id.id,data=item_obj.data_emissao)
-                        sql_custo = sql_custo.format(company_id=item_obj.company_id.matriz_id.id, location_id=location_id, product_id=item_obj.produto_id.id,data=item_obj.data_emissao)
+                        sql_saldo = sql_saldo.format(company_id=item_obj.company_id.matriz_id.id, location_id=location_id, product_id=item_obj.produto_id.id,data=item_obj.documento_id.data_emissao_brasilia)
+                        sql_custo = sql_custo.format(company_id=item_obj.company_id.matriz_id.id, location_id=location_id, product_id=item_obj.produto_id.id,data=item_obj.documento_id.data_emissao_brasilia)
 
                     else:
-                        sql_saldo = sql_saldo.format(company_id=item_obj.company_id.id,location_id=location_id, product_id=item_obj.produto_id.id,data=item_obj.data_emissao)
-                        sql_custo = sql_custo.format(company_id=item_obj.company_id.id,location_id=location_id, product_id=item_obj.produto_id.id,data=item_obj.data_emissao)
+                        sql_saldo = sql_saldo.format(company_id=item_obj.company_id.id,location_id=location_id, product_id=item_obj.produto_id.id,data=item_obj.documento_id.data_emissao_brasilia)
+                        sql_custo = sql_custo.format(company_id=item_obj.company_id.id,location_id=location_id, product_id=item_obj.produto_id.id,data=item_obj.documento_id.data_emissao_brasilia)
 
                     print(sql_saldo)
                     cr.execute(sql_saldo)

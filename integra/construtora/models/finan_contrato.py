@@ -44,6 +44,8 @@ class finan_contrato(osv.Model):
         'imovel_ids': fields.one2many('finan.contrato.imovel', 'contrato_id', u'Imóveis'),
         'comissao_ids': fields.one2many('finan.contrato.comissao', 'contrato_id', u'Comissões do contrato'),
         'condicao_ids': fields.one2many('finan.contrato.condicao', 'contrato_id', u'Condições de pagamento'),
+        'condicao_original_ids': fields.one2many('finan.contrato.condicao', 'contrato_id', u'Condições de pagamento', domain=[('tipo', '=', 'O')]),
+        'condicao_renegociacao_ids': fields.one2many('finan.contrato.condicao', 'contrato_id', u'Condições de pagamento', domain=[('tipo', '=', 'R')]),
         'parcela_ids': fields.one2many('finan.contrato.condicao.parcela', 'contrato_id', u'Parcelas'),
         'percentual_comissao': fields.float(u'Comissão'),
 
@@ -89,7 +91,7 @@ class finan_contrato(osv.Model):
         'percentual_comissao': 10,
         'etapa_id': 1,
         'vendedor_id': lambda self, cr, uid, ids, context={}: uid,
-        'vezes': 1,
+        'vezes': 0,
     }
 
     def get_url_compartilhamento(self, cr, uid, ids, context={}):
@@ -172,8 +174,19 @@ class finan_contrato(osv.Model):
         self.copia_comissao(cr, uid, ids, context)
         self.verifica_valor_prosposta(cr, uid, ids, context)
         self.verifica_valor_comissao(cr, uid, ids, context)
+        self.verifica_exclusao_condicoes(cr, uid, ids, context)
 
         return res
+
+    def verifica_exclusao_condicoes(self, cr, uid, ids, context={}):
+        #
+        # Se removeram todas as condições de pagamento, remover também as comissões e outros
+        # lançamentos
+        #
+        for contrato_obj in self.browse(cr, uid, ids):
+            if len(contrato_obj.condicao_original_ids) == 0 and len(contrato_obj.condicao_renegociacao_ids) == 0:
+                for comissao_obj in contrato_obj.comissao_ids:
+                    comissao_obj.unlink()
 
     def copia_checklist(self, cr, uid, ids, vals={}, context={}):
         item_pool = self.pool.get('checklist.contrato.item')
@@ -399,7 +412,7 @@ class finan_contrato(osv.Model):
             if contrato_obj.situacao_imovel != 'A':
                 continue
 
-            if contrato_obj.imovel_propriedade in ('T', 'A') and contrato_obj.pagamento_direto_proprietario:
+            if contrato_obj.imovel_propriedade in ('T', 'A', 'TA') and contrato_obj.pagamento_direto_proprietario:
                 continue
 
             filtro = {
@@ -409,6 +422,13 @@ class finan_contrato(osv.Model):
                 'imovel_id': contrato_obj.imovel_id.id,
                 'lancamento_id': False,
             }
+
+            #
+            # A prioridade do projeto no rateio é do centro de custo vinculado ao imóvel, e não
+            # o projeto do próprio imóvel
+            #
+            if contrato_obj.imovel_id and contrato_obj.imovel_id.centrocusto_id and contrato_obj.imovel_id.centrocusto_id.project_id:
+                filtro['project_id'] = contrato_obj.imovel_id.centrocusto_id.project_id.id
 
             historico = contrato_obj.imovel_id.descricao_lista or ''
             historico += '\n'
@@ -532,8 +552,22 @@ class finan_contrato(osv.Model):
                     dados['carteira_id'] = contrato_obj.carteira_id.id
 
                 if len(parcela_obj.atualizacao_ids):
-                    dados['valor_documento'] = parcela_obj.atualizacao_ids[-1].valor
-                    dados['valor_documento_moeda'] = parcela_obj.atualizacao_ids[-1].valor
+                    #
+                    # Seguindo a regra louca da Exata, seja o que Deus quiser....
+                    #
+                    #dados['valor_documento'] = parcela_obj.atualizacao_ids[-1].valor
+                    #dados['valor_documento_moeda'] = parcela_obj.atualizacao_ids[-1].valor
+                    valor = D(parcela_obj.valor or 0)
+                    valor += D(parcela_obj.atualizacao_ids[-1].valor_multa_carteira or 0)
+
+                    for atualizacao_obj in parcela_obj.atualizacao_ids:
+                        valor += D(atualizacao_obj.valor_juros_carteira or 0)
+                        valor += D(atualizacao_obj.correcao or 0)
+                        valor += D(atualizacao_obj.valor_juros_sacoc or 0)
+                        valor += D(atualizacao_obj.valor_seguro or 0)
+
+                    dados['valor_documento'] = valor
+                    dados['valor_documento_moeda'] = valor
 
                 novos_dados[condicao_id][parcela_obj.data_vencimento].append(dados)
 
@@ -573,15 +607,20 @@ class finan_contrato(osv.Model):
                         historico_parcela = historico + '\n'
                         historico_parcela += 'Capital R$ ' + formata_valor(valor_capital)
 
+
                         valor_capital_juros = D(dados['parcela_obj'].valor_capital_juros or 0).quantize(D('0.01'))
                         valor_capital_juros -= valor_capital
-                        historico_parcela = historico + '\n'
-                        historico_parcela += 'Juros R$ ' + formata_valor(valor_capital_juros)
+
+                        if valor_capital_juros > 0:
+                            historico_parcela = historico + '\n'
+                            historico_parcela += 'Juros R$ ' + formata_valor(valor_capital_juros)
 
                         correcao = D(dados['parcela_obj'].valor_capital_juros_correcao or 0).quantize(D('0.01'))
                         correcao -= valor_original
-                        historico_parcela += '\n'
-                        historico_parcela += u'Correção R$ ' + formata_valor(correcao)
+
+                        if valor_capital_juros > 0 and correcao > 0:
+                            historico_parcela += '\n'
+                            historico_parcela += u'Correção R$ ' + formata_valor(correcao)
 
                         dados['historico'] = historico_parcela
 
@@ -596,6 +635,13 @@ class finan_contrato(osv.Model):
                                 'imovel_id': contrato_obj.imovel_id.id,
                                 'project_id': contrato_obj.imovel_id.project_id.id,
                             }
+
+                            #
+                            # A prioridade do projeto no rateio é do centro de custo vinculado ao imóvel, e não
+                            # o projeto do próprio imóvel
+                            #
+                            if contrato_obj.imovel_id.centrocusto_id and contrato_obj.imovel_id.centrocusto_id.project_id:
+                                contexto_rateio['project_id'] = contrato_obj.imovel_id.centrocusto_id.project_id.id
 
                             if contrato_obj.hr_department_id:
                                 contexto_rateio['hr_department_id'] = contrato_obj.hr_department_id.id
@@ -650,10 +696,145 @@ class finan_contrato(osv.Model):
                             dados_pagamento['numero_documento_original'] = numero_documento
 
                             lancamento_pool.write(cr, uid, [pagamento_id], dados_pagamento)
+
+                            rateio = lancamento_pool.onchange_centrocusto_id(cr, uid, [pagamento_id], dados_pagamento['centrocusto_id'], dados_pagamento['valor_documento'], 0, dados_pagamento['company_id'], dados_pagamento['conta_id'], dados_pagamento['partner_id'], dados_pagamento['data_vencimento'], dados_pagamento['data_documento'], context=contexto_rateio)
+                            if 'value' in rateio:
+                                rateio_ids = [[5, False, False]]
+                                for rat in rateio['value']['rateio_ids']:
+                                    rateio_ids.append([0, False, rat])
+
+                                lancamento_pool.write(cr, uid, [pagamento_id], {'rateio_ids': rateio_ids})
+
                             filtro['lancamento_id'] = pagamento_id
                             cr.execute(SQL_ATUALIZA_RATEIO.format(**filtro))
-                            print(pagamento_id)
-                            print(dados_pagamento)
+
+                        #
+                        # Imóveis de 3º, se o pagamento não for para o proprietário direto,
+                        # gera o contas a pagar para o proprietário
+                        #
+                        if contrato_obj.imovel_id.propriedade in ('T', 'TA') and (not contrato_obj.pagamento_direto_proprietario):
+                            if not contrato_obj.imovel_id.project_id.modelo_terceiro_associado_pagar_id:
+                                raise osv.except_osv(u'Inválido !', u'Imóvel de Terceiro!!! Inserir um Modelo de Pagamento de Terceiro no Projeto')
+
+                            pagamento_id = lancamento_pool.copy(cr, uid, contrato_obj.imovel_id.project_id.modelo_terceiro_associado_pagar_id.id)
+
+                            dados_pagamento = {
+                                'tipo': 'P',
+                                'company_id': contrato_obj.imovel_id.company_id.id,
+                                'contrato_imovel_id': contrato_obj.id,
+                                'data_documento': dados['data_documento'],
+                                'partner_id': contrato_obj.imovel_proprietario_id.id,
+                                'data_vencimento': dados['data_vencimento'],
+                                'valor_documento': dados['valor_documento'],
+                                'lancamento_recebimento_imovel_id': lancamento_id,
+                                'historico': historico,
+                                'sugestao_bank_id': dados['sugestao_bank_id'],
+                                'centrocusto_id': contrato_obj.imovel_id.project_id.modelo_terceiro_associado_pagar_id.centrocusto_id.id,
+                                'conta_id': contrato_obj.imovel_id.project_id.modelo_terceiro_associado_pagar_id.conta_id.id,
+                            }
+                            numero_documento = u'3P-' + contrato_obj.numero + '-'
+                            numero_documento += str(numero_condicao[condicao_id]).zfill(2) + '-'
+                            numero_documento += str(i).zfill(3) + '/' + str(total_parcelas).zfill(3)
+                            dados_pagamento['numero_documento'] = numero_documento
+                            dados_pagamento['numero_documento_original'] = numero_documento
+                            lancamento_pool.write(cr, uid, [pagamento_id], dados_pagamento)
+
+                            rateio = lancamento_pool.onchange_centrocusto_id(cr, uid, [pagamento_id], dados_pagamento['centrocusto_id'], dados_pagamento['valor_documento'], 0, dados_pagamento['company_id'], dados_pagamento['conta_id'], dados_pagamento['partner_id'], dados_pagamento['data_vencimento'], dados_pagamento['data_documento'], context=contexto_rateio)
+                            if 'value' in rateio:
+                                rateio_ids = [[5, False, False]]
+                                for rat in rateio['value']['rateio_ids']:
+                                    rateio_ids.append([0, False, rat])
+
+                                lancamento_pool.write(cr, uid, [pagamento_id], {'rateio_ids': rateio_ids})
+
+                            filtro['lancamento_id'] = pagamento_id
+                            cr.execute(SQL_ATUALIZA_RATEIO.format(**filtro))
+
+                        #
+                        # Imóveis de 3º associado, faz o tratamentos dos recebimentos e pagamentos
+                        # de acordo
+                        #
+                        elif contrato_obj.imovel_id.propriedade == 'A':
+                            if not (contrato_obj.imovel_id.project_id.modelo_terceiro_associado_receber_id and contrato_obj.imovel_id.project_id.modelo_terceiro_associado_pagar_id):
+                                raise osv.except_osv(u'Inválido !', u'Imóvel de Terceiro Associado!!! Inserir um Modelo de Recebimento e Pagamento de Terceiro no Projeto')
+
+                            proprietario_company = self.pool.get('res.company').search(cr, uid, [('partner_id','=', contrato_obj.imovel_proprietario_id.id)])
+
+                            if len(proprietario_company) == 0:
+                                raise osv.except_osv(u'Inválido !', u'Proprietario do Imovel Não é uma Empresa Cadastrada no Sistema"')
+
+                            proprietario_company = proprietario_company[0]
+
+                            recebimento_id = lancamento_pool.copy(cr, uid, contrato_obj.imovel_id.project_id.modelo_terceiro_associado_receber_id.id)
+
+                            dados_recebimento = {
+                                'tipo': 'R',
+                                'company_id': proprietario_company,
+                                'contrato_imovel_id': contrato_obj.id,
+                                'data_documento': dados['data_documento'],
+                                'partner_id': contrato_obj.imovel_id.company_id.partner_id.id,
+                                'data_vencimento': dados['data_vencimento'],
+                                'valor_documento': dados['valor_documento'],
+                                'lancamento_recebimento_imovel_id': lancamento_id,
+                                'historico': historico,
+                                'centrocusto_id': contrato_obj.imovel_id.project_id.modelo_terceiro_associado_receber_id.centrocusto_id.id,
+                                'conta_id': contrato_obj.imovel_id.project_id.modelo_terceiro_associado_receber_id.conta_id.id,
+                            }
+                            numero_documento = '3AR-' + contrato_obj.numero + '-'
+                            numero_documento += str(numero_condicao[condicao_id]).zfill(2) + '-'
+                            numero_documento += str(i).zfill(3) + '/' + str(total_parcelas).zfill(3)
+                            dados_recebimento['numero_documento'] = numero_documento
+                            dados_recebimento['numero_documento_original'] = numero_documento
+
+                            if contrato_obj.imovel_id.res_partner_bank_id:
+                                dados_recebimento['sugestao_bank_id'] = contrato_obj.imovel_id.res_partner_bank_id.id
+
+                            lancamento_pool.write(cr, uid, [recebimento_id], dados_recebimento)
+
+                            rateio = lancamento_pool.onchange_centrocusto_id(cr, uid, [recebimento_id], dados_recebimento['centrocusto_id'], dados_recebimento['valor_documento'], 0, dados_recebimento['company_id'], dados_recebimento['conta_id'], dados_recebimento['partner_id'], dados_recebimento['data_vencimento'], dados_recebimento['data_documento'], context=contexto_rateio)
+                            if 'value' in rateio:
+                                rateio_ids = [[5, False, False]]
+                                for rat in rateio['value']['rateio_ids']:
+                                    rateio_ids.append([0, False, rat])
+
+                                lancamento_pool.write(cr, uid, [recebimento_id], {'rateio_ids': rateio_ids})
+
+                            filtro['lancamento_id'] = recebimento_id
+                            cr.execute(SQL_ATUALIZA_RATEIO.format(**filtro))
+
+                            pagamento_id = lancamento_pool.copy(cr, uid, contrato_obj.imovel_id.project_id.modelo_terceiro_associado_pagar_id.id)
+
+                            dados_pagamento = {
+                                'tipo': 'P',
+                                'company_id': contrato_obj.imovel_id.company_id.id,
+                                'contrato_imovel_id': contrato_obj.id,
+                                'data_documento': dados['data_documento'],
+                                'partner_id': contrato_obj.imovel_proprietario_id.id,
+                                'data_vencimento': dados['data_vencimento'],
+                                'valor_documento': dados['valor_documento'],
+                                'lancamento_recebimento_imovel_id': lancamento_id,
+                                'historico': historico,
+                                'sugestao_bank_id': dados['sugestao_bank_id'],
+                                'centrocusto_id': contrato_obj.imovel_id.project_id.modelo_terceiro_associado_pagar_id.centrocusto_id.id,
+                                'conta_id': contrato_obj.imovel_id.project_id.modelo_terceiro_associado_pagar_id.conta_id.id,
+                            }
+                            numero_documento = '3AP-' + contrato_obj.numero + '-'
+                            numero_documento += str(numero_condicao[condicao_id]).zfill(2) + '-'
+                            numero_documento += str(i).zfill(3) + '/' + str(total_parcelas).zfill(3)
+                            dados_pagamento['numero_documento'] = numero_documento
+                            dados_pagamento['numero_documento_original'] = numero_documento
+                            lancamento_pool.write(cr, uid, [pagamento_id], dados_pagamento)
+
+                            rateio = lancamento_pool.onchange_centrocusto_id(cr, uid, [pagamento_id], dados_pagamento['centrocusto_id'], dados_pagamento['valor_documento'], 0, dados_pagamento['company_id'], dados_pagamento['conta_id'], dados_pagamento['partner_id'], dados_pagamento['data_vencimento'], dados_pagamento['data_documento'], context=contexto_rateio)
+                            if 'value' in rateio:
+                                rateio_ids = [[5, False, False]]
+                                for rat in rateio['value']['rateio_ids']:
+                                    rateio_ids.append([0, False, rat])
+
+                                lancamento_pool.write(cr, uid, [pagamento_id], {'rateio_ids': rateio_ids})
+
+                            filtro['lancamento_id'] = pagamento_id
+                            cr.execute(SQL_ATUALIZA_RATEIO.format(**filtro))
 
                         i += 1
             #

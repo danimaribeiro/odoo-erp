@@ -9,16 +9,16 @@
             <field name="priority">2</field>
             <field name="inherit_id" ref="sped_base.view_partner_form"/>
             <field name="arch" type="xml">
-                <field name="cnpj_cpf" position="replace">
+            <!--    <field name="cnpj_cpf" position="replace">
                     <field name="cnpj_cpf" on_change="onchange_cnpj_cpf(cnpj_cpf)" required="1"/>
                 </field>
                 <field name="razao_social" position="replace">
                      <field name="razao_social" colspan="4" required="1"/>
-                </field>
+                </field> -->
                 <field name="fone" position="replace">
-                    <field name="fone" required="0"/>
+                    <field name="fone" required="1"/>
                 </field>
-                <field name="celular" position="replace">
+            <!--    <field name="celular" position="replace">
                     <field name="celular" required="1"/>
                 </field>
                 <field name="email" position="replace">
@@ -38,19 +38,19 @@
 
                 <field name="bairro" position="replace">
                     <field name="bairro" colspan="2" required="1"/>
-                </field>
+                </field> -->
 
                 <field name="municipio_id" position="replace">
                     <field name="municipio_id" colspan="2" required="1"/>
                 </field>
 
-                <field name="cep" position="replace">
+            <!--    <field name="cep" position="replace">
                     <field name="cep" on_change="onchange_cep(cep)" required="1"/>
                 </field>
 
                 <field name="email_nfe" position="replace">
                      <field name="email_nfe" colspan="4" required="1"/>
-                </field>
+                </field> -->
 
                 <field name="lang" position="after">
                     <newline/>
